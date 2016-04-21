@@ -1,0 +1,4 @@
+troposphere==1.5.0
+simplejson==3.8.2
+Werkzeug==0.9.4
+boto3==1.3.0
