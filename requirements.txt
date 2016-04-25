@@ -9,3 +9,4 @@ awacs==0.5.4
 clint==0.5.1
 cookiecutter==1.4.0
 slacker==0.9.9
+s3transfer==0.0.1
