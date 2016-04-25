@@ -113,7 +113,7 @@ def create_application_revision():
 
 
 def bundle_revision():
-    zip = tenkai_utils.make_zip_file_bytes(path=".")
+    zip = tenkai_utils.make_zip_file_bytes(path="./codedeploy")
     f = open('/tmp/bundle.zip', 'wb')
     f.write(zip)
     f.close()
