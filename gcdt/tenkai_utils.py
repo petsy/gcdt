@@ -21,8 +21,8 @@ def make_zip_file_bytes(path):
             archive_target = "/" + archive_name
             # print "archive target " + archive_target
             z.write(full_path, archive_target)
-    buffer_mbytes = float(len(buf.getvalue()) / 10000000)
-    print "buffer has size " + str(buffer_mbytes) + " mb"
+    #buffer_mbytes = float(len(buf.getvalue()) / 10000000)
+    #print "buffer has size " + str(buffer_mbytes) + " mb"
     return buf.getvalue()
 
 
