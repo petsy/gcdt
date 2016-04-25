@@ -18,6 +18,7 @@ import tenkai_utils
 from s3transfer import S3Transfer
 from tenkai_utils import ProgressPercentage
 
+
 doc = """Usage:
         tenkai deploy [-e ENV]
         tenkai bundle
@@ -132,6 +133,30 @@ def upload_revision_to_s3(bucket, file="/tmp/bundle.zip"):
     return response["ETag"], response["VersionId"]
 
 
+def bucket_exists(bucket):
+    s3 = boto3.resource('s3')
+    return s3.Bucket(bucket) in s3.buckets.all()
+
+
+def create_bucket(bucket):
+    client = boto3.client("s3")
+    response = client.create_bucket(
+        Bucket=bucket)
+    response = client.put_bucket_versioning(
+        Bucket=bucket,
+        VersioningConfiguration={
+            'Status': 'Enabled'
+        }
+    )
+
+
+
+def prepare_artifacts_bucket(bucket):
+    if not bucket_exists(bucket):
+        create_bucket(bucket)
+    else:
+        pass
+
 def main():
     arguments = docopt(doc)
     conf = None
@@ -140,15 +165,18 @@ def main():
     if arguments["deploy"]:
         env = (arguments["--env"] if arguments["--env"] else "DEV")
         # conf = get_config(arguments)
+        conf = read_config(config_base_name="codedeploy")
         # are_credentials_still_valid()
-        deploy(applicationName="mep-dev-cms-stack-mediaExchangeCms-1D3UDZRQ0I65J",
-               deploymentGroupName="mep-dev-cms-stack-mediaExchangeCmsDg-1UHT4YWDAGNQJ",
-               deploymentConfigName="CodeDeployDefaultemplate.AllAtOnce0", bucket="jobr-codedeploy-test")
+        prepare_artifacts_bucket(conf.get("codedeploy.artifactsBucket"))
+        deploy(applicationName=conf.get("codedeploy.applicationName"),
+               deploymentGroupName=conf.get("codedeploy.deploymentGroupName"),
+               deploymentConfigName=conf.get("codedeploy.deploymentConfigName"),
+               bucket=conf.get("codedeploy.artifactsBucket"))
     if arguments["bundle"]:
         bundle_revision()
     if arguments["push"]:
         bundle_revision()
-        upload_revision_to_s3("jobr-codedeploy-test")
+        upload_revision_to_s3(conf.get("codedeploy.artifactsBucket"))
 
 
 if __name__ == '__main__':
