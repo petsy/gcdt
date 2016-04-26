@@ -145,6 +145,7 @@ def update_stack(conf):
         exit_code = poll_stack_events(stackname)
         sys.exit(exit_code)
     except Exception as e:
+        print e
         print colored.yellow("No updates are to be performed.")
 
 

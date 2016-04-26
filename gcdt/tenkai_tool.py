@@ -68,7 +68,7 @@ def get_config(arguments):
 
 def deploy(applicationName, deploymentGroupName, deploymentConfigName, bucket, key="bundle.zip"):
     bundle_revision()
-    etag, version = upload_revision_to_s3("jobr-codedeploy-test")
+    etag, version = upload_revision_to_s3(bucket)
 
     client = boto3.client("codedeploy")
     response = client.create_deployment(
