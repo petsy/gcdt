@@ -66,9 +66,9 @@ def get_config(arguments):
     return conf
 
 
-def deploy(applicationName, deploymentGroupName, deploymentConfigName, bucket, key="bundle.zip"):
+def deploy(applicationName, deploymentGroupName, deploymentConfigName, bucket):
     bundle_revision()
-    etag, version = upload_revision_to_s3(bucket)
+    etag, version = upload_revision_to_s3(bucket, applicationName)
 
     client = boto3.client("codedeploy")
     response = client.create_deployment(
@@ -78,7 +78,7 @@ def deploy(applicationName, deploymentGroupName, deploymentConfigName, bucket, k
             'revisionType': 'S3',
             's3Location': {
                 'bucket': bucket,
-                'key': key,
+                'key': build_bundle_key(applicationName),
                 'bundleType': 'zip',
                 'eTag': etag,
                 'version': version,
@@ -120,13 +120,13 @@ def bundle_revision():
     f.close()
 
 
-def upload_revision_to_s3(bucket, file="/tmp/bundle.zip"):
+def upload_revision_to_s3(bucket, applicationName, file="/tmp/bundle.zip"):
     client = boto3.client('s3')
     transfer = S3Transfer(client)
     # Upload /tmp/myfile to s3://bucket/key and print upload progress.
-    transfer.upload_file(file, bucket, 'bundle.zip',
+    transfer.upload_file(file, bucket, build_bundle_key(applicationName),
                          callback=ProgressPercentage(file))
-    response = client.head_object(Bucket=bucket, Key="bundle.zip")
+    response = client.head_object(Bucket=bucket, Key=build_bundle_key(applicationName))
     print "\n"
     print response["ETag"]
     print response["VersionId"]
@@ -149,7 +149,9 @@ def create_bucket(bucket):
         }
     )
 
-
+def build_bundle_key(applicationName):
+    key = applicationName+"/"+"bundle.zip"
+    return key
 
 def prepare_artifacts_bucket(bucket):
     if not bucket_exists(bucket):
@@ -175,8 +177,9 @@ def main():
     if arguments["bundle"]:
         bundle_revision()
     if arguments["push"]:
+        conf = read_config(config_base_name="codedeploy")
         bundle_revision()
-        upload_revision_to_s3(conf.get("codedeploy.artifactsBucket"))
+        upload_revision_to_s3(conf.get("codedeploy.artifactsBucket"), conf.get("codedeploy.applicationName"))
 
 
 if __name__ == '__main__':
