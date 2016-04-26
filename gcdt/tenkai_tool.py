@@ -124,8 +124,7 @@ def upload_revision_to_s3(bucket, applicationName, file="/tmp/bundle.zip"):
     client = boto3.client('s3')
     transfer = S3Transfer(client)
     # Upload /tmp/myfile to s3://bucket/key and print upload progress.
-    transfer.upload_file(file, bucket, build_bundle_key(applicationName),
-                         callback=ProgressPercentage(file))
+    transfer.upload_file(file, bucket, build_bundle_key(applicationName))
     response = client.head_object(Bucket=bucket, Key=build_bundle_key(applicationName))
     print "\n"
     print response["ETag"]
