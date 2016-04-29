@@ -196,13 +196,13 @@ def main():
                deploymentGroupName=conf.get("codedeploy.deploymentGroupName"),
                deploymentConfigName=conf.get("codedeploy.deploymentConfigName"),
                bucket=conf.get("codedeploy.artifactsBucket"))
+        deployment_status(deployment)
     if arguments["bundle"]:
         bundle_revision()
     if arguments["push"]:
         conf = read_config(config_base_name="codedeploy")
         bundle_revision()
         upload_revision_to_s3(conf.get("codedeploy.artifactsBucket"), conf.get("codedeploy.applicationName"))
-        deployment_status(deployment)
 
 
 if __name__ == '__main__':
