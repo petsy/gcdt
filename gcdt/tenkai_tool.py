@@ -1,13 +1,14 @@
+#pylint: disable=E0401
 import os
 import sys
 
 import boto3
 from docopt import docopt
 from gcdt.config_reader import read_config
+import time
 from gcdt import monitoring
 import json
 from tabulate import tabulate
-import sys
 from clint.textui import colored
 import uuid
 from cookiecutter.main import cookiecutter
@@ -88,9 +89,11 @@ def deploy(applicationName, deploymentGroupName, deploymentConfigName, bucket):
         description='deploy with tenkai',
         ignoreApplicationStopFailures=True
     )
+    return response['deploymentId']
 
 
 def create_application_revision():
+    # UNUSED???
     client = boto3.client("codedeploy")
     response = client.register_application_revision(
         applicationName='string',
@@ -111,6 +114,26 @@ def create_application_revision():
             }
         }
     )
+
+def deployment_status(deploymentId, iterations=100):
+    """
+    wait until an deployment is in an steady state and output information
+    """
+    counter = 0
+    steady_states = ['Succeeded', 'Failed', 'Stopped']
+    client = boto3.client("codedeploy")
+    while counter <= iterations:
+        response = client.get_deployment(deploymentId=deploymentId)
+        status = response['deploymentInfo']['status']
+        if status not in steady_states:
+            print "Deployment: %s - State: %s" % (deploymentId, status)
+            time.sleep(10)
+        elif status is 'Failed':
+            print "Deployment: %s failed: %s" % (deploymentId, response['deploymentInfo']['errorInformation'])
+            sys.exit(1)
+        else:
+            print "Deployment: %s - State: %s" % (deploymentId, status)
+            break
 
 
 def bundle_revision():
@@ -169,7 +192,7 @@ def main():
         conf = read_config(config_base_name="codedeploy")
         # are_credentials_still_valid()
         prepare_artifacts_bucket(conf.get("codedeploy.artifactsBucket"))
-        deploy(applicationName=conf.get("codedeploy.applicationName"),
+        deployment = deploy(applicationName=conf.get("codedeploy.applicationName"),
                deploymentGroupName=conf.get("codedeploy.deploymentGroupName"),
                deploymentConfigName=conf.get("codedeploy.deploymentConfigName"),
                bucket=conf.get("codedeploy.artifactsBucket"))
@@ -179,6 +202,7 @@ def main():
         conf = read_config(config_base_name="codedeploy")
         bundle_revision()
         upload_revision_to_s3(conf.get("codedeploy.artifactsBucket"), conf.get("codedeploy.applicationName"))
+        deployment_status(deployment)
 
 
 if __name__ == '__main__':
