@@ -127,6 +127,7 @@ def deployment_status(deploymentId, iterations=100):
         status = response['deploymentInfo']['status']
         if status not in steady_states:
             print "Deployment: %s - State: %s" % (deploymentId, status)
+            sys.stdout.flush()
             time.sleep(10)
         elif status is 'Failed':
             print "Deployment: %s failed: %s" % (deploymentId, response['deploymentInfo']['errorInformation'])
