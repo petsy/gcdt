@@ -1,7 +1,6 @@
 from unittest import TestCase, main
 import sys
 import os
-# sys.path.append('../gcdt')
 sys.path.append(os.path.dirname(os.path.realpath(__file__)) + "/../gcdt")
 import monitoring
 import inspect
