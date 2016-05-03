@@ -98,6 +98,7 @@ def are_credentials_still_valid():
     try:
         client.list_functions()
     except Exception as e:
+        print e
         print colored.red("Your credentials have expired... Please renew and try again!")
         sys.exit(1)
     else:

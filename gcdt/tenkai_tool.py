@@ -4,9 +4,9 @@ import sys
 
 import boto3
 from docopt import docopt
-from gcdt.config_reader import read_config
+from config_reader import read_config
 import time
-from gcdt import monitoring
+import monitoring
 import json
 from tabulate import tabulate
 from clint.textui import colored
@@ -22,15 +22,6 @@ from tenkai_utils import ProgressPercentage
 
 doc = """Usage:
         tenkai deploy [-e ENV]
-        tenkai bundle
-        tenkai push
-        tenkai list
-        tenkai delete -f [-e ENV]
-        tenkai generate [-e ENV]
-        tenkai validate [-e ENV]
-        tenkai scaffold [<stackname>]
-        tenkai configure
-        tenkai preview
 
 -e ENV --env ENV    environment to use [default: dev] else is prod
 -h --help           show this
@@ -91,29 +82,6 @@ def deploy(applicationName, deploymentGroupName, deploymentConfigName, bucket):
     )
     return response['deploymentId']
 
-
-def create_application_revision():
-    # UNUSED???
-    client = boto3.client("codedeploy")
-    response = client.register_application_revision(
-        applicationName='string',
-        description='string',
-        revision={
-            'revisionType': 'S3' | 'GitHub',
-            's3Location': {
-                'bucket': 'string',
-                'key': 'string',
-                'bundleType': 'tar' | 'tgz' | 'zip',
-                'version': 'string',
-                'eTag': 'string',
-                'version': version,
-            },
-            'gitHubLocation': {
-                'repository': 'string',
-                'commitId': 'string'
-            }
-        }
-    )
 
 def deployment_status(deploymentId, iterations=100):
     """
@@ -198,12 +166,7 @@ def main():
                deploymentConfigName=conf.get("codedeploy.deploymentConfigName"),
                bucket=conf.get("codedeploy.artifactsBucket"))
         deployment_status(deployment)
-    if arguments["bundle"]:
-        bundle_revision()
-    if arguments["push"]:
-        conf = read_config(config_base_name="codedeploy")
-        bundle_revision()
-        upload_revision_to_s3(conf.get("codedeploy.artifactsBucket"), conf.get("codedeploy.applicationName"))
+
 
 
 if __name__ == '__main__':

@@ -23,14 +23,6 @@ s3bucket = t.add_resource(Bucket("S3Bucket", AccessControl=PublicRead,))
 s3bucket1 = t.add_resource(Bucket("S3Bucket1", AccessControl=PublicRead,))
 s3bucket2 = t.add_resource(Bucket("S3Bucket2", AccessControl=PublicRead,))
 
-ec2_instance = t.add_resource(ec2.Instance(
-    "Ec2Instance",
-    ImageId="ami-3883fe",
-    InstanceType="t1.micro",
-    KeyName="test",
-    SecurityGroups=["default"]
-))
-
 
 t.add_output(Output(
     "BucketName",

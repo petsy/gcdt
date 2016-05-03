@@ -6,9 +6,8 @@ import json
 from logger import log_json, setup_logger
 from slacker import Slacker
 
-
 log = setup_logger(logger_name="monitoring")
-slack = Slacker('xoxp-21496213815-21572710273-30619996855-b95027869b')
+
 
 def get_cloudwatch_client():
     return boto3.client("cloudwatch")
@@ -54,6 +53,7 @@ def timed(namespace, metric):
         finally:
             monitoring.timing('user.query.time', time.time() - start)
     """
+
     def wrapper(func):
         @wraps(func)
         def wrapped(*args, **kwargs):
@@ -61,7 +61,9 @@ def timed(namespace, metric):
             result = func(*args, **kwargs)
             timing(namespace, metric, time() - start)
             return result
+
         return wrapped
+
     return wrapper
 
 
@@ -94,16 +96,22 @@ def event(namespace, event):
             pass
 
     """
+
     def wrapper(func):
         @wraps(func)
         def wrapped(*args, **kwargs):
             result = func(*args, **kwargs)
             push_event(namespace, event)
             return result
+
         return wrapped
+
     return wrapper
 
-def send_to_slacker(channel, event):
+
+def send_to_slacker(channel, event, slack_token):
+    slack = Slacker(slack_token)
+
     """
     A decorator that will push a custom cloudwatch event
     ::
@@ -113,14 +121,19 @@ def send_to_slacker(channel, event):
             pass
 
     """
+
     def wrapper(func):
         @wraps(func)
         def wrapped(*args, **kwargs):
             result = func(*args, **kwargs)
-            slack.chat.post_message('#'+channel, event)
+            slack.chat.post_message('#' + channel, event)
             return result
+
         return wrapped
+
     return wrapper
 
-def slacker_notifcation(channel, event):
-    slack.chat.post_message('#'+channel, event)
+
+def slacker_notifcation(channel, message, slack_token):
+    slack = Slacker(slack_token)
+    slack.chat.post_message('#' + channel, message)

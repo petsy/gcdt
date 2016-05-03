@@ -68,4 +68,3 @@ def read_yugen_config():
 def get_input():
     name = prompt.query('Please enter your Slack API token: ')
     return name
-

@@ -2,13 +2,15 @@
 
 # from
 # http://stackoverflow.com/questions/279237/import-a-module-from-a-relative-path
+from __future__ import print_function
+
 import os
 import sys
 
 import boto3
 from docopt import docopt
-from gcdt.config_reader import read_config
-from gcdt import monitoring
+from config_reader import read_config
+import monitoring
 import json
 from tabulate import tabulate
 import sys
@@ -16,7 +18,7 @@ from kumo_util import json2table, are_credentials_still_valid, read_kumo_config,
 from clint.textui import colored
 import uuid
 from cookiecutter.main import cookiecutter
-#from selenium import webdriver
+# from selenium import webdriver
 import random
 import string
 
@@ -48,7 +50,9 @@ doc = """Usage:
 
 """
 
+KUMO_CONFIG = read_kumo_config()
 CONFIG_KEY = "cloudformation"
+SLACK_TOKEN = KUMO_CONFIG.get("kumo.slack-token")
 
 
 # generate an entry for the parameter list from a raw value read from config
@@ -74,12 +78,6 @@ def generate_parameters(conf):
         entry = generate_parameter_entry(conf, param)
         parameter_list.append(entry)
 
-    # Print parameters
-    # print "\n" + tabulate(
-    #    parameter_list,
-    #    headers='keys'
-    # )
-
     return parameter_list
 
 
@@ -102,10 +100,9 @@ def deploy_stack(conf):
     else:
         create_stack(conf)
 
+
 # create stack with all the information we have
 
-# @monitoring.event("cloudformation_deploy_tool", "DEPLOY - creating ")
-# @make_spin(Default, "Creating stack...")
 def create_stack(conf):
     client_cf = boto3.client('cloudformation')
     response = client_cf.create_stack(
@@ -117,17 +114,14 @@ def create_stack(conf):
         ],
     )
     message = "kumo bot: created stack %s " % get_stack_name(conf)
-    #monitoring.slacker_notifcation("systemmessages", message)
+    monitoring.slacker_notifcation("systemmessages", message, SLACK_TOKEN)
     stackname = get_stack_name(conf)
     exit_code = poll_stack_events(stackname)
     sys.exit(exit_code)
 
 
-
 # update stack with all the information we have
 
-# @monitoring.event("cloudformation_deploy_tool", "DEPLOY - updating")
-# @make_spin(Default, "Updating stack...")
 def update_stack(conf):
     client_cf = boto3.client('cloudformation')
     try:
@@ -140,13 +134,13 @@ def update_stack(conf):
             ],
         )
         message = "kumo bot: updated stack %s " % get_stack_name(conf)
-        #monitoring.slacker_notifcation("systemmessages", message)
+        monitoring.slacker_notifcation("systemmessages", message, SLACK_TOKEN)
         stackname = get_stack_name(conf)
         exit_code = poll_stack_events(stackname)
         sys.exit(exit_code)
     except Exception as e:
-        print e
-        print colored.yellow("No updates are to be performed.")
+        print (e)
+        print(colored.yellow("No updates are to be performed."))
 
 
 # delete stack
@@ -156,7 +150,7 @@ def delete_stack(conf):
         StackName=get_stack_name(conf),
     )
     message = "kumo bot: deleted stack %s " % get_stack_name(conf)
-    #monitoring.slacker_notifcation("systemmessages", message)
+    monitoring.slacker_notifcation("systemmessages", message, SLACK_TOKEN)
     stackname = get_stack_name(conf)
     exit_code = poll_stack_events(stackname)
     sys.exit(exit_code)
@@ -171,7 +165,7 @@ def validate_stack():
     response = client_cf.validate_template(
         TemplateBody=template_body
     )
-    print json2table(response)
+    print (json2table(response))
 
 
 def list_stacks():
@@ -190,14 +184,15 @@ def list_stacks():
         result["StackName"] = summary["StackName"]
         result["CreationTime"] = summary["CreationTime"]
         result["StackStatus"] = summary["StackStatus"]
-        print json2table(result)
+        print(json2table(result))
         stack_sum += 1
-    print "listed %s stacks" % str(stack_sum)
+    print("listed %s stacks" % str(stack_sum))
 
 
 def create_change_set(conf):
     client = boto3.client('cloudformation')
-    change_set_name = ''.join(random.SystemRandom().choice(string.ascii_uppercase + string.digits) for _ in range(8))
+    change_set_name = ''.join(random.SystemRandom().choice(
+        string.ascii_uppercase + string.digits) for _ in range(8))
     response = client.create_change_set(
         StackName=get_stack_name(conf),
         TemplateBody=cloudformation.generate_template(),
@@ -208,8 +203,9 @@ def create_change_set(conf):
         ChangeSetName=change_set_name
 
     )
-    #print json2table(response)
+    # print json2table(response)
     return change_set_name, get_stack_name(conf)
+
 
 def describe_change_set(change_set_name, stack_name):
     client = boto3.client('cloudformation')
@@ -223,10 +219,7 @@ def describe_change_set(change_set_name, stack_name):
         status = response["Status"]
         if status == completed:
             for change in response["Changes"]:
-                print json2table(change["ResourceChange"])
-
-
-
+                print (json2table(change["ResourceChange"]))
 
 
 # writes the template to disk
@@ -243,7 +236,6 @@ def generate_template_file(conf):
 
 
 def get_stack_name(conf):
-    print conf
     return conf.get("cloudformation.StackName")
 
 
@@ -256,7 +248,8 @@ def config_from_file(env):
 
 def scaffold():
     # Create project from the cookiecutter-pypackage/ template
-    template_path = os.path.join(os.path.dirname(__file__), 'cookiecutter-kumo')
+    template_path = os.path.join(
+        os.path.dirname(__file__), 'cookiecutter-kumo')
     cookiecutter(template_path)
 
 
@@ -268,6 +261,7 @@ def configure():
         config.write("kumo {\n")
         config.write("slack-token=%s" % stack_name)
         config.write("\n}")
+
 
 def get_config(arguments):
     if arguments['--env'] == 'prod':
@@ -296,6 +290,7 @@ def estimate_cost(conf):
     driver.quit()
 """
 
+
 def main():
     global cloudformation
     arguments = docopt(doc)
@@ -308,7 +303,6 @@ def main():
             sys.path.insert(0, os.getcwd())
         conf = get_config(arguments)
         import cloudformation
-        kumo_config = read_kumo_config()
         are_credentials_still_valid()
         print("deploy stack for " + os.environ.get('ENV') +
               ": " + get_stack_name(conf))
@@ -319,7 +313,6 @@ def main():
             sys.path.insert(0, os.getcwd())
         conf = get_config(arguments)
         import cloudformation
-        kumo_config = read_kumo_config()
         are_credentials_still_valid()
         print("deleting stack for " + os.environ.get('ENV') +
               ": " + get_stack_name(conf))
@@ -329,7 +322,6 @@ def main():
             sys.path.insert(0, os.getcwd())
         conf = get_config(arguments)
         import cloudformation
-        kumo_config = read_kumo_config()
         are_credentials_still_valid()
         validate_stack()
     elif arguments["generate"]:
@@ -350,7 +342,6 @@ def main():
             sys.path.insert(0, os.getcwd())
         conf = get_config(arguments)
         import cloudformation
-        kumo_config = read_kumo_config()
         are_credentials_still_valid()
         change_set, stack_name = create_change_set(conf)
         describe_change_set(change_set, stack_name)
@@ -365,6 +356,7 @@ def main():
         are_credentials_still_valid()
         estimate_cost(conf)
     """
+
 
 if __name__ == '__main__':
     main()
