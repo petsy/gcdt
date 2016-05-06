@@ -18,10 +18,12 @@ import string
 import tenkai_utils
 from s3transfer import S3Transfer
 from tenkai_utils import ProgressPercentage
+import utils
 
 
 doc = """Usage:
         tenkai deploy [-e ENV]
+        tenkai version
 
 -e ENV --env ENV    environment to use [default: dev] else is prod
 -h --help           show this
@@ -166,6 +168,8 @@ def main():
                deploymentConfigName=conf.get("codedeploy.deploymentConfigName"),
                bucket=conf.get("codedeploy.artifactsBucket"))
         deployment_status(deployment)
+    elif arguments["version"]:
+        utils.version()
 
 
 

@@ -14,14 +14,14 @@ import os
 
 
 
-def read_config(config_base_name = "settings"):
+def read_config(config_base_name="settings", location=""):
     """
     read local config file
     :param config_base_name:
     :return:
     """
     try:
-        config_file_name = os.getcwd() + "/" + get_config_name(config_base_name)
+        config_file_name = os.getcwd() + "/" + location + get_config_name(config_base_name)
         config = ConfigFactory.parse_file(config_file_name)
         return config
     except Exception as e:
@@ -39,12 +39,12 @@ def read_api_config(config_base_name = "api"):
 
 
 def get_config_name(config_base_name):
-    env = os.environ.get('ENV')
-    if env == "LOCAL":
+    env = os.environ.get('ENV') if os.environ.get('ENV') is not None else os.environ.get('env')
+    if env == "LOCAL" or env == "local":
         return config_base_name + "_local.conf"
-    elif env == "DEV":
+    elif env == "DEV" or env == "dev":
         return config_base_name + "_dev.conf"
-    elif env == "PROD":
+    elif env == "PROD" or env == "prod":
         return config_base_name + "_prod.conf"
     else:
         return config_base_name + ".conf"
