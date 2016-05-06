@@ -14,3 +14,16 @@ t.add_description(
 
 def generate_template():
     return t.to_json()
+
+
+
+def post_hook():
+    print("i'm a post hook")
+
+
+def post_update_hook():
+    print("i'm a post update hook")
+
+
+def post_create_hook():
+    print("i'm a post create hook")
