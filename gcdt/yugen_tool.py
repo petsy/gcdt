@@ -30,7 +30,10 @@ doc = """Usage:
 # TODO support more than one lambda function
 # TODO investigate base path problem
 
+
 SWAGGER_FILE = "swagger.yaml"
+YUGEN_CONFIG = yugen_utils.read_yugen_config()
+SLACK_TOKEN = YUGEN_CONFIG.get("yugen.slack-token")
 
 session = botocore.session.get_session()
 
@@ -141,7 +144,7 @@ def deploy_api(api_name, api_description, stage_name, api_key, lambda_name, lamb
             create_deployment(api_name, stage_name)
             wire_api_key(api_name, api_key, stage_name)
             message = ("yugen bot: created api *%s*") % (api_name)
-            monitoring.slacker_notifcation("systemmessages", message)
+            monitoring.slacker_notifcation("systemmessages", message, SLACK_TOKEN)
         else:
             print "API name unknown"
     else:
@@ -155,7 +158,7 @@ def deploy_api(api_name, api_description, stage_name, api_key, lambda_name, lamb
         if api is not None:
             create_deployment(api_name, stage_name)
             message = ("yugen bot: updated api *%s*") % (api_name)
-            monitoring.slacker_notifcation("systemmessages", message)
+            monitoring.slacker_notifcation("systemmessages", message, SLACK_TOKEN)
         else:
             print "API name unknown"
 
@@ -187,7 +190,7 @@ def delete_api(api_name):
 
         print yugen_utils.json2table(response)
         message = ("yugen bot: deleted api *%s*") % (api_name)
-        monitoring.slacker_notifcation("systemmessages", message)
+        monitoring.slacker_notifcation("systemmessages", message, SLACK_TOKEN)
     else:
         print "API name unknown"
 
