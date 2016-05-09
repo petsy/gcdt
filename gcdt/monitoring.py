@@ -110,28 +110,31 @@ def event(namespace, event):
 
 
 def send_to_slacker(channel, event, slack_token):
-    slack = Slacker(slack_token)
+    if slack_token:
+        slack = Slacker(slack_token)
 
-    """
-    A decorator that will push a custom cloudwatch event
-    ::
-        @monitoring.event('deploytool', 'deployed xyz')
-        def deploy_something():
-            # Do what you need to ...
-            pass
+        """
+        A decorator that will push a custom cloudwatch event
+        ::
+            @monitoring.event('deploytool', 'deployed xyz')
+            def deploy_something():
+                # Do what you need to ...
+                pass
 
-    """
+        """
 
-    def wrapper(func):
-        @wraps(func)
-        def wrapped(*args, **kwargs):
-            result = func(*args, **kwargs)
-            slack.chat.post_message('#' + channel, event)
-            return result
+        def wrapper(func):
+            @wraps(func)
+            def wrapped(*args, **kwargs):
+                result = func(*args, **kwargs)
+                slack.chat.post_message('#' + channel, event)
+                return result
 
-        return wrapped
+            return wrapped
 
-    return wrapper
+        return wrapper
+    else:
+        pass
 
 
 def slacker_notifcation(channel, message, slack_token):
