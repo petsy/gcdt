@@ -21,7 +21,8 @@ def read_config(config_base_name="settings", location=""):
     :return:
     """
     try:
-        config_file_name = os.getcwd() + "/" + location + get_config_name(config_base_name)
+        config_file_name = os.getcwd() + "/" + location +"/"+ get_config_name(config_base_name)
+        print config_file_name
         config = ConfigFactory.parse_file(config_file_name)
         return config
     except Exception as e:
