@@ -41,11 +41,11 @@ def read_api_config(config_base_name = "api"):
 
 def get_config_name(config_base_name):
     env = os.environ.get('ENV') if os.environ.get('ENV') is not None else os.environ.get('env')
-    if env == "LOCAL" or env == "local":
+    if env.lower() == "local":
         return config_base_name + "_local.conf"
-    elif env == "DEV" or env == "dev":
+    elif env.lower() == "dev":
         return config_base_name + "_dev.conf"
-    elif env == "PROD" or env == "prod":
+    elif env.lower() == "prod":
         return config_base_name + "_prod.conf"
     else:
         return config_base_name + ".conf"
