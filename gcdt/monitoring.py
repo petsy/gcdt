@@ -138,5 +138,8 @@ def send_to_slacker(channel, event, slack_token):
 
 
 def slacker_notifcation(channel, message, slack_token):
-    slack = Slacker(slack_token)
-    slack.chat.post_message('#' + channel, message)
+    if slack_token:
+        slack = Slacker(slack_token)
+        slack.chat.post_message('#' + channel, message)
+    else:
+        pass
