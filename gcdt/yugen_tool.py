@@ -9,6 +9,7 @@ import uuid
 import json
 import monitoring
 from config_reader import read_api_config
+import utils
 
 # creating docopt parameters and usage help
 doc = """Usage:
@@ -19,6 +20,7 @@ doc = """Usage:
         yugen apikey-create <keyname>
         yugen apikey-list
         yugen apikey-delete
+        yugen version
 
 -h --help           show this
 
@@ -368,6 +370,8 @@ def main():
         delete_api_key(api_key)
     elif arguments["apikey-list"]:
         list_api_keys()
+    elif arguments["version"]:
+        utils.version()
 
 
 if __name__ == "__main__":

@@ -21,6 +21,7 @@ from cookiecutter.main import cookiecutter
 # from selenium import webdriver
 import random
 import string
+import utils
 
 from pyspin.spin import make_spin, Default
 import time
@@ -44,6 +45,7 @@ doc = """Usage:
         kumo scaffold [<stackname>]
         kumo configure
         kumo preview
+        kumo version
 
 -e ENV --env ENV    environment to use [default: dev] else is prod
 -h --help           show this
@@ -53,6 +55,30 @@ doc = """Usage:
 KUMO_CONFIG = read_kumo_config()
 CONFIG_KEY = "cloudformation"
 SLACK_TOKEN = KUMO_CONFIG.get("kumo.slack-token")
+
+
+def call_post_create_hook():
+    if "post_create_hook" in dir(cloudformation):
+        print(colored.green("CloudFormation is done, now executing post create hook..."))
+        cloudformation.post_create_hook()
+    else:
+        print("no post create hook found")
+
+
+def call_post_update_hook():
+    if "post_update_hook" in dir(cloudformation):
+        print(colored.green("CloudFormation is done, now executing post update hook..."))
+        cloudformation.post_update_hook()
+    else:
+        print("no post update hook found")
+
+
+def call_post_hook():
+    if "post_hook" in dir(cloudformation):
+        print(colored.green("CloudFormation is done, now executing post  hook..."))
+        cloudformation.post_hook()
+    else:
+        print("no post hook found")
 
 
 # generate an entry for the parameter list from a raw value read from config
@@ -117,6 +143,8 @@ def create_stack(conf):
     monitoring.slacker_notifcation("systemmessages", message, SLACK_TOKEN)
     stackname = get_stack_name(conf)
     exit_code = poll_stack_events(stackname)
+    call_post_create_hook()
+    call_post_hook()
     sys.exit(exit_code)
 
 
@@ -137,10 +165,14 @@ def update_stack(conf):
         monitoring.slacker_notifcation("systemmessages", message, SLACK_TOKEN)
         stackname = get_stack_name(conf)
         exit_code = poll_stack_events(stackname)
+        call_post_update_hook()
+        call_post_hook()
         sys.exit(exit_code)
     except Exception as e:
-        print (e)
-        print(colored.yellow("No updates are to be performed."))
+        if "No updates" in repr(e):
+            print(colored.yellow("No updates are to be performed."))
+        else:
+            print(e)
 
 
 # delete stack
@@ -165,7 +197,7 @@ def validate_stack():
     response = client_cf.validate_template(
         TemplateBody=template_body
     )
-    print (json2table(response))
+    print(json2table(response))
 
 
 def list_stacks():
@@ -219,7 +251,7 @@ def describe_change_set(change_set_name, stack_name):
         status = response["Status"]
         if status == completed:
             for change in response["Changes"]:
-                print (json2table(change["ResourceChange"]))
+                print(json2table(change["ResourceChange"]))
 
 
 # writes the template to disk
@@ -304,8 +336,6 @@ def main():
         conf = get_config(arguments)
         import cloudformation
         are_credentials_still_valid()
-        print("deploy stack for " + os.environ.get('ENV') +
-              ": " + get_stack_name(conf))
         deploy_stack(conf)
     elif arguments["delete"]:
         env = (arguments["--env"] if arguments["--env"] else "DEV")
@@ -314,8 +344,6 @@ def main():
         conf = get_config(arguments)
         import cloudformation
         are_credentials_still_valid()
-        print("deleting stack for " + os.environ.get('ENV') +
-              ": " + get_stack_name(conf))
         delete_stack(conf)
     elif arguments["validate"]:
         if os.getcwd() not in sys.path:
@@ -345,6 +373,8 @@ def main():
         are_credentials_still_valid()
         change_set, stack_name = create_change_set(conf)
         describe_change_set(change_set, stack_name)
+    elif arguments["version"]:
+        utils.version()
 
     """
     elif arguments["costestimate"]:

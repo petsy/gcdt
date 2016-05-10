@@ -18,7 +18,7 @@ def generate_template():
 
 
 def post_hook():
-    print("i'm a post hook")
+    sample_hook.post_hook()
 
 
 def post_update_hook():
