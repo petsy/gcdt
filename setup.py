@@ -2,8 +2,7 @@ from setuptools import setup, find_packages
 from codecs import open
 from os import path
 
-
-__version__ = '0.0.5'
+__version__ = '0.0.7'
 
 here = path.abspath(path.dirname(__file__))
 
@@ -27,9 +26,9 @@ setup(
     download_url='http://invalidurl.invalid/gcdt/tarball/' + __version__,
     license='BSD',
     classifiers=[
-      'Development Status :: 3 - Alpha',
-      'Intended Audience :: Developers',
-      'Programming Language :: Python :: 3',
+        'Development Status :: 3 - Alpha',
+        'Intended Audience :: Developers',
+        'Programming Language :: Python :: 3',
     ],
     keywords='',
     packages=find_packages(exclude=['docs', 'tests*']),

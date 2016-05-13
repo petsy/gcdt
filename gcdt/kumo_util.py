@@ -93,6 +93,7 @@ class StackLookup(object):
             )
 
 
+
 def json2table(json):
     filter_terms = ["ResponseMetadata"]
     table = []
