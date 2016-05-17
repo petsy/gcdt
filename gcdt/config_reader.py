@@ -83,6 +83,7 @@ def __resolve_lookups(config):
     dic = config.as_plain_ordered_dict()
     stackset = set(__identify_stacks_recurse(dic))
     stackdata = {}
+    print stackset
     for stack in stackset:
         if "." in stack:
             stackdata.update({stack:  {"sslcert": servicediscovery.get_ssl_certificate(stack)}})
@@ -102,10 +103,17 @@ def __identify_stacks_recurse(dic):
                 for listelem in value:
                     stacklist = stacklist + (__identify_stacks_recurse(listelem))
             else:
-                if value.startswith("lookup:") or value.startswith("ssl:"):
-                    splits = value.split(":")
-                    stacklist.append(splits[1])
+                __identify_single_value(value, stacklist)
+                
+    else:
+        __identify_single_value(dic, stacklist)
     return stacklist
+
+
+def __identify_single_value(value, stacklist):
+    if value.startswith("lookup:") or value.startswith("ssl:"):
+        splits = value.split(":")
+        stacklist.append(splits[1])
 
 
 def __resolve_lookups_recurse(dic, stacks):
@@ -117,14 +125,23 @@ def __resolve_lookups_recurse(dic, stacks):
             elif isinstance(value, list):
                 sublist = []
                 for listelem in value:
+                    print listelem
                     sublist.append(__resolve_lookups_recurse(listelem, stacks))
                 subdict[key] = sublist
             else:
-                if value.startswith("lookup:"):
-                    splits = value.split(":")
-                    value = stacks[splits[1]][splits[2]]
-                if value.startswith("ssl:"):
-                    splits = value.split(":")
-                    value = stacks[splits[1]].values()[0]
-                subdict[key] = value
+                subdict[key] = __resolve_single_value(value, stacks)
+    else:
+        return __resolve_single_value(dic, stacks)
     return subdict
+
+
+def __resolve_single_value(value, stacks):
+    if value.startswith("lookup:"):
+        splits = value.split(":")
+        return stacks[splits[1]][splits[2]]
+    if value.startswith("ssl:"):
+        splits = value.split(":")
+        return stacks[splits[1]].values()[0]
+    return value
+    
+
