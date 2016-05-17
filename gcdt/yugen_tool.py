@@ -334,11 +334,6 @@ def main():
 
     if arguments["list"]:
         list_apis()
-    elif arguments["test"]:
-        env = (arguments["--env"] if arguments["--env"] else "DEV")
-        conf = config_from_file(env)
-        lmbdas = get_lambdas(conf)
-        print lmbdas
     elif arguments["deploy"]:
         env = (arguments["--env"] if arguments["--env"] else "DEV")
         conf = config_from_file(env)
@@ -347,8 +342,6 @@ def main():
         target_stage= conf.get("api.targetStage")
         api_key=conf.get("api.apiKey")
         lambdas = get_lambdas(conf)
-        #lambda_name=conf.get("lambda.name", None)
-        #lambda_alias=conf.get("lambda.alias", None)
         deploy_api(
             api_name=api_name,
             api_description=api_description,
