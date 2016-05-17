@@ -94,32 +94,37 @@ def __resolve_lookups(config):
 
 def __identify_stacks_recurse(dic):
     stacklist = []
-    for key, value in dic.items():
-        if isinstance(value, OrderedDict):
-            stacklist = stacklist + (__identify_stacks_recurse(value))
-        if not isinstance(value, OrderedDict):
-            if value.startswith("lookup:"):
-                splits = value.split(":")
-                stacklist.append(splits[1])
-            if value.startswith("ssl:"):
-                splits = value.split(":")
-                stacklist.append(splits[1])
+    if isinstance(dic, OrderedDict):
+        for key, value in dic.items():
+            if isinstance(value, OrderedDict):
+                stacklist = stacklist + (__identify_stacks_recurse(value))
+            elif isinstance(value, list):
+                for listelem in value:
+                    stacklist = stacklist + (__identify_stacks_recurse(listelem))
+            else:
+                if value.startswith("lookup:") or value.startswith("ssl:"):
+                    splits = value.split(":")
+                    stacklist.append(splits[1])
     return stacklist
 
 
 def __resolve_lookups_recurse(dic, stacks):
     subdict = OrderedDict()
-    for key, value in dic.items():
-        if isinstance(value, OrderedDict):
-            subdict[key] = __resolve_lookups_recurse(value, stacks)
-        if not isinstance(value, OrderedDict):
-            if value.startswith("lookup:"):
-                splits = value.split(":")
-                value = stacks[splits[1]][splits[2]]
-            subdict[key] = value
-            if value.startswith("ssl:"):
-                splits = value.split(":")
-                value = stacks[splits[1]].values()[0]
-            subdict[key] = value
-
+    if isinstance(dic, OrderedDict):
+        for key, value in dic.items():
+            if isinstance(value, OrderedDict):
+                subdict[key] = __resolve_lookups_recurse(value, stacks)
+            elif isinstance(value, list):
+                sublist = []
+                for listelem in value:
+                    sublist.append(__resolve_lookups_recurse(listelem, stacks))
+                subdict[key] = sublist
+            else:
+                if value.startswith("lookup:"):
+                    splits = value.split(":")
+                    value = stacks[splits[1]][splits[2]]
+                if value.startswith("ssl:"):
+                    splits = value.split(":")
+                    value = stacks[splits[1]].values()[0]
+                subdict[key] = value
     return subdict
