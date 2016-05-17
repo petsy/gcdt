@@ -163,6 +163,30 @@ swagger.yaml -> API definition in swagger with API Gateway extensions
 
 api.conf -> settings for the API which is needed for wiring
 
+```
+api {
+    name = "dp-dev-serve-api-2"
+    description = "description"
+    targetStage = "dev"
+    apiKey = "xxx"
+}
+
+lambda {
+
+    entries = [
+      {
+        name = "dp-dev-serve-api-query"
+        alias = "ACTIVE"
+      },
+      {
+        name = "dp-dev-serve-api-query-elasticsearch"
+        alias = "ACTIVE"
+      }
+    ]
+    
+}
+```
+
 
 ## AWS Lambda Deploy Tool
 ### ramuda (ラムダ from Japanese: lambda)
