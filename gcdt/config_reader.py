@@ -66,23 +66,33 @@ def read_api_config(config_base_name="api"):
 
 
 def get_config_name(config_base_name):
-    env = os.environ.get('ENV')
-    if env == "LOCAL":
+    """
+    Read config name based on ENV variable
+    """
+    env = os.environ.get('ENV') if os.environ.get('ENV').lower() is not None else os.environ.get('env').lower()
+    if env == "local":
         return config_base_name + "_local.conf"
-    elif env == "DEV":
+    elif env == "dev":
         return config_base_name + "_dev.conf"
-    elif env == "PROD":
+    elif env == "prod":
         return config_base_name + "_prod.conf"
     else:
         return config_base_name + ".conf"
 
+
+# TODO remove method. I think we should not make methods public only for testing - ludwigm
 def resolve_lookups(config):
     return __resolve_lookups(config)
 
+
 def __resolve_lookups(config):
+    """
+    Resolve all lookups in the config and return it transformed
+    """
     dic = config.as_plain_ordered_dict()
     stackset = set(__identify_stacks_recurse(dic))
     stackdata = {}
+    print stackset
     for stack in stackset:
         if "." in stack:
             stackdata.update({stack:  {"sslcert": servicediscovery.get_ssl_certificate(stack)}})
@@ -93,6 +103,9 @@ def __resolve_lookups(config):
 
 
 def __identify_stacks_recurse(dic):
+    """
+    Identify all stacks which are needed to be fetched
+    """
     stacklist = []
     if isinstance(dic, OrderedDict):
         for key, value in dic.items():
@@ -124,6 +137,7 @@ def __resolve_lookups_recurse(dic, stacks):
             elif isinstance(value, list):
                 sublist = []
                 for listelem in value:
+                    print listelem
                     sublist.append(__resolve_lookups_recurse(listelem, stacks))
                 subdict[key] = sublist
             else:
