@@ -69,7 +69,8 @@ def get_config_name(config_base_name):
     """
     Read config name based on ENV variable
     """
-    env = os.environ.get('ENV') if os.environ.get('ENV').lower() is not None else os.environ.get('env').lower()
+    env = os.environ.get('ENV') if os.environ.get('ENV') is not None else os.environ.get('env')
+    env = env.lower() if env is not None else None
     if env == "local":
         return config_base_name + "_local.conf"
     elif env == "dev":
@@ -123,9 +124,10 @@ def __identify_stacks_recurse(dic):
 
 
 def __identify_single_value(value, stacklist):
-    if value.startswith("lookup:") or value.startswith("ssl:"):
-        splits = value.split(":")
-        stacklist.append(splits[1])
+    if isinstance(value, basestring):
+        if value.startswith("lookup:") or value.startswith("ssl:"):
+            splits = value.split(":")
+            stacklist.append(splits[1])
 
 
 def __resolve_lookups_recurse(dic, stacks):
@@ -148,12 +150,13 @@ def __resolve_lookups_recurse(dic, stacks):
 
 
 def __resolve_single_value(value, stacks):
-    if value.startswith("lookup:"):
-        splits = value.split(":")
-        return stacks[splits[1]][splits[2]]
-    if value.startswith("ssl:"):
-        splits = value.split(":")
-        return stacks[splits[1]].values()[0]
+    if isinstance(value, basestring):
+        if value.startswith("lookup:"):
+            splits = value.split(":")
+            return stacks[splits[1]][splits[2]]
+        if value.startswith("ssl:"):
+            splits = value.split(":")
+            return stacks[splits[1]].values()[0]
     return value
     
 
