@@ -263,8 +263,7 @@ def generate_template_file(conf):
     template_file_name = get_stack_name(conf) + "-generated-cf-template.json"
     with open(template_file_name, 'w') as opened_file:
         opened_file.write(template_body)
-    print("wrote cf-template for " + os.environ.get('ENV') +
-          " to disk: %s") % (template_file_name)
+    print("wrote cf-template for {} to disk: {}".format(os.environ.get('ENV'), template_file_name))
 
 
 def get_stack_name(conf):
