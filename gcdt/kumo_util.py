@@ -145,7 +145,7 @@ def create_dp_name(env, layer, name):
     if env == "dev":
         return "dp-dev-" + layer + "-" + name
     elif env == "prod":
-        return "dp-prod" + layer + "-" + name
+        return "dp-prod-" + layer + "-" + name
     else:
         raise Exception("Unknown env: " + env)
 
