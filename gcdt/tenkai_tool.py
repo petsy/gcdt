@@ -100,7 +100,7 @@ def deployment_status(deploymentId, iterations=100):
             sys.stdout.flush()
             time.sleep(10)
         elif status is 'Failed':
-            print "Deployment: %s failed: %s" % (deploymentId, response['deploymentInfo']['errorInformation'])
+            print colored.red("Deployment: %s failed: %s" % (deploymentId, response['deploymentInfo']['errorInformation']))
             sys.exit(1)
         else:
             print "Deployment: %s - State: %s" % (deploymentId, status)
@@ -120,9 +120,9 @@ def upload_revision_to_s3(bucket, applicationName, file="/tmp/bundle.zip"):
     # Upload /tmp/myfile to s3://bucket/key and print upload progress.
     transfer.upload_file(file, bucket, build_bundle_key(applicationName))
     response = client.head_object(Bucket=bucket, Key=build_bundle_key(applicationName))
-    print "\n"
-    print response["ETag"]
-    print response["VersionId"]
+    #print "\n"
+    #print response["ETag"]
+    #print response["VersionId"]
     return response["ETag"], response["VersionId"]
 
 

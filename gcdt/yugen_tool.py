@@ -130,7 +130,7 @@ def list_apis():
 
 
 
-def deploy_api(api_name, api_description, stage_name, api_key, lambda_name, lambda_alias):
+def deploy_api(api_name, api_description, stage_name, api_key, lambdas):
 
     if not yugen_utils.api_exists(api_name):
         if os.path.isfile(SWAGGER_FILE):
@@ -141,8 +141,8 @@ def deploy_api(api_name, api_description, stage_name, api_key, lambda_name, lamb
         api = yugen_utils.api_by_name(api_name)
 
         if api is not None:
-            if lambda_name is not None:
-                add_lambda_permissions(lambda_name, lambda_alias, api)
+            for lmbda in lambdas:
+                add_lambda_permissions(lmbda["name"], lmbda["alias"], api)
             create_deployment(api_name, stage_name)
             wire_api_key(api_name, api_key, stage_name)
             message = ("yugen bot: created api *%s*") % (api_name)
@@ -316,7 +316,16 @@ def add_lambda_permissions(lambda_name, lambda_alias, api):
         print "Lambda function could not be found"
 
 
-
+def get_lambdas(config):
+    lambda_entries = config.get("lambda.entries", [])
+    lmbdas = []
+    for lambda_entry in lambda_entries:
+        lmbda = {
+            "name" : lambda_entry.get("name", None),
+            "alias" : lambda_entry.get("alias", None)
+        }
+        lmbdas.append(lmbda)
+    return lmbdas
 
 def main():
     yugen_utils.are_credentials_still_valid()
@@ -332,15 +341,13 @@ def main():
         api_description = conf.get("api.description")
         target_stage= conf.get("api.targetStage")
         api_key=conf.get("api.apiKey")
-        lambda_name=conf.get("lambda.name", None)
-        lambda_alias=conf.get("lambda.alias", None)
+        lambdas = get_lambdas(conf)
         deploy_api(
             api_name=api_name,
             api_description=api_description,
             stage_name=target_stage,
             api_key=api_key,
-            lambda_name=lambda_name,
-            lambda_alias=lambda_alias
+            lambdas=lambdas
         )
     elif arguments["delete"]:
         env = (arguments["--env"] if arguments["--env"] else "DEV")
