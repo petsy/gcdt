@@ -56,6 +56,7 @@ KUMO_CONFIG = read_kumo_config()
 CONFIG_KEY = "cloudformation"
 SLACK_TOKEN = KUMO_CONFIG.get("kumo.slack-token")
 
+boto_session = boto3.session.Session()
 
 def call_post_create_hook():
     if "post_create_hook" in dir(cloudformation):
@@ -98,7 +99,7 @@ def generate_parameters(conf):
     parameter_list = []
     for item in conf.iterkeys():
         for key in conf[item].iterkeys():
-            if key not in ["StackName", "TemplateBody"]:
+            if key not in ["StackName", "TemplateBody", "StackBucket"]:
                 raw_parameters.append(key)
     for param in raw_parameters:
         entry = generate_parameter_entry(conf, param)
@@ -108,7 +109,7 @@ def generate_parameters(conf):
 
 
 def stack_exists(stackName):
-    client = boto3.client('cloudformation')
+    client = boto_session.client('cloudformation')
     try:
         response = client.describe_stacks(
             StackName=stackName
@@ -129,11 +130,31 @@ def deploy_stack(conf):
 
 # create stack with all the information we have
 
+def s3_upload(conf):
+    region = boto_session.region_name
+    resource_s3 = boto_session.resource('s3')
+    bucket = get_stack_bucket(conf)
+    dest_key = "kumo/%s/%s-cloudformation.json" % (region, get_stack_name(conf))
+
+    source_file = generate_template_file(conf)
+
+    s3obj = resource_s3.Object(bucket, dest_key)
+    s3obj.upload_file(source_file)
+    s3obj.wait_until_exists()
+
+    s3url = "https://s3-%s.amazonaws.com/%s/%s" % (region, bucket, dest_key)
+
+    return s3url
+
+
+
+
 def create_stack(conf):
-    client_cf = boto3.client('cloudformation')
+    client_cf = boto_session.client('cloudformation')
     response = client_cf.create_stack(
         StackName=get_stack_name(conf),
-        TemplateBody=cloudformation.generate_template(),
+        TemplateURL=s3_upload(conf),
+    #    TemplateBody=cloudformation.generate_template(),
         Parameters=generate_parameters(conf),
         Capabilities=[
             'CAPABILITY_IAM',
@@ -151,11 +172,11 @@ def create_stack(conf):
 # update stack with all the information we have
 
 def update_stack(conf):
-    client_cf = boto3.client('cloudformation')
+    client_cf = boto_session.client('cloudformation')
     try:
         response = client_cf.update_stack(
             StackName=get_stack_name(conf),
-            TemplateBody=cloudformation.generate_template(),
+            TemplateURL=s3_upload(conf),
             Parameters=generate_parameters(conf),
             Capabilities=[
                 'CAPABILITY_IAM',
@@ -177,7 +198,7 @@ def update_stack(conf):
 
 # delete stack
 def delete_stack(conf):
-    client_cf = boto3.client('cloudformation')
+    client_cf = boto_session.client('cloudformation')
     response = client_cf.delete_stack(
         StackName=get_stack_name(conf),
     )
@@ -192,7 +213,7 @@ def delete_stack(conf):
 
 # @make_spin(Default, "Validating stack...")
 def validate_stack():
-    client_cf = boto3.client('cloudformation')
+    client_cf = boto_session.client('cloudformation')
     template_body = cloudformation.generate_template()
     response = client_cf.validate_template(
         TemplateBody=template_body
@@ -201,7 +222,7 @@ def validate_stack():
 
 
 def list_stacks():
-    client_cf = boto3.client('cloudformation')
+    client_cf = boto_session.client('cloudformation')
     response = client_cf.list_stacks(
         StackStatusFilter=[
             'CREATE_IN_PROGRESS', 'CREATE_COMPLETE', 'ROLLBACK_IN_PROGRESS', 'ROLLBACK_COMPLETE', 'DELETE_IN_PROGRESS',
@@ -222,7 +243,7 @@ def list_stacks():
 
 
 def create_change_set(conf):
-    client = boto3.client('cloudformation')
+    client = boto_session.client('cloudformation')
     change_set_name = ''.join(random.SystemRandom().choice(
         string.ascii_uppercase + string.digits) for _ in range(8))
     response = client.create_change_set(
@@ -240,7 +261,7 @@ def create_change_set(conf):
 
 
 def describe_change_set(change_set_name, stack_name):
-    client = boto3.client('cloudformation')
+    client = boto_session.client('cloudformation')
 
     completed = "CREATE_COMPLETE"
     status = ""
@@ -264,11 +285,14 @@ def generate_template_file(conf):
     with open(template_file_name, 'w') as opened_file:
         opened_file.write(template_body)
     print("wrote cf-template for {} to disk: {}".format(os.environ.get('ENV'), template_file_name))
+    return template_file_name
 
 
 def get_stack_name(conf):
     return conf.get("cloudformation.StackName")
 
+def get_stack_bucket(conf):
+    return conf.get("cloudformation.StackBucket")
 
 def config_from_file(env):
     os.environ['ENV'] = env
@@ -307,7 +331,7 @@ def get_config(arguments):
 # leaving this for later
 """
 def estimate_cost(conf):
-    client = boto3.client('cloudformation')
+    client = boto_session.client('cloudformation')
     response = client.estimate_template_cost(
         TemplateBody=cloudformation.generate_template(),
         Parameters=generate_parameters(conf),
