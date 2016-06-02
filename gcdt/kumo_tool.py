@@ -22,6 +22,7 @@ from cookiecutter.main import cookiecutter
 import random
 import string
 import utils
+from pyhocon.exceptions import ConfigMissingException
 
 from pyspin.spin import make_spin, Default
 import time
@@ -151,15 +152,26 @@ def s3_upload(conf):
 
 def create_stack(conf):
     client_cf = boto_session.client('cloudformation')
-    response = client_cf.create_stack(
-        StackName=get_stack_name(conf),
-        TemplateURL=s3_upload(conf),
-    #    TemplateBody=cloudformation.generate_template(),
-        Parameters=generate_parameters(conf),
-        Capabilities=[
-            'CAPABILITY_IAM',
-        ],
-    )
+    try:
+        get_stack_bucket(conf)
+        response = client_cf.create_stack(
+            StackName=get_stack_name(conf),
+            TemplateURL=s3_upload(conf),
+            Parameters=generate_parameters(conf),
+            Capabilities=[
+                'CAPABILITY_IAM',
+            ],
+        )
+    except ConfigMissingException:
+        response = client_cf.create_stack(
+            StackName=get_stack_name(conf),
+            TemplateBody=cloudformation.generate_template(),
+            Parameters=generate_parameters(conf),
+            Capabilities=[
+                'CAPABILITY_IAM',
+            ],
+        )
+
     message = "kumo bot: created stack %s " % get_stack_name(conf)
     monitoring.slacker_notifcation("systemmessages", message, SLACK_TOKEN)
     stackname = get_stack_name(conf)
@@ -174,14 +186,26 @@ def create_stack(conf):
 def update_stack(conf):
     client_cf = boto_session.client('cloudformation')
     try:
-        response = client_cf.update_stack(
-            StackName=get_stack_name(conf),
-            TemplateURL=s3_upload(conf),
-            Parameters=generate_parameters(conf),
-            Capabilities=[
-                'CAPABILITY_IAM',
-            ],
-        )
+        try:
+            get_stack_bucket(conf)
+            response = client_cf.update_stack(
+                StackName=get_stack_name(conf),
+                TemplateURL=s3_upload(conf),
+                Parameters=generate_parameters(conf),
+                Capabilities=[
+                    'CAPABILITY_IAM',
+                ],
+            )
+        except ConfigMissingException:
+            response = client_cf.update_stack(
+                StackName=get_stack_name(conf),
+                TemplateBody=cloudformation.generate_template(),
+                Parameters=generate_parameters(conf),
+                Capabilities=[
+                    'CAPABILITY_IAM',
+                ],
+            )
+
         message = "kumo bot: updated stack %s " % get_stack_name(conf)
         monitoring.slacker_notifcation("systemmessages", message, SLACK_TOKEN)
         stackname = get_stack_name(conf)
