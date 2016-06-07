@@ -93,7 +93,6 @@ class StackLookup(object):
             )
 
 
-
 def json2table(json):
     filter_terms = ["ResponseMetadata"]
     table = []
@@ -143,12 +142,7 @@ def get_stack_id(stackName):
 
 
 def create_dp_name(env, layer, name):
-    if env == "dev":
-        return "dp-dev-" + layer + "-" + name
-    elif env == "prod":
-        return "dp-prod-" + layer + "-" + name
-    else:
-        raise Exception("Unknown env: " + env)
+    return "dp-" + env + "-" + layer + "-" + name
 
 
 def poll_stack_events(stackName):
