@@ -1,6 +1,8 @@
 import boto3
-import logger
 from datetime import tzinfo, timedelta, datetime
+from logger import log_json, setup_logger
+
+log = setup_logger(logger_name="monitoring")
 
 ZERO = timedelta(0)
 
@@ -29,7 +31,7 @@ def get_ssl_certificate(domain):
     for cert in response["ServerCertificateMetadataList"]:
         if domain in cert["ServerCertificateName"]:
             if datetime.now(UTC()) > cert['Expiration']:
-                logger.debug("certificate has expired")
+                log.debug("certificate has expired")
             else:
                 arn = cert["Arn"]
                 break

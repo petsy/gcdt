@@ -93,7 +93,6 @@ def __resolve_lookups(config):
     dic = config.as_plain_ordered_dict()
     stackset = set(__identify_stacks_recurse(dic))
     stackdata = {}
-    print stackset
     for stack in stackset:
         if "." in stack:
             stackdata.update({stack:  {"sslcert": servicediscovery.get_ssl_certificate(stack)}})
@@ -139,7 +138,6 @@ def __resolve_lookups_recurse(dic, stacks):
             elif isinstance(value, list):
                 sublist = []
                 for listelem in value:
-                    print listelem
                     sublist.append(__resolve_lookups_recurse(listelem, stacks))
                 subdict[key] = sublist
             else:
