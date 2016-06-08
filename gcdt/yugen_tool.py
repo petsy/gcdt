@@ -8,7 +8,7 @@ import os
 import uuid
 import json
 import monitoring
-from config_reader import read_api_config
+from glomex_utils.config_reader import read_api_config
 import utils
 
 # creating docopt parameters and usage help

@@ -3,7 +3,7 @@
 import sys
 import boto3
 from docopt import docopt
-from config_reader import read_config
+from glomex_utils.config_reader import read_config
 import time
 from clint.textui import colored
 import tenkai_utils
