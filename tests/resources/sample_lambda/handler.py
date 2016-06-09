@@ -18,5 +18,5 @@ def handle(event, context):
             return "alive"
     else:
         sample()
-        print("hello")
+        #print("hello")
         return event
