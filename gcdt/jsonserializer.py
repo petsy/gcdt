@@ -1,6 +1,7 @@
 from datetime import datetime
 from decimal import *
 
+
 #####################################
 # Easy support to add ISO datetime
 # serialization for json.dumps
@@ -14,4 +15,4 @@ def json_serial(obj):
     if isinstance(obj, datetime):
         serial = obj.isoformat()
         return serial
-    raise TypeError ("Type not serializable")
+    raise TypeError("Type not serializable")

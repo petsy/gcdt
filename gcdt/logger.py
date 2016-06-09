@@ -2,6 +2,7 @@ import logging
 import json
 from jsonserializer import json_serial
 
+
 ###################################
 # General logging support for
 # console and logfile
@@ -13,9 +14,9 @@ def setup_logger(
         disc_logging=False,
         logger_name="python-logger",
         logger_path="./",
-        logging_level_root = logging.DEBUG,
-        logging_level_console = logging.INFO,
-        logging_level_file = logging.INFO
+        logging_level_root=logging.DEBUG,
+        logging_level_console=logging.INFO,
+        logging_level_file=logging.INFO
 ):
     log = logging.getLogger(logger_name)
     log.setLevel(logging_level_root)
@@ -38,6 +39,7 @@ def setup_logger(
 
 
 def log_json(log_entry_dict):
-    return json.dumps(log_entry_dict, sort_keys=True,indent=4, separators=(',', ': '), default=json_serial)
+    return json.dumps(log_entry_dict, sort_keys=True, indent=4, separators=(',', ': '), default=json_serial)
+
 
 log = setup_logger()

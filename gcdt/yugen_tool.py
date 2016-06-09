@@ -8,13 +8,13 @@ import os
 import uuid
 import json
 import monitoring
-from config_reader import read_api_config
+from glomex_utils.config_reader import read_api_config
 import utils
 
 # creating docopt parameters and usage help
 doc = """Usage:
-        yugen deploy [--env=<env>]
-        yugen delete -f [--env=<env>]
+        yugen deploy
+        yugen delete -f
         yugen export
         yugen list
         yugen apikey-create <keyname>
@@ -23,9 +23,7 @@ doc = """Usage:
         yugen version
 
 -h --help           show this
-
 """
-
 
 # TODO support changing API keys
 # TODO fill swagger description and name from config
@@ -38,13 +36,6 @@ YUGEN_CONFIG = yugen_utils.read_yugen_config()
 SLACK_TOKEN = YUGEN_CONFIG.get("yugen.slack-token")
 
 session = botocore.session.get_session()
-
-
-def config_from_file(env):
-    os.environ['ENV'] = env
-
-    # read config from given name
-    return read_api_config()
 
 
 def import_from_swagger(api_name, api_description):
@@ -77,8 +68,8 @@ def update_from_swagger(api_name, api_description):
 
     if api is not None:
         response_swagger = client.put_rest_api(
-            restApiId = api["id"],
-            mode = "overwrite",
+            restApiId=api["id"],
+            mode="overwrite",
             failOnWarnings=True,
             body=swagger_file
         )
@@ -86,6 +77,7 @@ def update_from_swagger(api_name, api_description):
         print "API name unknown"
 
     print yugen_utils.json2table(response_swagger)
+
 
 # WIP
 # FIXME looks like it ignores that it should export yaml
@@ -103,10 +95,10 @@ def export_to_swagger(api_name, stage_name):
             restApiId=api["id"],
             stageName=stage_name,
             exportType="swagger",
-            #parameters={
+            # parameters={
             #    'string': 'string'
-            #},
-            #accepts="application/yaml"
+            # },
+            # accepts="application/yaml"
             accepts="application/json"
         )
 
@@ -119,7 +111,6 @@ def export_to_swagger(api_name, stage_name):
         print "API name unknown"
 
 
-
 def list_apis():
     client = boto3.client('apigateway')
 
@@ -129,9 +120,7 @@ def list_apis():
         print yugen_utils.json2table(api)
 
 
-
 def deploy_api(api_name, api_description, stage_name, api_key, lambdas):
-
     if not yugen_utils.api_exists(api_name):
         if os.path.isfile(SWAGGER_FILE):
             import_from_swagger(api_name, api_description)
@@ -163,6 +152,7 @@ def deploy_api(api_name, api_description, stage_name, api_key, lambdas):
             monitoring.slacker_notifcation("systemmessages", message, SLACK_TOKEN)
         else:
             print "API name unknown"
+
 
 def create_api(api_name, api_description):
     client = boto3.client('apigateway')
@@ -285,7 +275,7 @@ def add_lambda_permissions(lambda_name, lambda_alias, api):
 
     print "Adding lambda permission for API Gateway"
 
-    #lambda_full_name = lambda_name if lambda_alias is None else lambda_name + "/" + lambda_alias
+    # lambda_full_name = lambda_name if lambda_alias is None else lambda_name + "/" + lambda_alias
 
     response_lamba = client.get_function(FunctionName=lambda_name)
 
@@ -297,9 +287,9 @@ def add_lambda_permissions(lambda_name, lambda_alias, api):
         lambda_account_id = lambda_arn.split(":")[4]
 
         source_arn = 'arn:aws:execute-api:{region}:{accountId}:{apiId}/*/*'.format(
-            region = lambda_region,
-            accountId = lambda_account_id,
-            apiId = api["id"]
+            region=lambda_region,
+            accountId=lambda_account_id,
+            apiId=api["id"]
         )
 
         response = client.add_permission(
@@ -321,11 +311,12 @@ def get_lambdas(config):
     lmbdas = []
     for lambda_entry in lambda_entries:
         lmbda = {
-            "name" : lambda_entry.get("name", None),
-            "alias" : lambda_entry.get("alias", None)
+            "name": lambda_entry.get("name", None),
+            "alias": lambda_entry.get("alias", None)
         }
         lmbdas.append(lmbda)
     return lmbdas
+
 
 def main():
     yugen_utils.are_credentials_still_valid()
@@ -335,12 +326,11 @@ def main():
     if arguments["list"]:
         list_apis()
     elif arguments["deploy"]:
-        env = (arguments["--env"] if arguments["--env"] else "DEV")
-        conf = config_from_file(env)
+        conf = read_api_config()
         api_name = conf.get("api.name")
         api_description = conf.get("api.description")
-        target_stage= conf.get("api.targetStage")
-        api_key=conf.get("api.apiKey")
+        target_stage = conf.get("api.targetStage")
+        api_key = conf.get("api.apiKey")
         lambdas = get_lambdas(conf)
         deploy_api(
             api_name=api_name,
@@ -350,30 +340,26 @@ def main():
             lambdas=lambdas
         )
     elif arguments["delete"]:
-        env = (arguments["--env"] if arguments["--env"] else "DEV")
-        conf = config_from_file(env)
+        conf = read_api_config()
         api_name = conf.get("api.name")
         delete_api(
             api_name=api_name
         )
     elif arguments["export"]:
-        env = (arguments["--env"] if arguments["--env"] else "DEV")
-        conf = config_from_file(env)
+        conf = read_api_config()
         api_name = conf.get("api.name")
-        target_stage= conf.get("api.targetStage")
+        target_stage = conf.get("api.targetStage")
         export_to_swagger(
             api_name=api_name,
             stage_name=target_stage
         )
     elif arguments["apikey-create"]:
-        env = (arguments["--env"] if arguments["--env"] else "DEV")
-        conf = config_from_file(env)
+        conf = read_api_config()
         api_name = conf.get("api.name")
         create_api_key(api_name, arguments["<keyname>"])
     elif arguments["apikey-delete"]:
-        env = (arguments["--env"] if arguments["--env"] else "DEV")
-        conf = config_from_file(env)
-        api_key=conf.get("api.apiKey")
+        conf = read_api_config()
+        api_key = conf.get("api.apiKey")
         delete_api_key(api_key)
     elif arguments["apikey-list"]:
         list_api_keys()

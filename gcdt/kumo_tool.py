@@ -5,27 +5,18 @@
 from __future__ import print_function
 
 import os
-import sys
-
 import boto3
 from docopt import docopt
-from config_reader import read_config
 import monitoring
-import json
-from tabulate import tabulate
 import sys
 from kumo_util import json2table, are_credentials_still_valid, read_kumo_config, get_input, poll_stack_events
 from clint.textui import colored
-import uuid
 from cookiecutter.main import cookiecutter
-# from selenium import webdriver
 import random
 import string
 import utils
+from glomex_utils.config_reader import read_config, get_env
 from pyhocon.exceptions import ConfigMissingException
-
-from pyspin.spin import make_spin, Default
-import time
 
 # TODO
 # check credentials
@@ -38,17 +29,16 @@ import time
 
 # creating docopt parameters and usage help
 doc = """Usage:
-        kumo deploy [-e ENV]
+        kumo deploy
         kumo list
-        kumo delete -f [-e ENV]
-        kumo generate [-e ENV]
-        kumo validate [-e ENV]
+        kumo delete -f
+        kumo generate
+        kumo validate
         kumo scaffold [<stackname>]
         kumo configure
         kumo preview
         kumo version
 
--e ENV --env ENV    environment to use [default: dev] else is prod
 -h --help           show this
 
 """
@@ -58,6 +48,7 @@ CONFIG_KEY = "cloudformation"
 SLACK_TOKEN = KUMO_CONFIG.get("kumo.slack-token")
 
 boto_session = boto3.session.Session()
+
 
 def call_post_create_hook():
     if "post_create_hook" in dir(cloudformation):
@@ -146,8 +137,6 @@ def s3_upload(conf):
     s3url = "https://s3-%s.amazonaws.com/%s/%s" % (region, bucket, dest_key)
 
     return s3url
-
-
 
 
 def create_stack(conf):
@@ -308,21 +297,16 @@ def generate_template_file(conf):
     template_file_name = get_stack_name(conf) + "-generated-cf-template.json"
     with open(template_file_name, 'w') as opened_file:
         opened_file.write(template_body)
-    print("wrote cf-template for {} to disk: {}".format(os.environ.get('ENV'), template_file_name))
+    print("wrote cf-template for {} to disk: {}".format(get_env(), template_file_name))
     return template_file_name
 
 
 def get_stack_name(conf):
     return conf.get("cloudformation.StackName")
 
+
 def get_stack_bucket(conf):
     return conf.get("cloudformation.StackBucket")
-
-def config_from_file(env):
-    os.environ['ENV'] = env
-
-    # read config from given name
-    return read_config()
 
 
 def scaffold():
@@ -340,15 +324,6 @@ def configure():
         config.write("kumo {\n")
         config.write("slack-token=%s" % stack_name)
         config.write("\n}")
-
-
-def get_config(arguments):
-    if arguments['--env'] == 'prod':
-        conf = config_from_file('PROD')
-    else:
-        conf = config_from_file('DEV')
-
-    return conf
 
 
 # very cool, but depends on having phantom.js installed
@@ -377,32 +352,30 @@ def main():
 
     # Run command
     if arguments["deploy"]:
-        env = (arguments["--env"] if arguments["--env"] else "DEV")
         if os.getcwd() not in sys.path:
             sys.path.insert(0, os.getcwd())
-        conf = get_config(arguments)
+        conf = read_config()
         import cloudformation
         are_credentials_still_valid()
         deploy_stack(conf)
     elif arguments["delete"]:
-        env = (arguments["--env"] if arguments["--env"] else "DEV")
         if os.getcwd() not in sys.path:
             sys.path.insert(0, os.getcwd())
-        conf = get_config(arguments)
+        conf = read_config()
         import cloudformation
         are_credentials_still_valid()
         delete_stack(conf)
     elif arguments["validate"]:
         if os.getcwd() not in sys.path:
             sys.path.insert(0, os.getcwd())
-        conf = get_config(arguments)
+        conf = read_config()
         import cloudformation
         are_credentials_still_valid()
         validate_stack()
     elif arguments["generate"]:
         if os.getcwd() not in sys.path:
             sys.path.insert(0, os.getcwd())
-        conf = get_config(arguments)
+        conf = read_config()
         import cloudformation
         generate_template_file(conf)
     elif arguments["list"]:
@@ -415,24 +388,20 @@ def main():
     elif arguments["preview"]:
         if os.getcwd() not in sys.path:
             sys.path.insert(0, os.getcwd())
-        conf = get_config(arguments)
+        conf = read_config()
         import cloudformation
         are_credentials_still_valid()
         change_set, stack_name = create_change_set(conf)
         describe_change_set(change_set, stack_name)
     elif arguments["version"]:
         utils.version()
-
-    """
-    elif arguments["costestimate"]:
-        if os.getcwd() not in sys.path:
-            sys.path.insert(0, os.getcwd())
-        import cloudformation
-        conf = get_config(arguments)
-        kumo_config = read_kumo_config()
-        are_credentials_still_valid()
-        estimate_cost(conf)
-    """
+        # elif arguments["costestimate"]:
+        #     if os.getcwd() not in sys.path:
+        #         sys.path.insert(0, os.getcwd())
+        #     conf = read_config()
+        #     import cloudformation
+        #     are_credentials_still_valid()
+        #     estimate_cost(conf)
 
 
 if __name__ == '__main__':
