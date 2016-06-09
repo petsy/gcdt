@@ -8,7 +8,6 @@ from clint.textui import colored, prompt
 import os
 
 
-
 def json2table(json):
     filter_terms = ["ResponseMetadata"]
     table = []
