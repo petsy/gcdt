@@ -91,7 +91,7 @@ def generate_parameters(conf):
     parameter_list = []
     for item in conf.iterkeys():
         for key in conf[item].iterkeys():
-            if key not in ["StackName", "TemplateBody", "StackBucket"]:
+            if key not in ["StackName", "TemplateBody", "ArtifactBucket"]:
                 raw_parameters.append(key)
     for param in raw_parameters:
         entry = generate_parameter_entry(conf, param)
@@ -125,7 +125,7 @@ def deploy_stack(conf):
 def s3_upload(conf):
     region = boto_session.region_name
     resource_s3 = boto_session.resource('s3')
-    bucket = get_stack_bucket(conf)
+    bucket = get_artifact_bucket(conf)
     dest_key = "kumo/%s/%s-cloudformation.json" % (region, get_stack_name(conf))
 
     source_file = generate_template_file(conf)
@@ -142,7 +142,7 @@ def s3_upload(conf):
 def create_stack(conf):
     client_cf = boto_session.client('cloudformation')
     try:
-        get_stack_bucket(conf)
+        get_artifact_bucket(conf)
         response = client_cf.create_stack(
             StackName=get_stack_name(conf),
             TemplateURL=s3_upload(conf),
@@ -176,7 +176,7 @@ def update_stack(conf):
     client_cf = boto_session.client('cloudformation')
     try:
         try:
-            get_stack_bucket(conf)
+            get_artifact_bucket(conf)
             response = client_cf.update_stack(
                 StackName=get_stack_name(conf),
                 TemplateURL=s3_upload(conf),
@@ -305,8 +305,8 @@ def get_stack_name(conf):
     return conf.get("cloudformation.StackName")
 
 
-def get_stack_bucket(conf):
-    return conf.get("cloudformation.StackBucket")
+def get_artifact_bucket(conf):
+    return conf.get("cloudformation.artifactBucket")
 
 
 def scaffold():
