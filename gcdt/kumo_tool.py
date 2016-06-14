@@ -78,10 +78,18 @@ def call_post_hook():
 def generate_parameter_entry(conf, raw_param):
     entry = {
         'ParameterKey': raw_param,
-        'ParameterValue': conf.get(CONFIG_KEY + "." + raw_param),
+        'ParameterValue': get_conf_value(conf, raw_param),
         'UsePreviousValue': False
     }
     return entry
+
+
+def get_conf_value(conf, raw_param):
+    conf_value = conf.get(CONFIG_KEY + "." + raw_param)
+    if isinstance(conf_value, list):    # if list or array then join to comma seperated list
+        return ",".join(conf_value)
+    else:
+        return conf_value
 
 
 # generate the parameter list for the cloudformation template from the
