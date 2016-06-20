@@ -172,7 +172,7 @@ def create_stack(conf):
     message = "kumo bot: created stack %s " % get_stack_name(conf)
     monitoring.slacker_notifcation("systemmessages", message, SLACK_TOKEN)
     stackname = get_stack_name(conf)
-    exit_code = poll_stack_events(stackname)
+    exit_code = poll_stack_events(boto_session, stackname)
     call_post_create_hook()
     call_post_hook()
     sys.exit(exit_code)
@@ -206,7 +206,7 @@ def update_stack(conf):
         message = "kumo bot: updated stack %s " % get_stack_name(conf)
         monitoring.slacker_notifcation("systemmessages", message, SLACK_TOKEN)
         stackname = get_stack_name(conf)
-        exit_code = poll_stack_events(stackname)
+        exit_code = poll_stack_events(boto_session, stackname)
         call_post_update_hook()
         call_post_hook()
         sys.exit(exit_code)
@@ -226,7 +226,7 @@ def delete_stack(conf):
     message = "kumo bot: deleted stack %s " % get_stack_name(conf)
     monitoring.slacker_notifcation("systemmessages", message, SLACK_TOKEN)
     stackname = get_stack_name(conf)
-    exit_code = poll_stack_events(stackname)
+    exit_code = poll_stack_events(boto_session, stackname)
     sys.exit(exit_code)
 
 
@@ -364,21 +364,21 @@ def main():
             sys.path.insert(0, os.getcwd())
         conf = read_config()
         import cloudformation
-        are_credentials_still_valid()
+        are_credentials_still_valid(boto_session)
         deploy_stack(conf)
     elif arguments["delete"]:
         if os.getcwd() not in sys.path:
             sys.path.insert(0, os.getcwd())
         conf = read_config()
         import cloudformation
-        are_credentials_still_valid()
+        are_credentials_still_valid(boto_session)
         delete_stack(conf)
     elif arguments["validate"]:
         if os.getcwd() not in sys.path:
             sys.path.insert(0, os.getcwd())
         conf = read_config()
         import cloudformation
-        are_credentials_still_valid()
+        are_credentials_still_valid(boto_session)
         validate_stack()
     elif arguments["generate"]:
         if os.getcwd() not in sys.path:
@@ -387,7 +387,7 @@ def main():
         import cloudformation
         generate_template_file(conf)
     elif arguments["list"]:
-        are_credentials_still_valid()
+        are_credentials_still_valid(boto_session)
         list_stacks()
     elif arguments["scaffold"]:
         scaffold()
@@ -398,7 +398,7 @@ def main():
             sys.path.insert(0, os.getcwd())
         conf = read_config()
         import cloudformation
-        are_credentials_still_valid()
+        are_credentials_still_valid(boto_session)
         change_set, stack_name = create_change_set(conf)
         describe_change_set(change_set, stack_name)
     elif arguments["version"]:
@@ -408,7 +408,7 @@ def main():
         #         sys.path.insert(0, os.getcwd())
         #     conf = read_config()
         #     import cloudformation
-        #     are_credentials_still_valid()
+        #     are_credentials_still_valid(boto_session)
         #     estimate_cost(conf)
 
 
