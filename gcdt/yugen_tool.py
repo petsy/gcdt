@@ -26,10 +26,7 @@ doc = """Usage:
 """
 
 # TODO support changing API keys
-# TODO fill swagger description and name from config
-# TODO support more than one lambda function
 # TODO investigate base path problem
-
 
 SWAGGER_FILE = "swagger.yaml"
 YUGEN_CONFIG = yugen_utils.read_yugen_config()
