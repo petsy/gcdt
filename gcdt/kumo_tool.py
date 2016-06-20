@@ -6,26 +6,28 @@ from __future__ import print_function
 
 import os
 import boto3
-from docopt import docopt
-import monitoring
 import sys
-from kumo_util import json2table, are_credentials_still_valid, read_kumo_config, get_input, poll_stack_events
-from clint.textui import colored
-from cookiecutter.main import cookiecutter
 import random
 import string
 import utils
+
+import monitoring
+
+if os.getcwd() not in sys.path:
+    sys.path.insert(0, os.getcwd())
+
+import cloudformation
+
+from docopt import docopt
+from kumo_util import json2table, are_credentials_still_valid, read_kumo_config, get_input, poll_stack_events
+from clint.textui import colored
+from cookiecutter.main import cookiecutter
 from glomex_utils.config_reader import read_config, get_env
 from pyhocon.exceptions import ConfigMissingException
 
-# TODO
-# check credentials
-# move config_reader
-# move slack
-# poll cloudformation for events
-# move iam stuff to utils
-# multi tenancy
 
+# TODO
+# move slack
 
 # creating docopt parameters and usage help
 doc = """Usage:
@@ -48,6 +50,30 @@ CONFIG_KEY = "cloudformation"
 SLACK_TOKEN = KUMO_CONFIG.get("kumo.slack-token")
 
 boto_session = boto3.session.Session()
+
+
+def call_pre_hook():
+    if "pre_hook" in dir(cloudformation):
+        print(colored.green("Executing pre hook..."))
+        cloudformation.pre_hook()
+    else:
+        print("no pre hook found")
+
+
+def call_pre_create_hook():
+    if "pre_create_hook" in dir(cloudformation):
+        print(colored.green("Executing pre create hook..."))
+        cloudformation.pre_create_hook()
+    else:
+        print("no pre create hook found")
+
+
+def call_pre_update_hook():
+    if "pre_update_hook" in dir(cloudformation):
+        print(colored.green("Executing pre update hook..."))
+        cloudformation.pre_update_hook()
+    else:
+        print("no pre update hook found")
 
 
 def call_post_create_hook():
@@ -149,6 +175,7 @@ def s3_upload(conf):
 
 def create_stack(conf):
     client_cf = boto_session.client('cloudformation')
+    call_pre_create_hook()
     try:
         get_artifact_bucket(conf)
         response = client_cf.create_stack(
@@ -183,6 +210,7 @@ def create_stack(conf):
 def update_stack(conf):
     client_cf = boto_session.client('cloudformation')
     try:
+        call_pre_update_hook()
         try:
             get_artifact_bucket(conf)
             response = client_cf.update_stack(
@@ -354,37 +382,25 @@ def estimate_cost(conf):
 
 
 def main():
-    global cloudformation
     arguments = docopt(doc)
     conf = None
 
     # Run command
     if arguments["deploy"]:
-        if os.getcwd() not in sys.path:
-            sys.path.insert(0, os.getcwd())
+        call_pre_hook()
         conf = read_config()
-        import cloudformation
         are_credentials_still_valid(boto_session)
         deploy_stack(conf)
     elif arguments["delete"]:
-        if os.getcwd() not in sys.path:
-            sys.path.insert(0, os.getcwd())
         conf = read_config()
-        import cloudformation
         are_credentials_still_valid(boto_session)
         delete_stack(conf)
     elif arguments["validate"]:
-        if os.getcwd() not in sys.path:
-            sys.path.insert(0, os.getcwd())
         conf = read_config()
-        import cloudformation
         are_credentials_still_valid(boto_session)
         validate_stack()
     elif arguments["generate"]:
-        if os.getcwd() not in sys.path:
-            sys.path.insert(0, os.getcwd())
         conf = read_config()
-        import cloudformation
         generate_template_file(conf)
     elif arguments["list"]:
         are_credentials_still_valid(boto_session)
@@ -394,11 +410,8 @@ def main():
     elif arguments["configure"]:
         configure()
     elif arguments["preview"]:
-        if os.getcwd() not in sys.path:
-            sys.path.insert(0, os.getcwd())
         conf = read_config()
-        import cloudformation
-        are_credentials_still_valid(boto_session)
+        are_credentials_still_valid()
         change_set, stack_name = create_change_set(conf)
         describe_change_set(change_set, stack_name)
     elif arguments["version"]:

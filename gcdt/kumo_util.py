@@ -141,7 +141,7 @@ def get_stack_id(stackName):
 
 
 def create_dp_name(env, layer, name):
-    return "dp-" + env + "-" + layer + "-" + name
+    return "dp-" + env.lower() + "-" + layer + "-" + name
 
 
 def poll_stack_events(boto_session, stackName):
