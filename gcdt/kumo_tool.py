@@ -26,16 +26,8 @@ from glomex_utils.config_reader import read_config, get_env
 from pyhocon.exceptions import ConfigMissingException
 
 
-
-
 # TODO
-# check credentials
-# move config_reader
 # move slack
-# poll cloudformation for events
-# move iam stuff to utils
-# multi tenancy
-
 
 # creating docopt parameters and usage help
 doc = """Usage:
