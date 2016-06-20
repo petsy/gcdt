@@ -61,9 +61,15 @@ def compile_template(swagger_template_file, template_params):
     return filled_template
 
 
+def get_region_and_account_from_lambda_arn(lambda_arn):
+    lambda_region = lambda_arn.split(":")[3]
+    lambda_account_id = lambda_arn.split(":")[4]
+    return lambda_region, lambda_account_id
+
 
 def arn_to_uri(lambda_arn, lambda_alias):
-    arn_prefix = "arn:aws:apigateway:eu-west-1:lambda:path/2015-03-31/functions/"
+    lambda_region, lambda_account_id = get_region_and_account_from_lambda_arn(lambda_arn)
+    arn_prefix = "arn:aws:apigateway:" + lambda_region + ":lambda:path/2015-03-31/functions/"
     arn_suffix = "/invocations"
     return arn_prefix + lambda_arn + ":" + lambda_alias + arn_suffix
 

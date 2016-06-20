@@ -52,8 +52,7 @@ def import_from_swagger(api_name, api_description, stage_name, lambdas):
                                                         stage_name,
                                                         api_id,
                                                         lambdas)
-        swagger_template_file = SWAGGER_FILE
-        filled_swagger_file = yugen_utils.compile_template(swagger_template_file, template_variables)
+        filled_swagger_file = yugen_utils.compile_template(SWAGGER_FILE, template_variables)
         response_swagger = client.import_rest_api(
             failOnWarnings=True,
             body=filled_swagger_file
@@ -61,7 +60,6 @@ def import_from_swagger(api_name, api_description, stage_name, lambdas):
         print yugen_utils.json2table(response_swagger)
     else:
         print "API name unknown"
-
 
 
 def update_from_swagger(api_name, api_description, stage_name, lambdas):
@@ -78,8 +76,7 @@ def update_from_swagger(api_name, api_description, stage_name, lambdas):
                                                         stage_name,
                                                         api_id,
                                                         lambdas)
-        swagger_template_file = SWAGGER_FILE
-        filled_swagger_file = yugen_utils.compile_template(swagger_template_file, template_variables)
+        filled_swagger_file = yugen_utils.compile_template(SWAGGER_FILE, template_variables)
 
         response_swagger = client.put_rest_api(
             restApiId=api["id"],
@@ -103,12 +100,11 @@ def export_to_swagger(api_name, stage_name, api_description, lambdas):
         print yugen_utils.json2table(api)
         api_id = api["id"]
         template_variables = template_variables_to_dict(api_name,
-                                                                    api_description,
-                                                                    stage_name,
-                                                                    api_id,
-                                                                    lambdas)
-        swagger_template_file = SWAGGER_FILE
-        content = yugen_utils.compile_template(swagger_template_file, template_variables)
+                                                        api_description,
+                                                        stage_name,
+                                                        api_id,
+                                                        lambdas)
+        content = yugen_utils.compile_template(SWAGGER_FILE, template_variables)
         swagger_file = open("swagger_export.yaml", 'w')
 
         swagger_file.write(content)
@@ -274,12 +270,22 @@ def list_api_keys():
     for item in response:
         print yugen_utils.json2table(item)
 
+
 def template_variables_to_dict(api_name, api_description, api_target_stage, api_id, lambdas):
+    if lambdas:
+        lambda_region, lambda_account_id = yugen_utils.get_region_and_account_from_lambda_arn(
+            lambdas[0].get("arn")
+        )
+    else:
+        boto3_session = boto3.session.Session()
+        lambda_region = boto3_session.region_name
+    api_hostname = api_id + ".execute-api." + lambda_region + ".amazonaws.com"
+
     return_dict = {
-        "api.name": api_name,
-        "api.description": api_description,
-        "api.targetStage": api_target_stage,
-        "api.id": api_id
+        "apiName": api_name,
+        "apiDescription": api_description,
+        "apiTargetStage": api_target_stage,
+        "apiHostname": api_hostname
     }
     for lmbda in lambdas:
         if lmbda.get("arn"):
@@ -295,8 +301,6 @@ def add_lambda_permissions(lmbda, api):
 
     # lambda_full_name = lambda_name if lambda_alias is None else lambda_name + "/" + lambda_alias
 
-    # response_lamba = client.get_function(FunctionName=lambda_name)
-
     if lmbda.get("arn"):
 
         # Get info from the lambda instead of API Gateway as there is not other boto possibility
@@ -304,8 +308,7 @@ def add_lambda_permissions(lmbda, api):
         lambda_alias = lmbda.get("alias")
         lambda_name = lmbda.get("name")
 
-        lambda_region = lambda_arn.split(":")[3]
-        lambda_account_id = lambda_arn.split(":")[4]
+        lambda_region, lambda_account_id = yugen_utils.get_region_and_account_from_lambda_arn(lambda_arn)
 
         source_arn = 'arn:aws:execute-api:{region}:{accountId}:{apiId}/*/*'.format(
             region=lambda_region,
@@ -327,8 +330,7 @@ def add_lambda_permissions(lmbda, api):
         print "Lambda function could not be found"
 
 
-
-def get_lambdas(config, add_arn = False):
+def get_lambdas(config, add_arn=False):
     client = boto3.client('lambda')
     lambda_entries = config.get("lambda.entries", [])
     lmbdas = []
@@ -336,7 +338,7 @@ def get_lambdas(config, add_arn = False):
         lmbda = {
             "name": lambda_entry.get("name", None),
             "alias": lambda_entry.get("alias", None),
-            "swagger_ref": lambda_entry.get("swagger_ref",None)
+            "swagger_ref": lambda_entry.get("swaggerRef", None)
         }
         if add_arn:
             response_lambda = client.get_function(FunctionName=lmbda["name"])
