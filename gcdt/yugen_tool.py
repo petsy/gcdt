@@ -38,40 +38,54 @@ SLACK_TOKEN = YUGEN_CONFIG.get("yugen.slack-token")
 session = botocore.session.get_session()
 
 
-def import_from_swagger(api_name, api_description):
+def import_from_swagger(api_name, api_description, stage_name, lambdas):
     client = session.create_client('apigateway')
 
-    print "import from swagger file"
+    print "Import from swagger file"
 
-    swagger_file = open(SWAGGER_FILE, 'r').read()
-    swagger_file = swagger_file.replace("$API_NAME", api_name)
-    swagger_file = swagger_file.replace("$API_DESCRIPTION", api_description)
+    api = yugen_utils.api_by_name(api_name)
+    if api is not None:
+        print yugen_utils.json2table(api)
+        api_id = api["id"]
+        template_variables = template_variables_to_dict(api_name,
+                                                        api_description,
+                                                        stage_name,
+                                                        api_id,
+                                                        lambdas)
+        swagger_template_file = SWAGGER_FILE
+        filled_swagger_file = yugen_utils.compile_template(swagger_template_file, template_variables)
+        response_swagger = client.import_rest_api(
+            failOnWarnings=True,
+            body=filled_swagger_file
+        )
+        print yugen_utils.json2table(response_swagger)
+    else:
+        print "API name unknown"
 
-    response_swagger = client.import_rest_api(
-        failOnWarnings=True,
-        body=swagger_file
-    )
-
-    print yugen_utils.json2table(response_swagger)
 
 
-def update_from_swagger(api_name, api_description):
+def update_from_swagger(api_name, api_description, stage_name, lambdas):
     client = session.create_client('apigateway')
 
     print "update from swagger file"
 
-    swagger_file = open(SWAGGER_FILE, 'r').read()
-    swagger_file = swagger_file.replace("$API_NAME", api_name)
-    swagger_file = swagger_file.replace("$API_DESCRIPTION", api_description)
-
     api = yugen_utils.api_by_name(api_name)
 
     if api is not None:
+        api_id = api["id"]
+        template_variables = template_variables_to_dict(api_name,
+                                                        api_description,
+                                                        stage_name,
+                                                        api_id,
+                                                        lambdas)
+        swagger_template_file = SWAGGER_FILE
+        filled_swagger_file = yugen_utils.compile_template(swagger_template_file, template_variables)
+
         response_swagger = client.put_rest_api(
             restApiId=api["id"],
             mode="overwrite",
             failOnWarnings=True,
-            body=swagger_file
+            body=filled_swagger_file
         )
     else:
         print "API name unknown"
@@ -80,31 +94,22 @@ def update_from_swagger(api_name, api_description):
 
 
 # WIP
-# FIXME looks like it ignores that it should export yaml
-def export_to_swagger(api_name, stage_name):
-    client = session.create_client('apigateway')
-
-    print "exporting to swagger"
+def export_to_swagger(api_name, stage_name, api_description, lambdas):
+    print "Exporting to swagger..."
 
     api = yugen_utils.api_by_name(api_name)
-
     if api is not None:
+
         print yugen_utils.json2table(api)
-
-        response = client.get_export(
-            restApiId=api["id"],
-            stageName=stage_name,
-            exportType="swagger",
-            # parameters={
-            #    'string': 'string'
-            # },
-            # accepts="application/yaml"
-            accepts="application/json"
-        )
-
-        swagger_file = open("swagger_export.json", 'w')
-
-        content = response["body"].read()
+        api_id = api["id"]
+        template_variables = template_variables_to_dict(api_name,
+                                                                    api_description,
+                                                                    stage_name,
+                                                                    api_id,
+                                                                    lambdas)
+        swagger_template_file = SWAGGER_FILE
+        content = yugen_utils.compile_template(swagger_template_file, template_variables)
+        swagger_file = open("swagger_export.yaml", 'w')
 
         swagger_file.write(content)
     else:
@@ -123,7 +128,7 @@ def list_apis():
 def deploy_api(api_name, api_description, stage_name, api_key, lambdas):
     if not yugen_utils.api_exists(api_name):
         if os.path.isfile(SWAGGER_FILE):
-            import_from_swagger(api_name, api_description)
+            import_from_swagger(api_name, api_description, stage_name, lambdas)
         else:
             create_api(api_name=api_name, api_description=api_description)
 
@@ -131,7 +136,7 @@ def deploy_api(api_name, api_description, stage_name, api_key, lambdas):
 
         if api is not None:
             for lmbda in lambdas:
-                add_lambda_permissions(lmbda["name"], lmbda["alias"], api)
+                add_lambda_permissions(lmbda, api)
             create_deployment(api_name, stage_name)
             wire_api_key(api_name, api_key, stage_name)
             message = ("yugen bot: created api *%s*") % (api_name)
@@ -269,20 +274,36 @@ def list_api_keys():
     for item in response:
         print yugen_utils.json2table(item)
 
+def template_variables_to_dict(api_name, api_description, api_target_stage, api_id, lambdas):
+    return_dict = {
+        "api.name": api_name,
+        "api.description": api_description,
+        "api.targetStage": api_target_stage,
+        "api.id": api_id
+    }
+    for lmbda in lambdas:
+        if lmbda.get("arn"):
+            lambda_uri = yugen_utils.arn_to_uri(lmbda["arn"], lmbda["alias"])
+            return_dict.update({"{}".format(lmbda["swagger_ref"]): lambda_uri})
+    return return_dict
 
-def add_lambda_permissions(lambda_name, lambda_alias, api):
+
+def add_lambda_permissions(lmbda, api):
     client = boto3.client('lambda')
 
     print "Adding lambda permission for API Gateway"
 
     # lambda_full_name = lambda_name if lambda_alias is None else lambda_name + "/" + lambda_alias
 
-    response_lamba = client.get_function(FunctionName=lambda_name)
+    # response_lamba = client.get_function(FunctionName=lambda_name)
 
-    if response_lamba is not None:
+    if lmbda.get("arn"):
 
         # Get info from the lambda instead of API Gateway as there is not other boto possibility
-        lambda_arn = response_lamba["Configuration"]["FunctionArn"]
+        lambda_arn = lmbda.get("arn")
+        lambda_alias = lmbda.get("alias")
+        lambda_name = lmbda.get("name")
+
         lambda_region = lambda_arn.split(":")[3]
         lambda_account_id = lambda_arn.split(":")[4]
 
@@ -306,14 +327,20 @@ def add_lambda_permissions(lambda_name, lambda_alias, api):
         print "Lambda function could not be found"
 
 
-def get_lambdas(config):
+
+def get_lambdas(config, add_arn = False):
+    client = boto3.client('lambda')
     lambda_entries = config.get("lambda.entries", [])
     lmbdas = []
     for lambda_entry in lambda_entries:
         lmbda = {
             "name": lambda_entry.get("name", None),
-            "alias": lambda_entry.get("alias", None)
+            "alias": lambda_entry.get("alias", None),
+            "swagger_ref": lambda_entry.get("swagger_ref",None)
         }
+        if add_arn:
+            response_lambda = client.get_function(FunctionName=lmbda["name"])
+            lmbda.update({"arn": response_lambda["Configuration"]["FunctionArn"]})
         lmbdas.append(lmbda)
     return lmbdas
 
@@ -331,7 +358,7 @@ def main():
         api_description = conf.get("api.description")
         target_stage = conf.get("api.targetStage")
         api_key = conf.get("api.apiKey")
-        lambdas = get_lambdas(conf)
+        lambdas = get_lambdas(conf, add_arn=True)
         deploy_api(
             api_name=api_name,
             api_description=api_description,
@@ -349,9 +376,14 @@ def main():
         conf = read_api_config()
         api_name = conf.get("api.name")
         target_stage = conf.get("api.targetStage")
+        api_description = conf.get("api.description")
+
+        lambdas = get_lambdas(conf, add_arn=True)
         export_to_swagger(
             api_name=api_name,
-            stage_name=target_stage
+            stage_name=target_stage,
+            api_description=api_description,
+            lambdas=lambdas
         )
     elif arguments["apikey-create"]:
         conf = read_api_config()

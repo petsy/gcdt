@@ -6,6 +6,8 @@ import boto3
 import sys
 from clint.textui import colored, prompt
 import os
+from pybars import Compiler
+import codecs
 
 
 def json2table(json):
@@ -48,6 +50,22 @@ def api_by_name(api_name):
         return None
     else:
         return filtered_rest_apis[0]
+
+
+def compile_template(swagger_template_file, template_params):
+    compiler = Compiler()
+    with codecs.open(swagger_template_file, 'r', "utf-8") as f:
+        template_file = f.read()
+    template = compiler.compile(template_file)
+    filled_template = template(template_params)
+    return filled_template
+
+
+
+def arn_to_uri(lambda_arn, lambda_alias):
+    arn_prefix = "arn:aws:apigateway:eu-west-1:lambda:path/2015-03-31/functions/"
+    arn_suffix = "/invocations"
+    return arn_prefix + lambda_arn + ":" + lambda_alias + arn_suffix
 
 
 # TODO it is unused. Token is not read from config for now
