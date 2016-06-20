@@ -145,7 +145,7 @@ def deploy_api(api_name, api_description, stage_name, api_key, lambdas):
             print "API name unknown"
     else:
         if os.path.isfile(SWAGGER_FILE):
-            update_from_swagger(api_name, api_description)
+            update_from_swagger(api_name, api_description, stage_name, lambdas)
         else:
             update_api()
 
