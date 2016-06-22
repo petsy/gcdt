@@ -411,7 +411,7 @@ def main():
         configure()
     elif arguments["preview"]:
         conf = read_config()
-        are_credentials_still_valid()
+        are_credentials_still_valid(boto_session)
         change_set, stack_name = create_change_set(conf)
         describe_change_set(change_set, stack_name)
     elif arguments["version"]:
