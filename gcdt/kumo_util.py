@@ -133,7 +133,7 @@ def get_input():
     return name
 
 
-def get_stack_id(stackName):
+def get_stack_id(boto_session, stackName):
     client = boto_session.client("cloudformation")
     response = client.describe_stacks(StackName=stackName)
     stack_id = response["Stacks"][0]["StackId"]
