@@ -1,7 +1,7 @@
 Glomex Cloud Deployment Tools
 ===============================
 
-version number: 0.0.2
+version number: 0.0.10
 
 author: Glomex Data Platform Team
 
@@ -14,13 +14,15 @@ Cloudformation, AWS Lambda, API Gateway and CodeDeploy
 Installation / Usage
 --------------------
 
-Right now there is no central PyPi Repository, so you have to install directly from the file system.
+All gcdt packages live in a private PyPi repository. See [reposerver](http://reposerver-prod-eu-west-1.infra.glomex.cloud/pypi/) for instructions.
 
+Install the package:
 
-Clone the repo:
+    $ pip install gcdt
 
-    $ git clone https://github.com/GLOMEX/glomex-cloud-deployment-tools.git
-    $ python setup.py install
+The repo also has prerelease packages you can use for testing new features or bug fixes:
+
+    $ pip install --pre gcdt
 
 
 Contributing
@@ -36,7 +38,8 @@ Please open a GitHub issue for any bug reports and feature requests.
 ## Common for all Tools
 - All tools imply that your working directory is the directory that contains the artifact you want to work with.
 - Furthermore you are responsible for supplying a valid set of AWS credentials. A good tool is [aws-mfa](https://pypi.python.org/pypi/aws-mfa/0.0.5)
-- Currently you can still supply an ENV parameter to each tool but this is deprecated. In the future you need to set an environment variable "ENV" which indicates the account/staging area you want to work with. This parameter tells the tools which config file to use. Basically something like settings_$(ENV).conf is evaluated in the configuration component.
+- You you need to set an environment variable "ENV" which indicates the account/staging area you want to work with. This parameter tells the tools which config file to use. Basically something like settings_$(ENV).conf is evaluated in the configuration component.
+1. All tools use the config_reader module from [glomex-utils](https://github.com/glomex/glomex-utils). This offers some convenient features like looking up values from other CloudFormation stacks, fetching credentials stored in credstash. See the repo documentation for details.
 
 ## Cloudformation Deploy Tool  
 ### kumo (雲 from Japanese: cloud)
@@ -44,8 +47,6 @@ Please open a GitHub issue for any bug reports and feature requests.
 ### Usage
 
 To see available commands, call kumo without any arguments:
-
-
 
 ```bash
 $kumo
@@ -58,6 +59,7 @@ Usage:
         kumo scaffold [<stackname>]
         kumo configure
         kumo preview
+        kumo version
 ```
 
 ### Commands
@@ -85,6 +87,9 @@ you need to run this on first run
 
 #### preview
 will create a CloudFormation ChangeSet with your current changes to the template
+
+#### version
+will print the version of gcdt you are using
 
 ### Folder Layout
 
@@ -120,6 +125,26 @@ You can create a new folder with this structure by calling `kumo scaffold`.
 4. call `kumo validate`to check your template for errors
 5. call `kumo deploy`to deploy your stack to AWS
 
+### Hooks
+kumo offers numerous hook functions that get called during the lifecycle of a kumo run:
+
+* pre_hook
+  * gets called before everything else - even config reading. Useful for e.g. creating secrets in credstash if they don't exist
+* pre_create_hook()
+  * gets called before a stack is created
+* pre_update_hook()
+  * gets called before a stack is updated
+* post_create_hook()
+  * gets called after a stack is created
+* post_update_hook()
+  * gets called after a stack is updated
+* post_hook()
+  * gets called after a stack is either updated or created
+
+You can basically call any custom code you want. Just implement the function in
+cloudformation.py
+
+
 
 ## API Gateway Deploy Tool
 ### yugen (幽玄 from Japanese: “dim”, “deep” or “mysterious”)
@@ -130,13 +155,14 @@ To see available commands, call this:
 ```bash
 	$yugen
   Usage:
-        yugen deploy [--env=<env>]
-        yugen delete -f [--env=<env>]
+        yugen deploy
+        yugen delete -f
         yugen export
         yugen list
         yugen apikey-create <keyname>
         yugen apikey-list
         yugen apikey-delete
+        yugen version
 ```
 
 #### deploy
@@ -156,6 +182,9 @@ lists all existing API keys
 
 #### apikey-delete
 deletes an API key
+
+#### version
+will print the version of gcdt you are using
 
 ### Folder Layout
 
@@ -183,7 +212,7 @@ lambda {
         alias = "ACTIVE"
       }
     ]
-    
+
 }
 ```
 
@@ -198,14 +227,15 @@ To see available commands, call this:
 ```bash
 	$ramuda
   Usage:
-        ramuda bundle [--env=<env>]
-        ramuda deploy [--env=<env>]
+        ramuda bundle
+        ramuda deploy
         ramuda list
         ramuda metrics <lambda>
-        ramuda wire [--env=<env>]
-        ramuda unwire [--env=<env>]
+        ramuda wire
+        ramuda unwire
         ramuda delete -f <lambda>
         ramuda rollback <lambda> [<version>]
+        ramuda version
 ```
 
 #### bundle
@@ -247,6 +277,9 @@ deletes a lambda function
 
 #### rollback
 sets the active version to ACTIVE -1 or to a given version
+
+#### version
+will print the version of gcdt you are using
 
 
 ### Folder Layout
@@ -291,6 +324,15 @@ deployment {
 settings_env.conf -> settings for your code
 
 
+#### S3 upload
+ramuda can upload your lambda functions to S3 instead of inline through the API.
+To enable this feature add this to your lambda.conf:
+
+deployment {
+    artifactBucket = "7finity-$PROJECT-deployment"
+}
+
+You can get the name of the bucket from Ops and it should be part of the stack outputs of the base stack in your account (s3DeploymentBucket).
 
 ## AWS CodeDeploy Tool
 ### tenkai (展開 from Japanese: deployment)
@@ -301,13 +343,17 @@ To see available commands, call this:
 ```bash
 	$tenkai
   Usage:
-        tenkai deploy [-e ENV]
+        tenkai deploy
+        tenkai version
 
 ```
 
 
 #### deploy
 bundles your code then uploads it to S3 as a new revision and triggers a new deployment
+
+#### version
+will print the version of gcdt you are using
 
 
 
