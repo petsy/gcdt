@@ -3,6 +3,8 @@
 # Helper to create Route53 entries
 
 import troposphere
+
+from troposphere.ec2 import Instance
 from troposphere.route53 import RecordSetType
 from glomex_utils.config_reader import get_env
 
@@ -23,24 +25,30 @@ def create_record(name_prefix, instance_reference, type="A"):
         raise Exception("Record set type is not supported!")
 
     name_of_record = name_prefix \
-        .replace('.', '') \
-        .replace('-', '') \
-        .title() + "HostRecord"
+                         .replace('.', '') \
+                         .replace('-', '') \
+                         .title() + "HostRecord"
     host_name_suffix = get_env() + HOST_ZONE_BASE_NAME
 
-    return RecordSetType(
-        name_of_record,
-        HostedZoneName=host_name_suffix,
-        Name=troposphere.Join("", [
-            name_prefix + ".",
-            host_name_suffix,
-        ]),
-        Type=type,
-        TTL=TTL_DEFAULT,
-        ResourceRecords=[
-            troposphere.GetAtt(
+    # Reference EC2 instance automatically to their private IP
+    if isinstance(instance_reference, Instance):
+        resource_record = troposphere.GetAtt(
                 instance_reference,
                 "PrivateIp"
-            )
-        ],
+        )
+    else:
+        resource_record = instance_reference
+
+    return RecordSetType(
+            name_of_record,
+            HostedZoneName=host_name_suffix,
+            Name=troposphere.Join("", [
+                name_prefix + ".",
+                host_name_suffix,
+            ]),
+            Type=type,
+            TTL=TTL_DEFAULT,
+            ResourceRecords=[
+                resource_record
+            ],
     )
