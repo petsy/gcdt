@@ -6,7 +6,6 @@ import troposphere
 from pyhocon import ConfigFactory
 from troposphere.cloudformation import AWSCustomObject
 from tabulate import tabulate
-import boto3
 import sys
 from clint.textui import colored, prompt, validators
 import os
@@ -104,8 +103,8 @@ def json2table(json):
         return json
 
 
-def are_credentials_still_valid():
-    client = boto3.client("lambda")
+def are_credentials_still_valid(boto_session):
+    client = boto_session.client("lambda")
     try:
         client.list_functions()
     except Exception as e:
@@ -134,18 +133,18 @@ def get_input():
     return name
 
 
-def get_stack_id(stackName):
-    client = boto3.client("cloudformation")
+def get_stack_id(boto_session, stackName):
+    client = boto_session.client("cloudformation")
     response = client.describe_stacks(StackName=stackName)
     stack_id = response["Stacks"][0]["StackId"]
     return stack_id
 
 
 def create_dp_name(env, layer, name):
-    return "dp-" + env + "-" + layer + "-" + name
+    return "dp-" + env.lower() + "-" + layer + "-" + name
 
 
-def poll_stack_events(stackName):
+def poll_stack_events(boto_session, stackName):
     finished_statuses = ["CREATE_COMPLETE",
                          "CREATE_FAILED",
                          "DELETE_COMPLETE",
@@ -173,12 +172,12 @@ def poll_stack_events(stackName):
 
     seen_events = []
     # print len(seen_events)
-    client = boto3.client("cloudformation")
+    client = boto_session.client("cloudformation")
     # the actual call to AWS has a little headstart
     now = datetime.now(utc) - timedelta(seconds=10)
     status = ""
     # for the delete command we need the stack_id
-    stack_id = get_stack_id(stackName)
+    stack_id = get_stack_id(boto_session, stackName)
 
     while status not in finished_statuses:
         response = client.describe_stack_events(StackName=stack_id)

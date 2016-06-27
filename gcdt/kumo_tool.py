@@ -6,26 +6,28 @@ from __future__ import print_function
 
 import os
 import boto3
-from docopt import docopt
-import monitoring
 import sys
-from kumo_util import json2table, are_credentials_still_valid, read_kumo_config, get_input, poll_stack_events
-from clint.textui import colored
-from cookiecutter.main import cookiecutter
 import random
 import string
 import utils
+
+import monitoring
+
+if os.getcwd() not in sys.path:
+    sys.path.insert(0, os.getcwd())
+
+import cloudformation
+
+from docopt import docopt
+from kumo_util import json2table, are_credentials_still_valid, read_kumo_config, get_input, poll_stack_events
+from clint.textui import colored
+from cookiecutter.main import cookiecutter
 from glomex_utils.config_reader import read_config, get_env
 from pyhocon.exceptions import ConfigMissingException
 
-# TODO
-# check credentials
-# move config_reader
-# move slack
-# poll cloudformation for events
-# move iam stuff to utils
-# multi tenancy
 
+# TODO
+# move slack
 
 # creating docopt parameters and usage help
 doc = """Usage:
@@ -48,6 +50,30 @@ CONFIG_KEY = "cloudformation"
 SLACK_TOKEN = KUMO_CONFIG.get("kumo.slack-token")
 
 boto_session = boto3.session.Session()
+
+
+def call_pre_hook():
+    if "pre_hook" in dir(cloudformation):
+        print(colored.green("Executing pre hook..."))
+        cloudformation.pre_hook()
+    else:
+        print("no pre hook found")
+
+
+def call_pre_create_hook():
+    if "pre_create_hook" in dir(cloudformation):
+        print(colored.green("Executing pre create hook..."))
+        cloudformation.pre_create_hook()
+    else:
+        print("no pre create hook found")
+
+
+def call_pre_update_hook():
+    if "pre_update_hook" in dir(cloudformation):
+        print(colored.green("Executing pre update hook..."))
+        cloudformation.pre_update_hook()
+    else:
+        print("no pre update hook found")
 
 
 def call_post_create_hook():
@@ -78,10 +104,18 @@ def call_post_hook():
 def generate_parameter_entry(conf, raw_param):
     entry = {
         'ParameterKey': raw_param,
-        'ParameterValue': conf.get(CONFIG_KEY + "." + raw_param),
+        'ParameterValue': get_conf_value(conf, raw_param),
         'UsePreviousValue': False
     }
     return entry
+
+
+def get_conf_value(conf, raw_param):
+    conf_value = conf.get(CONFIG_KEY + "." + raw_param)
+    if isinstance(conf_value, list):    # if list or array then join to comma seperated list
+        return ",".join(conf_value)
+    else:
+        return conf_value
 
 
 # generate the parameter list for the cloudformation template from the
@@ -91,7 +125,7 @@ def generate_parameters(conf):
     parameter_list = []
     for item in conf.iterkeys():
         for key in conf[item].iterkeys():
-            if key not in ["StackName", "TemplateBody", "StackBucket"]:
+            if key not in ["StackName", "TemplateBody", "ArtifactBucket"]:
                 raw_parameters.append(key)
     for param in raw_parameters:
         entry = generate_parameter_entry(conf, param)
@@ -125,7 +159,7 @@ def deploy_stack(conf):
 def s3_upload(conf):
     region = boto_session.region_name
     resource_s3 = boto_session.resource('s3')
-    bucket = get_stack_bucket(conf)
+    bucket = get_artifact_bucket(conf)
     dest_key = "kumo/%s/%s-cloudformation.json" % (region, get_stack_name(conf))
 
     source_file = generate_template_file(conf)
@@ -141,8 +175,9 @@ def s3_upload(conf):
 
 def create_stack(conf):
     client_cf = boto_session.client('cloudformation')
+    call_pre_create_hook()
     try:
-        get_stack_bucket(conf)
+        get_artifact_bucket(conf)
         response = client_cf.create_stack(
             StackName=get_stack_name(conf),
             TemplateURL=s3_upload(conf),
@@ -164,7 +199,7 @@ def create_stack(conf):
     message = "kumo bot: created stack %s " % get_stack_name(conf)
     monitoring.slacker_notifcation("systemmessages", message, SLACK_TOKEN)
     stackname = get_stack_name(conf)
-    exit_code = poll_stack_events(stackname)
+    exit_code = poll_stack_events(boto_session, stackname)
     call_post_create_hook()
     call_post_hook()
     sys.exit(exit_code)
@@ -175,8 +210,9 @@ def create_stack(conf):
 def update_stack(conf):
     client_cf = boto_session.client('cloudformation')
     try:
+        call_pre_update_hook()
         try:
-            get_stack_bucket(conf)
+            get_artifact_bucket(conf)
             response = client_cf.update_stack(
                 StackName=get_stack_name(conf),
                 TemplateURL=s3_upload(conf),
@@ -198,7 +234,7 @@ def update_stack(conf):
         message = "kumo bot: updated stack %s " % get_stack_name(conf)
         monitoring.slacker_notifcation("systemmessages", message, SLACK_TOKEN)
         stackname = get_stack_name(conf)
-        exit_code = poll_stack_events(stackname)
+        exit_code = poll_stack_events(boto_session, stackname)
         call_post_update_hook()
         call_post_hook()
         sys.exit(exit_code)
@@ -218,7 +254,7 @@ def delete_stack(conf):
     message = "kumo bot: deleted stack %s " % get_stack_name(conf)
     monitoring.slacker_notifcation("systemmessages", message, SLACK_TOKEN)
     stackname = get_stack_name(conf)
-    exit_code = poll_stack_events(stackname)
+    exit_code = poll_stack_events(boto_session, stackname)
     sys.exit(exit_code)
 
 
@@ -305,8 +341,8 @@ def get_stack_name(conf):
     return conf.get("cloudformation.StackName")
 
 
-def get_stack_bucket(conf):
-    return conf.get("cloudformation.StackBucket")
+def get_artifact_bucket(conf):
+    return conf.get("cloudformation.artifactBucket")
 
 
 def scaffold():
@@ -346,51 +382,36 @@ def estimate_cost(conf):
 
 
 def main():
-    global cloudformation
     arguments = docopt(doc)
     conf = None
 
     # Run command
     if arguments["deploy"]:
-        if os.getcwd() not in sys.path:
-            sys.path.insert(0, os.getcwd())
+        call_pre_hook()
         conf = read_config()
-        import cloudformation
-        are_credentials_still_valid()
+        are_credentials_still_valid(boto_session)
         deploy_stack(conf)
     elif arguments["delete"]:
-        if os.getcwd() not in sys.path:
-            sys.path.insert(0, os.getcwd())
         conf = read_config()
-        import cloudformation
-        are_credentials_still_valid()
+        are_credentials_still_valid(boto_session)
         delete_stack(conf)
     elif arguments["validate"]:
-        if os.getcwd() not in sys.path:
-            sys.path.insert(0, os.getcwd())
         conf = read_config()
-        import cloudformation
-        are_credentials_still_valid()
+        are_credentials_still_valid(boto_session)
         validate_stack()
     elif arguments["generate"]:
-        if os.getcwd() not in sys.path:
-            sys.path.insert(0, os.getcwd())
         conf = read_config()
-        import cloudformation
         generate_template_file(conf)
     elif arguments["list"]:
-        are_credentials_still_valid()
+        are_credentials_still_valid(boto_session)
         list_stacks()
     elif arguments["scaffold"]:
         scaffold()
     elif arguments["configure"]:
         configure()
     elif arguments["preview"]:
-        if os.getcwd() not in sys.path:
-            sys.path.insert(0, os.getcwd())
         conf = read_config()
-        import cloudformation
-        are_credentials_still_valid()
+        are_credentials_still_valid(boto_session)
         change_set, stack_name = create_change_set(conf)
         describe_change_set(change_set, stack_name)
     elif arguments["version"]:
@@ -400,7 +421,7 @@ def main():
         #         sys.path.insert(0, os.getcwd())
         #     conf = read_config()
         #     import cloudformation
-        #     are_credentials_still_valid()
+        #     are_credentials_still_valid(boto_session)
         #     estimate_cost(conf)
 
 

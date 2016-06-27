@@ -1,26 +1,36 @@
-from unittest import TestCase, main
 import sys
-sys.path.append("../gcdt/")
+from os import path, environ
+environ['ENV']='LOCAL'
+sys.path.append( path.dirname( path.dirname( path.abspath(__file__) ) ) + "/gcdt/")
 
-from kumo_tool import stack_exists, create_change_set
+from unittest import TestCase
+from nose.plugins.attrib import attr
+from pyhocon import ConfigFactory
 
-class MonitoringTestCase(TestCase):
-    def setUp(self):
-        pass
+from kumo_tool import stack_exists, create_change_set, generate_parameters
 
-    def tearDown(self):
-        # shutil.rmtree(os.getcwdu()+"/resources/vendored")
-        pass
+@attr("unit")
+class KumoUnitTestCase(TestCase):
 
-    def test_stack_exists(self):
-        existing_stack = "dp-dev"
-        non_existing_stack = "fonsi"
-        self.assertTrue(stack_exists(existing_stack))
-        self.assertFalse(stack_exists(non_existing_stack))
-
-    def test_create_change_set(self):
-        pass
-
-
-if __name__ == "__main__":
-    main()
+    def test_config_reading(self):
+        config_string = """
+        cloudformation {
+            ConfigOne = value1
+            ConfigTwo = [value2, value3]
+        }
+        """
+        expected = [
+            {
+                "ParameterKey": "ConfigOne",
+                "ParameterValue": "value1",
+                "UsePreviousValue": False
+            },
+            {
+                "ParameterKey": "ConfigTwo",
+                "ParameterValue": "value2,value3",
+                "UsePreviousValue": False
+            }
+        ]
+        conf = ConfigFactory.parse_string(config_string)
+        converted_conf = generate_parameters(conf)
+        self.assertEqual(converted_conf, expected)
