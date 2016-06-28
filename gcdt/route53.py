@@ -87,5 +87,5 @@ def _retrieve_stack_host_zone_name():
         ))
         sys.exit()
 
-    _host_zone_name = default_stack_output[HOST_ZONE_NAME__STACK_OUTPUT_NAME]
+    _host_zone_name = default_stack_output[HOST_ZONE_NAME__STACK_OUTPUT_NAME] + "."
     return _host_zone_name
