@@ -11,4 +11,4 @@ slacker>=0.9.9
 pathspec>=0.3.4
 s3transfer>=0.0.1
 mock>=2.0.0
-glomex-utils==0.0.1
+glomex-utils==0.0.4
