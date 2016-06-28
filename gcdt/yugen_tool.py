@@ -345,13 +345,14 @@ def get_lambdas(config, add_arn=False):
 
 
 def main():
-    yugen_utils.are_credentials_still_valid()
 
     arguments = docopt(doc)
 
     if arguments["list"]:
+        yugen_utils.are_credentials_still_valid()
         list_apis()
     elif arguments["deploy"]:
+        yugen_utils.are_credentials_still_valid()
         conf = read_api_config()
         api_name = conf.get("api.name")
         api_description = conf.get("api.description")
@@ -366,12 +367,14 @@ def main():
             lambdas=lambdas
         )
     elif arguments["delete"]:
+        yugen_utils.are_credentials_still_valid()
         conf = read_api_config()
         api_name = conf.get("api.name")
         delete_api(
             api_name=api_name
         )
     elif arguments["export"]:
+        yugen_utils.are_credentials_still_valid()
         conf = read_api_config()
         api_name = conf.get("api.name")
         target_stage = conf.get("api.targetStage")
@@ -385,14 +388,17 @@ def main():
             lambdas=lambdas
         )
     elif arguments["apikey-create"]:
+        yugen_utils.are_credentials_still_valid()
         conf = read_api_config()
         api_name = conf.get("api.name")
         create_api_key(api_name, arguments["<keyname>"])
     elif arguments["apikey-delete"]:
+        yugen_utils.are_credentials_still_valid()
         conf = read_api_config()
         api_key = conf.get("api.apiKey")
         delete_api_key(api_key)
     elif arguments["apikey-list"]:
+        yugen_utils.are_credentials_still_valid()
         list_api_keys()
     elif arguments["version"]:
         utils.version()
