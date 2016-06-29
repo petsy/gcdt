@@ -3,7 +3,7 @@ from codecs import open
 from os import path
 
 
-__version__ = '0.0.12.dev0'
+__version__ = '0.0.12'
 
 
 here = path.abspath(path.dirname(__file__))
@@ -18,7 +18,6 @@ with open(path.join(here, 'requirements.txt'), encoding='utf-8') as f:
 
 
 install_requires = [x.strip() for x in all_reqs if ('git+' not in x) and (not x.startswith('#')) and (not x.startswith('-'))]
-print install_requires
 dependency_links = [x.strip().replace('git+', '') for x in all_reqs if 'git+' not in x]
 
 setup(
