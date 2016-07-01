@@ -391,7 +391,6 @@ def estimate_cost(conf):
 """
 
 def validate_import():
-    print (CLOUDFORMATION_FOUND)
     if not CLOUDFORMATION_FOUND:
         print (colored.red("no cloudformation.py found, bailing out..."))
         sys.exit(1)
