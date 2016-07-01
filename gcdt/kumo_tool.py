@@ -16,7 +16,14 @@ import monitoring
 if os.getcwd() not in sys.path:
     sys.path.insert(0, os.getcwd())
 
-import cloudformation
+CLOUDFORMATION_FOUND = False
+
+try:
+    import cloudformation
+    CLOUDFORMATION_FOUND = True
+except Exception as e:
+    pass
+
 
 from docopt import docopt
 from kumo_util import json2table, are_credentials_still_valid, read_kumo_config, get_input, poll_stack_events
@@ -380,6 +387,11 @@ def estimate_cost(conf):
     driver.quit()
 """
 
+def validate_import():
+    if not CLOUDFORMATION_FOUND:
+        print (colored.red("no cloudformation.py found, bailing out..."))
+        sys.exit(1)
+
 
 def main():
     arguments = docopt(doc)
@@ -387,22 +399,27 @@ def main():
 
     # Run command
     if arguments["deploy"]:
+        validate_import()
         call_pre_hook()
         conf = read_config()
         are_credentials_still_valid(boto_session)
         deploy_stack(conf)
     elif arguments["delete"]:
+        validate_import()
         conf = read_config()
         are_credentials_still_valid(boto_session)
         delete_stack(conf)
     elif arguments["validate"]:
+        validate_import()
         conf = read_config()
         are_credentials_still_valid(boto_session)
         validate_stack()
     elif arguments["generate"]:
+        validate_import()
         conf = read_config()
         generate_template_file(conf)
     elif arguments["list"]:
+        validate_import()
         are_credentials_still_valid(boto_session)
         list_stacks()
     elif arguments["scaffold"]:
@@ -410,6 +427,7 @@ def main():
     elif arguments["configure"]:
         configure()
     elif arguments["preview"]:
+        validate_import()
         conf = read_config()
         are_credentials_still_valid(boto_session)
         change_set, stack_name = create_change_set(conf)
