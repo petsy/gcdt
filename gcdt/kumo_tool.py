@@ -16,13 +16,16 @@ import monitoring
 if os.getcwd() not in sys.path:
     sys.path.insert(0, os.getcwd())
 
-CLOUDFORMATION_FOUND = False
+CLOUDFORMATION_FOUND = True
 
 try:
+    print (sys.path)
     import cloudformation
-    CLOUDFORMATION_FOUND = True
+    print ("using the following CloudFormation template: {}".format(cloudformation.__file__))
 except Exception as e:
-    pass
+    print ("no cf found")
+    CLOUDFORMATION_FOUND = False
+
 
 
 from docopt import docopt
@@ -388,6 +391,7 @@ def estimate_cost(conf):
 """
 
 def validate_import():
+    print (CLOUDFORMATION_FOUND)
     if not CLOUDFORMATION_FOUND:
         print (colored.red("no cloudformation.py found, bailing out..."))
         sys.exit(1)
