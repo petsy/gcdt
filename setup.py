@@ -3,7 +3,7 @@ from codecs import open
 from os import path
 
 
-__version__ = '0.0.14'
+__version__ = '0.0.15.dev0'
 
 
 here = path.abspath(path.dirname(__file__))
