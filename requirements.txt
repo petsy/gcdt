@@ -7,6 +7,7 @@
 --extra-index-url https://reposerver-prod-eu-west-1.infra.glomex.cloud/pypi/packages
 --extra-index-url https://reposerver-prod-eu-west-1.infra.glomex.cloud/pypi/packages
 --extra-index-url https://reposerver-prod-eu-west-1.infra.glomex.cloud/pypi/packages
+--extra-index-url https://reposerver-prod-eu-west-1.infra.glomex.cloud/pypi/packages
 
 
 args==0.1.0               # via clint
@@ -24,9 +25,6 @@ docutils==0.12            # via botocore, glomex-utils
 funcsigs==1.0.2           # via mock
 future==0.15.2            # via cookiecutter
 futures==3.0.5            # via boto3, glomex-utils, s3transfer
-gitdb==0.6.4              # via gitpython, glomex-utils
-gitpython==0.3.6          # via glomex-utils, pypi-publisher
-glomex-credstash==1.11.1  # via glomex-utils
 glomex-utils==0.0.6
 jinja2-time==0.2.0        # via cookiecutter
 jinja2==2.8               # via cookiecutter, jinja2-time
@@ -40,13 +38,11 @@ pybars3==0.9.1
 pyhocon==0.3.29
 PyMeta3==0.5.1            # via pybars3
 pyparsing==2.1.5          # via glomex-utils, pyhocon
-pypi-publisher==0.0.4     # via glomex-utils
 python-dateutil==2.5.3    # via arrow, botocore, glomex-utils
 requests==2.10.0          # via slacker
 s3transfer==0.0.1
 six==1.10.0               # via glomex-utils, mock, python-dateutil
 slacker==0.9.9
-smmap==0.9.0              # via gitdb, glomex-utils
 tabulate==0.7.5
 troposphere==1.6.0
 whichcraft==0.4.0         # via cookiecutter
