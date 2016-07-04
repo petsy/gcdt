@@ -27,7 +27,7 @@ futures==3.0.5            # via boto3, glomex-utils, s3transfer
 gitdb==0.6.4              # via gitpython, glomex-utils
 gitpython==0.3.6          # via glomex-utils, pypi-publisher
 glomex-credstash==1.11.1  # via glomex-utils
-glomex-utils==0.0.5
+glomex-utils==0.0.6
 jinja2-time==0.2.0        # via cookiecutter
 jinja2==2.8               # via cookiecutter, jinja2-time
 jmespath==0.9.0           # via boto3, botocore, glomex-utils
