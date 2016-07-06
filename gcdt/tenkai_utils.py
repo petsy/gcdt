@@ -14,18 +14,6 @@ def files_to_bundle(path):
             #print "full_path, archive_name" + full_path, archive_name
             yield full_path, archive_name
 
-def make_zip_file_bytes(path):
-    buf = io.BytesIO()
-    with ZipFile(buf, 'w') as z:
-        for full_path, archive_name in files_to_bundle(path=path):
-            # print "full_path " + full_path
-            archive_target = "/" + archive_name
-            # print "archive target " + archive_target
-            z.write(full_path, archive_target)
-    #buffer_mbytes = float(len(buf.getvalue()) / 10000000)
-    #print "buffer has size " + str(buffer_mbytes) + " mb"
-    return buf.getvalue()
-
 def make_tar_file(path, outputpath):
     # make sure we add a unique identifiere when we are running within jenkins
     file_suffix = os.getenv('BUILD_TAG', '')

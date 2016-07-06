@@ -14,7 +14,7 @@ doc = """Usage:
         tenkai bundle
         tenkai deploy
         tenkai version
-        
+
 -h --help           show this
 """
 
@@ -81,8 +81,8 @@ def deployment_status(deploymentId, iterations=100):
 
 
 def bundle_revision(outputpath='/tmp'):
-    tarfile = tenkai_utils.make_tar_file(path="./codedeploy", outputpath="/tmp")
-    return tarfile
+    tarfile_name = tenkai_utils.make_tar_file(path="./codedeploy", outputpath=outputpath)
+    return tarfile_name
 
 
 def upload_revision_to_s3(bucket, applicationName, file):
