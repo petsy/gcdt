@@ -3,6 +3,7 @@
 from pyhocon import ConfigFactory
 from tabulate import tabulate
 import boto3
+from botocore.exceptions import ClientError
 import sys
 from clint.textui import colored, prompt
 import os
@@ -31,6 +32,20 @@ def are_credentials_still_valid():
     else:
         pass
 
+def custom_domain_name_exists(domain_name):
+    client = boto3.client('apigateway')
+    # domain = None
+    try:
+        domain = client.get_domain_name(domainName=domain_name)
+        # domain = response["distributionDomainName"]
+        print "distrinbution {} exists".format(domain_name)
+    except ClientError as e:
+        domain = None
+        if e.response["Error"]["Code"] == "NotFoundException":
+            pass
+        else:
+            raise
+    return domain
 
 def api_exists(api_name):
     api = api_by_name(api_name)
@@ -50,6 +65,12 @@ def api_by_name(api_name):
         return None
     else:
         return filtered_rest_apis[0]
+
+def basepath_to_string_if_null(basepath):
+    # None (empty basepath) defined as "(null)" in API Gateway
+    if basepath is None:
+        basepath = "(none)"
+    return basepath
 
 
 def compile_template(swagger_template_file, template_params):
