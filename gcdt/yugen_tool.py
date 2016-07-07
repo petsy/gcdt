@@ -8,8 +8,7 @@ import os
 import uuid
 import json
 import monitoring
-from glomex_utils.config_reader import read_api_config, get_env
-from dphelper.jsonserializer import json_serial
+from glomex_utils.config_reader import read_api_config
 import utils
 
 # creating docopt parameters and usage help
@@ -272,28 +271,18 @@ def list_api_keys():
 
 def create_custom_domain(api_name, api_target_stage, api_base_path, domain_name, route_53_record,
                          ssl_cert, hosted_zone_id):
-    print("incoming settings:")
-    print api_name
-    print api_target_stage
-    print  api_base_path
-    print domain_name
-    print route_53_record
-    for key in ssl_cert:
-        print " {}  <secret> ".format(key)
-    print hosted_zone_id
-
     api_base_path = yugen_utils.basepath_to_string_if_null(api_base_path)
     api = yugen_utils.api_by_name(api_name)
 
     if not api:
         print("Api {} does not exist, aborting...".format(api_name))
-        return
+        exit(1)
 
     domain = yugen_utils.custom_domain_name_exists(domain_name)
 
     if not domain:
         response = create_new_custom_domain(domain_name, ssl_cert)
-        cloudfront_distribution= response["distributionDomainName"]
+        cloudfront_distribution = response["distributionDomainName"]
     else:
         cloudfront_distribution = domain["distributionDomainName"]
 
@@ -307,7 +296,10 @@ def create_custom_domain(api_name, api_target_stage, api_base_path, domain_name,
         print("Route53 record correctly set: {} --> {}".format(route_53_record,
                                                                cloudfront_distribution))
     else:
-        ensure_correct_route_53_record(hosted_zone_id,record_name=route_53_record, record_value=cloudfront_distribution)
+        ensure_correct_route_53_record(hosted_zone_id, record_name=route_53_record,
+                                       record_value=cloudfront_distribution)
+        print("Route53 record set: {} --> {}".format(route_53_record,
+                                                     cloudfront_distribution))
 
 
 def ensure_correct_route_53_record(hosted_zone_id, record_name, record_value, record_type="CNAME"):
@@ -315,7 +307,7 @@ def ensure_correct_route_53_record(hosted_zone_id, record_name, record_value, re
     response = route_53_client.change_resource_record_sets(
         HostedZoneId=hosted_zone_id,
         ChangeBatch={
-            "Changes":[
+            "Changes": [
                 {
                     "Action": "UPSERT",
                     "ResourceRecordSet": {
@@ -336,19 +328,19 @@ def ensure_correct_route_53_record(hosted_zone_id, record_name, record_value, re
 
 def ensure_correct_base_path_mapping(domain_name, base_path, api_id, target_stage):
     client = boto3.client("apigateway")
-    mapping = client.get_base_path_mapping(domainName=domain_name,basePath=base_path)
+    mapping = client.get_base_path_mapping(domainName=domain_name, basePath=base_path)
     operations = []
     if not mapping["stage"] == target_stage:
         operations.append({
-            "op":"replace",
-            "path":"/stage",
-            "value":target_stage
+            "op": "replace",
+            "path": "/stage",
+            "value": target_stage
         })
     if not mapping["restApiId"] == api_id:
         operations.append({
-            "op":"replace",
-            "path":"/restApiId",
-            "value":api_id
+            "op": "replace",
+            "path": "/restApiId",
+            "value": api_id
         })
     if operations:
         response = client.update_base_path_mapping(
@@ -367,6 +359,7 @@ def base_path_mapping_exists(domain_name, base_path):
                 mapping_exists = True
     return mapping_exists
 
+
 def create_base_path_mapping(domain_name, base_path, stage, api_id):
     client = boto3.client("apigateway")
     base_path_respone = client.create_base_path_mapping(
@@ -375,6 +368,7 @@ def create_base_path_mapping(domain_name, base_path, stage, api_id):
         restApiId=api_id,
         stage=stage
     )
+
 
 def record_exists_and_correct(hosted_zone_id, target_route_53_record_name, cloudfront_distribution):
     route_53_client = boto3.client("route53")
@@ -391,7 +385,6 @@ def record_exists_and_correct(hosted_zone_id, target_route_53_record_name, cloud
                 if value["Value"] == cloudfront_distribution:
                     record_correct = True
     return record_exists, record_correct
-
 
 
 def create_new_custom_domain(domain_name, ssl_cert):
@@ -482,22 +475,7 @@ def get_lambdas(config, add_arn=False):
     return lmbdas
 
 
-    if conf.get("customDomain"):
-        domain_name = conf.get("customDomain.domainName")
-        route_53_record = conf.get("customDomain.route53Record")
-        ssl_cert = {
-        "name": conf.get("customDomain.certificateName"),
-        "body": conf.get("customDomain.certificateBody"),
-        "private_key": conf.get("customDomain.certificatePrivateKey"),
-        "chain": conf.get("customDomain.certificateChain")
-        }
-
-        hosted_zone_id = conf.get("customDomain.hostedDomainZoneId")
-
-
-
 def main():
-
     arguments = docopt(doc)
 
     if arguments["list"]:
