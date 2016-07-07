@@ -34,11 +34,8 @@ def are_credentials_still_valid():
 
 def custom_domain_name_exists(domain_name):
     client = boto3.client('apigateway')
-    # domain = None
     try:
         domain = client.get_domain_name(domainName=domain_name)
-        # domain = response["distributionDomainName"]
-        print "distrinbution {} exists".format(domain_name)
     except ClientError as e:
         domain = None
         if e.response["Error"]["Code"] == "NotFoundException":
