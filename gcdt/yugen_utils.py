@@ -65,7 +65,7 @@ def api_by_name(api_name):
 
 def basepath_to_string_if_null(basepath):
     # None (empty basepath) defined as "(null)" in API Gateway
-    if basepath is None:
+    if basepath is None or basepath=="":
         basepath = "(none)"
     return basepath
 

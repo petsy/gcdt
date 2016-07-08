@@ -89,7 +89,7 @@ def update_from_swagger(api_name, api_description, stage_name, lambdas):
 
 
 # WIP
-def export_to_swagger(api_name, stage_name, api_description, lambdas):
+def export_to_swagger(api_name, stage_name, api_description, lambdas, custom_hostname=False, custom_base_path=False):
     print "Exporting to swagger..."
 
     api = yugen_utils.api_by_name(api_name)
@@ -101,7 +101,9 @@ def export_to_swagger(api_name, stage_name, api_description, lambdas):
                                                         api_description,
                                                         stage_name,
                                                         api_id,
-                                                        lambdas)
+                                                        lambdas,
+                                                        custom_hostname,
+                                                        custom_base_path)
         content = yugen_utils.compile_template(SWAGGER_FILE, template_variables)
         swagger_file = open("swagger_export.yaml", 'w')
 
@@ -361,6 +363,10 @@ def base_path_mapping_exists(domain_name, base_path):
 
 
 def create_base_path_mapping(domain_name, base_path, stage, api_id):
+    print domain_name
+    print base_path
+    print stage
+    print api_id
     client = boto3.client("apigateway")
     base_path_respone = client.create_base_path_mapping(
         domainName=domain_name,
@@ -399,7 +405,8 @@ def create_new_custom_domain(domain_name, ssl_cert):
     return response
 
 
-def template_variables_to_dict(api_name, api_description, api_target_stage, api_id, lambdas):
+def template_variables_to_dict(api_name, api_description, api_target_stage, api_id, lambdas, custom_hostname = False,
+                               custom_base_path = False):
     if lambdas:
         lambda_region, lambda_account_id = yugen_utils.get_region_and_account_from_lambda_arn(
             lambdas[0].get("arn")
@@ -407,12 +414,18 @@ def template_variables_to_dict(api_name, api_description, api_target_stage, api_
     else:
         boto3_session = boto3.session.Session()
         lambda_region = boto3_session.region_name
-    api_hostname = api_id + ".execute-api." + lambda_region + ".amazonaws.com"
+
+    if custom_hostname:
+        api_hostname = custom_hostname
+        api_basepath = custom_base_path
+    else: # not using custom domain name
+        api_hostname = api_id + ".execute-api." + lambda_region + ".amazonaws.com"
+        api_basepath = api_target_stage #
 
     return_dict = {
         "apiName": api_name,
         "apiDescription": api_description,
-        "apiTargetStage": api_target_stage,
+        "apiBasePath": api_basepath,
         "apiHostname": api_hostname
     }
     for lmbda in lambdas:
@@ -533,7 +546,9 @@ def main():
             api_name=api_name,
             stage_name=target_stage,
             api_description=api_description,
-            lambdas=lambdas
+            lambdas=lambdas,
+            custom_hostname=(conf.get("customDomain.domainName") if conf.get("customDomain") else False),
+            custom_base_path=(conf.get("customDomain.basePath") if conf.get("customDomain") else False)
         )
     elif arguments["apikey-create"]:
         yugen_utils.are_credentials_still_valid()
@@ -553,10 +568,11 @@ def main():
         conf = read_api_config()
         api_name = conf.get("api.name")
         api_target_stage = conf.get("api.targetStage")
-        api_base_path = conf.get("api.targetStage")
+
 
         domain_name = conf.get("customDomain.domainName")
         route_53_record = conf.get("customDomain.route53Record")
+        api_base_path = conf.get("customDomain.basePath")
         ssl_cert = {
             "name": conf.get("customDomain.certificateName"),
             "body": conf.get("customDomain.certificateBody"),
