@@ -22,8 +22,12 @@ try:
     print (sys.path)
     import cloudformation
     print ("using the following CloudFormation template: {}".format(cloudformation.__file__))
+except ImportError:
+    print ("could not find cloudformation.py")
+    CLOUDFORMATION_FOUND = False
 except Exception as e:
-    print ("no cf found")
+    print ("could not import cloudformation.py, maybe something wrong with your code?")
+    print (e)
     CLOUDFORMATION_FOUND = False
 
 
