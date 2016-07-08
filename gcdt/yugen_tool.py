@@ -20,6 +20,7 @@ doc = """Usage:
         yugen apikey-create <keyname>
         yugen apikey-list
         yugen apikey-delete
+        yugen custom-domain-create
         yugen version
 
 -h --help           show this
@@ -88,7 +89,7 @@ def update_from_swagger(api_name, api_description, stage_name, lambdas):
 
 
 # WIP
-def export_to_swagger(api_name, stage_name, api_description, lambdas):
+def export_to_swagger(api_name, stage_name, api_description, lambdas, custom_hostname=False, custom_base_path=False):
     print "Exporting to swagger..."
 
     api = yugen_utils.api_by_name(api_name)
@@ -100,7 +101,9 @@ def export_to_swagger(api_name, stage_name, api_description, lambdas):
                                                         api_description,
                                                         stage_name,
                                                         api_id,
-                                                        lambdas)
+                                                        lambdas,
+                                                        custom_hostname,
+                                                        custom_base_path)
         content = yugen_utils.compile_template(SWAGGER_FILE, template_variables)
         swagger_file = open("swagger_export.yaml", 'w')
 
@@ -268,7 +271,142 @@ def list_api_keys():
         print yugen_utils.json2table(item)
 
 
-def template_variables_to_dict(api_name, api_description, api_target_stage, api_id, lambdas):
+def create_custom_domain(api_name, api_target_stage, api_base_path, domain_name, route_53_record,
+                         ssl_cert, hosted_zone_id):
+    api_base_path = yugen_utils.basepath_to_string_if_null(api_base_path)
+    api = yugen_utils.api_by_name(api_name)
+
+    if not api:
+        print("Api {} does not exist, aborting...".format(api_name))
+        exit(1)
+
+    domain = yugen_utils.custom_domain_name_exists(domain_name)
+
+    if not domain:
+        response = create_new_custom_domain(domain_name, ssl_cert)
+        cloudfront_distribution = response["distributionDomainName"]
+    else:
+        cloudfront_distribution = domain["distributionDomainName"]
+
+    if base_path_mapping_exists(domain_name, api_base_path):
+        ensure_correct_base_path_mapping(domain_name, api_base_path, api["id"], api_target_stage)
+    else:
+        create_base_path_mapping(domain_name, api_base_path, api_target_stage, api["id"])
+
+    record_exists, record_correct = record_exists_and_correct(hosted_zone_id, route_53_record, cloudfront_distribution)
+    if record_correct:
+        print("Route53 record correctly set: {} --> {}".format(route_53_record,
+                                                               cloudfront_distribution))
+    else:
+        ensure_correct_route_53_record(hosted_zone_id, record_name=route_53_record,
+                                       record_value=cloudfront_distribution)
+        print("Route53 record set: {} --> {}".format(route_53_record,
+                                                     cloudfront_distribution))
+
+
+def ensure_correct_route_53_record(hosted_zone_id, record_name, record_value, record_type="CNAME"):
+    route_53_client = boto3.client("route53")
+    response = route_53_client.change_resource_record_sets(
+        HostedZoneId=hosted_zone_id,
+        ChangeBatch={
+            "Changes": [
+                {
+                    "Action": "UPSERT",
+                    "ResourceRecordSet": {
+                        "Name": (record_name + "."),
+                        "Type": record_type,
+                        "ResourceRecords": [
+                            {
+                                "Value": record_value
+                            }
+                        ],
+                        "TTL": 300
+                    }
+                }
+            ]
+        }
+    )
+
+
+def ensure_correct_base_path_mapping(domain_name, base_path, api_id, target_stage):
+    client = boto3.client("apigateway")
+    mapping = client.get_base_path_mapping(domainName=domain_name, basePath=base_path)
+    operations = []
+    if not mapping["stage"] == target_stage:
+        operations.append({
+            "op": "replace",
+            "path": "/stage",
+            "value": target_stage
+        })
+    if not mapping["restApiId"] == api_id:
+        operations.append({
+            "op": "replace",
+            "path": "/restApiId",
+            "value": api_id
+        })
+    if operations:
+        response = client.update_base_path_mapping(
+            domainName=domain_name,
+            basePath="(none)",
+            patchOperations=operations)
+
+
+def base_path_mapping_exists(domain_name, base_path):
+    client = boto3.client("apigateway")
+    base_path_mappings = client.get_base_path_mappings(domainName=domain_name)
+    mapping_exists = False
+    if base_path_mappings.get("items"):
+        for item in base_path_mappings["items"]:
+            if item["basePath"] == base_path:
+                mapping_exists = True
+    return mapping_exists
+
+
+def create_base_path_mapping(domain_name, base_path, stage, api_id):
+    print domain_name
+    print base_path
+    print stage
+    print api_id
+    client = boto3.client("apigateway")
+    base_path_respone = client.create_base_path_mapping(
+        domainName=domain_name,
+        basePath=base_path,
+        restApiId=api_id,
+        stage=stage
+    )
+
+
+def record_exists_and_correct(hosted_zone_id, target_route_53_record_name, cloudfront_distribution):
+    route_53_client = boto3.client("route53")
+    response = route_53_client.list_resource_record_sets(
+        HostedZoneId=hosted_zone_id
+    )
+    resource_records = response["ResourceRecordSets"]
+    record_exists = False
+    record_correct = False
+    for record in resource_records:
+        if record["Name"] == (target_route_53_record_name + "."):
+            record_exists = True
+            for value in record["ResourceRecords"]:
+                if value["Value"] == cloudfront_distribution:
+                    record_correct = True
+    return record_exists, record_correct
+
+
+def create_new_custom_domain(domain_name, ssl_cert):
+    client = boto3.client("apigateway")
+    response = client.create_domain_name(
+        domainName=domain_name,
+        certificateName=ssl_cert["name"],
+        certificateBody=ssl_cert["body"],
+        certificatePrivateKey=ssl_cert["private_key"],
+        certificateChain=ssl_cert["chain"]
+    )
+    return response
+
+
+def template_variables_to_dict(api_name, api_description, api_target_stage, api_id, lambdas, custom_hostname = False,
+                               custom_base_path = False):
     if lambdas:
         lambda_region, lambda_account_id = yugen_utils.get_region_and_account_from_lambda_arn(
             lambdas[0].get("arn")
@@ -276,12 +414,18 @@ def template_variables_to_dict(api_name, api_description, api_target_stage, api_
     else:
         boto3_session = boto3.session.Session()
         lambda_region = boto3_session.region_name
-    api_hostname = api_id + ".execute-api." + lambda_region + ".amazonaws.com"
+
+    if custom_hostname:
+        api_hostname = custom_hostname
+        api_basepath = custom_base_path
+    else: # not using custom domain name
+        api_hostname = api_id + ".execute-api." + lambda_region + ".amazonaws.com"
+        api_basepath = api_target_stage #
 
     return_dict = {
         "apiName": api_name,
         "apiDescription": api_description,
-        "apiTargetStage": api_target_stage,
+        "apiBasePath": api_basepath,
         "apiHostname": api_hostname
     }
     for lmbda in lambdas:
@@ -345,7 +489,6 @@ def get_lambdas(config, add_arn=False):
 
 
 def main():
-
     arguments = docopt(doc)
 
     if arguments["list"]:
@@ -366,6 +509,24 @@ def main():
             api_key=api_key,
             lambdas=lambdas
         )
+        if conf.get("customDomain"):
+            domain_name = conf.get("customDomain.domainName")
+            route_53_record = conf.get("customDomain.route53Record")
+            ssl_cert = {
+                "name": conf.get("customDomain.certificateName"),
+                "body": conf.get("customDomain.certificateBody"),
+                "private_key": conf.get("customDomain.certificatePrivateKey"),
+                "chain": conf.get("customDomain.certificateChain")
+            }
+            hosted_zone_id = conf.get("customDomain.hostedDomainZoneId")
+            api_base_path = conf.get("api.stage")
+            create_custom_domain(api_name=api_name,
+                                 api_target_stage=target_stage,
+                                 api_base_path=api_base_path,
+                                 domain_name=domain_name,
+                                 route_53_record=route_53_record,
+                                 ssl_cert=ssl_cert,
+                                 hosted_zone_id=hosted_zone_id)
     elif arguments["delete"]:
         yugen_utils.are_credentials_still_valid()
         conf = read_api_config()
@@ -385,7 +546,9 @@ def main():
             api_name=api_name,
             stage_name=target_stage,
             api_description=api_description,
-            lambdas=lambdas
+            lambdas=lambdas,
+            custom_hostname=(conf.get("customDomain.domainName") if conf.get("customDomain") else False),
+            custom_base_path=(conf.get("customDomain.basePath") if conf.get("customDomain") else False)
         )
     elif arguments["apikey-create"]:
         yugen_utils.are_credentials_still_valid()
@@ -400,6 +563,32 @@ def main():
     elif arguments["apikey-list"]:
         yugen_utils.are_credentials_still_valid()
         list_api_keys()
+    elif arguments["custom-domain-create"]:
+        yugen_utils.are_credentials_still_valid()
+        conf = read_api_config()
+        api_name = conf.get("api.name")
+        api_target_stage = conf.get("api.targetStage")
+
+
+        domain_name = conf.get("customDomain.domainName")
+        route_53_record = conf.get("customDomain.route53Record")
+        api_base_path = conf.get("customDomain.basePath")
+        ssl_cert = {
+            "name": conf.get("customDomain.certificateName"),
+            "body": conf.get("customDomain.certificateBody"),
+            "private_key": conf.get("customDomain.certificatePrivateKey"),
+            "chain": conf.get("customDomain.certificateChain")
+        }
+        hosted_zone_id = conf.get("customDomain.hostedDomainZoneId")
+
+        create_custom_domain(api_name=api_name,
+                             api_target_stage=api_target_stage,
+                             api_base_path=api_base_path,
+                             domain_name=domain_name,
+                             route_53_record=route_53_record,
+                             ssl_cert=ssl_cert,
+                             hosted_zone_id=hosted_zone_id)
+
     elif arguments["version"]:
         utils.version()
 
