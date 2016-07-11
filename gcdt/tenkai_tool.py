@@ -1,4 +1,4 @@
-# pylint: disable=E0401
+# pylint: disable=E0401, E1101
 
 import sys
 import boto3
@@ -11,6 +11,7 @@ from s3transfer import S3Transfer
 import utils
 
 doc = """Usage:
+        tenkai bundle
         tenkai deploy
         tenkai version
 
@@ -32,8 +33,8 @@ def are_credentials_still_valid():
 
 
 def deploy(applicationName, deploymentGroupName, deploymentConfigName, bucket):
-    bundle_revision()
-    etag, version = upload_revision_to_s3(bucket, applicationName)
+    bundlefile = bundle_revision()
+    etag, version = upload_revision_to_s3(bucket, applicationName, bundlefile)
 
     client = boto3.client("codedeploy")
     response = client.create_deployment(
@@ -44,7 +45,7 @@ def deploy(applicationName, deploymentGroupName, deploymentConfigName, bucket):
             's3Location': {
                 'bucket': bucket,
                 'key': build_bundle_key(applicationName),
-                'bundleType': 'zip',
+                'bundleType': 'tgz',
                 'eTag': etag,
                 'version': version,
             },
@@ -79,14 +80,12 @@ def deployment_status(deploymentId, iterations=100):
             break
 
 
-def bundle_revision():
-    zip = tenkai_utils.make_zip_file_bytes(path="./codedeploy")
-    f = open('/tmp/bundle.zip', 'wb')
-    f.write(zip)
-    f.close()
+def bundle_revision(outputpath='/tmp'):
+    tarfile_name = tenkai_utils.make_tar_file(path="./codedeploy", outputpath=outputpath)
+    return tarfile_name
 
 
-def upload_revision_to_s3(bucket, applicationName, file="/tmp/bundle.zip"):
+def upload_revision_to_s3(bucket, applicationName, file):
     client = boto3.client('s3')
     transfer = S3Transfer(client)
     # Upload /tmp/myfile to s3://bucket/key and print upload progress.
@@ -117,7 +116,7 @@ def create_bucket(bucket):
 
 
 def build_bundle_key(application_name):
-    key = application_name + "/" + "bundle.zip"
+    key = application_name + "/" + "bundle.tar.gz"
     return key
 
 
@@ -144,6 +143,9 @@ def main():
             bucket=conf.get("codedeploy.artifactsBucket")
         )
         deployment_status(deployment)
+    elif arguments["bundle"]:
+        conf = read_config(config_base_name="codedeploy")
+        print "created bundle at %s"% bundle_revision()
     elif arguments["version"]:
         utils.version()
 
