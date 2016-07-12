@@ -519,7 +519,7 @@ def main():
                 "chain": conf.get("customDomain.certificateChain")
             }
             hosted_zone_id = conf.get("customDomain.hostedDomainZoneId")
-            api_base_path = conf.get("api.stage")
+            api_base_path = conf.get("customDomain.basePath")
             create_custom_domain(api_name=api_name,
                                  api_target_stage=target_stage,
                                  api_base_path=api_base_path,
