@@ -509,7 +509,7 @@ def main():
             api_key=api_key,
             lambdas=lambdas
         )
-        if conf.get("customDomain"):
+        if "customDomain" in conf:
             domain_name = conf.get("customDomain.domainName")
             route_53_record = conf.get("customDomain.route53Record")
             ssl_cert = {
