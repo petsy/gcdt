@@ -11,6 +11,8 @@ import random
 import string
 import utils
 
+import pyhocon.exceptions
+
 import monitoring
 
 if os.getcwd() not in sys.path:
@@ -45,7 +47,7 @@ from pyhocon.exceptions import ConfigMissingException
 
 # creating docopt parameters and usage help
 doc = """Usage:
-        kumo deploy
+        kumo deploy [-f]
         kumo list
         kumo delete -f
         kumo generate
@@ -64,6 +66,43 @@ CONFIG_KEY = "cloudformation"
 SLACK_TOKEN = KUMO_CONFIG.get("kumo.slack-token")
 
 boto_session = boto3.session.Session()
+
+def parameter_diff(force=False):
+    """
+    print differences between local config and currently active config
+
+    """
+    config = read_config()
+    cf = boto_session.resource('cloudformation')
+    try:
+        stackname = config['cloudformation.StackName']
+        stack = cf.Stack(stackname)
+    except pyhocon.exceptions.ConfigMissingException:
+        print("StackName is not configured, could not create parameter diff")
+        return config
+    except:
+        # probably the stack is not existing
+        return config
+
+    changed = 0
+    for param in stack.parameters:
+        try:
+            old = config.get('cloudformation.' + param['ParameterKey'])
+            new = param['ParameterValue']
+            if old != new:
+                print("%s Old: %s New: %s" % (param['ParameterKey'], old, new))
+                changed += 1
+        except pyhocon.exceptions.ConfigMissingException:
+            print('Did not find %s in local config file' % param['ParameterKey'])
+    if changed >= 1 and force == False:
+        print('Parameters have changed. If you want to proceed please call again with the -f flag')
+        sys.exit(1)
+    elif changed >= 1 and force == True:
+        print('Parameters have changed. As -f was specified we are continuing')
+        return config
+    else:
+        print('Parameters are unchanged')
+
 
 
 def call_pre_hook():
@@ -408,22 +447,22 @@ def main():
     if arguments["deploy"]:
         validate_import()
         call_pre_hook()
-        conf = read_config()
+        conf = parameter_diff(arguments['-f'])
         are_credentials_still_valid(boto_session)
         deploy_stack(conf)
     elif arguments["delete"]:
         validate_import()
-        conf = read_config()
+        conf = parameter_diff(arguments['-f'])
         are_credentials_still_valid(boto_session)
         delete_stack(conf)
     elif arguments["validate"]:
         validate_import()
-        conf = read_config()
+        conf = parameter_diff(arguments['-f'])
         are_credentials_still_valid(boto_session)
         validate_stack()
     elif arguments["generate"]:
         validate_import()
-        conf = read_config()
+        conf = parameter_diff(arguments['-f'])
         generate_template_file(conf)
     elif arguments["list"]:
         validate_import()
@@ -435,7 +474,7 @@ def main():
         configure()
     elif arguments["preview"]:
         validate_import()
-        conf = read_config()
+        conf = parameter_diff(arguments['-f'])
         are_credentials_still_valid(boto_session)
         change_set, stack_name = create_change_set(conf)
         describe_change_set(change_set, stack_name)
