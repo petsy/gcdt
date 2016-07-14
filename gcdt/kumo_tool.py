@@ -105,7 +105,7 @@ def call_post_update_hook():
     else:
         print("no post update hook found")
 
-
+# FIXME does not get called when no changes from CF to apply
 def call_post_hook():
     if "post_hook" in dir(cloudformation):
         print(colored.green("CloudFormation is done, now executing post  hook..."))
@@ -308,7 +308,7 @@ def list_stacks():
 def create_change_set(conf):
     client = boto_session.client('cloudformation')
     change_set_name = ''.join(random.SystemRandom().choice(
-        string.ascii_uppercase + string.digits) for _ in range(8))
+        string.ascii_uppercase) for _ in range(8))
     response = client.create_change_set(
         StackName=get_stack_name(conf),
         TemplateBody=cloudformation.generate_template(),
