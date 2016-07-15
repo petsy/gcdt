@@ -42,9 +42,9 @@ def import_from_swagger(api_name, api_description, stage_name, lambdas):
     print "Import from swagger file"
 
     api = yugen_utils.api_by_name(api_name)
-    if api is not None:
+    if api is None:
         print yugen_utils.json2table(api)
-        api_id = api["id"]
+        api_id = False
         template_variables = template_variables_to_dict(api_name,
                                                         api_description,
                                                         stage_name,
@@ -57,7 +57,7 @@ def import_from_swagger(api_name, api_description, stage_name, lambdas):
         )
         print yugen_utils.json2table(response_swagger)
     else:
-        print "API name unknown"
+        print "API already taken"
 
 
 def update_from_swagger(api_name, api_description, stage_name, lambdas):
@@ -124,9 +124,10 @@ def list_apis():
 def deploy_api(api_name, api_description, stage_name, api_key, lambdas):
     if not yugen_utils.api_exists(api_name):
         if os.path.isfile(SWAGGER_FILE):
+            create_api(api_name=api_name, api_description=api_description)
             import_from_swagger(api_name, api_description, stage_name, lambdas)
         else:
-            create_api(api_name=api_name, api_description=api_description)
+            print "No swagger file ({}) found".format(SWAGGER_FILE)
 
         api = yugen_utils.api_by_name(api_name)
 
@@ -363,10 +364,6 @@ def base_path_mapping_exists(domain_name, base_path):
 
 
 def create_base_path_mapping(domain_name, base_path, stage, api_id):
-    print domain_name
-    print base_path
-    print stage
-    print api_id
     client = boto3.client("apigateway")
     base_path_respone = client.create_base_path_mapping(
         domainName=domain_name,
@@ -405,7 +402,7 @@ def create_new_custom_domain(domain_name, ssl_cert):
     return response
 
 
-def template_variables_to_dict(api_name, api_description, api_target_stage, api_id, lambdas, custom_hostname = False,
+def template_variables_to_dict(api_name, api_description, api_target_stage, api_id = False, lambdas = [], custom_hostname = False,
                                custom_base_path = False):
     if lambdas:
         lambda_region, lambda_account_id = yugen_utils.get_region_and_account_from_lambda_arn(
@@ -418,7 +415,10 @@ def template_variables_to_dict(api_name, api_description, api_target_stage, api_
     if custom_hostname:
         api_hostname = custom_hostname
         api_basepath = custom_base_path
-    else: # not using custom domain name
+    elif not api_id: # case deploying new api, -> hostname exists
+        api_hostname = False
+        api_basepath = api_target_stage #
+    else:  # not using custom domain name
         api_hostname = api_id + ".execute-api." + lambda_region + ".amazonaws.com"
         api_basepath = api_target_stage #
 
@@ -428,6 +428,9 @@ def template_variables_to_dict(api_name, api_description, api_target_stage, api_
         "apiBasePath": api_basepath,
         "apiHostname": api_hostname
     }
+    if api_hostname:
+        return_dict["apiHostname"]= api_hostname
+
     for lmbda in lambdas:
         if lmbda.get("arn"):
             lambda_uri = yugen_utils.arn_to_uri(lmbda["arn"], lmbda["alias"])
