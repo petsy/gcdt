@@ -124,9 +124,10 @@ def list_apis():
 def deploy_api(api_name, api_description, stage_name, api_key, lambdas):
     if not yugen_utils.api_exists(api_name):
         if os.path.isfile(SWAGGER_FILE):
+            create_api(api_name=api_name, api_description=api_description)
             import_from_swagger(api_name, api_description, stage_name, lambdas)
         else:
-            create_api(api_name=api_name, api_description=api_description)
+            print "No swagger file ({}) found".format(SWAGGER_FILE)
 
         api = yugen_utils.api_by_name(api_name)
 
