@@ -22,7 +22,7 @@ docutils==0.12            # via botocore, glomex-utils
 funcsigs==1.0.2           # via mock
 future==0.15.2            # via cookiecutter
 futures==3.0.5            # via boto3, glomex-utils, s3transfer
-glomex-utils==0.0.9
+glomex-utils==0.0.10
 jinja2-time==0.2.0        # via cookiecutter
 jinja2==2.8               # via cookiecutter, jinja2-time
 jmespath==0.9.0           # via boto3, botocore, glomex-utils
