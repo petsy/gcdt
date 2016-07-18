@@ -186,8 +186,13 @@ def poll_stack_events(boto_session, stackName):
                 seen_events.append(event["EventId"])
                 resource_status = event["ResourceStatus"]
                 resource_id = event["LogicalResourceId"]
+                #this is not always present
+                try:
+                    reason = event["ResourceStatusReason"]
+                except KeyError:
+                    reason = ""
                 timestamp = str(event["Timestamp"])
-                message = "%-25s %-50s %-25s\n" % (resource_status, resource_id, timestamp)
+                message = "%-25s %-25s %-50s %-25s\n" % (resource_status, resource_id, reason, timestamp)
                 if resource_status in failed_statuses:
                     print colored.red(message)
                 elif resource_status in warning_statuses:

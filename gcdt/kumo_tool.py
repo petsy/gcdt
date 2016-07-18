@@ -10,6 +10,7 @@ import sys
 import random
 import string
 import utils
+import json
 
 import monitoring
 
@@ -19,11 +20,9 @@ if os.getcwd() not in sys.path:
 CLOUDFORMATION_FOUND = True
 
 try:
-    print (sys.path)
     import cloudformation
     print ("using the following CloudFormation template: {}".format(cloudformation.__file__))
 except ImportError:
-    print ("could not find cloudformation.py")
     CLOUDFORMATION_FOUND = False
 except Exception as e:
     print ("could not import cloudformation.py, maybe something wrong with your code?")
@@ -45,7 +44,7 @@ from pyhocon.exceptions import ConfigMissingException
 
 # creating docopt parameters and usage help
 doc = """Usage:
-        kumo deploy
+        kumo deploy [--override-stack-policy]
         kumo list
         kumo delete -f
         kumo generate
@@ -160,12 +159,12 @@ def stack_exists(stackName):
         return True
 
 
-def deploy_stack(conf):
+def deploy_stack(conf, override_stack_policy=False):
     stackname = get_stack_name(conf)
     if stack_exists(stackname):
-        update_stack(conf)
+        update_stack(conf, override_stack_policy)
     else:
-        create_stack(conf)
+        create_stack(conf, override_stack_policy)
 
 
 # create stack with all the information we have
@@ -187,6 +186,73 @@ def s3_upload(conf):
     return s3url
 
 
+def _get_stack_policy():
+    default_stack_policy = json.dumps({
+          "Statement" : [
+            {
+              "Effect" : "Allow",
+              "Action" : "Update:Modify",
+              "Principal": "*",
+              "Resource" : "*"
+            },
+            {
+              "Effect" : "Deny",
+              "Action" : ["Update:Replace", "Update:Delete"],
+              "Principal": "*",
+              "Resource" : "*"
+            }
+          ]
+        })
+
+    stack_policy = default_stack_policy
+
+    # check if a user specified his own stack policy
+    if CLOUDFORMATION_FOUND:
+        if "get_stack_policy" in dir(cloudformation):
+            stack_policy = cloudformation.get_stack_policy()
+
+    return stack_policy
+
+def _get_stack_policy_during_update(override_stack_policy):
+    if override_stack_policy:
+        default_stack_policy_during_update = json.dumps({
+              "Statement" : [
+                {
+                  "Effect" : "Allow",
+                  "Action" : "Update:*",
+                  "Principal": "*",
+                  "Resource" : "*"
+                }
+              ]
+            })
+    else:
+        default_stack_policy_during_update = json.dumps({
+            "Statement": [
+                {
+                    "Effect": "Allow",
+                    "Action": "Update:Modify",
+                    "Principal": "*",
+                    "Resource": "*"
+                },
+                {
+                    "Effect": "Deny",
+                    "Action": ["Update:Replace", "Update:Delete"],
+                    "Principal": "*",
+                    "Resource": "*"
+                }
+            ]
+        })
+
+    stack_policy_during_update = default_stack_policy_during_update
+
+    # check if a user specified his own stack policy
+    if CLOUDFORMATION_FOUND:
+        if "get_stack_policy_during_update" in dir(cloudformation):
+            stack_policy_during_update = cloudformation.get_stack_policy_during_update()
+
+    return stack_policy_during_update
+
+
 def create_stack(conf):
     client_cf = boto_session.client('cloudformation')
     call_pre_create_hook()
@@ -199,7 +265,9 @@ def create_stack(conf):
             Capabilities=[
                 'CAPABILITY_IAM',
             ],
+            StackPolicyBody=_get_stack_policy(),
         )
+    # if we have no artifacts bucket configured then upload the template directly
     except ConfigMissingException:
         response = client_cf.create_stack(
             StackName=get_stack_name(conf),
@@ -208,6 +276,7 @@ def create_stack(conf):
             Capabilities=[
                 'CAPABILITY_IAM',
             ],
+            StackPolicyBody=_get_stack_policy(),
         )
 
     message = "kumo bot: created stack %s " % get_stack_name(conf)
@@ -221,7 +290,7 @@ def create_stack(conf):
 
 # update stack with all the information we have
 
-def update_stack(conf):
+def update_stack(conf, override_stack_policy):
     client_cf = boto_session.client('cloudformation')
     try:
         call_pre_update_hook()
@@ -234,6 +303,9 @@ def update_stack(conf):
                 Capabilities=[
                     'CAPABILITY_IAM',
                 ],
+                StackPolicyBody=_get_stack_policy(),
+                StackPolicyDuringUpdateBody=_get_stack_policy_during_update(override_stack_policy)
+
             )
         except ConfigMissingException:
             response = client_cf.update_stack(
@@ -243,6 +315,8 @@ def update_stack(conf):
                 Capabilities=[
                     'CAPABILITY_IAM',
                 ],
+                StackPolicyBody=_get_stack_policy(),
+                StackPolicyDuringUpdateBody=_get_stack_policy_during_update(override_stack_policy)
             )
 
         message = "kumo bot: updated stack %s " % get_stack_name(conf)
@@ -256,7 +330,9 @@ def update_stack(conf):
         if "No updates" in repr(e):
             print(colored.yellow("No updates are to be performed."))
         else:
-            print(e)
+            print (type(e))
+            print(colored.red("Exception occured during update:"+str(e)))
+
 
 
 # delete stack
@@ -410,7 +486,12 @@ def main():
         call_pre_hook()
         conf = read_config()
         are_credentials_still_valid(boto_session)
-        deploy_stack(conf)
+        print (arguments)
+        if arguments["--override-stack-policy"]:
+            override_stack_policy=True
+        else:
+            override_stack_policy=False
+        deploy_stack(conf, override_stack_policy=override_stack_policy)
     elif arguments["delete"]:
         validate_import()
         conf = read_config()
@@ -426,7 +507,6 @@ def main():
         conf = read_config()
         generate_template_file(conf)
     elif arguments["list"]:
-        validate_import()
         are_credentials_still_valid(boto_session)
         list_stacks()
     elif arguments["scaffold"]:

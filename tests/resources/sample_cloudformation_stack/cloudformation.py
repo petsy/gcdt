@@ -10,6 +10,7 @@ from troposphere import ec2
 from troposphere import Output, Ref, Template
 from troposphere.s3 import Bucket, PublicRead
 from resources import sample_hook
+import json
 
 # TODO
 # ramuda cookiecutter
@@ -25,15 +26,15 @@ t.add_description(
     "how to create a publicly accessible S3 bucket."
 )
 
-s3bucket = t.add_resource(Bucket("S3Bucket", AccessControl=PublicRead, ))
+#s3bucket = t.add_resource(Bucket("S3Bucket", AccessControl=PublicRead, ))
 s3bucket1 = t.add_resource(Bucket("S3Bucket1", AccessControl=PublicRead, ))
-s3bucket2 = t.add_resource(Bucket("S3Bucket2", AccessControl=PublicRead, ))
+#s3bucket2 = t.add_resource(Bucket("S3Bucket2", AccessControl=PublicRead, ))
 
-t.add_output(Output(
-    "BucketName",
-    Value=Ref(s3bucket),
-    Description="Name of S3 bucket"
-))
+#t.add_output(Output(
+#    "BucketName",
+#    Value=Ref(s3bucket),
+#    Description="Name of S3 bucket"
+#))
 
 
 def generate_template():
@@ -50,3 +51,35 @@ def post_update_hook():
 
 def post_create_hook():
     print("i'm a post create hook")
+
+
+def get_stack_policy():
+    return json.dumps({
+          "Statement" : [
+            {
+              "Effect" : "Allow",
+              "Action" : "Update:Modify",
+              "Principal": "*",
+              "Resource" : "*"
+            },
+            {
+              "Effect" : "Deny",
+              "Action" : ["Update:Replace", "Update:Delete"],
+              "Principal": "*",
+              "Resource" : "*"
+            }
+          ]
+        })
+
+
+def get_stack_policy_during_update():
+    return json.dumps({
+        "Statement": [
+            {
+                "Effect": "Allow",
+                "Action": "Update:*",
+                "Principal": "*",
+                "Resource": "*"
+            }
+        ]
+   })

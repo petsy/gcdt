@@ -1,0 +1,10 @@
+# Change Log
+All notable changes to this project will be documented in this file.
+This project adheres to [Semantic Versioning](http://semver.org/).
+
+
+## [0.0.26] - 2016-07-19
+### Added
+- FEATURE: kumo now supports stack policies, see README for details
+- FIX: removed debug output
+- FIX: removed some unneccessary import validations
