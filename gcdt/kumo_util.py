@@ -178,7 +178,7 @@ def poll_stack_events(boto_session, stackName):
     status = ""
     # for the delete command we need the stack_id
     stack_id = get_stack_id(boto_session, stackName)
-
+    print( "%-50s %-25s %-50s %-25s\n" % ("Resource Status", "Resource ID", "Reason", "Timestamp"))
     while status not in finished_statuses:
         response = client.describe_stack_events(StackName=stack_id)
         for event in response["StackEvents"][::-1]:
@@ -192,7 +192,7 @@ def poll_stack_events(boto_session, stackName):
                 except KeyError:
                     reason = ""
                 timestamp = str(event["Timestamp"])
-                message = "%-25s %-25s %-50s %-25s\n" % (resource_status, resource_id, reason, timestamp)
+                message = "%-50s %-25s %-50s %-25s\n" % (resource_status, resource_id, reason, timestamp)
                 if resource_status in failed_statuses:
                     print colored.red(message)
                 elif resource_status in warning_statuses:

@@ -11,8 +11,17 @@ import random
 import string
 import utils
 import json
-
+import time
+import pyhocon.exceptions
 import monitoring
+from tabulate import tabulate
+from pyspin.spin import Default, Spinner
+from docopt import docopt
+from kumo_util import json2table, are_credentials_still_valid, read_kumo_config, get_input, poll_stack_events
+from clint.textui import colored
+from cookiecutter.main import cookiecutter
+from glomex_utils.config_reader import read_config, get_env
+from pyhocon.exceptions import ConfigMissingException
 
 if os.getcwd() not in sys.path:
     sys.path.insert(0, os.getcwd())
@@ -21,7 +30,13 @@ CLOUDFORMATION_FOUND = True
 
 try:
     import cloudformation
-    print ("using the following CloudFormation template: {}".format(cloudformation.__file__))
+    #print ("using the following CloudFormation template: {}".format(cloudformation.__file__))
+    template_directory=((cloudformation.__file__).rstrip("/cloudformation.pyc"))
+    cwd = (os.getcwd())
+
+    if not template_directory == cwd:
+        print(colored.red("FATAL: cloudformation.py imported outside of your current working directory. Bailing out... "))
+        sys.exit(1)
 except ImportError:
     CLOUDFORMATION_FOUND = False
 except Exception as e:
@@ -29,22 +44,10 @@ except Exception as e:
     print (e)
     CLOUDFORMATION_FOUND = False
 
-
-
-from docopt import docopt
-from kumo_util import json2table, are_credentials_still_valid, read_kumo_config, get_input, poll_stack_events
-from clint.textui import colored
-from cookiecutter.main import cookiecutter
-from glomex_utils.config_reader import read_config, get_env
-from pyhocon.exceptions import ConfigMissingException
-
-
-# TODO
-# move slack
-
 # creating docopt parameters and usage help
 doc = """Usage:
         kumo deploy [--override-stack-policy]
+        kumo deploy [-f]
         kumo list
         kumo delete -f
         kumo generate
@@ -64,13 +67,56 @@ SLACK_TOKEN = KUMO_CONFIG.get("kumo.slack-token")
 
 boto_session = boto3.session.Session()
 
+def print_parameter_diff(config):
+    """
+    print differences between local config and currently active config
+    """
+    cf = boto_session.resource('cloudformation')
+    try:
+        stackname = config['cloudformation.StackName']
+        stack = cf.Stack(stackname)
+    except pyhocon.exceptions.ConfigMissingException:
+        print("StackName is not configured, could not create parameter diff")
+        return None
+    except:
+        # probably the stack is not existing
+        return None
+
+    changed = 0
+    table = []
+    table.append(["Parameter", "Current Value", "New Value"])
+
+    for param in stack.parameters:
+        try:
+            old = param['ParameterValue']
+            new = config.get('cloudformation.' + param['ParameterKey'])
+            if old != new:
+                table.append([param['ParameterKey'], old, new])
+                changed += 1
+        except pyhocon.exceptions.ConfigMissingException:
+            print('Did not find %s in local config file' % param['ParameterKey'])
+
+    if changed > 0:
+        print (tabulate(table, tablefmt="fancy_grid"))
+        print(colored.red("Parameters have changed. Waiting 10 seconds. \n"))
+        print("If parameters are unexpected you might want to exit now: control-c")
+        # Choose a spin style.
+        spin = Spinner(Default)
+        # Spin it now.
+        for i in range(100):
+            print(u"\r{0}".format(spin.next()), end="")
+            sys.stdout.flush()
+            time.sleep(0.1)
+        print("\n")
+
+
 
 def call_pre_hook():
     if "pre_hook" in dir(cloudformation):
         print(colored.green("Executing pre hook..."))
         cloudformation.pre_hook()
     else:
-        print("no pre hook found")
+        pass
 
 
 def call_pre_create_hook():
@@ -78,7 +124,7 @@ def call_pre_create_hook():
         print(colored.green("Executing pre create hook..."))
         cloudformation.pre_create_hook()
     else:
-        print("no pre create hook found")
+        pass
 
 
 def call_pre_update_hook():
@@ -86,7 +132,7 @@ def call_pre_update_hook():
         print(colored.green("Executing pre update hook..."))
         cloudformation.pre_update_hook()
     else:
-        print("no pre update hook found")
+        pass
 
 
 def call_post_create_hook():
@@ -94,7 +140,7 @@ def call_post_create_hook():
         print(colored.green("CloudFormation is done, now executing post create hook..."))
         cloudformation.post_create_hook()
     else:
-        print("no post create hook found")
+        pass
 
 
 def call_post_update_hook():
@@ -102,7 +148,7 @@ def call_post_update_hook():
         print(colored.green("CloudFormation is done, now executing post update hook..."))
         cloudformation.post_update_hook()
     else:
-        print("no post update hook found")
+        pass
 
 # FIXME does not get called when no changes from CF to apply
 def call_post_hook():
@@ -110,7 +156,7 @@ def call_post_hook():
         print(colored.green("CloudFormation is done, now executing post  hook..."))
         cloudformation.post_hook()
     else:
-        print("no post hook found")
+        pass
 
 
 # generate an entry for the parameter list from a raw value read from config
@@ -210,6 +256,7 @@ def _get_stack_policy():
     if CLOUDFORMATION_FOUND:
         if "get_stack_policy" in dir(cloudformation):
             stack_policy = cloudformation.get_stack_policy()
+            print(colored.magenta("Applying custom stack policy"))
 
     return stack_policy
 
@@ -249,6 +296,7 @@ def _get_stack_policy_during_update(override_stack_policy):
     if CLOUDFORMATION_FOUND:
         if "get_stack_policy_during_update" in dir(cloudformation):
             stack_policy_during_update = cloudformation.get_stack_policy_during_update()
+            print(colored.magenta("Applying custom stack policy for updates\n"))
 
     return stack_policy_during_update
 
@@ -485,8 +533,8 @@ def main():
         validate_import()
         call_pre_hook()
         conf = read_config()
+        print_parameter_diff(conf)
         are_credentials_still_valid(boto_session)
-        print (arguments)
         if arguments["--override-stack-policy"]:
             override_stack_policy=True
         else:
@@ -500,11 +548,13 @@ def main():
     elif arguments["validate"]:
         validate_import()
         conf = read_config()
+        print_parameter_diff(conf)
         are_credentials_still_valid(boto_session)
         validate_stack()
     elif arguments["generate"]:
         validate_import()
         conf = read_config()
+        print_parameter_diff(conf)
         generate_template_file(conf)
     elif arguments["list"]:
         are_credentials_still_valid(boto_session)
@@ -516,6 +566,7 @@ def main():
     elif arguments["preview"]:
         validate_import()
         conf = read_config()
+        print_parameter_diff(conf)
         are_credentials_still_valid(boto_session)
         change_set, stack_name = create_change_set(conf)
         describe_change_set(change_set, stack_name)

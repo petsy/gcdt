@@ -36,6 +36,11 @@ s3bucket1 = t.add_resource(Bucket("S3Bucket1", AccessControl=PublicRead, ))
 #    Description="Name of S3 bucket"
 #))
 
+param_foo = t.add_parameter(troposphere.Parameter(
+    'InstanceType',
+    Description='Type of EC2 instance',
+    Type='String',
+))
 
 def generate_template():
     return t.to_json()
@@ -71,7 +76,7 @@ def get_stack_policy():
           ]
         })
 
-
+"""
 def get_stack_policy_during_update():
     return json.dumps({
         "Statement": [
@@ -83,3 +88,4 @@ def get_stack_policy_during_update():
             }
         ]
    })
+"""
