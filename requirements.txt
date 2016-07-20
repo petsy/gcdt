@@ -22,7 +22,7 @@ docutils==0.12            # via botocore, glomex-utils
 funcsigs==1.0.2           # via mock
 future==0.15.2            # via cookiecutter
 futures==3.0.5            # via boto3, glomex-utils, s3transfer
-glomex-utils==0.0.9
+glomex-utils==0.0.10
 jinja2-time==0.2.0        # via cookiecutter
 jinja2==2.8               # via cookiecutter, jinja2-time
 jmespath==0.9.0           # via boto3, botocore, glomex-utils
@@ -35,6 +35,7 @@ pybars3==0.9.1
 pyhocon==0.3.30
 PyMeta3==0.5.1            # via pybars3
 pyparsing==2.1.5          # via glomex-utils, pyhocon
+pyspin==1.0.2
 python-dateutil==2.5.3    # via arrow, botocore, glomex-utils
 requests==2.10.0          # via slacker
 s3transfer==0.0.1

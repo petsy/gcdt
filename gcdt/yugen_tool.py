@@ -550,8 +550,8 @@ def main():
             stage_name=target_stage,
             api_description=api_description,
             lambdas=lambdas,
-            custom_hostname=(conf.get("customDomain.domainName") if conf.get("customDomain") else False),
-            custom_base_path=(conf.get("customDomain.basePath") if conf.get("customDomain") else False)
+            custom_hostname=(conf.get("customDomain.domainName") if "customDomain" in conf else False),
+            custom_base_path=(conf.get("customDomain.basePath") if "customDomain" in conf else False)
         )
     elif arguments["apikey-create"]:
         yugen_utils.are_credentials_still_valid()

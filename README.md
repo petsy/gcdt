@@ -1,7 +1,7 @@
 Glomex Cloud Deployment Tools
 ===============================
 
-version number: 0.0.10
+version number: 0.0.26
 
 author: Glomex Data Platform Team
 
@@ -51,11 +51,11 @@ To see available commands, call kumo without any arguments:
 ```bash
 $kumo
 Usage:
-        kumo deploy [-e ENV]
+        kumo deploy [--override-stack-policy]
         kumo list
-        kumo delete -f [-e ENV]
-        kumo generate [-e ENV]
-        kumo validate [-e ENV]
+        kumo delete -f
+        kumo generate
+        kumo validate
         kumo scaffold [<stackname>]
         kumo configure
         kumo preview
@@ -66,6 +66,8 @@ Usage:
 
 #### deploy
 will create or update a CloudFormation stack
+
+to be able to update a stack that is protected by a stack policy you need to supply "--override-stack-policy"
 
 #### list
 will list all available CloudFormation stacks
@@ -128,7 +130,7 @@ You can create a new folder with this structure by calling `kumo scaffold`.
 ### Hooks
 kumo offers numerous hook functions that get called during the lifecycle of a kumo run:
 
-* pre_hook
+* pre_hook()
   * gets called before everything else - even config reading. Useful for e.g. creating secrets in credstash if they don't exist
 * pre_create_hook()
   * gets called before a stack is created
@@ -144,6 +146,51 @@ kumo offers numerous hook functions that get called during the lifecycle of a ku
 You can basically call any custom code you want. Just implement the function in
 cloudformation.py
 
+### Stack Policies
+kumo does offer support for stack policies. It has a default stack policy that will get applied to each stack:
+
+```json
+{
+          "Statement" : [
+            {
+              "Effect" : "Allow",
+              "Action" : "Update:Modify",
+              "Principal": "*",
+              "Resource" : "*"
+            },
+            {
+              "Effect" : "Deny",
+              "Action" : ["Update:Replace", "Update:Delete"],
+              "Principal": "*",
+              "Resource" : "*"
+            }
+          ]
+        }        
+```
+This allows an update operation to modify each resource but disables replacement or deletion. If you supply "--override-stack-policy" to kumo then it will use another default policy that gets applied during updates and allows every operation on every resource:
+
+
+```json
+{
+          "Statement" : [
+            {
+              "Effect" : "Deny",
+              "Action" : "Update:*",
+              "Principal": "*",
+              "Resource" : "*"
+            }
+          ]
+        }
+```
+
+If you want to lock down your stack even more you can implement two functions in your cloudformation.py file:
+
+* get_stack_policy()
+* * the actual stack policy for your stack
+* get_stack_policy_during_update()
+* * the policy that gets applied during updates
+
+These should return a valid stack policy document which is then preferred over the default value. 
 
 
 ## API Gateway Deploy Tool
