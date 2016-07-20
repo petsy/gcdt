@@ -35,6 +35,7 @@ pybars3==0.9.1
 pyhocon==0.3.30
 PyMeta3==0.5.1            # via pybars3
 pyparsing==2.1.5          # via glomex-utils, pyhocon
+pyspin==1.0.2
 python-dateutil==2.5.3    # via arrow, botocore, glomex-utils
 requests==2.10.0          # via slacker
 s3transfer==0.0.1
