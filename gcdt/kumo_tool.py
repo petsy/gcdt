@@ -37,7 +37,8 @@ try:
     if not template_directory == cwd:
         print(colored.red("FATAL: cloudformation.py imported outside of your current working directory" + template_directory +" Bailing out... "))
         sys.exit(1)
-except ImportError:
+except ImportError as ei:
+    print ("could not find package for import: {}".format(ei))
     CLOUDFORMATION_FOUND = False
 except Exception as e:
     print ("could not import cloudformation.py, maybe something wrong with your code?")
