@@ -75,6 +75,7 @@ def print_parameter_diff(config):
     try:
         stackname = config['cloudformation.StackName']
         stack = cf.Stack(stackname)
+        stack.load() # load here to trigger exception if the stack does not exist
     except pyhocon.exceptions.ConfigMissingException:
         print("StackName is not configured, could not create parameter diff")
         return None
