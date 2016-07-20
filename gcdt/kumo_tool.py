@@ -47,7 +47,6 @@ except Exception as e:
 # creating docopt parameters and usage help
 doc = """Usage:
         kumo deploy [--override-stack-policy]
-        kumo deploy [-f]
         kumo list
         kumo delete -f
         kumo generate
@@ -115,48 +114,36 @@ def call_pre_hook():
     if "pre_hook" in dir(cloudformation):
         print(colored.green("Executing pre hook..."))
         cloudformation.pre_hook()
-    else:
-        pass
 
 
 def call_pre_create_hook():
     if "pre_create_hook" in dir(cloudformation):
         print(colored.green("Executing pre create hook..."))
         cloudformation.pre_create_hook()
-    else:
-        pass
 
 
 def call_pre_update_hook():
     if "pre_update_hook" in dir(cloudformation):
         print(colored.green("Executing pre update hook..."))
         cloudformation.pre_update_hook()
-    else:
-        pass
 
 
 def call_post_create_hook():
     if "post_create_hook" in dir(cloudformation):
         print(colored.green("CloudFormation is done, now executing post create hook..."))
         cloudformation.post_create_hook()
-    else:
-        pass
 
 
 def call_post_update_hook():
     if "post_update_hook" in dir(cloudformation):
         print(colored.green("CloudFormation is done, now executing post update hook..."))
         cloudformation.post_update_hook()
-    else:
-        pass
 
 # FIXME does not get called when no changes from CF to apply
 def call_post_hook():
     if "post_hook" in dir(cloudformation):
         print(colored.green("CloudFormation is done, now executing post  hook..."))
         cloudformation.post_hook()
-    else:
-        pass
 
 
 # generate an entry for the parameter list from a raw value read from config
