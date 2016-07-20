@@ -10,28 +10,12 @@ import sys
 import random
 import string
 import utils
-
+import json
+import time
+import pyhocon.exceptions
 import monitoring
-
-if os.getcwd() not in sys.path:
-    sys.path.insert(0, os.getcwd())
-
-CLOUDFORMATION_FOUND = True
-
-try:
-    print (sys.path)
-    import cloudformation
-    print ("using the following CloudFormation template: {}".format(cloudformation.__file__))
-except ImportError:
-    print ("could not find cloudformation.py")
-    CLOUDFORMATION_FOUND = False
-except Exception as e:
-    print ("could not import cloudformation.py, maybe something wrong with your code?")
-    print (e)
-    CLOUDFORMATION_FOUND = False
-
-
-
+from tabulate import tabulate
+from pyspin.spin import Default, Spinner
 from docopt import docopt
 from kumo_util import json2table, are_credentials_still_valid, read_kumo_config, get_input, poll_stack_events
 from clint.textui import colored
@@ -39,13 +23,30 @@ from cookiecutter.main import cookiecutter
 from glomex_utils.config_reader import read_config, get_env
 from pyhocon.exceptions import ConfigMissingException
 
+if os.getcwd() not in sys.path:
+    sys.path.insert(0, os.getcwd())
 
-# TODO
-# move slack
+CLOUDFORMATION_FOUND = True
+
+try:
+    import cloudformation
+    #print ("using the following CloudFormation template: {}".format(cloudformation.__file__))
+    template_directory=(os.path.dirname(cloudformation.__file__))
+    cwd = (os.getcwd())
+
+    if not template_directory == cwd:
+        print(colored.red("FATAL: cloudformation.py imported outside of your current working directory" + template_directory +" Bailing out... "))
+        sys.exit(1)
+except ImportError:
+    CLOUDFORMATION_FOUND = False
+except Exception as e:
+    print ("could not import cloudformation.py, maybe something wrong with your code?")
+    print (e)
+    CLOUDFORMATION_FOUND = False
 
 # creating docopt parameters and usage help
 doc = """Usage:
-        kumo deploy
+        kumo deploy [--override-stack-policy]
         kumo list
         kumo delete -f
         kumo generate
@@ -65,53 +66,84 @@ SLACK_TOKEN = KUMO_CONFIG.get("kumo.slack-token")
 
 boto_session = boto3.session.Session()
 
+def print_parameter_diff(config):
+    """
+    print differences between local config and currently active config
+    """
+    cf = boto_session.resource('cloudformation')
+    try:
+        stackname = config['cloudformation.StackName']
+        stack = cf.Stack(stackname)
+    except pyhocon.exceptions.ConfigMissingException:
+        print("StackName is not configured, could not create parameter diff")
+        return None
+    except:
+        # probably the stack is not existing
+        return None
+
+    changed = 0
+    table = []
+    table.append(["Parameter", "Current Value", "New Value"])
+
+    for param in stack.parameters:
+        try:
+            old = param['ParameterValue']
+            new = config.get('cloudformation.' + param['ParameterKey'])
+            if old != new:
+                table.append([param['ParameterKey'], old, new])
+                changed += 1
+        except pyhocon.exceptions.ConfigMissingException:
+            print('Did not find %s in local config file' % param['ParameterKey'])
+
+    if changed > 0:
+        print (tabulate(table, tablefmt="fancy_grid"))
+        print(colored.red("Parameters have changed. Waiting 10 seconds. \n"))
+        print("If parameters are unexpected you might want to exit now: control-c")
+        # Choose a spin style.
+        spin = Spinner(Default)
+        # Spin it now.
+        for i in range(100):
+            print(u"\r{0}".format(spin.next()), end="")
+            sys.stdout.flush()
+            time.sleep(0.1)
+        print("\n")
+
+
 
 def call_pre_hook():
     if "pre_hook" in dir(cloudformation):
         print(colored.green("Executing pre hook..."))
         cloudformation.pre_hook()
-    else:
-        print("no pre hook found")
 
 
 def call_pre_create_hook():
     if "pre_create_hook" in dir(cloudformation):
         print(colored.green("Executing pre create hook..."))
         cloudformation.pre_create_hook()
-    else:
-        print("no pre create hook found")
 
 
 def call_pre_update_hook():
     if "pre_update_hook" in dir(cloudformation):
         print(colored.green("Executing pre update hook..."))
         cloudformation.pre_update_hook()
-    else:
-        print("no pre update hook found")
 
 
 def call_post_create_hook():
     if "post_create_hook" in dir(cloudformation):
         print(colored.green("CloudFormation is done, now executing post create hook..."))
         cloudformation.post_create_hook()
-    else:
-        print("no post create hook found")
 
 
 def call_post_update_hook():
     if "post_update_hook" in dir(cloudformation):
         print(colored.green("CloudFormation is done, now executing post update hook..."))
         cloudformation.post_update_hook()
-    else:
-        print("no post update hook found")
 
 # FIXME does not get called when no changes from CF to apply
 def call_post_hook():
     if "post_hook" in dir(cloudformation):
         print(colored.green("CloudFormation is done, now executing post  hook..."))
         cloudformation.post_hook()
-    else:
-        print("no post hook found")
 
 
 # generate an entry for the parameter list from a raw value read from config
@@ -160,12 +192,12 @@ def stack_exists(stackName):
         return True
 
 
-def deploy_stack(conf):
+def deploy_stack(conf, override_stack_policy=False):
     stackname = get_stack_name(conf)
     if stack_exists(stackname):
-        update_stack(conf)
+        update_stack(conf, override_stack_policy)
     else:
-        create_stack(conf)
+        create_stack(conf, override_stack_policy)
 
 
 # create stack with all the information we have
@@ -187,6 +219,75 @@ def s3_upload(conf):
     return s3url
 
 
+def _get_stack_policy():
+    default_stack_policy = json.dumps({
+          "Statement" : [
+            {
+              "Effect" : "Allow",
+              "Action" : "Update:Modify",
+              "Principal": "*",
+              "Resource" : "*"
+            },
+            {
+              "Effect" : "Deny",
+              "Action" : ["Update:Replace", "Update:Delete"],
+              "Principal": "*",
+              "Resource" : "*"
+            }
+          ]
+        })
+
+    stack_policy = default_stack_policy
+
+    # check if a user specified his own stack policy
+    if CLOUDFORMATION_FOUND:
+        if "get_stack_policy" in dir(cloudformation):
+            stack_policy = cloudformation.get_stack_policy()
+            print(colored.magenta("Applying custom stack policy"))
+
+    return stack_policy
+
+def _get_stack_policy_during_update(override_stack_policy):
+    if override_stack_policy:
+        default_stack_policy_during_update = json.dumps({
+              "Statement" : [
+                {
+                  "Effect" : "Allow",
+                  "Action" : "Update:*",
+                  "Principal": "*",
+                  "Resource" : "*"
+                }
+              ]
+            })
+    else:
+        default_stack_policy_during_update = json.dumps({
+            "Statement": [
+                {
+                    "Effect": "Allow",
+                    "Action": "Update:Modify",
+                    "Principal": "*",
+                    "Resource": "*"
+                },
+                {
+                    "Effect": "Deny",
+                    "Action": ["Update:Replace", "Update:Delete"],
+                    "Principal": "*",
+                    "Resource": "*"
+                }
+            ]
+        })
+
+    stack_policy_during_update = default_stack_policy_during_update
+
+    # check if a user specified his own stack policy
+    if CLOUDFORMATION_FOUND:
+        if "get_stack_policy_during_update" in dir(cloudformation):
+            stack_policy_during_update = cloudformation.get_stack_policy_during_update()
+            print(colored.magenta("Applying custom stack policy for updates\n"))
+
+    return stack_policy_during_update
+
+
 def create_stack(conf):
     client_cf = boto_session.client('cloudformation')
     call_pre_create_hook()
@@ -199,7 +300,9 @@ def create_stack(conf):
             Capabilities=[
                 'CAPABILITY_IAM',
             ],
+            StackPolicyBody=_get_stack_policy(),
         )
+    # if we have no artifacts bucket configured then upload the template directly
     except ConfigMissingException:
         response = client_cf.create_stack(
             StackName=get_stack_name(conf),
@@ -208,6 +311,7 @@ def create_stack(conf):
             Capabilities=[
                 'CAPABILITY_IAM',
             ],
+            StackPolicyBody=_get_stack_policy(),
         )
 
     message = "kumo bot: created stack %s " % get_stack_name(conf)
@@ -221,7 +325,7 @@ def create_stack(conf):
 
 # update stack with all the information we have
 
-def update_stack(conf):
+def update_stack(conf, override_stack_policy):
     client_cf = boto_session.client('cloudformation')
     try:
         call_pre_update_hook()
@@ -234,6 +338,9 @@ def update_stack(conf):
                 Capabilities=[
                     'CAPABILITY_IAM',
                 ],
+                StackPolicyBody=_get_stack_policy(),
+                StackPolicyDuringUpdateBody=_get_stack_policy_during_update(override_stack_policy)
+
             )
         except ConfigMissingException:
             response = client_cf.update_stack(
@@ -243,6 +350,8 @@ def update_stack(conf):
                 Capabilities=[
                     'CAPABILITY_IAM',
                 ],
+                StackPolicyBody=_get_stack_policy(),
+                StackPolicyDuringUpdateBody=_get_stack_policy_during_update(override_stack_policy)
             )
 
         message = "kumo bot: updated stack %s " % get_stack_name(conf)
@@ -256,7 +365,9 @@ def update_stack(conf):
         if "No updates" in repr(e):
             print(colored.yellow("No updates are to be performed."))
         else:
-            print(e)
+            print (type(e))
+            print(colored.red("Exception occured during update:"+str(e)))
+
 
 
 # delete stack
@@ -409,8 +520,13 @@ def main():
         validate_import()
         call_pre_hook()
         conf = read_config()
+        print_parameter_diff(conf)
         are_credentials_still_valid(boto_session)
-        deploy_stack(conf)
+        if arguments["--override-stack-policy"]:
+            override_stack_policy=True
+        else:
+            override_stack_policy=False
+        deploy_stack(conf, override_stack_policy=override_stack_policy)
     elif arguments["delete"]:
         validate_import()
         conf = read_config()
@@ -419,6 +535,7 @@ def main():
     elif arguments["validate"]:
         validate_import()
         conf = read_config()
+        print_parameter_diff(conf)
         are_credentials_still_valid(boto_session)
         validate_stack()
     elif arguments["generate"]:
@@ -426,7 +543,6 @@ def main():
         conf = read_config()
         generate_template_file(conf)
     elif arguments["list"]:
-        validate_import()
         are_credentials_still_valid(boto_session)
         list_stacks()
     elif arguments["scaffold"]:
@@ -436,6 +552,7 @@ def main():
     elif arguments["preview"]:
         validate_import()
         conf = read_config()
+        print_parameter_diff(conf)
         are_credentials_still_valid(boto_session)
         change_set, stack_name = create_change_set(conf)
         describe_change_set(change_set, stack_name)
