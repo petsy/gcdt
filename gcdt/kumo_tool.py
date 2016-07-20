@@ -31,11 +31,11 @@ CLOUDFORMATION_FOUND = True
 try:
     import cloudformation
     #print ("using the following CloudFormation template: {}".format(cloudformation.__file__))
-    template_directory=((cloudformation.__file__).rstrip("/cloudformation.pyc"))
+    template_directory=(os.path.dirname(cloudformation.__file__))
     cwd = (os.getcwd())
 
     if not template_directory == cwd:
-        print(colored.red("FATAL: cloudformation.py imported outside of your current working directory. Bailing out... "))
+        print(colored.red("FATAL: cloudformation.py imported outside of your current working directory" + template_directory +" Bailing out... "))
         sys.exit(1)
 except ImportError:
     CLOUDFORMATION_FOUND = False
@@ -541,7 +541,6 @@ def main():
     elif arguments["generate"]:
         validate_import()
         conf = read_config()
-        print_parameter_diff(conf)
         generate_template_file(conf)
     elif arguments["list"]:
         are_credentials_still_valid(boto_session)
