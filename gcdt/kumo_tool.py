@@ -199,7 +199,7 @@ def deploy_stack(conf, override_stack_policy=False):
     if stack_exists(stackname):
         update_stack(conf, override_stack_policy)
     else:
-        create_stack(conf, override_stack_policy)
+        create_stack(conf)
 
 
 # create stack with all the information we have
