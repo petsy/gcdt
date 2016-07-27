@@ -131,3 +131,6 @@ ENV/
 # Rope project settings
 .ropeproject
 
+# kumo generated templates
+*-generated-cf-template.json
+log-*.txt
