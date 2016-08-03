@@ -32,12 +32,15 @@ doc = """Usage:
 
 """
 
-def validate_import(found_template):
+
+def load_template():
     """Bail out if template is not found.
     """
-    if not found_template:
+    cloudformation, found = load_cloudformation_template()
+    if not found:
         print(colored.red('no cloudformation.py found, bailing out...'))
         sys.exit(1)
+    return cloudformation
 
 
 def are_credentials_still_valid(boto_session):
@@ -66,15 +69,13 @@ def get_slack_token():
 
 def main():
     exit_code = 0
-    cloudformation, CLOUDFORMATION_FOUND = load_cloudformation_template()
-
     boto_session = boto3.session.Session()
     arguments = docopt(doc)
 
     # Run command
     if arguments['deploy']:
         slack_token = get_slack_token()
-        validate_import(CLOUDFORMATION_FOUND)
+        cloudformation = load_template()
         call_pre_hook(cloudformation)
         conf = read_config()
         print_parameter_diff(boto_session, conf)
@@ -83,12 +84,12 @@ def main():
                      override_stack_policy=arguments['--override-stack-policy'])
     elif arguments['delete']:
         slack_token = get_slack_token()
-        validate_import(CLOUDFORMATION_FOUND)
+        cloudformation = load_template()
         conf = read_config()
         are_credentials_still_valid(boto_session)
         exit_code = delete_stack(boto_session, conf, slack_token)
     elif arguments['generate']:
-        validate_import(CLOUDFORMATION_FOUND)
+        cloudformation = load_template()
         conf = read_config()
         generate_template_file(conf, cloudformation)
     elif arguments['list']:
@@ -97,11 +98,12 @@ def main():
     elif arguments['configure']:
         configure()
     elif arguments['preview']:
-        validate_import(CLOUDFORMATION_FOUND)
+        cloudformation = load_template()
         conf = read_config()
-        print_parameter_diff(conf)
+        print_parameter_diff(boto_session, conf)
         are_credentials_still_valid(boto_session)
-        change_set, stack_name = create_change_set(conf, cloudformation)
+        change_set, stack_name = create_change_set(boto_session, conf,
+                                                   cloudformation)
         describe_change_set(change_set, stack_name)
     elif arguments['version']:
         utils.version()
