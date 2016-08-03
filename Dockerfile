@@ -12,7 +12,6 @@ WORKDIR /gcdt
 RUN ls -l
 RUN pip install -U pip==8.1.1
 RUN pip-compile
-#CMD env && bash install_gcdt.sh
 RUN pip-sync
 RUN python setup.py install
 RUN kumo version && ramuda version && tenkai version && yugen version

@@ -2,6 +2,15 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.0.30] - 2016-08-02
+### Added
+- FIX: refactored kumo structure to kumo_main and kumo_core
+- FIX: improved kumo testability and test coverage
+- FIX: Rate limiting when preview with empty changeset (#48)
+### Removed
+- FEATURE: kumo validate
+- FEATURE: kumo scaffold
+
 ## [0.0.29] - 2016-07-21
 ### Added
 - FEATURE: bump glomex-utils to 0.0.11

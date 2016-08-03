@@ -1,23 +1,24 @@
-import time
-import math
+from __future__ import print_function
+import sys
+from time import sleep
 
 
-def version():
-    import pkg_resources  # part of setuptools
-    version = pkg_resources.require("gcdt")[0].version
-    print(("gcdt version %s") % (version))
+__version__ = '0.0.29'
+
+
+def version(out=sys.stdout):
+    """Print version of gcdt tools."""
+    print("gcdt version %s" % __version__, file=out)
 
 
 def get_git_revision_short_hash():
+    # TODO: is this a good idea? (how to make sure that git is installed)?
     from string import strip
     import subprocess
     return strip(subprocess.check_output(['git', 'rev-parse', '--short', 'HEAD']))
 
 
-import sys
-from time import sleep
-
-
+'''looks like this is no longer used...
 def example_exc_handler(tries_remaining, exception, delay):
     """Example exception handler; prints a warning to stderr.
 
@@ -25,6 +26,7 @@ def example_exc_handler(tries_remaining, exception, delay):
     exception: The exception instance which was raised.
     """
     print >> sys.stderr, "Caught '%s', %d tries remaining, sleeping for %s seconds" % (exception, tries_remaining, delay)
+'''
 
 
 def retries(max_tries, delay=1, backoff=2, exceptions=(Exception,), hook=None):
@@ -57,7 +59,7 @@ def retries(max_tries, delay=1, backoff=2, exceptions=(Exception,), hook=None):
             tries.reverse()
             for tries_remaining in tries:
                 try:
-                   return func(*args, **kwargs)
+                    return func(*args, **kwargs)
                 except exceptions as e:
                     if tries_remaining > 0:
                         if hook is not None:

@@ -1,19 +1,15 @@
 #!/usr/bin/env python
 
-import os
 import troposphere
-from troposphere import ec2
 
 # Converted from S3_Bucket.template located at:
 # http://aws.amazon.com/cloudformation/aws-cloudformation-templates/
-
+import json
 from troposphere import Output, Ref, Template
 from troposphere.s3 import Bucket, PublicRead
-from resources import sample_hook
-import json
+import sample_hook
 
 # TODO
-# ramuda cookiecutter
 # add resources folder to kumo for post_hook stuff
 # add lambda to post_hook folder
 # call lambda_deploy, lambda_invoke_lambda_delete from folder
@@ -41,6 +37,7 @@ param_foo = t.add_parameter(troposphere.Parameter(
     Description='Type of EC2 instance',
     Type='String',
 ))
+
 
 def generate_template():
     return t.to_json()
