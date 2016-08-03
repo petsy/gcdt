@@ -7,7 +7,8 @@ from glomex_utils.config_reader import read_config
 import time
 from clint.textui import colored
 import tenkai_utils
-from s3transfer import S3Transfer
+#from s3transfer import S3Transfer
+from boto3.s3.transfer import S3Transfer
 import utils
 
 doc = """Usage:
