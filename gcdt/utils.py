@@ -3,7 +3,7 @@ import sys
 from time import sleep
 
 
-__version__ = '0.0.29'
+__version__ = '0.0.30.dev0'
 
 
 def version(out=sys.stdout):
