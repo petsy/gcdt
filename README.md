@@ -61,7 +61,7 @@ $ nosetests tests/test_kumo*
 Please make sure that you do not lower the gcdt test coverage. You can use the following command to make sure:
 
 ```bash
-$ nosetests --with-coverage --cover-package=gcdt tests/test_kumo*
+$ nosetests --with-coverage --cover-erase --cover-package=gcdt tests/test_kumo*
 ```
 
 
@@ -79,8 +79,6 @@ Usage:
         kumo list
         kumo delete -f
         kumo generate
-        kumo validate
-        kumo scaffold [<stackname>]
         kumo configure
         kumo preview
         kumo version
@@ -101,12 +99,6 @@ will delete a CloudFormation stack
 
 #### generate
 will generate the CloudFormation template for the given stack and write it to your current working directory.
-
-#### validate
-will validate your CloudFormation template. Warning: deploys can still fail
-
-#### scaffold
-create a new CloudFormation stack in your current working directory from a CookieCutter template
 
 #### configure
 you need to run this on first run
@@ -138,7 +130,6 @@ settings_prod.conf -> settings for prod in [hocon](https://github.com/typesafehu
 ```json
 cloudformation {
   StackName = "sample-stack"
-
 }
 ```
 
@@ -416,7 +407,6 @@ To see available commands, call this:
   Usage:
         tenkai deploy
         tenkai version
-
 ```
 
 

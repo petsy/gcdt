@@ -10,7 +10,8 @@ from pyhocon import ConfigFactory
 from pyhocon.config_tree import ConfigTree
 from gcdt.kumo_core import load_cloudformation_template, list_stacks, \
     print_parameter_diff, are_credentials_still_valid, deploy_stack, \
-    delete_stack, create_change_set, _get_stack_name, describe_change_set
+    delete_stack, create_change_set, _get_stack_name, describe_change_set, \
+    _get_artifact_bucket, _s3_upload
 
 
 def here(p): return os.path.join(os.path.dirname(__file__), p)
@@ -56,6 +57,46 @@ def test_print_parameter_diff():
     print_parameter_diff(boto_session, empty_conf, out=out)
     assert_regexp_matches(out.getvalue().strip(),
         'StackName is not configured, could not create parameter diff')
+
+
+@with_setup(check_preconditions)
+def test_s3_upload():
+    # bucket helpers borrowed from tenkai
+    def _prepare_artifacts_bucket(bucket):
+        if not _bucket_exists(bucket):
+            _create_bucket(bucket)
+
+    def _bucket_exists(bucket):
+        s3 = boto_session.resource('s3')
+        return s3.Bucket(bucket) in s3.buckets.all()
+
+    def _create_bucket(bucket):
+        client = boto_session.client('s3')
+        client.create_bucket(
+            Bucket=bucket
+        )
+        client.put_bucket_versioning(
+            Bucket=bucket,
+            VersioningConfiguration={
+                'Status': 'Enabled'
+            }
+        )
+
+    upload_conf = ConfigFactory.parse_file(
+        here('resources/simple_cloudformation_stack/settings_upload_dev.conf')
+    )
+
+    region = boto_session.region_name
+    artifact_bucket = _get_artifact_bucket(upload_conf)
+    _prepare_artifacts_bucket(artifact_bucket)
+    dest_key = 'kumo/%s/%s-cloudformation.json' % (region,
+                                                   _get_stack_name(upload_conf))
+    expected_s3url = 'https://s3-%s.amazonaws.com/%s/%s' % (region,
+                                                            artifact_bucket,
+                                                            dest_key)
+
+    actual_s3url = _s3_upload(boto_session, upload_conf, cloudformation)
+    assert_equal(expected_s3url, actual_s3url)
 
 
 # most kumo-operations which rely on a stack on AWS can not be tested in isolation

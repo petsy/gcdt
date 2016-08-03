@@ -321,13 +321,13 @@ def deploy_stack(boto_session, conf, cloudformation, slack_token,
         return _create_stack(boto_session, conf, cloudformation, slack_token)
 
 
-def _s3_upload(boto_session, conf):
+def _s3_upload(boto_session, conf, cloudformation):
     region = boto_session.region_name
     resource_s3 = boto_session.resource('s3')
     bucket = _get_artifact_bucket(conf)
     dest_key = 'kumo/%s/%s-cloudformation.json' % (region, _get_stack_name(conf))
 
-    source_file = generate_template_file(conf)
+    source_file = generate_template_file(conf, cloudformation)
 
     s3obj = resource_s3.Object(bucket, dest_key)
     s3obj.upload_file(source_file)
@@ -416,7 +416,7 @@ def _create_stack(boto_session, conf, cloudformation, slack_token):
         _get_artifact_bucket(conf)
         response = client_cf.create_stack(
             StackName=_get_stack_name(conf),
-            TemplateURL=_s3_upload(conf),
+            TemplateURL=_s3_upload(boto_session, conf, cloudformation),
             Parameters=_generate_parameters(conf),
             Capabilities=[
                 'CAPABILITY_IAM',
@@ -454,7 +454,7 @@ def _update_stack(boto_session, conf, cloudformation, override_stack_policy, sla
             _get_artifact_bucket(conf)
             response = client_cf.update_stack(
                 StackName=_get_stack_name(conf),
-                TemplateURL=_s3_upload(conf),
+                TemplateURL=_s3_upload(boto_session, conf, cloudformation),
                 Parameters=_generate_parameters(conf),
                 Capabilities=[
                     'CAPABILITY_IAM',
