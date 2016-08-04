@@ -59,6 +59,7 @@ def test_print_parameter_diff():
         'StackName is not configured, could not create parameter diff')
 
 
+# TODO: this needs a cleanup of the bucket
 @with_setup(check_preconditions)
 def test_s3_upload():
     # bucket helpers borrowed from tenkai

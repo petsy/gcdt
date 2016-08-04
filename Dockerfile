@@ -3,7 +3,8 @@ FROM jfloff/alpine-python:2.7
 # for a flask server
 ADD . /gcdt
 RUN ls -l gcdt
-ADD tests/pip.conf /root/.pip/pip.conf
+#ADD tests/pip.conf /root/.pip/pip.conf
+ADD pip.conf /root/.pip/pip.conf
 RUN pip install pip-tools
 RUN echo 'yugen { slack-token=""}' >> /root/.yugen
 RUN echo 'kumo { slack-token=""}' >> /root/.kumo
