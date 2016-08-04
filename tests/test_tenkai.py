@@ -1,4 +1,4 @@
-from nose.tools import assert_equal, assert_true, assert_list_equal
+from nose.tools import assert_equal, assert_true, assert_items_equal
 import nose
 import os
 import shutil
@@ -45,7 +45,7 @@ def test_files_to_bundle():
     expected = ['sample_code2.txt', 'sample_code.txt', 'folder/sample_code3.txt']
 
     actual = [x[1] for x in _files_to_bundle(codedeploy)]
-    assert_list_equal(actual, expected)
+    assert_items_equal(actual, expected)
 
 
 def test_build_bundle_key():
