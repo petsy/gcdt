@@ -46,7 +46,7 @@ setup(
             'kumo=gcdt.kumo_main:main',
             'ramuda=gcdt.ramuda_tool:main',
             'yugen=gcdt.yugen_tool:main',
-            'tenkai=gcdt.tenkai_tool:main'
+            'tenkai=gcdt.tenkai_main:main'
         ]
     }
 )

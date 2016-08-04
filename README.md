@@ -1,7 +1,7 @@
 Glomex Cloud Deployment Tools
 ===============================
 
-version number: 0.0.26
+version number: 0.0.30
 
 author: Glomex Data Platform Team
 
@@ -24,6 +24,12 @@ The repo also has prerelease packages you can use for testing new features or bu
 
     $ pip install --pre gcdt
 
+Install the development version (after checkout):
+
+```bash
+$ pip install -e .
+```
+
 
 Contributing
 ------------
@@ -41,10 +47,26 @@ Please open a GitHub issue for any bug reports and feature requests.
 - You you need to set an environment variable "ENV" which indicates the account/staging area you want to work with. This parameter tells the tools which config file to use. Basically something like settings_$(ENV).conf is evaluated in the configuration component.
 1. All tools use the config_reader module from [glomex-utils](https://github.com/glomex/glomex-utils). This offers some convenient features like looking up values from other CloudFormation stacks, fetching credentials stored in credstash. See the repo documentation for details.
 
+Installing dev requirements
+---------------------------
+
+use pip to install the dev requirements:
+
+```bash
+$ pip install -r requirements_dev.txt
+```
+
+
 Running Unit-Tests
 ------------------
 
 Use the nosetest test-runner to run the gcdt unit tests. A few tests (with '_aws' in the file name) need AWS. Please turn on your VPN and set the AWS_DEFAULT_PROFILE, ENV, and ACCOUNT environment variables. Details here: https://confluence.glomex.com/display/OPSSHARED/Deployment+on+AWS.
+
+You need to install the development version of this package so you can run the tests:
+
+```bash
+$ pip install -e .
+```
 
 ```bash
 $ export AWS_DEFAULT_PROFILE=superuser-dp-dev

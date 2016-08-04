@@ -18,25 +18,23 @@ def get_git_revision_short_hash():
     return strip(subprocess.check_output(['git', 'rev-parse', '--short', 'HEAD']))
 
 
-'''looks like this is no longer used...
-def example_exc_handler(tries_remaining, exception, delay):
-    """Example exception handler; prints a warning to stderr.
-
-    tries_remaining: The number of tries remaining.
-    exception: The exception instance which was raised.
-    """
-    print >> sys.stderr, "Caught '%s', %d tries remaining, sleeping for %s seconds" % (exception, tries_remaining, delay)
-'''
-
-
 def retries(max_tries, delay=1, backoff=2, exceptions=(Exception,), hook=None):
     """Function decorator implementing retrying logic.
 
     delay: Sleep this many seconds * backoff * try number after failure
     backoff: Multiply delay by this factor after each failure
     exceptions: A tuple of exception classes; default (Exception,)
-    hook: A function with the signature myhook(tries_remaining, exception);
-          default None
+    hook: A function with the signature:
+        example: myhook(tries_remaining, exception, mydelay);
+        default: None
+
+    def example_hook(tries_remaining, exception, delay):
+        '''Example exception handler; prints a warning to stderr.
+
+        tries_remaining: The number of tries remaining.
+        exception: The exception instance which was raised.
+        '''
+        print >> sys.stderr, "Caught '%s', %d tries remaining, sleeping for %s seconds" % (exception, tries_remaining, delay)
 
     The decorator will call the function up to max_tries times if it raises
     an exception.
@@ -69,6 +67,7 @@ def retries(max_tries, delay=1, backoff=2, exceptions=(Exception,), hook=None):
                     else:
                         raise
                 else:
+                    # break out of the retry loop in success case
                     break
         return f2
     return dec

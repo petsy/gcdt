@@ -84,7 +84,7 @@ def main():
                      override_stack_policy=arguments['--override-stack-policy'])
     elif arguments['delete']:
         slack_token = get_slack_token()
-        cloudformation = load_template()
+        cloudformation = load_template()  # TODO: is this really necessary?
         conf = read_config()
         are_credentials_still_valid(boto_session)
         exit_code = delete_stack(boto_session, conf, slack_token)
@@ -108,7 +108,6 @@ def main():
     elif arguments['version']:
         utils.version()
 
-    # note: moved the sys.exit call here so only main exits!
     sys.exit(exit_code)
 
 
