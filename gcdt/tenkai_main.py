@@ -8,12 +8,12 @@ from __future__ import print_function
 import sys
 from docopt import docopt
 from glomex_utils.config_reader import read_config
-import utils
-from tenkai_core import prepare_artifacts_bucket, deploy, deployment_status, \
+from gcdt import utils
+from gcdt.tenkai_core import prepare_artifacts_bucket, deploy, deployment_status, \
     bundle_revision
 
 
-doc = """Usage:
+DOC = """Usage:
         tenkai bundle
         tenkai deploy
         tenkai version
@@ -23,7 +23,7 @@ doc = """Usage:
 
 
 def main():
-    arguments = docopt(doc)
+    arguments = docopt(DOC)
 
     if arguments['deploy']:
         conf = read_config(config_base_name='codedeploy')

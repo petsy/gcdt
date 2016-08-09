@@ -8,6 +8,7 @@
 # test-tools
 nose==1.3.7
 coverage==4.2.0
+testfixtures
 
 # build-tools
 setuptools>=25.1.3

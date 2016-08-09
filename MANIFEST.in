@@ -1,4 +1,3 @@
 include README.md
 include requirements.txt
-include gcdt/cookiecutter-kumo/*
-include gcdt/cookiecutter-kumo/{{cookiecutter.app_name}}/*
+include setup.py

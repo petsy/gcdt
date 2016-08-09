@@ -12,11 +12,11 @@ from datetime import tzinfo, timedelta, datetime
 import pyhocon.exceptions
 from pyhocon.exceptions import ConfigMissingException
 from pyhocon import ConfigFactory
-import monitoring
 from tabulate import tabulate
 from pyspin.spin import Default, Spinner
 from clint.textui import colored, prompt
 from glomex_utils.config_reader import get_env
+from gcdt import monitoring
 
 
 def load_cloudformation_template(path=None):

@@ -69,6 +69,7 @@ class StackLookup(object):
             )
 
 
+# TODO: move this to dp_helper!
 def create_dp_name(env, layer, name):
     """Deprecated! Please move this to dp_helper!
 

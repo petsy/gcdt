@@ -1,9 +1,7 @@
 from __future__ import print_function
 import sys
 from time import sleep
-
-
-__version__ = '0.0.31.dev0'
+from gcdt import __version__
 
 
 def version(out=sys.stdout):

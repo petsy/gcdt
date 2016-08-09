@@ -134,3 +134,11 @@ ENV/
 # kumo generated templates
 *-generated-cf-template.json
 log-*.txt
+
+# ramuda temporary test files
+tests/resources/sample_lambda/vendored
+tests/resources/sample_lambda/settings_dev.conf
+tests/vendored
+tests/settings_dev.conf
+vendored
+tests/requirements.txt
