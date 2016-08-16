@@ -77,9 +77,13 @@ def test_s3_upload():
 
     region = boto_session.region_name
     account = os.getenv('ACCOUNT', None)
-    artifact_bucket = _get_artifact_bucket(upload_conf)
+    # add account prefix to artifact bucket config
     if account:
-        artifact_bucket = account + '-' + artifact_bucket
+        upload_conf['cloudformation']['artifactBucket'] = \
+            '%s-unittest-kumo-artifact-bucket' % account
+    # expected = ConfigTree([('kumo', ConfigTree([('slack-token', stackname)]))])
+
+    artifact_bucket = _get_artifact_bucket(upload_conf)
     _prepare_artifacts_bucket(artifact_bucket)
     dest_key = 'kumo/%s/%s-cloudformation.json' % (region,
                                                    _get_stack_name(upload_conf))
