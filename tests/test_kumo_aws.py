@@ -76,7 +76,10 @@ def test_s3_upload():
     )
 
     region = boto_session.region_name
+    account = os.getenv('ACCOUNT', None)
     artifact_bucket = _get_artifact_bucket(upload_conf)
+    if account:
+        artifact_bucket = account + '-' + artifact_bucket
     _prepare_artifacts_bucket(artifact_bucket)
     dest_key = 'kumo/%s/%s-cloudformation.json' % (region,
                                                    _get_stack_name(upload_conf))
