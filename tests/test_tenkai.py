@@ -14,7 +14,8 @@ def test_make_tar_file():
     # _make_tar_file implements bundle
     codedeploy = here('resources/simple_codedeploy/codedeploy')
     folder = mkdtemp()
-    expected_filename = '%s/tenkai-bundle.tar.gz' % folder
+    file_suffix = os.getenv('BUILD_TAG', '')
+    expected_filename = '%s/tenkai-bundle%s.tar.gz' % (folder, file_suffix)
 
     tarfile_name = _make_tar_file(path=codedeploy,
                                   outputpath=folder)
@@ -29,7 +30,8 @@ def test_bundle_revision():
     cwd = (os.getcwd())
     os.chdir(here('resources/simple_codedeploy'))
     folder = mkdtemp()
-    expected_filename = '%s/tenkai-bundle.tar.gz' % folder
+    file_suffix = os.getenv('BUILD_TAG', '')
+    expected_filename = '%s/tenkai-bundle%s.tar.gz' % (folder, file_suffix)
 
     tarfile_name = bundle_revision(outputpath=folder)
     assert_equal(tarfile_name, expected_filename)

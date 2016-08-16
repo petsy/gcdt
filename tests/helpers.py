@@ -60,56 +60,6 @@ def with_setup_args(setup, teardown=None):
     return decorate
 
 
-'''
-class _Decorator(object):
-    def __init__(self, func, setup, teardown):
-        self.func = func
-        #self.param1, self.param2 = param1, param2
-        self.args = []
-        self.kwargs = {}
-
-        #def test_wrapped():
-        #    func(*self.args, **self.kwargs)
-
-        #self.test_wrapped = test_wrapped
-        self.__name__ = func.__name__
-
-        def setup_wrapped():
-            a, k = setup()
-            self.args.extend(a)
-            self.kwargs.update(k)
-            #if hasattr(func, 'setup'):
-            #    func.setup()
-        self.setup = setup_wrapped
-
-        if teardown:
-            def teardown_wrapped():
-                #if hasattr(func, 'teardown'):
-                #    func.teardown()
-                teardown(*self.args, **self.kwargs)
-
-            self.teardown = teardown_wrapped
-        #else:
-        #    if hasattr(func, 'teardown'):
-        #        test_wrapped.teardown = func.teardown()
-        #return test_wrapped
-
-    #def __call__(self, *args, **kwargs):
-    def __call__(self):
-        #use self.param1
-        #self.test_wrapped()
-        return self.func(*self.args, **self.kwargs)
-        #use self.param2
-        #return result
-
-
-def with_setup_args(setup, teardown=None):
-    def decorator(func):
-        return _Decorator(func, setup, teardown)
-    return decorator
-'''
-
-
 def create_tempfile(contents):
     """Helper to create a named tempoary file with contents.
     Note: caller has responsibility to clean up the temp file!
@@ -142,7 +92,8 @@ def get_size(start_path='.'):
 
 def check_preconditions():
     """Make sure the default AWS profile is set so the test can run on AWS."""
-    if not os.getenv('AWS_DEFAULT_PROFILE', None):
+    if os.getenv('USER', None) != 'jenkins' and \
+            not os.getenv('AWS_DEFAULT_PROFILE', None):
         # http://stackoverflow.com/questions/1120148/disabling-python-nosetests/1843106
         print("AWS_DEFAULT_PROFILE variable not set! Test is skipped.")
         raise SkipTest("AWS_DEFAULT_PROFILE variable not set! Test is skipped.")
