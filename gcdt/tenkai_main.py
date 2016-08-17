@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
 """The 'tenkai' tool is used to work with AWS CodeDeploy.
 """

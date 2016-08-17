@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 """The kumo_util file contains stuff that is used for example in cloudformation.py
 templates or from other external code.
 """

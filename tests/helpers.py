@@ -1,5 +1,8 @@
+# -*- coding: utf-8 -*-
 from __future__ import print_function
 import os
+import random
+import string
 from tempfile import NamedTemporaryFile
 from nose.plugins.skip import SkipTest
 
@@ -104,3 +107,9 @@ def check_preconditions():
     if not os.getenv('ACCOUNT', None):
         print("ACCOUNT environment variable not set! Test is skipped.")
         raise SkipTest("ACCOUNT environment variable not set! Test is skipped.")
+
+
+def random_string():
+    """Create a random 6 character string.
+    """
+    return ''.join([random.choice(string.ascii_lowercase) for i in xrange(6)])

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from nose.tools import assert_equal, assert_true, assert_in
 from helpers import with_setup_args
 

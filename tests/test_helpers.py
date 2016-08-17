@@ -1,9 +1,10 @@
+# -*- coding: utf-8 -*-
 import os
 import shutil
 from tempfile import mkdtemp
-
+import nose
 from nose.tools import assert_equal, assert_true, assert_in
-from helpers import with_setup_args, create_tempfile, get_size
+from helpers import with_setup_args, create_tempfile, get_size, random_string
 
 
 # code & sample from here:
@@ -68,3 +69,10 @@ def test_get_size():
     shutil.rmtree(folder)
 
 # TODO: write test for check_preconditions!
+
+
+def test_random_string():
+    ts = random_string()
+    print(ts)
+    assert_equal(len(ts), 6)
+    nose.tools.assert_not_equal(ts, random_string())

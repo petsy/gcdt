@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import boto3
 import os
 from StringIO import StringIO
@@ -5,6 +6,7 @@ from nose.tools import assert_equal, assert_false, \
     assert_regexp_matches, with_setup
 import nose
 from nose.tools import assert_is_not
+from nose.plugins.attrib import attr
 from pyhocon import ConfigFactory
 from pyhocon.config_tree import ConfigTree
 from gcdt.kumo_core import load_cloudformation_template, list_stacks, \
@@ -30,6 +32,7 @@ config = ConfigFactory.parse_file(
 )
 
 
+@attr('aws')
 @with_setup(check_preconditions)
 def test_list_stacks():
     out = StringIO()
@@ -37,6 +40,7 @@ def test_list_stacks():
     assert_regexp_matches(out.getvalue().strip(), 'listed \d+ stacks')
 
 
+@attr('aws')
 @with_setup(check_preconditions)
 def test_print_parameter_diff():
     out = StringIO()
@@ -48,6 +52,7 @@ def test_print_parameter_diff():
 
 
 # TODO: this needs a cleanup of the bucket
+@attr('aws')
 @with_setup(check_preconditions)
 def test_s3_upload():
     # bucket helpers borrowed from tenkai
@@ -109,6 +114,7 @@ def cleanup_stack():
                  'please make sure to clean up the stack manually')
 
 
+@attr('aws')
 @with_setup(check_preconditions, cleanup_stack)
 def test_kumo_stack_lifecycle():
     # create a stack we use for the test lifecycle

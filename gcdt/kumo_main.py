@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
 """The 'kumo' tool is used to deploy infrastructure CloudFormation templates
 to AWS cloud.
