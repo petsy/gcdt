@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 """The kumo_util file contains stuff that is used for example in cloudformation.py
 templates or from other external code.
 """
@@ -69,6 +71,7 @@ class StackLookup(object):
             )
 
 
+# TODO: move this to dp_helper!
 def create_dp_name(env, layer, name):
     """Deprecated! Please move this to dp_helper!
 

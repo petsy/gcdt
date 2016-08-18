@@ -1,17 +1,19 @@
+# -*- coding: utf-8 -*-
 import boto3
 import os
 from StringIO import StringIO
-from nose.plugins.skip import SkipTest
 from nose.tools import assert_equal, assert_false, \
     assert_regexp_matches, with_setup
 import nose
 from nose.tools import assert_is_not
+from nose.plugins.attrib import attr
 from pyhocon import ConfigFactory
 from pyhocon.config_tree import ConfigTree
 from gcdt.kumo_core import load_cloudformation_template, list_stacks, \
     print_parameter_diff, are_credentials_still_valid, deploy_stack, \
     delete_stack, create_change_set, _get_stack_name, describe_change_set, \
     _get_artifact_bucket, _s3_upload
+from helpers import check_preconditions
 
 
 def here(p): return os.path.join(os.path.dirname(__file__), p)
@@ -30,18 +32,7 @@ config = ConfigFactory.parse_file(
 )
 
 
-def check_preconditions():
-    """Make sure the default profile is set"""
-    if not os.getenv('AWS_DEFAULT_PROFILE', None):
-        # http://stackoverflow.com/questions/1120148/disabling-python-nosetests/1843106
-        print("AWS_DEFAULT_PROFILE variable not set! Test is skipped.")
-        raise SkipTest("AWS_DEFAULT_PROFILE variable not set! Test is skipped.")
-    # export AWS_DEFAULT_PROFILE=superuser-qa-dev => README.md
-    if not os.getenv('ENV', None):
-        print("ENV environment variable not set! Test is skipped.")
-        raise SkipTest("ENV environment variable not set! Test is skipped.")
-
-
+@attr('aws')
 @with_setup(check_preconditions)
 def test_list_stacks():
     out = StringIO()
@@ -49,6 +40,7 @@ def test_list_stacks():
     assert_regexp_matches(out.getvalue().strip(), 'listed \d+ stacks')
 
 
+@attr('aws')
 @with_setup(check_preconditions)
 def test_print_parameter_diff():
     out = StringIO()
@@ -60,6 +52,7 @@ def test_print_parameter_diff():
 
 
 # TODO: this needs a cleanup of the bucket
+@attr('aws')
 @with_setup(check_preconditions)
 def test_s3_upload():
     # bucket helpers borrowed from tenkai
@@ -88,6 +81,13 @@ def test_s3_upload():
     )
 
     region = boto_session.region_name
+    account = os.getenv('ACCOUNT', None)
+    # add account prefix to artifact bucket config
+    if account:
+        upload_conf['cloudformation']['artifactBucket'] = \
+            '%s-unittest-kumo-artifact-bucket' % account
+    # expected = ConfigTree([('kumo', ConfigTree([('slack-token', stackname)]))])
+
     artifact_bucket = _get_artifact_bucket(upload_conf)
     _prepare_artifacts_bucket(artifact_bucket)
     dest_key = 'kumo/%s/%s-cloudformation.json' % (region,
@@ -114,6 +114,7 @@ def cleanup_stack():
                  'please make sure to clean up the stack manually')
 
 
+@attr('aws')
 @with_setup(check_preconditions, cleanup_stack)
 def test_kumo_stack_lifecycle():
     # create a stack we use for the test lifecycle

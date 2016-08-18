@@ -1,11 +1,12 @@
+# -*- coding: utf-8 -*-
 from __future__ import print_function
 import os
 import sys
-import boto3
 import time
 import tarfile
-from clint.textui import colored
+import boto3
 from boto3.s3.transfer import S3Transfer
+from clint.textui import colored
 
 
 def deploy(applicationName, deploymentGroupName, deploymentConfigName, bucket):

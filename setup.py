@@ -1,19 +1,21 @@
 from setuptools import setup, find_packages
 from codecs import open
-from os import path
+import os
+from gcdt import __version__
 
+here = os.path.abspath(os.path.dirname(__file__))
+if not os.getenv('ghprbPullId', None):
+    version = __version__
+else:
+    version = 'PR%s' % os.getenv('ghprbPullId')
 
-__version__ = '0.0.32'
-
-
-here = path.abspath(path.dirname(__file__))
 
 # Get the long description from the README file
-with open(path.join(here, 'README.md'), encoding='utf-8') as f:
+with open(os.path.join(here, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
 # get the dependencies and installs
-with open(path.join(here, 'requirements.txt'), encoding='utf-8') as f:
+with open(os.path.join(here, 'requirements.txt'), encoding='utf-8') as f:
     all_reqs = f.read().split('\n')
 
 
@@ -23,11 +25,11 @@ dependency_links = [x.strip().replace('git+', '') for x in all_reqs if 'git+' no
 
 setup(
     name='gcdt',
-    version=__version__,
+    version=version,
     description='Glomex Cloud Deployment Tools',
     long_description=long_description,
     url='https://invalidurl.invalid',
-    download_url='http://invalidurl.invalid/gcdt/tarball/' + __version__,
+    download_url='http://invalidurl.invalid/gcdt/tarball/' + version,
     license='BSD',
     classifiers=[
         'Development Status :: 3 - Alpha',
@@ -44,7 +46,7 @@ setup(
     entry_points={
         'console_scripts': [
             'kumo=gcdt.kumo_main:main',
-            'ramuda=gcdt.ramuda_tool:main',
+            'ramuda=gcdt.ramuda_main:main',
             'yugen=gcdt.yugen_tool:main',
             'tenkai=gcdt.tenkai_main:main'
         ]
