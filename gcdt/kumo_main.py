@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
 """The 'kumo' tool is used to deploy infrastructure CloudFormation templates
 to AWS cloud.
@@ -7,19 +8,19 @@ to AWS cloud.
 from __future__ import print_function
 
 import sys
-import utils
 import boto3
 from docopt import docopt
 from clint.textui import colored
 from glomex_utils.config_reader import read_config
-from kumo_core import call_pre_hook, print_parameter_diff, delete_stack, \
+from gcdt import utils
+from gcdt.kumo_core import call_pre_hook, print_parameter_diff, delete_stack, \
     deploy_stack, generate_template_file, list_stacks, configure, \
     create_change_set, describe_change_set, \
     load_cloudformation_template
 
 
 # creating docopt parameters and usage help
-doc = """Usage:
+DOC = """Usage:
         kumo deploy [--override-stack-policy]
         kumo list
         kumo delete -f
@@ -70,7 +71,7 @@ def get_slack_token():
 def main():
     exit_code = 0
     boto_session = boto3.session.Session()
-    arguments = docopt(doc)
+    arguments = docopt(DOC)
 
     # Run command
     if arguments['deploy']:
@@ -81,7 +82,7 @@ def main():
         print_parameter_diff(boto_session, conf)
         are_credentials_still_valid(boto_session)
         exit_code = deploy_stack(boto_session, conf, cloudformation, slack_token,
-                     override_stack_policy=arguments['--override-stack-policy'])
+            override_stack_policy=arguments['--override-stack-policy'])
     elif arguments['delete']:
         slack_token = get_slack_token()
         cloudformation = load_template()  # TODO: is this really necessary?

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from nose.tools import assert_equal
 from StringIO import StringIO
 from gcdt.utils import version, __version__, retries

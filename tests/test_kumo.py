@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from nose.tools import assert_dict_equal
 from nose.tools import assert_equal, assert_true, \
     assert_regexp_matches, assert_list_equal, raises

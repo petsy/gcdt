@@ -1,9 +1,9 @@
 Glomex Cloud Deployment Tools
-===============================
+=============================
 
-version number: 0.0.30
+version number: 0.0.32.dev0
 
-author: Glomex Data Platform Team
+author: Glomex DevOps Team
 
 Overview
 --------
@@ -49,6 +49,16 @@ Please open a GitHub issue for any bug reports and feature requests.
 
 Installing dev requirements
 ---------------------------
+
+if you use virtualenv, add the following entry to your $VIRTUAL_ENV/pip.conf file:
+
+```
+[global]
+timeout = 5
+extra-index-url = https://reposerver-prod-eu-west-1.infra.glomex.cloud/pypi/packages
+trusted-host = reposerver-prod-eu-west-1.infra.glomex.cloud
+```
+
 
 use pip to install the dev requirements:
 

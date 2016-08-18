@@ -1,9 +1,8 @@
+# -*- coding: utf-8 -*-
 from __future__ import print_function
 import sys
 from time import sleep
-
-
-__version__ = '0.0.32'
+from gcdt import __version__
 
 
 def version(out=sys.stdout):

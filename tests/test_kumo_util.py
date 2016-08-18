@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import troposphere
 from nose.tools import assert_equal
 from gcdt.kumo_util import create_dp_name, StackLookup
