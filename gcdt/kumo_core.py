@@ -436,7 +436,7 @@ def _create_stack(boto_session, conf, cloudformation, slack_token):
         )
 
     message = 'kumo bot: created stack %s ' % _get_stack_name(conf)
-    monitoring.slacker_notifcation('systemmessages', message, slack_token)
+    monitoring.slacker_notification('systemmessages', message, slack_token)
     stackname = _get_stack_name(conf)
     exit_code = _poll_stack_events(boto_session, stackname)
     _call_post_create_hook(cloudformation)
@@ -480,7 +480,7 @@ def _update_stack(boto_session, conf, cloudformation, override_stack_policy, sla
             )
 
         message = 'kumo bot: updated stack %s ' % _get_stack_name(conf)
-        monitoring.slacker_notifcation('systemmessages', message, slack_token)
+        monitoring.slacker_notification('systemmessages', message, slack_token)
         stackname = _get_stack_name(conf)
         exit_code = _poll_stack_events(boto_session, stackname)
         _call_post_update_hook(cloudformation)
@@ -507,7 +507,7 @@ def delete_stack(boto_session, conf, slack_token):
         StackName=_get_stack_name(conf),
     )
     message = 'kumo bot: deleted stack %s ' % _get_stack_name(conf)
-    monitoring.slacker_notifcation('systemmessages', message, slack_token)
+    monitoring.slacker_notification('systemmessages', message, slack_token)
     stackname = _get_stack_name(conf)
     return _poll_stack_events(boto_session, stackname)
 

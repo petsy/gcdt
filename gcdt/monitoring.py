@@ -1,13 +1,16 @@
+# -*- coding: utf-8 -*-
 from time import time
 from functools import wraps
 import boto3
 import datetime
 import json
-from logger import log_json, setup_logger
 from slacker import Slacker
+from gcdt.logger import setup_logger
 
 log = setup_logger(logger_name="monitoring")
 
+
+# TODO: this needs tests!
 
 def get_cloudwatch_client():
     return boto3.client("cloudwatch")
@@ -17,14 +20,14 @@ def get_cloudwatch_events_client():
     return boto3.client('events')
 
 
-def put_metrics(Namespace, MetricData):
+def put_metrics(namespace, metric_data):
     cloudwatch = get_cloudwatch_client()
-    cloudwatch.put_metric_data(Namespace=Namespace, MetricData=MetricData)
+    cloudwatch.put_metric_data(Namespace=namespace, MetricData=metric_data)
 
 
 def timing(namespace, metric, value):
-    """
-    Record a timing.
+    """Record a timing.
+
     >>> monitoring.timing("query.response.time", 1234)
     """
     print(metric, 'ms', value)
@@ -38,8 +41,7 @@ def timing(namespace, metric, value):
 
 
 def timed(namespace, metric):
-    """
-    A decorator that will measure the distribution of a function's run
+    """A decorator that will measure the distribution of a function's execution
     time.
     ::
         @monitoring.timed('user.query.time')
@@ -67,9 +69,9 @@ def timed(namespace, metric):
     return wrapper
 
 
-def push_event(namespace, event):
+def push_event(namespace, cloudwatch_event):
     client = get_cloudwatch_events_client()
-    detail = {"description": event}
+    detail = {"description": cloudwatch_event}
     response = client.put_events(
         Entries=[
             {
@@ -81,12 +83,12 @@ def push_event(namespace, event):
             },
         ]
     )
-    log.info(namespace + " " + event)
+    log.info(namespace + " " + cloudwatch_event)
     log.info(("pushed cloudwatch event: %s" % response))
     print response
 
 
-def event(namespace, event):
+def event(namespace, cloudwatch_event):
     """
     A decorator that will push a custom cloudwatch event
     ::
@@ -101,7 +103,7 @@ def event(namespace, event):
         @wraps(func)
         def wrapped(*args, **kwargs):
             result = func(*args, **kwargs)
-            push_event(namespace, event)
+            push_event(namespace, cloudwatch_event)
             return result
 
         return wrapped
@@ -109,25 +111,23 @@ def event(namespace, event):
     return wrapper
 
 
-def send_to_slacker(channel, event, slack_token):
+def send_to_slacker(channel, cloudwatch_event, slack_token):
+    """A decorator that will push a custom cloudwatch event
+
+    @monitoring.event('deploytool', 'deployed xyz')
+    def deploy_something():
+        # Do what you need to ...
+        pass
+    """
+
     if slack_token:
         slack = Slacker(slack_token)
-
-        """
-        A decorator that will push a custom cloudwatch event
-        ::
-            @monitoring.event('deploytool', 'deployed xyz')
-            def deploy_something():
-                # Do what you need to ...
-                pass
-
-        """
 
         def wrapper(func):
             @wraps(func)
             def wrapped(*args, **kwargs):
                 result = func(*args, **kwargs)
-                slack.chat.post_message('#' + channel, event)
+                slack.chat.post_message('#' + channel, cloudwatch_event)
                 return result
 
             return wrapped
@@ -137,7 +137,7 @@ def send_to_slacker(channel, event, slack_token):
         pass
 
 
-def slacker_notifcation(channel, message, slack_token):
+def slacker_notification(channel, message, slack_token):
     if slack_token:
         slack = Slacker(slack_token)
         slack.chat.post_message('#' + channel, message)
