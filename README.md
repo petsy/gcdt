@@ -1,7 +1,7 @@
 Glomex Cloud Deployment Tools
 =============================
 
-version number: 0.0.33
+version number: 0.0.34.dev0
 
 author: Glomex DevOps Team
 
