@@ -5,6 +5,7 @@
 
 from __future__ import print_function
 import sys
+import json
 from numbers import Number
 from compiler.ast import flatten
 
@@ -12,23 +13,67 @@ from compiler.ast import flatten
 # Author: Ben Butler-Cole
 # License: MIT
 
+
 # sample use:
-# with open('ELBStickinessSample.template', 'r') as tfile:
-#    template = json.loads(tfile.read())
-# cfn_viz(template, parameters={'KeyName': 'abc123'})
+#def main():
+#    # python kumo_viz.py | dot -Tsvg -osample.svg
+#    with open('ELBStickinessSample.template', 'r') as tfile:
+#        template = json.loads(tfile.read())
+#    cfn_viz(template, parameters={'KeyName': 'abc123'})
 
 
 def cfn_viz(template, parameters={}, outputs={}, out=sys.stdout):
     """Render dot output for cloudformation.template in json format.
     """
+    known_sg, open_sg = _analyze_sg(template['Resources'])
     (graph, edges) = _extract_graph(template.get('Description', ''),
-                                    template['Resources'])
+                                    template['Resources'], known_sg, open_sg)
     graph['edges'].extend(edges)
     _handle_terminals(template, graph, 'Parameters', 'source', parameters)
     _handle_terminals(template, graph, 'Outputs', 'sink', outputs)
     graph['subgraphs'].append(_handle_pseudo_params(graph['edges']))
 
     _render(graph, out=out)
+
+
+def _analyze_sg(elem):
+    # helper to analyzse the security groups in the stack
+    # returns known, open
+
+    #"InstanceSecurityGroup" : {
+    #    "Type" : "AWS::EC2::SecurityGroup",
+    #    "Properties" : {
+    #        "GroupDescription" : "Enable SSH access and HTTP access on the inbound port",
+    #        "SecurityGroupIngress" : [ {
+    #            "IpProtocol" : "tcp",
+    #            "FromPort" : "22",
+    #            "ToPort" : "22",
+    #            "CidrIp" : { "Ref" : "SSHLocation"}
+    #        },
+    #            {
+    #                "IpProtocol" : "tcp",
+    #                "FromPort" : "80",
+    #                "ToPort" : "80",
+    #                "CidrIp" : "0.0.0.0/0"
+    #            } ]
+    #    }
+    known_sg = []
+    open_sg = []
+    for item, details in elem.iteritems():
+        # item: ElasticLoadBalancer
+        # details: {u'Type': u'AWS::ElasticLoadBalancing::LoadBalancer',
+        #  u'Properties': {u'Scheme': u'internet-facing',...
+        if 'Type' in details:
+            resource_type = details['Type'].split('::')[-1]
+            if resource_type and resource_type == 'SecurityGroup':
+                known_sg.append(item)
+                if 'Properties' in details:
+                    properties = details['Properties']
+                    if 'SecurityGroupIngress' in properties:
+                        for sgi in properties['SecurityGroupIngress']:
+                            if 'CidrIp' in sgi and sgi['CidrIp'] == '0.0.0.0/0':
+                                open_sg.append(item)
+    return known_sg, open_sg
 
 
 def _handle_terminals(template, graph, name, rank, values={}):
@@ -54,20 +99,34 @@ def _handle_pseudo_params(edges):
     return graph
 
 
-def _get_fillcolor(resource_type, properties):
+def _get_fillcolor(resource_type, properties, known_sg=[], open_sg=[]):
     """Determine fillcolor for resources (public ones in this case)
     """
     fillcolor = None
+    # check security groups
+    if 'SecurityGroups' in properties:
+        # check for external security groups
+        for sg in properties['SecurityGroups']:
+            if 'Ref' in sg and (sg['Ref'] not in known_sg):
+                fillcolor = 'yellow'
+                break
+
+        # check for open security groups
+        for osg in open_sg:
+            if {'Ref': osg} in properties['SecurityGroups']:
+                fillcolor = 'red'
+                break
+
     # LoadBalancer
     if resource_type == 'LoadBalancer':
         if ('Scheme' not in properties) or \
-                properties['Scheme'] == 'internet-facing':
+                        properties['Scheme'] == 'internet-facing':
             fillcolor = 'red'
 
     return fillcolor
 
 
-def _extract_graph(name, elem):
+def _extract_graph(name, elem, known_sg=[], open_sg=[]):
     graph = {'name': name, 'nodes': [], 'edges': [], 'subgraphs': []}
     edges = []
     for item, details in elem.iteritems():
@@ -81,7 +140,8 @@ def _extract_graph(name, elem):
                 node['type'] = resource_type
                 if 'Properties' in details:
                     fillcolor = _get_fillcolor(resource_type,
-                                               details['Properties'])
+                                               details['Properties'],
+                                               known_sg, open_sg)
                     if fillcolor:
                         node['fillcolor'] = fillcolor
         graph['nodes'].append(node)
@@ -167,3 +227,7 @@ def _render(graph, subgraph=False, out=sys.stdout):
     for e in graph['edges']:
         print('"%s" -> "%s";' % (e['from'], e['to']), file=out)
     print('}', file=out)
+
+
+#if __name__ == '__main__':
+#    main()

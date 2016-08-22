@@ -6,8 +6,16 @@ node [fillcolor="red"]
 "ElasticLoadBalancer"[label=<<FONT POINT-SIZE="8">[LoadBalancer]</FONT><BR />ElasticLoadBalancer>]
 node [style=""];
 node [fillcolor=""]
+node [style="filled"];
+node [fillcolor="red"]
 "EC2Instance1"[label=<<FONT POINT-SIZE="8">[Instance]</FONT><BR />EC2Instance1>]
+node [style=""];
+node [fillcolor=""]
+node [style="filled"];
+node [fillcolor="red"]
 "EC2Instance2"[label=<<FONT POINT-SIZE="8">[Instance]</FONT><BR />EC2Instance2>]
+node [style=""];
+node [fillcolor=""]
 "InstanceSecurityGroup"[label=<<FONT POINT-SIZE="8">[SecurityGroup]</FONT><BR />InstanceSecurityGroup>]
 subgraph "Parameters" {
 labeljust=l;
