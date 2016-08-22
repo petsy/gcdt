@@ -1,11 +1,13 @@
-#!/usr/bin/env python
-#
-# Helper to create Route53 entries
+# -*- coding: utf-8 -*-
+
+"""Helper to create Route53 entries
+"""
+
+# TODO: add tests!
 
 import sys
 
 import troposphere
-
 from troposphere.ec2 import Instance
 from troposphere.route53 import RecordSetType
 

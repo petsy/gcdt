@@ -137,7 +137,7 @@ def deploy_api(api_name, api_description, stage_name, api_key, lambdas):
             create_deployment(api_name, stage_name)
             wire_api_key(api_name, api_key, stage_name)
             message = ("yugen bot: created api *%s*") % (api_name)
-            monitoring.slacker_notifcation("systemmessages", message, SLACK_TOKEN)
+            monitoring.slacker_notification("systemmessages", message, SLACK_TOKEN)
         else:
             print "API name unknown"
     else:
@@ -151,7 +151,7 @@ def deploy_api(api_name, api_description, stage_name, api_key, lambdas):
         if api is not None:
             create_deployment(api_name, stage_name)
             message = ("yugen bot: updated api *%s*") % (api_name)
-            monitoring.slacker_notifcation("systemmessages", message, SLACK_TOKEN)
+            monitoring.slacker_notification("systemmessages", message, SLACK_TOKEN)
         else:
             print "API name unknown"
 
@@ -184,7 +184,7 @@ def delete_api(api_name):
 
         print yugen_utils.json2table(response)
         message = ("yugen bot: deleted api *%s*") % (api_name)
-        monitoring.slacker_notifcation("systemmessages", message, SLACK_TOKEN)
+        monitoring.slacker_notification("systemmessages", message, SLACK_TOKEN)
     else:
         print "API name unknown"
 

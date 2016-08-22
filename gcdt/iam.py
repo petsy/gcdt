@@ -1,14 +1,17 @@
-#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
-# Helper to create IAM parts of cloud formation templates
+"""Helper to create IAM parts of cloud formation templates
+"""
 
 import troposphere
 from troposphere.iam import Role, PolicyType, ManagedPolicy
-from troposphere.s3 import Bucket, BucketPolicy, LifecycleConfiguration, LifecycleRule
+from troposphere.s3 import Bucket, BucketPolicy
 
 from awacs.aws import Allow, Statement, Principal, Policy
 from awacs.sts import AssumeRole
 
+
+# TODO: add tests
 
 class IAMRoleAndPolicies(object):
     """
@@ -184,7 +187,8 @@ class IAMRoleAndPolicies(object):
 
         return role
 
-    def build_bucket(self, name, lifecycle_configuration=False, use_plain_name=False):
+    def build_bucket(self, name, lifecycle_configuration=False,
+                     use_plain_name=False):
         """
         Generate S3 bucket statement
         :param name: Name of the bucket
