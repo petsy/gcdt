@@ -18,31 +18,31 @@ from compiler.ast import flatten
 # cfn_viz(template, parameters={'KeyName': 'abc123'})
 
 
-def cfn_viz(template, parameters=[], outputs=[], out=sys.stdout):
+def cfn_viz(template, parameters={}, outputs={}, out=sys.stdout):
     """Render dot output for cloudformation.template in json format.
     """
-    (graph, edges) = extract_graph(template.get('Description', ''),
-                                   template['Resources'])
+    (graph, edges) = _extract_graph(template.get('Description', ''),
+                                    template['Resources'])
     graph['edges'].extend(edges)
-    handle_terminals(template, graph, 'Parameters', 'source', parameters)
-    handle_terminals(template, graph, 'Outputs', 'sink', outputs)
-    graph['subgraphs'].append(handle_psuedo_params(graph['edges']))
+    _handle_terminals(template, graph, 'Parameters', 'source', parameters)
+    _handle_terminals(template, graph, 'Outputs', 'sink', outputs)
+    graph['subgraphs'].append(_handle_pseudo_params(graph['edges']))
 
-    render(graph, out=out)
+    _render(graph, out=out)
 
 
-def handle_terminals(template, graph, name, rank, values={}):
+def _handle_terminals(template, graph, name, rank, values={}):
     if name in template:
-        (subgraph, edges) = extract_graph_terminals(name, template[name], values)
+        (subgraph, edges) = _extract_graph_terminals(name, template[name], values)
         subgraph['rank'] = rank
         subgraph['style'] = 'filled,rounded'
         graph['subgraphs'].append(subgraph)
         graph['edges'].extend(edges)
 
 
-def handle_psuedo_params(edges):
+def _handle_pseudo_params(edges):
     graph = {
-        'name': 'Psuedo Parameters', 'nodes': [], 'edges': [],
+        'name': 'Pseudo Parameters', 'nodes': [], 'edges': [],
         'subgraphs': []
     }
     graph['shape'] = 'ellipse'
@@ -54,7 +54,7 @@ def handle_psuedo_params(edges):
     return graph
 
 
-def get_fillcolor(resource_type, properties):
+def _get_fillcolor(resource_type, properties):
     """Determine fillcolor for resources (public ones in this case)
     """
     fillcolor = None
@@ -67,29 +67,30 @@ def get_fillcolor(resource_type, properties):
     return fillcolor
 
 
-def extract_graph(name, elem):
+def _extract_graph(name, elem):
     graph = {'name': name, 'nodes': [], 'edges': [], 'subgraphs': []}
     edges = []
     for item, details in elem.iteritems():
         # item: ElasticLoadBalancer
-        # details: {u'Type': u'AWS::ElasticLoadBalancing::LoadBalancer', u'Properties': {u'Scheme': u'internet-facing',...
+        # details: {u'Type': u'AWS::ElasticLoadBalancing::LoadBalancer',
+        #  u'Properties': {u'Scheme': u'internet-facing',...
         node = {'name': item}
         if 'Type' in details:
             resource_type = details['Type'].split('::')[-1]
             if resource_type:
                 node['type'] = resource_type
                 if 'Properties' in details:
-                    fillcolor = get_fillcolor(resource_type,
-                                              details['Properties'])
+                    fillcolor = _get_fillcolor(resource_type,
+                                               details['Properties'])
                     if fillcolor:
                         node['fillcolor'] = fillcolor
         graph['nodes'].append(node)
         # edges.extend(flatten(find_refs(item, details)))
-        edges.extend(flatten(find_refs(item, details)))
+        edges.extend(flatten(_find_refs(item, details)))
     return graph, edges
 
 
-def extract_graph_terminals(name, elem, values={}):
+def _extract_graph_terminals(name, elem, values={}):
     graph = {'name': name, 'nodes': [], 'edges': [], 'subgraphs': []}
     edges = []
     for item, details in elem.iteritems():
@@ -97,11 +98,11 @@ def extract_graph_terminals(name, elem, values={}):
         if item in values:
             node['value'] = values[item]
         graph['nodes'].append(node)
-        edges.extend(flatten(find_refs(item, details)))
+        edges.extend(flatten(_find_refs(item, details)))
     return graph, edges
 
 
-def find_refs(context, elem):
+def _find_refs(context, elem):
     if isinstance(elem, dict):
         refs = []
         for k, v in elem.iteritems():
@@ -112,10 +113,10 @@ def find_refs(context, elem):
                 assert isinstance(v, list), 'Expected a list: %s' % v
                 refs.append({'from': v[0], 'to': context})
             else:
-                refs.extend(find_refs(context, v))
+                refs.extend(_find_refs(context, v))
         return refs
     elif isinstance(elem, list):
-        return map(lambda e: find_refs(context, e), elem)
+        return map(lambda e: _find_refs(context, e), elem)
     elif isinstance(elem, basestring):
         return []
     elif isinstance(elem, bool):
@@ -126,7 +127,7 @@ def find_refs(context, elem):
         raise AssertionError('Unexpected type: %s' % elem)
 
 
-def render(graph, subgraph=False, out=sys.stdout):
+def _render(graph, subgraph=False, out=sys.stdout):
     def _render_node(n):
         # helper to render a node (this adds type and fillcolor)
         # styles here: http://www.graphviz.org/doc/info/attrs.html#d:fillcolor
@@ -162,7 +163,7 @@ def render(graph, subgraph=False, out=sys.stdout):
     for node in graph['nodes']:
         _render_node(node)
     for s in graph['subgraphs']:
-        render(s, True, out)
+        _render(s, True, out)
     for e in graph['edges']:
         print('"%s" -> "%s";' % (e['from'], e['to']), file=out)
     print('}', file=out)

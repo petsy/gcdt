@@ -1,0 +1,62 @@
+digraph "AWS CloudFormation Sample Template ELBStickinessSample: Create a load balanced sample web site with ELB stickiness enabled. The AI is chosen based on the region in which the stack is run. This example creates 2 EC2 instances behind a load balancer with a simple health check. The ec2 instnces are untargeted and may be deployed in one or more availaiblity zones. The web site is available on port 80, however, the instances can be configured to listen on any port (8888 by default). **WARNING** This template creates one or more Amazon EC2 instances and an Elastic Load Balancer. You will be billed for the AWS resources used if you create a stack from this template." {
+labeljust=l;
+node [shape=box];
+node [style="filled"];
+node [fillcolor="red"]
+"ElasticLoadBalancer"[label=<<FONT POINT-SIZE="8">[LoadBalancer]</FONT><BR />ElasticLoadBalancer>]
+node [style=""];
+node [fillcolor=""]
+"EC2Instance1"[label=<<FONT POINT-SIZE="8">[Instance]</FONT><BR />EC2Instance1>]
+"EC2Instance2"[label=<<FONT POINT-SIZE="8">[Instance]</FONT><BR />EC2Instance2>]
+"InstanceSecurityGroup"[label=<<FONT POINT-SIZE="8">[SecurityGroup]</FONT><BR />InstanceSecurityGroup>]
+subgraph "Parameters" {
+labeljust=l;
+node [shape=box];
+node [style="filled,rounded"]
+rank=source
+"SSHLocation"
+"KeyName"[label=<KeyName<BR /><FONT POINT-SIZE="8">[=abc123]</FONT>>]
+"InstanceType"
+}
+subgraph "Outputs" {
+labeljust=l;
+node [shape=box];
+node [style="filled,rounded"]
+rank=sink
+"URL"
+}
+subgraph "Pseudo Parameters" {
+labeljust=l;
+node [shape=ellipse];
+"AWS::StackName"
+"AWS::Region"
+"AWS::StackId"
+}
+"EC2Instance1" -> "ElasticLoadBalancer";
+"EC2Instance2" -> "ElasticLoadBalancer";
+"AWS::StackName" -> "EC2Instance1";
+"AWS::Region" -> "EC2Instance1";
+"AWS::StackName" -> "EC2Instance1";
+"AWS::Region" -> "EC2Instance1";
+"KeyName" -> "EC2Instance1";
+"InstanceSecurityGroup" -> "EC2Instance1";
+"InstanceType" -> "EC2Instance1";
+"AWS::Region" -> "EC2Instance1";
+"InstanceType" -> "EC2Instance1";
+"AWS::StackId" -> "EC2Instance1";
+"AWS::Region" -> "EC2Instance1";
+"AWS::StackName" -> "EC2Instance1";
+"AWS::Region" -> "EC2Instance1";
+"AWS::Region" -> "EC2Instance1";
+"AWS::StackName" -> "EC2Instance2";
+"AWS::Region" -> "EC2Instance2";
+"AWS::StackName" -> "EC2Instance2";
+"AWS::Region" -> "EC2Instance2";
+"KeyName" -> "EC2Instance2";
+"InstanceSecurityGroup" -> "EC2Instance2";
+"InstanceType" -> "EC2Instance2";
+"AWS::Region" -> "EC2Instance2";
+"InstanceType" -> "EC2Instance2";
+"SSHLocation" -> "InstanceSecurityGroup";
+"ElasticLoadBalancer" -> "URL";
+}
