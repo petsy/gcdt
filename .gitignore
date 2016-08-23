@@ -143,4 +143,7 @@ tests/settings_dev.conf
 vendored
 tests/requirements.txt
 set_qa
+set_dp
 howto.txt
+build_pr.sh
+tests/MyStringIO.py
