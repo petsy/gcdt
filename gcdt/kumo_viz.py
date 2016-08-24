@@ -71,7 +71,8 @@ def _analyze_sg(elem):
                     properties = details['Properties']
                     if 'SecurityGroupIngress' in properties:
                         for sgi in properties['SecurityGroupIngress']:
-                            if 'CidrIp' in sgi and sgi['CidrIp'] == '0.0.0.0/0':
+                            if 'CidrIp' in sgi and sgi['CidrIp'] == '0.0.0.0/0'\
+                                    and sgi['IpProtocol'].lower() != 'icmp':
                                 open_sg.append(item)
     return known_sg, open_sg
 
