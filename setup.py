@@ -39,7 +39,7 @@ setup(
     keywords='',
     packages=find_packages(exclude=['docs', 'tests*']),
     include_package_data=True,
-    author='Glomex team',
+    author='Glomex DevOps Team',
     install_requires=install_requires,
     dependency_links=dependency_links,
     author_email='glomex@glomex.de',
