@@ -47,7 +47,7 @@ setup(
         'console_scripts': [
             'kumo=gcdt.kumo_main:main',
             'ramuda=gcdt.ramuda_main:main',
-            'yugen=gcdt.yugen_tool:main',
+            'yugen=gcdt.yugen_main:main',
             'tenkai=gcdt.tenkai_main:main'
         ]
     }
