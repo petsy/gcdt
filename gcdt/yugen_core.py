@@ -82,7 +82,6 @@ def deploy_api(boto_session, api_name, api_description, stage_name, api_key,
             print('No swagger file (%s) found' % SWAGGER_FILE)
 
         api = _api_by_name(api_name)
-
         if api is not None:
             for lmbda in lambdas:
                 _add_lambda_permissions(lmbda, api)
@@ -101,7 +100,6 @@ def deploy_api(boto_session, api_name, api_description, stage_name, api_key,
             _update_api()
 
         api = _api_by_name(api_name)
-
         if api is not None:
             _create_deployment(api_name, stage_name)
             message = 'yugen bot: updated api *%s*' % api_name
@@ -164,7 +162,7 @@ def delete_api_key(api_key):
     :param api_key:
     """
     client = boto3.client('apigateway')
-    print('delete api key: %s' %api_key)
+    print('delete api key: %s' % api_key)
 
     response = client.delete_api_key(
         apiKey=api_key
@@ -204,7 +202,7 @@ def create_custom_domain(api_name, api_target_stage, api_base_path, domain_name,
 
     if not api:
         print("Api %s does not exist, aborting..." % api_name)
-        #exit(1)
+        # exit(1)
         return 1
 
     domain = _custom_domain_name_exists(domain_name)
@@ -275,7 +273,7 @@ def are_credentials_still_valid():
     except Exception as e:
         print(colored.red(
             'Your credentials have expired... Please renew and try again!'))
-        #sys.exit(1)
+        # sys.exit(1)
         return 1
     return 0
 
@@ -393,6 +391,38 @@ def _wire_api_key(api_name, api_key, stage_name):
 
 def _update_api():
     print('updating api. not supported now')
+
+
+'''
+creating API
+╒═════════════╤══════════════════════════════════════╕
+│ id          │ rbftp6o1ng                           │
+├─────────────┼──────────────────────────────────────┤
+│ name        │ jenkins-gcdt-sample-api-dev          │
+├─────────────┼──────────────────────────────────────┤
+│ description │ Gcdt sample API based on dp api-mock │
+├─────────────┼──────────────────────────────────────┤
+│ createdDate │ 2016-08-25 15:09:35+02:00            │
+╘═════════════╧══════════════════════════════════════╛
+Enter MFA code:
+Import from swagger file
+API already taken
+create deployment
+Traceback (most recent call last):
+File "/home/mark/PROJECTS/GM/repos/ops-team/venv/bin/yugen", line 9, in <module>
+load_entry_point('gcdt', 'console_scripts', 'yugen')()
+File "/home/mark/PROJECTS/GM/repos/ops-team/glomex-cloud-deployment-tools/gcdt/yugen_main.py", line 76, in main
+slack_token=slack_token
+File "/home/mark/PROJECTS/GM/repos/ops-team/glomex-cloud-deployment-tools/gcdt/yugen_core.py", line 88, in deploy_api
+_create_deployment(api_name, stage_name)
+File "/home/mark/PROJECTS/GM/repos/ops-team/glomex-cloud-deployment-tools/gcdt/yugen_core.py", line 407, in _create_deployment
+description='TO BE FILLED'
+File "/home/mark/PROJECTS/GM/repos/ops-team/venv/local/lib/python2.7/site-packages/botocore/client.py", line 278, in _api_call
+return self._make_api_call(operation_name, kwargs)
+File "/home/mark/PROJECTS/GM/repos/ops-team/venv/local/lib/python2.7/site-packages/botocore/client.py", line 572, in _make_api_call
+raise ClientError(parsed_response, operation_name)
+botocore.exceptions.ClientError: An error occurred (BadRequestException) when calling the CreateDeployment operation: The REST API doesn't contain any methods
+'''
 
 
 def _create_deployment(api_name, stage_name):
@@ -515,13 +545,16 @@ def _create_new_custom_domain(domain_name, ssl_cert):
     return response
 
 
+# original signature (fixed otherwise implementation makes no sense):
+#def _template_variables_to_dict(api_name, api_description, api_target_stage,
+#                                api_id=False, lambdas=[], custom_hostname=False,
+#                                custom_base_path=False):
 def _template_variables_to_dict(api_name, api_description, api_target_stage,
-                                api_id=False, lambdas=[], custom_hostname=False,
-                                custom_base_path=False):
+                                api_id=False, lambdas=[], custom_hostname=None,
+                                custom_base_path=None):
     if lambdas:
         lambda_region, lambda_account_id = \
-            _get_region_and_account_from_lambda_arn(lambdas[0].get('arn')
-                                                    )
+            _get_region_and_account_from_lambda_arn(lambdas[0].get('arn'))
     else:
         boto3_session = boto3.session.Session()
         lambda_region = boto3_session.region_name
@@ -539,8 +572,8 @@ def _template_variables_to_dict(api_name, api_description, api_target_stage,
     return_dict = {
         'apiName': api_name,
         'apiDescription': api_description,
-        'apiBasePath': api_basepath,
-        'apiHostname': api_hostname
+        'apiBasePath': api_basepath
+        #'apiHostname': api_hostname  # or the next statement is dead!
     }
     if api_hostname:
         return_dict['apiHostname'] = api_hostname
@@ -628,8 +661,9 @@ def _api_exists(api_name):
 
 def _api_by_name(api_name):
     client = boto3.client('apigateway')
-    filtered_rest_apis = filter(lambda api: True if api['name'] == api_name
-    else False, client.get_rest_apis()['items'])
+    filtered_rest_apis = \
+        filter(lambda api: True if api['name'] == api_name else False,
+               client.get_rest_apis()['items'])
     if len(filtered_rest_apis) > 1:
         raise Exception(
             'more than one API with that name found. Clean up manually first')
