@@ -1,18 +1,17 @@
 # -*- coding: utf-8 -*-
 from __future__ import print_function
+
+import codecs
+import json
 import os
 import uuid
-import json
-import codecs
 
 import boto3
 from botocore.exceptions import ClientError
-from pyhocon import ConfigFactory
-from clint.textui import colored, prompt
+from clint.textui import colored
+from gcdt import monitoring
 from pybars import Compiler
 from tabulate import tabulate
-
-from gcdt import monitoring
 
 SWAGGER_FILE = 'swagger.yaml'
 
@@ -62,7 +61,7 @@ def list_apis():
 
 
 def deploy_api(boto_session, api_name, api_description, stage_name, api_key,
-               lambdas, slack_token):
+               lambdas, slack_token=None):
     """Deploy API Gateway to AWS cloud.
     
     :param boto_session:
@@ -91,8 +90,8 @@ def deploy_api(boto_session, api_name, api_description, stage_name, api_key,
             _create_deployment(api_name, stage_name)
             _wire_api_key(api_name, api_key, stage_name)
             message = 'yugen bot: created api *%s*' % api_name
-            monitoring.slacker_notification('systemmessages', message,
-                                            slack_token)
+            monitoring.slack_notification('systemmessages', message,
+                                          slack_token)
         else:
             print('API name unknown')
     else:
@@ -106,13 +105,13 @@ def deploy_api(boto_session, api_name, api_description, stage_name, api_key,
         if api is not None:
             _create_deployment(api_name, stage_name)
             message = 'yugen bot: updated api *%s*' % api_name
-            monitoring.slacker_notification('systemmessages', message,
-                                            slack_token)
+            monitoring.slack_notification('systemmessages', message,
+                                          slack_token)
         else:
             print('API name unknown')
 
 
-def delete_api(api_name, slack_token):
+def delete_api(api_name, slack_token=None):
     """Delete the API.
 
     :param api_name:
@@ -132,7 +131,7 @@ def delete_api(api_name, slack_token):
 
         print(_json2table(response))
         message = 'yugen bot: deleted api *%s*' % api_name
-        monitoring.slacker_notification('systemmessages', message, slack_token)
+        monitoring.slack_notification('systemmessages', message, slack_token)
     else:
         print('API name unknown')
 
@@ -279,24 +278,6 @@ def are_credentials_still_valid():
         # sys.exit(1)
         return 1
     return 0
-
-
-def read_yugen_config(config_file=None):
-    """Read .yugen config file from user home.
-
-    :return: pyhocon configuration, exit_code
-    """
-    if not config_file:
-        config_file = os.path.expanduser('~') + '/' + '.yugen'
-    try:
-        config = ConfigFactory.parse_file(config_file)
-        return config, 0
-    except Exception as e:
-        # print(e)
-        print(colored.red('Cannot find file .yugen in your home directory %s' %
-                          config_file))
-        print(colored.red("Please run 'yugen configure'"))
-        return None, 1
 
 
 def _import_from_swagger(boto_session, api_name, api_description, stage_name,
@@ -673,9 +654,3 @@ def _arn_to_uri(lambda_arn, lambda_alias):
                  ':lambda:path/2015-03-31/functions/'
     arn_suffix = '/invocations'
     return arn_prefix + lambda_arn + ':' + lambda_alias + arn_suffix
-
-
-# TODO: consolidate with other tools!
-def _get_input():
-    name = prompt.query('Please enter your Slack API token: ')
-    return name

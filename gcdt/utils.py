@@ -1,7 +1,12 @@
 # -*- coding: utf-8 -*-
 from __future__ import print_function
+
+import os
 import sys
 from time import sleep
+
+from clint.textui import prompt, colored
+from pyhocon import ConfigFactory
 from gcdt import __version__
 
 
@@ -70,3 +75,51 @@ def retries(max_tries, delay=1, backoff=2, exceptions=(Exception,), hook=None):
                     break
         return f2
     return dec
+
+
+# config
+# TODO: consolidate with other tools!
+
+
+def read_gcdt_user_config(gcdt_file=None, compatibility_mode=None):
+    """Read .gcdt config file from user home.
+    supports compatibility for .kumo, .tenkai, .ramuda, etc. files
+
+    :return: slack_token or None
+    """
+    if not gcdt_file:
+        gcdt_file = os.path.expanduser('~') + '/' + '.gcdt'
+        try:
+            if not os.path.isfile(gcdt_file) \
+                    and compatibility_mode in ['kumo', 'tenkai', 'ramuda', 'yugen']:
+                # read compatibility_mode file
+                comp_mode_file = os.path.expanduser('~') + '/.' + compatibility_mode
+                config = ConfigFactory.parse_file(comp_mode_file)
+                return config.get('%s.slack-token' % compatibility_mode)
+            else:
+                # read .gcdt file
+                config = ConfigFactory.parse_file(gcdt_file)
+                return config.get('gcdt.slack-token')
+        except Exception:
+            print(colored.red('Cannot find file .gcdt in your home directory'))
+            print(colored.red('Please run \'gcdt configure\''))
+            return None
+
+
+def _get_slack_token_from_user():
+    slack_token = prompt.query('Please enter your Slack API token: ')
+    return slack_token
+
+
+def configure(config_file=None):
+    """Create the .gcdt config file in the users home folder.
+
+    :param config_file:
+    """
+    if not config_file:
+        config_file = os.path.expanduser('~') + '/' + '.gcdt'
+    slack_token = _get_slack_token_from_user()
+    with open(config_file, 'w') as config:
+        config.write('gcdt {\n')
+        config.write('slack-token=%s' % slack_token)
+        config.write('\n}')

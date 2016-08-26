@@ -3,14 +3,12 @@
 
 import sys
 from docopt import docopt
-#import boto3
 import botocore.session
 from glomex_utils.config_reader import read_api_config
 from gcdt.yugen_core import list_api_keys, get_lambdas, delete_api, \
     export_to_swagger, create_api_key, list_apis, \
     create_custom_domain, delete_api_key, deploy_api
-from gcdt.yugen_core import read_yugen_config
-from gcdt import utils
+from gcdt.utils import version, read_gcdt_user_config
 
 # creating docopt parameters and usage help
 DOC = '''Usage:
@@ -39,12 +37,12 @@ def are_credentials_still_valid():
         sys.exit(1)
 
 
-def get_slack_token():
-    yugen_config, exit_code = read_yugen_config()
-    if exit_code:
+def get_user_config():
+    slack_tocken = read_gcdt_user_config(compatibility_mode='yugen')
+    if not slack_tocken:
         sys.exit(1)
     else:
-        return yugen_config.get('yugen.slack-token')
+        return slack_tocken
 
 
 def main():
@@ -58,7 +56,7 @@ def main():
         are_credentials_still_valid()
         list_apis()
     elif arguments['deploy']:
-        slack_token = get_slack_token()
+        slack_token = get_user_config()
         are_credentials_still_valid()
         conf = read_api_config()
         api_name = conf.get('api.name')
@@ -94,7 +92,7 @@ def main():
                                  ssl_cert=ssl_cert,
                                  hosted_zone_id=hosted_zone_id)
     elif arguments['delete']:
-        slack_token = get_slack_token()
+        slack_token = get_user_config()
         are_credentials_still_valid()
         conf = read_api_config()
         api_name = conf.get('api.name')
@@ -159,7 +157,7 @@ def main():
                              hosted_zone_id=hosted_zone_id)
 
     elif arguments['version']:
-        utils.version()
+        version()
 
     sys.exit(exit_code)
 

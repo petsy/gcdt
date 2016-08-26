@@ -1,22 +1,24 @@
 # -*- coding: utf-8 -*-
 from __future__ import print_function
-import os
-import sys
-import random
-import string
-import json
-import time
-import six
+
 import imp
+import json
+import os
+import random
+import six
+import string
+import sys
+import time
 from datetime import tzinfo, timedelta, datetime
+
 import pyhocon.exceptions
-from pyhocon.exceptions import ConfigMissingException
-from pyhocon import ConfigFactory
-from tabulate import tabulate
-from pyspin.spin import Default, Spinner
 from clint.textui import colored, prompt
-from glomex_utils.config_reader import get_env
 from gcdt import monitoring
+from glomex_utils.config_reader import get_env
+from pyhocon import ConfigFactory
+from pyhocon.exceptions import ConfigMissingException
+from pyspin.spin import Default, Spinner
+from tabulate import tabulate
 
 
 def load_cloudformation_template(path=None):
@@ -436,7 +438,7 @@ def _create_stack(boto_session, conf, cloudformation, slack_token):
         )
 
     message = 'kumo bot: created stack %s ' % _get_stack_name(conf)
-    monitoring.slacker_notification('systemmessages', message, slack_token)
+    monitoring.slack_notification('systemmessages', message, slack_token)
     stackname = _get_stack_name(conf)
     exit_code = _poll_stack_events(boto_session, stackname)
     _call_post_create_hook(cloudformation)
@@ -480,7 +482,7 @@ def _update_stack(boto_session, conf, cloudformation, override_stack_policy, sla
             )
 
         message = 'kumo bot: updated stack %s ' % _get_stack_name(conf)
-        monitoring.slacker_notification('systemmessages', message, slack_token)
+        monitoring.slack_notification('systemmessages', message, slack_token)
         stackname = _get_stack_name(conf)
         exit_code = _poll_stack_events(boto_session, stackname)
         _call_post_update_hook(cloudformation)
@@ -507,7 +509,7 @@ def delete_stack(boto_session, conf, slack_token):
         StackName=_get_stack_name(conf),
     )
     message = 'kumo bot: deleted stack %s ' % _get_stack_name(conf)
-    monitoring.slacker_notification('systemmessages', message, slack_token)
+    monitoring.slack_notification('systemmessages', message, slack_token)
     stackname = _get_stack_name(conf)
     return _poll_stack_events(boto_session, stackname)
 
@@ -598,20 +600,6 @@ def generate_template_file(conf, cloudformation):
         opened_file.write(template_body)
     print('wrote cf-template for %s to disk: %s' % (get_env(), template_file_name))
     return template_file_name
-
-
-def configure(config_file=None):
-    """Create the .gcdt config file in the users home folder.
-
-    :param config_file:
-    """
-    if not config_file:
-        config_file = os.path.expanduser('~') + '/' + '.kumo'
-    stack_name = _get_input()
-    with open(config_file, 'w') as config:
-        config.write('kumo {\n')
-        config.write('slack-token=%s' % stack_name)
-        config.write('\n}')
 
 
 def read_kumo_config(config_file=None):
