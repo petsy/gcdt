@@ -321,6 +321,7 @@ To see available commands, call this:
 ```bash
 	$ramuda
   Usage:
+        ramuda clean
         ramuda bundle
         ramuda deploy
         ramuda list
@@ -331,6 +332,8 @@ To see available commands, call this:
         ramuda rollback <lambda> [<version>]
         ramuda version
 ```
+#### clean
+removes local bundle files.
 
 #### bundle
 zips all the files belonging to your lambda according to your config and requirements.txt and puts it in your current working directory as `bundle.zip`. Useful for debugging as you can still provide different environments.
