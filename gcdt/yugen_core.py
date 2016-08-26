@@ -75,7 +75,10 @@ def deploy_api(boto_session, api_name, api_description, stage_name, api_key,
     """
     if not _api_exists(api_name):
         if os.path.isfile(SWAGGER_FILE):
-            _create_api(api_name=api_name, api_description=api_description)
+            # this does an import from swagger file
+            # the next step does not make sense since there is a check in
+            # _import_from_swagger for if api is existent!
+            # _create_api(api_name=api_name, api_description=api_description)
             _import_from_swagger(boto_session, api_name, api_description,
                                  stage_name, lambdas)
         else:
@@ -311,11 +314,11 @@ def _import_from_swagger(boto_session, api_name, api_description, stage_name,
                                                          stage_name,
                                                          api_id,
                                                          lambdas)
-        filled_swagger_file = _compile_template(SWAGGER_FILE,
-                                                template_variables)
+        swagger_body = _compile_template(SWAGGER_FILE,
+                                         template_variables)
         response_swagger = client.import_rest_api(
             failOnWarnings=True,
-            body=filled_swagger_file
+            body=swagger_body
         )
         print(_json2table(response_swagger))
     else:
@@ -379,7 +382,7 @@ def _wire_api_key(api_name, api_key, stage_name):
                 {
                     'op': 'add',
                     'path': '/stages',
-                    'value': "%s/%s" % (api['"id'], stage_name)
+                    'value': "%s/%s" % (api['id'], stage_name)
                 },
             ]
         )
@@ -391,38 +394,6 @@ def _wire_api_key(api_name, api_key, stage_name):
 
 def _update_api():
     print('updating api. not supported now')
-
-
-'''
-creating API
-╒═════════════╤══════════════════════════════════════╕
-│ id          │ rbftp6o1ng                           │
-├─────────────┼──────────────────────────────────────┤
-│ name        │ jenkins-gcdt-sample-api-dev          │
-├─────────────┼──────────────────────────────────────┤
-│ description │ Gcdt sample API based on dp api-mock │
-├─────────────┼──────────────────────────────────────┤
-│ createdDate │ 2016-08-25 15:09:35+02:00            │
-╘═════════════╧══════════════════════════════════════╛
-Enter MFA code:
-Import from swagger file
-API already taken
-create deployment
-Traceback (most recent call last):
-File "/home/mark/PROJECTS/GM/repos/ops-team/venv/bin/yugen", line 9, in <module>
-load_entry_point('gcdt', 'console_scripts', 'yugen')()
-File "/home/mark/PROJECTS/GM/repos/ops-team/glomex-cloud-deployment-tools/gcdt/yugen_main.py", line 76, in main
-slack_token=slack_token
-File "/home/mark/PROJECTS/GM/repos/ops-team/glomex-cloud-deployment-tools/gcdt/yugen_core.py", line 88, in deploy_api
-_create_deployment(api_name, stage_name)
-File "/home/mark/PROJECTS/GM/repos/ops-team/glomex-cloud-deployment-tools/gcdt/yugen_core.py", line 407, in _create_deployment
-description='TO BE FILLED'
-File "/home/mark/PROJECTS/GM/repos/ops-team/venv/local/lib/python2.7/site-packages/botocore/client.py", line 278, in _api_call
-return self._make_api_call(operation_name, kwargs)
-File "/home/mark/PROJECTS/GM/repos/ops-team/venv/local/lib/python2.7/site-packages/botocore/client.py", line 572, in _make_api_call
-raise ClientError(parsed_response, operation_name)
-botocore.exceptions.ClientError: An error occurred (BadRequestException) when calling the CreateDeployment operation: The REST API doesn't contain any methods
-'''
 
 
 def _create_deployment(api_name, stage_name):
@@ -546,7 +517,7 @@ def _create_new_custom_domain(domain_name, ssl_cert):
 
 
 # original signature (fixed otherwise implementation makes no sense):
-#def _template_variables_to_dict(api_name, api_description, api_target_stage,
+# def _template_variables_to_dict(api_name, api_description, api_target_stage,
 #                                api_id=False, lambdas=[], custom_hostname=False,
 #                                custom_base_path=False):
 def _template_variables_to_dict(api_name, api_description, api_target_stage,
@@ -573,7 +544,7 @@ def _template_variables_to_dict(api_name, api_description, api_target_stage,
         'apiName': api_name,
         'apiDescription': api_description,
         'apiBasePath': api_basepath
-        #'apiHostname': api_hostname  # or the next statement is dead!
+        # 'apiHostname': api_hostname  # or the next statement is dead!
     }
     if api_hostname:
         return_dict['apiHostname'] = api_hostname
