@@ -38,11 +38,11 @@ def are_credentials_still_valid():
 
 
 def get_user_config():
-    slack_tocken = read_gcdt_user_config(compatibility_mode='yugen')
+    slack_tocken, slack_channel = read_gcdt_user_config(compatibility_mode='kumo')
     if not slack_tocken:
         sys.exit(1)
     else:
-        return slack_tocken
+        return slack_tocken, slack_channel
 
 
 def main():
@@ -56,7 +56,7 @@ def main():
         are_credentials_still_valid()
         list_apis()
     elif arguments['deploy']:
-        slack_token = get_user_config()
+        slack_token, slack_channel = get_user_config()
         are_credentials_still_valid()
         conf = read_api_config()
         api_name = conf.get('api.name')
@@ -71,7 +71,8 @@ def main():
             stage_name=target_stage,
             api_key=api_key,
             lambdas=lambdas,
-            slack_token=slack_token
+            slack_token=slack_token,
+            slack_channel=slack_channel
         )
         if 'customDomain' in conf:
             domain_name = conf.get('customDomain.domainName')
@@ -92,13 +93,14 @@ def main():
                                  ssl_cert=ssl_cert,
                                  hosted_zone_id=hosted_zone_id)
     elif arguments['delete']:
-        slack_token = get_user_config()
+        slack_token, slack_channel = get_user_config()
         are_credentials_still_valid()
         conf = read_api_config()
         api_name = conf.get('api.name')
         delete_api(
             api_name=api_name,
-            slack_token=slack_token
+            slack_token=slack_token,
+            slack_channel=slack_channel
         )
     elif arguments['export']:
         are_credentials_still_valid()

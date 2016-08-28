@@ -98,11 +98,16 @@ def read_gcdt_user_config(gcdt_file=None, compatibility_mode=None):
     try:
         config = ConfigFactory.parse_file(gcdt_file)
         if compatibility_mode:
-            return config.get('%s.slack-token' % compatibility_mode)
+            slack_token = config.get('%s.slack-token' % compatibility_mode)
+            slack_channel = config.get('%s.slack-channel' % compatibility_mode)
         else:
-            return config.get('gcdt.slack-token')
+            slack_token = config.get('gcdt.slack-token')
+            slack_channel = config.get('gcdt.slack-channel')
+        if not slack_channel:
+            slack_channel = 'systemmessages'
+        return slack_token, slack_channel
     except Exception:
-        print(colored.red('Cannot find file .gcdt in your home directory'))
+        print(colored.red('Cannot find config file .gcdt in your home directory'))
         print(colored.red('Please run \'gcdt configure\''))
         return None
 
