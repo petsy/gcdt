@@ -102,7 +102,6 @@ def test_read_user_config():
     open(tf.name, 'w').write('gcdt {\nslack-token=%s\nslack-channel=%s\n}' %
                              (expected_slack_token, expected_slack_channel))
 
-    #expected = ConfigTree([('gcdt', ConfigTree([('slack-token', slack_token)]))])
     slack_token, slack_channel = read_gcdt_user_config(tf.name)
     assert_equal(slack_token, expected_slack_token)
     assert_equal(slack_channel, expected_slack_channel)
@@ -118,7 +117,6 @@ def test_read_user_config_comp_mode():
     tf = NamedTemporaryFile(delete=False)
     open(tf.name, 'w').write('kumo {\nslack-token=%s\n}' % expected_slack_token)
 
-    #expected = ConfigTree([('kumo', ConfigTree([('slack-token', slack_token)]))])
     slack_token, slack_channel = read_gcdt_user_config(tf.name, 'kumo')
     assert_equal(slack_token, expected_slack_token)
     assert_equal(slack_channel, 'systemmessages')

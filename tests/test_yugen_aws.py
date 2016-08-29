@@ -15,8 +15,6 @@ from gcdt.yugen_core import deploy_api, delete_api, delete_api_key, \
 from .helpers import check_preconditions, random_string, with_setup_args
 
 log = setup_logger(__name__)
-# TODO: remove the slack token (see mail)
-#SLACK_TOKEN =
 
 
 def here(p): return os.path.join(os.path.dirname(__file__), p)

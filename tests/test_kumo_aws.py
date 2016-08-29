@@ -18,9 +18,6 @@ from helpers import check_preconditions
 
 def here(p): return os.path.join(os.path.dirname(__file__), p)
 
-# slack_token for testing (the one Jenkins uses):
-#slack_token =
-
 boto_session = boto3.session.Session()
 
 # read template and config
@@ -86,7 +83,6 @@ def test_s3_upload():
     if account:
         upload_conf['cloudformation']['artifactBucket'] = \
             '%s-unittest-kumo-artifact-bucket' % account
-    # expected = ConfigTree([('kumo', ConfigTree([('slack-token', stackname)]))])
 
     artifact_bucket = _get_artifact_bucket(upload_conf)
     _prepare_artifacts_bucket(artifact_bucket)
