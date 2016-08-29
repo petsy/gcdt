@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+from __future__ import print_function
+import sys
+from clint.textui import colored
 from slacker import Slacker
 from gcdt.logger import setup_logger
 
@@ -122,10 +125,12 @@ def send_to_slack(channel, cloudwatch_event, slack_token):
 '''
 
 
-# TODO: this needs tests!
 # TODO: maybe move to utils?
-
-def slack_notification(channel, message, slack_token):
-    if slack_token:
-        slack = Slacker(slack_token)
-        slack.chat.post_message('#%s' % channel, message)
+def slack_notification(channel, message, slack_token, out=sys.stdout):
+    if channel and slack_token:
+        try:
+            slack = Slacker(slack_token)
+            slack.chat.post_message('#%s' % channel, message)
+        except Exception as e:
+            print(colored.red('We can not use your slack token: %s' % str(e)),
+                  file=out)
