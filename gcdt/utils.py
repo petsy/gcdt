@@ -112,7 +112,7 @@ def read_gcdt_user_config(gcdt_file=None, compatibility_mode=None):
     except Exception:
         print(colored.red('Cannot find config file .gcdt in your home directory'))
         print(colored.red('Please run \'gcdt configure\''))
-        return None
+        return None, None
 
 
 def _get_slack_token_from_user():

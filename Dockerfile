@@ -3,12 +3,9 @@ FROM jfloff/alpine-python:2.7
 # for a flask server
 ADD . /gcdt
 RUN ls -l gcdt
-#ADD tests/pip.conf /root/.pip/pip.conf
 ADD pip.conf /root/.pip/pip.conf
 RUN pip install pip-tools
-RUN echo 'yugen { slack-token=""}' >> /root/.yugen
-RUN echo 'kumo { slack-token=""}' >> /root/.kumo
-RUN echo 'ramuda { slack-token=""}' >> /root/.ramuda
+RUN echo 'gcdt { slack-token=""}' >> /root/.gcdt
 WORKDIR /gcdt
 RUN ls -l
 RUN pip install -U pip==8.1.1
