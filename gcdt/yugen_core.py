@@ -61,7 +61,7 @@ def list_apis():
 
 
 def deploy_api(boto_session, api_name, api_description, stage_name, api_key,
-               lambdas, slack_token, slack_channel):
+               lambdas, slack_token=None, slack_channel='systemmessages'):
     """Deploy API Gateway to AWS cloud.
     
     :param boto_session:
@@ -91,7 +91,7 @@ def deploy_api(boto_session, api_name, api_description, stage_name, api_key,
             _create_deployment(api_name, stage_name)
             _wire_api_key(api_name, api_key, stage_name)
             message = 'yugen bot: created api *%s*' % api_name
-            monitoring.slacker_notification(slack_channel, message, slack_token)
+            monitoring.slack_notification(slack_channel, message, slack_token)
         else:
             print('API name unknown')
     else:
@@ -105,12 +105,12 @@ def deploy_api(boto_session, api_name, api_description, stage_name, api_key,
         if api is not None:
             _create_deployment(api_name, stage_name)
             message = 'yugen bot: updated api *%s*' % api_name
-            monitoring.slacker_notification(slack_channel, message, slack_token)
+            monitoring.slack_notification(slack_channel, message, slack_token)
         else:
             print('API name unknown')
 
 
-def delete_api(api_name, slack_token, slack_channel):
+def delete_api(api_name, slack_token=None, slack_channel='systemmessages'):
     """Delete the API.
 
     :param api_name:
@@ -131,7 +131,7 @@ def delete_api(api_name, slack_token, slack_channel):
 
         print(_json2table(response))
         message = 'yugen bot: deleted api *%s*' % api_name
-        monitoring.slacker_notification(slack_channel, message, slack_token)
+        monitoring.slack_notification(slack_channel, message, slack_token)
     else:
         print('API name unknown')
 

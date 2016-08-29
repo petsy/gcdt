@@ -99,11 +99,14 @@ def read_gcdt_user_config(gcdt_file=None, compatibility_mode=None):
         config = ConfigFactory.parse_file(gcdt_file)
         if compatibility_mode:
             slack_token = config.get('%s.slack-token' % compatibility_mode)
-            slack_channel = config.get('%s.slack-channel' % compatibility_mode)
         else:
             slack_token = config.get('gcdt.slack-token')
-            slack_channel = config.get('gcdt.slack-channel')
-        if not slack_channel:
+        try:
+            if compatibility_mode:
+                slack_channel = config.get('%s.slack-channel' % compatibility_mode)
+            else:
+                slack_channel = config.get('gcdt.slack-channel')
+        except Exception:
             slack_channel = 'systemmessages'
         return slack_token, slack_channel
     except Exception:
