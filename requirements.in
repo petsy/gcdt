@@ -8,7 +8,7 @@ mock==2.0.0
 pathspec==0.3.4
 pybars3==0.9.1
 pyhocon>=0.3.27
-slacker==0.9.9
+slacker==0.9.24
 tabulate==0.7.5
 troposphere>=1.6.0
 pyspin==1.0.2

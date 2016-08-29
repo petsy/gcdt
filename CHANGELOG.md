@@ -2,6 +2,11 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.0.35] - 2016-08-29
+### Added
+- ADD: consolidated slack configuration to .gcdt files
+- ADD: configuration for slack_channel
+
 ## [0.0.34] - 2016-08-tbd
 ### Added
 - FIX: refactored yugen structure to yugen_main and yugen_core
