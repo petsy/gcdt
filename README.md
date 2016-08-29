@@ -96,8 +96,29 @@ Please make sure that you do not lower the gcdt test coverage. You can use the f
 $ nosetests --with-coverage --cover-erase --cover-package=gcdt tests/test_kumo*
 ```
 
-
 ## Cloudformation Deploy Tool  
+### gcdt
+
+### Usage
+
+To see available commands, call gcdt without any arguments:
+
+```bash
+$kumo
+Usage:
+        gcdt configure
+        gcdt version
+```
+
+### Commands
+
+#### configure
+you need to run this on first run
+
+#### version
+will print the version of gcdt you are using
+
+
 ### kumo (雲 from Japanese: cloud)
 
 ### Usage
@@ -111,7 +132,6 @@ Usage:
         kumo list
         kumo delete -f
         kumo generate
-        kumo configure
         kumo preview
         kumo version
 ```
@@ -131,9 +151,6 @@ will delete a CloudFormation stack
 
 #### generate
 will generate the CloudFormation template for the given stack and write it to your current working directory.
-
-#### configure
-you need to run this on first run
 
 #### preview
 will create a CloudFormation ChangeSet with your current changes to the template

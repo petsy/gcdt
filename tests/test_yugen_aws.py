@@ -15,8 +15,6 @@ from gcdt.yugen_core import deploy_api, delete_api, delete_api_key, \
 from .helpers import check_preconditions, random_string, with_setup_args
 
 log = setup_logger(__name__)
-# TODO: remove the slack token (see mail)
-SLACK_TOKEN = '***REMOVED***'
 
 
 def here(p): return os.path.join(os.path.dirname(__file__), p)
@@ -30,7 +28,7 @@ def _setup():
 def _teardown(api_keys=[], apis=[]):
     # delete apis
     for api_name in apis:
-        delete_api(api_name, SLACK_TOKEN)
+        delete_api(api_name)
     # delete api keys
     for key in api_keys:
         delete_api_key(key)
@@ -58,8 +56,7 @@ def test_create_api():
         api_description=api_description,
         stage_name=target_stage,
         api_key=api_key,
-        lambdas=lambdas,
-        slack_token=SLACK_TOKEN
+        lambdas=lambdas
     )
 
     api_keys = [api_key]

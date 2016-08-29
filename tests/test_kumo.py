@@ -8,9 +8,7 @@ import shutil
 import json
 from tempfile import NamedTemporaryFile, mkdtemp
 from pyhocon import ConfigFactory
-from pyhocon.config_tree import ConfigTree
-from gcdt import kumo_core
-from gcdt.kumo_core import configure, read_kumo_config, _generate_parameters, \
+from gcdt.kumo_core import _generate_parameters, \
     load_cloudformation_template, generate_template_file, _get_stack_name, \
     _get_stack_policy, _get_stack_policy_during_update, _get_conf_value, \
     _generate_parameter_entry
@@ -18,39 +16,6 @@ from pyhocon.exceptions import ConfigMissingException
 
 
 def here(p): return os.path.join(os.path.dirname(__file__), p)
-
-
-def test_configure():
-    stackname = 'my_stack'
-
-    def fake_get_input():
-        return stackname
-
-    kumo_core._get_input = fake_get_input
-
-    tf = NamedTemporaryFile(delete=False)
-    configure(tf.name)
-    assert_equal(open(tf.name).read(), 'kumo {\nslack-token=%s\n}' % stackname)
-
-    # cleanup the testfile
-    tf.close()
-    os.unlink(tf.name)
-
-
-def test_read_kumo_config():
-    stackname = 'my_stack'
-
-    tf = NamedTemporaryFile(delete=False)
-    open(tf.name, 'w').write('kumo {\nslack-token=%s\n}' % stackname)
-
-    expected = ConfigTree([('kumo', ConfigTree([('slack-token', stackname)]))])
-    actual, exit_code = read_kumo_config(tf.name)
-    assert_equal(exit_code, 0)
-    assert_equal(actual, expected)
-
-    # cleanup the testfile
-    tf.close()
-    os.unlink(tf.name)
 
 
 def test_parameter_substitution():

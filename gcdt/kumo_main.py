@@ -14,10 +14,9 @@ from clint.textui import colored
 from glomex_utils.config_reader import read_config
 from gcdt import utils
 from gcdt.kumo_core import call_pre_hook, print_parameter_diff, delete_stack, \
-    deploy_stack, generate_template_file, list_stacks, configure, \
-    create_change_set, describe_change_set, \
-    load_cloudformation_template
-
+    deploy_stack, generate_template_file, list_stacks, create_change_set, \
+    describe_change_set, load_cloudformation_template
+from utils import read_gcdt_user_config
 
 # creating docopt parameters and usage help
 DOC = """Usage:
@@ -25,12 +24,10 @@ DOC = """Usage:
         kumo list
         kumo delete -f
         kumo generate
-        kumo configure
         kumo preview
         kumo version
 
 -h --help           show this
-
 """
 
 
@@ -52,20 +49,12 @@ def are_credentials_still_valid(boto_session):
         sys.exit(1)
 
 
-def read_kumo_config():
-    """Wrapper to bail out on invalid credentials."""
-    from kumo_core import read_kumo_config as rkc
-    kumo_config, exit_code = rkc()
-    if exit_code:
+def get_user_config():
+    slack_tocken, slack_channel = read_gcdt_user_config(compatibility_mode='kumo')
+    if not slack_tocken:
         sys.exit(1)
     else:
-        return kumo_config
-
-
-def get_slack_token():
-    KUMO_CONFIG = read_kumo_config()
-    slack_token = KUMO_CONFIG.get('kumo.slack-token')
-    return slack_token
+        return slack_tocken, slack_channel
 
 
 def main():
@@ -75,20 +64,20 @@ def main():
 
     # Run command
     if arguments['deploy']:
-        slack_token = get_slack_token()
+        slack_token, slack_channel = get_user_config()
         cloudformation = load_template()
         call_pre_hook(cloudformation)
         conf = read_config()
         print_parameter_diff(boto_session, conf)
         are_credentials_still_valid(boto_session)
-        exit_code = deploy_stack(boto_session, conf, cloudformation, slack_token,
-            override_stack_policy=arguments['--override-stack-policy'])
+        exit_code = deploy_stack(boto_session, conf, cloudformation, slack_token, \
+            slack_channel, override_stack_policy=arguments['--override-stack-policy'])
     elif arguments['delete']:
-        slack_token = get_slack_token()
+        slack_token, slack_channel = get_user_config()
         cloudformation = load_template()  # TODO: is this really necessary?
         conf = read_config()
         are_credentials_still_valid(boto_session)
-        exit_code = delete_stack(boto_session, conf, slack_token)
+        exit_code = delete_stack(boto_session, conf, slack_token, slack_channel)
     elif arguments['generate']:
         cloudformation = load_template()
         conf = read_config()
@@ -96,8 +85,6 @@ def main():
     elif arguments['list']:
         are_credentials_still_valid(boto_session)
         list_stacks(boto_session)
-    elif arguments['configure']:
-        configure()
     elif arguments['preview']:
         cloudformation = load_template()
         conf = read_config()

@@ -1,7 +1,12 @@
 # -*- coding: utf-8 -*-
 from __future__ import print_function
+
+import os
 import sys
 from time import sleep
+
+from clint.textui import prompt, colored
+from pyhocon import ConfigFactory
 from gcdt import __version__
 
 
@@ -67,3 +72,60 @@ def retries(max_tries, delay=1, backoff=2, exceptions=(Exception,), hook=None):
                         raise
         return f2
     return dec
+
+
+# config
+
+def read_gcdt_user_config(gcdt_file=None, compatibility_mode=None):
+    """Read .gcdt config file from user home.
+    supports compatibility for .kumo, .tenkai, .ramuda, etc. files
+
+    :return: slack_token or None
+    """
+    if compatibility_mode and compatibility_mode not in \
+            ['kumo', 'tenkai', 'ramuda', 'yugen']:
+        print(colored.red('Unknown compatibility mode: %s' % compatibility_mode))
+        print(colored.red('No user configuration!'))
+        return
+    if not gcdt_file:
+        extension = 'gcdt'
+        if compatibility_mode:
+            extension = compatibility_mode
+        gcdt_file = os.path.expanduser('~') + '/.' + extension
+    try:
+        config = ConfigFactory.parse_file(gcdt_file)
+        if compatibility_mode:
+            slack_token = config.get('%s.slack-token' % compatibility_mode)
+        else:
+            slack_token = config.get('gcdt.slack-token')
+        try:
+            if compatibility_mode:
+                slack_channel = config.get('%s.slack-channel' % compatibility_mode)
+            else:
+                slack_channel = config.get('gcdt.slack-channel')
+        except Exception:
+            slack_channel = 'systemmessages'
+        return slack_token, slack_channel
+    except Exception:
+        print(colored.red('Cannot find config file .gcdt in your home directory'))
+        print(colored.red('Please run \'gcdt configure\''))
+        return None
+
+
+def _get_slack_token_from_user():
+    slack_token = prompt.query('Please enter your Slack API token: ')
+    return slack_token
+
+
+def configure(config_file=None):
+    """Create the .gcdt config file in the users home folder.
+
+    :param config_file:
+    """
+    if not config_file:
+        config_file = os.path.expanduser('~') + '/' + '.gcdt'
+    slack_token = _get_slack_token_from_user()
+    with open(config_file, 'w') as config:
+        config.write('gcdt {\n')
+        config.write('slack-token=%s' % slack_token)
+        config.write('\n}')

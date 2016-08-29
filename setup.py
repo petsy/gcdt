@@ -45,6 +45,7 @@ setup(
     author_email='glomex@glomex.de',
     entry_points={
         'console_scripts': [
+            'gcdt=gcdt.gcdt_main:main',
             'kumo=gcdt.kumo_main:main',
             'ramuda=gcdt.ramuda_main:main',
             'yugen=gcdt.yugen_main:main',

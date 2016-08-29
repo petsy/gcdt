@@ -30,6 +30,6 @@ python-dateutil==2.5.3    # via botocore, glomex-utils
 requests==2.11.1          # via slacker
 s3transfer==0.1.2
 six==1.10.0               # via glomex-utils, mock, python-dateutil
-slacker==0.9.9
+slacker==0.9.24
 tabulate==0.7.5
 troposphere==1.8.0
