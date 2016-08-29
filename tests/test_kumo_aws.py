@@ -19,7 +19,7 @@ from helpers import check_preconditions
 def here(p): return os.path.join(os.path.dirname(__file__), p)
 
 # slack_token for testing (the one Jenkins uses):
-slack_token = '***REMOVED***'
+#slack_token =
 
 boto_session = boto3.session.Session()
 
@@ -108,7 +108,7 @@ def cleanup_stack():
     """Remove the stack to cleanup after test run.
 
     This is intended to be called during test teardown"""
-    exit_code = delete_stack(boto_session, config, slack_token)
+    exit_code = delete_stack(boto_session, config)
     # check whether delete was completed!
     assert_false(exit_code, 'delete_stack was not completed\n' +
                  'please make sure to clean up the stack manually')
@@ -121,7 +121,7 @@ def test_kumo_stack_lifecycle():
     print_parameter_diff(boto_session, config)
     are_credentials_still_valid(boto_session)
     exit_code = deploy_stack(boto_session, config, cloudformation,
-                             slack_token, override_stack_policy=False)
+                             override_stack_policy=False)
     assert_equal(exit_code, 0)
 
     ## preview (with identical stack)
@@ -135,5 +135,5 @@ def test_kumo_stack_lifecycle():
     ## update the stack
     print_parameter_diff(boto_session, config)
     exit_code = deploy_stack(boto_session, config, cloudformation,
-                             slack_token, override_stack_policy=False)
+                             override_stack_policy=False)
     assert_equal(exit_code, 0)

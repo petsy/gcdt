@@ -600,21 +600,3 @@ def generate_template_file(conf, cloudformation):
         opened_file.write(template_body)
     print('wrote cf-template for %s to disk: %s' % (get_env(), template_file_name))
     return template_file_name
-
-
-def read_kumo_config(config_file=None):
-    """Read .kumo config file from user home.
-
-    :return: pyhocon configuration, exit_code
-    """
-    if not config_file:
-        config_file = os.path.expanduser('~') + '/' + '.kumo'
-    try:
-        config = ConfigFactory.parse_file(config_file)
-        return config, 0
-    except Exception as e:
-        print(e)
-        print(colored.red('Cannot find file .kumo in your home directory %s' %
-                          config_file))
-        print(colored.red("Please run 'kumo configure'"))
-        return None, 1

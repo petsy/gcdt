@@ -1,7 +1,12 @@
 # -*- coding: utf-8 -*-
+import os
+from tempfile import NamedTemporaryFile
 from nose.tools import assert_equal
 from StringIO import StringIO
-from gcdt.utils import version, __version__, retries
+from pyhocon.config_tree import ConfigTree
+from gcdt import utils
+from gcdt.utils import version, __version__, retries, configure, \
+    read_gcdt_user_config
 
 
 def test_version():
@@ -71,3 +76,50 @@ def test_retries_raises_exception():
 
     assert_equal(state['r'], 5)
     assert_equal(state['h'], 4)
+
+
+def test_configure():
+    stackname = 'my_stack'
+
+    def fake_get_input():
+        return stackname
+
+    utils._get_slack_token_from_user = fake_get_input
+
+    tf = NamedTemporaryFile(delete=False)
+    configure(tf.name)
+    assert_equal(open(tf.name).read(), 'gcdt {\nslack-token=%s\n}' % stackname)
+
+    # cleanup the testfile
+    tf.close()
+    os.unlink(tf.name)
+
+
+def test_read_user_config():
+    slack_token = 'my_slack_token'
+
+    tf = NamedTemporaryFile(delete=False)
+    open(tf.name, 'w').write('gcdt {\nslack-token=%s\n}' % slack_token)
+
+    #expected = ConfigTree([('gcdt', ConfigTree([('slack-token', slack_token)]))])
+    actual = read_gcdt_user_config(tf.name)
+    assert_equal(actual, slack_token)
+
+    # cleanup the testfile
+    tf.close()
+    os.unlink(tf.name)
+
+
+def test_read_user_config_comp_mode():
+    slack_token = 'my_slack_token'
+
+    tf = NamedTemporaryFile(delete=False)
+    open(tf.name, 'w').write('kumo {\nslack-token=%s\n}' % slack_token)
+
+    #expected = ConfigTree([('kumo', ConfigTree([('slack-token', slack_token)]))])
+    actual = read_gcdt_user_config(tf.name, 'kumo')
+    assert_equal(actual, slack_token)
+
+    # cleanup the testfile
+    tf.close()
+    os.unlink(tf.name)

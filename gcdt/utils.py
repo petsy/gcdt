@@ -78,8 +78,6 @@ def retries(max_tries, delay=1, backoff=2, exceptions=(Exception,), hook=None):
 
 
 # config
-# TODO: consolidate with other tools!
-
 
 def read_gcdt_user_config(gcdt_file=None, compatibility_mode=None):
     """Read .gcdt config file from user home.
@@ -87,23 +85,26 @@ def read_gcdt_user_config(gcdt_file=None, compatibility_mode=None):
 
     :return: slack_token or None
     """
+    if compatibility_mode and compatibility_mode not in \
+            ['kumo', 'tenkai', 'ramuda', 'yugen']:
+        print(colored.red('Unknown compatibility mode: %s' % compatibility_mode))
+        print(colored.red('No user configuration!'))
+        return
     if not gcdt_file:
-        gcdt_file = os.path.expanduser('~') + '/' + '.gcdt'
-        try:
-            if not os.path.isfile(gcdt_file) \
-                    and compatibility_mode in ['kumo', 'tenkai', 'ramuda', 'yugen']:
-                # read compatibility_mode file
-                comp_mode_file = os.path.expanduser('~') + '/.' + compatibility_mode
-                config = ConfigFactory.parse_file(comp_mode_file)
-                return config.get('%s.slack-token' % compatibility_mode)
-            else:
-                # read .gcdt file
-                config = ConfigFactory.parse_file(gcdt_file)
-                return config.get('gcdt.slack-token')
-        except Exception:
-            print(colored.red('Cannot find file .gcdt in your home directory'))
-            print(colored.red('Please run \'gcdt configure\''))
-            return None
+        extension = 'gcdt'
+        if compatibility_mode:
+            extension = compatibility_mode
+        gcdt_file = os.path.expanduser('~') + '/.' + extension
+    try:
+        config = ConfigFactory.parse_file(gcdt_file)
+        if compatibility_mode:
+            return config.get('%s.slack-token' % compatibility_mode)
+        else:
+            return config.get('gcdt.slack-token')
+    except Exception:
+        print(colored.red('Cannot find file .gcdt in your home directory'))
+        print(colored.red('Please run \'gcdt configure\''))
+        return None
 
 
 def _get_slack_token_from_user():
