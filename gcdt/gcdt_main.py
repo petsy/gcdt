@@ -10,13 +10,12 @@ from docopt import docopt
 from gcdt.utils import configure, version
 
 # creating docopt parameters and usage help
-DOC = """Usage:
+DOC = ''''Usage:
         gcdt configure
         gcdt version
 
 -h --help           show this
-
-"""
+'''
 
 
 def main():
