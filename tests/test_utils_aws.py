@@ -14,6 +14,7 @@ def test_get_context():
         'env': 'dev',
     }
     assert_dict_contains_subset(expected_subset, actual)
-    assert_in('_datadog_api_key', actual)
+    # the api_key is currently not rolled out see OPS-126
+    # assert_in('_datadog_api_key', actual)
     assert_in('user', actual)
     assert_in('version', actual)
