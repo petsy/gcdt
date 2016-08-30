@@ -13,3 +13,4 @@ pyspin==1.0.2
 datadog==0.13.0
 glomex-utils==0.0.11
 glomex-credstash==1.11.15
+pycrypto==2.6.1

@@ -25,6 +25,7 @@ mock==2.0.0
 pathspec==0.3.4
 pbr==1.10.0               # via mock
 pybars3==0.9.1
+pycrypto==2.6.1
 pyhocon==0.3.30
 PyMeta3==0.5.1            # via pybars3
 pyparsing==2.1.5          # via glomex-utils, pyhocon
