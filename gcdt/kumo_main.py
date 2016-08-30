@@ -16,10 +16,12 @@ from gcdt import utils
 from gcdt.kumo_core import call_pre_hook, print_parameter_diff, delete_stack, \
     deploy_stack, generate_template_file, list_stacks, create_change_set, \
     describe_change_set, load_cloudformation_template
-from utils import read_gcdt_user_config
+from gcdt.utils import read_gcdt_user_config, get_context, get_command
+from gcdt.monitoring import datadog_notification, datadog_error
+
 
 # creating docopt parameters and usage help
-DOC = """Usage:
+DOC = '''Usage:
         kumo deploy [--override-stack-policy]
         kumo list
         kumo delete -f
@@ -28,7 +30,7 @@ DOC = """Usage:
         kumo version
 
 -h --help           show this
-"""
+'''
 
 
 def load_template():
@@ -61,6 +63,12 @@ def main():
     exit_code = 0
     boto_session = boto3.session.Session()
     arguments = docopt(DOC)
+    if arguments['version']:
+        utils.version()
+        sys.exit(0)
+
+    context = get_context('kumo', get_command(arguments))
+    datadog_notification(context)
 
     # Run command
     if arguments['deploy']:
@@ -93,9 +101,9 @@ def main():
         change_set, stack_name = create_change_set(boto_session, conf,
                                                    cloudformation)
         describe_change_set(change_set, stack_name)
-    elif arguments['version']:
-        utils.version()
 
+    if exit_code:
+        datadog_error(context)
     sys.exit(exit_code)
 
 

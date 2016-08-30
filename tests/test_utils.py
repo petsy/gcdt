@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 import os
 from tempfile import NamedTemporaryFile
-from nose.tools import assert_equal
+from nose.tools import assert_equal,assert_dict_contains_subset
+import nose
 from StringIO import StringIO
 from gcdt import utils
 from gcdt.utils import version, __version__, retries, configure, \
-    read_gcdt_user_config
+    read_gcdt_user_config, get_context
 
 
 def test_version():
