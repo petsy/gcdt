@@ -1,12 +1,14 @@
 # -*- coding: utf-8 -*-
 from __future__ import print_function
 
+import getpass
 import os
 import sys
 from time import sleep
 
 from clint.textui import prompt, colored
 from pyhocon import ConfigFactory
+import credstash
 from gcdt import __version__
 
 
@@ -132,3 +134,39 @@ def configure(config_file=None):
         config.write('gcdt {\n')
         config.write('slack-token=%s' % slack_token)
         config.write('\n}')
+
+
+def _get_datadog_api_key():
+    api_key = None
+    try:
+        api_key = credstash.getSecret('datadog.api_key')
+    except Exception:
+        pass
+    return api_key
+
+
+def _get_user():
+    return getpass.getuser()
+
+
+def get_context(tool, command):
+    """This assembles the tool context. Private members are preceded by a '_'.
+
+    :param tool:
+    :param command:
+    :return: dictionary containing the tool context
+    """
+    # TODO: elapsed, artifact (stack, depl-grp, lambda, api)
+    context = {
+        'tool': tool,
+        'command': command,
+        'env': os.environ.get('ENV').lower(),
+        'version': __version__,
+        'user': _get_user()
+    }
+
+    datadog_api_key = _get_datadog_api_key()
+    if datadog_api_key:
+        context['_datadog_api_key'] = datadog_api_key
+
+    return context

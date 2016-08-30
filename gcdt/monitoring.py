@@ -3,6 +3,8 @@ from __future__ import print_function
 import sys
 from clint.textui import colored
 from slacker import Slacker
+import datadog
+
 from gcdt.logger import setup_logger
 
 log = setup_logger(__name__)
@@ -134,3 +136,46 @@ def slack_notification(channel, message, slack_token, out=sys.stdout):
         except Exception as e:
             print(colored.red('We can not use your slack token: %s' % str(e)),
                   file=out)
+
+
+def datadog_event(api_key, title, tags, text=''):
+    """Sent counter metrics to datadog
+
+    :param metric: metrics like 'gcdt.kumo.deploy'
+    :param text: message text
+    :param tags: tags like ['version:1', 'application:web']
+    """
+    datadog.initialize(api_key=api_key)
+    datadog.api.Event.create(title=title, tags=tags, text=text)
+
+
+def datadog_metric(api_key, metric, tags):
+    """Sent counter metrics to datadog
+
+    :param metric: metrics like 'gcdt.kumo.deploy'
+    :param text: message text
+    :param tags: tags like ['version:1', 'application:web']
+    """
+    datadog.initialize(api_key=api_key)
+    datadog.api.Metric.send(metric=metric, points=1, tags=tags, type='counter')
+
+
+def _datadog_get_tags(context):
+    tags = ['%s:%s' % (k, v) for k,v in context.iteritems() if not k.startswith('_')]
+    return tags
+
+
+def datadog_notification(context):
+    api_key = context['_datadog_api_key']
+    metric = 'gcdt.%s' % context['tool']
+    tags = _datadog_get_tags(context)
+
+    datadog_metric(api_key, metric, tags)
+
+
+def datadog_error(context, message):
+    api_key = context['_datadog_api_key']
+    tags = _datadog_get_tags(context)
+    tags.append('error:%s' % message)
+
+    datadog_metric(api_key, 'gcdt.error', tags)

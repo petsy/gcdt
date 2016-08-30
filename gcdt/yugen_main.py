@@ -8,7 +8,8 @@ from glomex_utils.config_reader import read_api_config
 from gcdt.yugen_core import list_api_keys, get_lambdas, delete_api, \
     export_to_swagger, create_api_key, list_apis, \
     create_custom_domain, delete_api_key, deploy_api
-from gcdt.utils import version, read_gcdt_user_config
+from gcdt.utils import version, read_gcdt_user_config, get_context
+from gcdt.monitoring import datadog_notification, datadog_error
 
 # creating docopt parameters and usage help
 DOC = '''Usage:
@@ -47,10 +48,10 @@ def get_user_config():
 
 def main():
     exit_code = 0
-    #session = botocore.session.get_session()
     boto_session = botocore.session.get_session()
-    #boto_session = boto3.session.Session()
     arguments = docopt(DOC)
+    context = get_context('yugen', arguments[0])
+    datadog_notification(context)
 
     if arguments['list']:
         are_credentials_still_valid()
@@ -161,6 +162,8 @@ def main():
     elif arguments['version']:
         version()
 
+    if exit_code:
+        datadog_error(context)
     sys.exit(exit_code)
 
 
