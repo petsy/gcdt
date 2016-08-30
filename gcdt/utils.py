@@ -170,3 +170,12 @@ def get_context(tool, command):
         context['_datadog_api_key'] = datadog_api_key
 
     return context
+
+
+def get_command(arguments):
+    """Extract the first argument from arguments parsed by docopt.
+
+    :param arguments parsed by docopt:
+    :return: command
+    """
+    return [k for k, v in arguments.iteritems() if v == True][0]

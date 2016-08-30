@@ -8,7 +8,7 @@ from glomex_utils.config_reader import read_api_config
 from gcdt.yugen_core import list_api_keys, get_lambdas, delete_api, \
     export_to_swagger, create_api_key, list_apis, \
     create_custom_domain, delete_api_key, deploy_api
-from gcdt.utils import version, read_gcdt_user_config, get_context
+from gcdt.utils import version, read_gcdt_user_config, get_context, get_command
 from gcdt.monitoring import datadog_notification, datadog_error
 
 # creating docopt parameters and usage help
@@ -50,7 +50,11 @@ def main():
     exit_code = 0
     boto_session = botocore.session.get_session()
     arguments = docopt(DOC)
-    context = get_context('yugen', arguments[0])
+    if arguments['version']:
+        version()
+        sys.exit(0)
+
+    context = get_context('yugen', get_command(arguments))
     datadog_notification(context)
 
     if arguments['list']:
@@ -158,9 +162,6 @@ def main():
                              route_53_record=route_53_record,
                              ssl_cert=ssl_cert,
                              hosted_zone_id=hosted_zone_id)
-
-    elif arguments['version']:
-        version()
 
     if exit_code:
         datadog_error(context)

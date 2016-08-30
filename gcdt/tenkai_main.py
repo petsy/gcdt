@@ -12,7 +12,7 @@ from glomex_utils.config_reader import read_config
 from gcdt import utils
 from gcdt.tenkai_core import prepare_artifacts_bucket, deploy, deployment_status, \
     bundle_revision
-from gcdt.utils import get_context
+from gcdt.utils import get_context, get_command
 from gcdt.monitoring import datadog_notification, datadog_error
 
 
@@ -27,7 +27,11 @@ DOC = '''Usage:
 
 def main():
     arguments = docopt(DOC)
-    context = get_context('tenkai', arguments[0])
+    if arguments['version']:
+        utils.version()
+        sys.exit(0)
+
+    context = get_context('tenkai', get_command(arguments))
     datadog_notification(context)
 
     if arguments['deploy']:
@@ -46,11 +50,7 @@ def main():
             datadog_error(context)
             sys.exit(1)
     elif arguments['bundle']:
-        # I do not think we need conf here!
-        # conf = read_config(config_base_name='codedeploy')
         print('created bundle at %s' % bundle_revision())
-    elif arguments['version']:
-        utils.version()
 
 
 if __name__ == '__main__':
