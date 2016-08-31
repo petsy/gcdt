@@ -32,7 +32,7 @@ pyparsing==2.1.5          # via glomex-utils, pyhocon
 pyspin==1.0.2
 python-dateutil==2.5.3    # via botocore, glomex-credstash, glomex-utils
 requests==2.11.1          # via datadog, slacker
-s3transfer==0.1.2
+s3transfer==0.1.3
 simplejson==3.8.2         # via datadog
 six==1.10.0               # via glomex-credstash, glomex-utils, mock, python-dateutil
 slacker==0.9.24
