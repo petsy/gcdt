@@ -39,15 +39,16 @@ setup(
     keywords='',
     packages=find_packages(exclude=['docs', 'tests*']),
     include_package_data=True,
-    author='Glomex team',
+    author='Glomex DevOps Team',
     install_requires=install_requires,
     dependency_links=dependency_links,
     author_email='glomex@glomex.de',
     entry_points={
         'console_scripts': [
+            'gcdt=gcdt.gcdt_main:main',
             'kumo=gcdt.kumo_main:main',
             'ramuda=gcdt.ramuda_main:main',
-            'yugen=gcdt.yugen_tool:main',
+            'yugen=gcdt.yugen_main:main',
             'tenkai=gcdt.tenkai_main:main'
         ]
     }

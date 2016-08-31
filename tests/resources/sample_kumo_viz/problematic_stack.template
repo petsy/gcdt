@@ -1,0 +1,625 @@
+{
+    "AWSTemplateFormatVersion": "2010-09-09",
+    "Description": "cdn-splitter inside ingest layer",
+    "Outputs": {
+        "BucketCDNSplitted": {
+            "Description": "Bucket cdn-splitted",
+            "Value": {
+                "Ref": "CdnSplitted"
+            }
+        },
+        "QueueARN": {
+            "Description": "ARN of newly created SQS Queue",
+            "Value": {
+                "Fn::GetAtt": [
+                    "DpIngestRawSplittingQueue",
+                    "Arn"
+                ]
+            }
+        },
+        "QueueName": {
+            "Description": "Name newly created SQS Queue",
+            "Value": {
+                "Fn::GetAtt": [
+                    "DpIngestRawSplittingQueue",
+                    "QueueName"
+                ]
+            }
+        },
+        "QueueURL": {
+            "Description": "URL of newly created SQS Queue",
+            "Value": {
+                "Ref": "DpIngestRawSplittingQueue"
+            }
+        },
+        "RoleCDNSplitterDivider": {
+            "Description": "Role cdn-splitter-divider",
+            "Value": {
+                "Ref": "InstanceRoleCdnSplitterDivider"
+            }
+        },
+        "RoleCDNSplitterDividerArn": {
+            "Description": "Role Arn of cdn-splitter-divider",
+            "Value": {
+                "Fn::GetAtt": [
+                    "InstanceRoleCdnSplitterDivider",
+                    "Arn"
+                ]
+            }
+        },
+        "RoleCDNSplitterJunction": {
+            "Description": "Role cdn-splitter-junction",
+            "Value": {
+                "Ref": "LambdaCdnSplitterJunction"
+            }
+        },
+        "RoleCDNSplitterJunctionArn": {
+            "Description": "Role Arn of cdn-splitter-junction",
+            "Value": {
+                "Fn::GetAtt": [
+                    "LambdaCdnSplitterJunction",
+                    "Arn"
+                ]
+            }
+        }
+    },
+    "Parameters": {
+        "AMI": {
+            "Default": "ami-e1398992",
+            "Description": "Machine image to use (AMI)",
+            "Type": "String"
+        },
+        "AlarmEmail": {
+            "Description": "The email address alarms should be sent to",
+            "Type": "String"
+        },
+        "InstanceType": {
+            "Default": "t2.nano",
+            "Description": "Type of EC2 instance",
+            "Type": "String"
+        },
+        "KeyName": {
+            "Default": "dev-ec2",
+            "Description": "Name of an existing EC2 KeyPair to enable SSH access to the instance",
+            "Type": "String"
+        },
+        "PolicyLambdaDefaultVar": {
+            "Description": "Output variable name for default lambda policy",
+            "Type": "String"
+        },
+        "QueueName": {
+            "Description": "The name of the SQS queue",
+            "Type": "String"
+        },
+        "ScaleMaxCapacity": {
+            "Default": "5",
+            "Description": "Number of api servers to run",
+            "Type": "String"
+        },
+        "ScaleMinCapacity": {
+            "Default": "1",
+            "Description": "Number of api servers to run",
+            "Type": "String"
+        },
+        "SecurityGroup": {
+            "Description": "Name of an existing security group",
+            "Type": "CommaDelimitedList"
+        },
+        "SpotPrice": {
+            "Description": "The price we are willing to pay for the spot instance",
+            "Type": "String"
+        },
+        "VpcSubnets": {
+            "Description": "The VPC subnets the instances should live",
+            "Type": "String"
+        }
+    },
+    "Resources": {
+        "AlarmTopic": {
+            "Properties": {
+                "Subscription": [
+                    {
+                        "Endpoint": {
+                            "Ref": "AlarmEmail"
+                        },
+                        "Protocol": "email"
+                    }
+                ]
+            },
+            "Type": "AWS::SNS::Topic"
+        },
+        "AutoscalingGroup": {
+            "Properties": {
+                "HealthCheckType": "EC2",
+                "LaunchConfigurationName": {
+                    "Ref": "LaunchConfiguration"
+                },
+                "MaxSize": {
+                    "Ref": "ScaleMaxCapacity"
+                },
+                "MetricsCollection": [
+                    {
+                        "Granularity": "1Minute",
+                        "Metrics": [
+                            "GroupMinSize",
+                            "GroupMaxSize",
+                            "GroupDesiredCapacity",
+                            "GroupInServiceInstances",
+                            "GroupPendingInstances",
+                            "GroupStandbyInstances",
+                            "GroupTerminatingInstances",
+                            "GroupTotalInstances"
+                        ]
+                    }
+                ],
+                "MinSize": {
+                    "Ref": "ScaleMinCapacity"
+                },
+                "Tags": [
+                    {
+                        "Key": "Name",
+                        "PropagateAtLaunch": "true",
+                        "Value": "raw-splitter"
+                    },
+                    {
+                        "Key": "project",
+                        "PropagateAtLaunch": "true",
+                        "Value": "data platform"
+                    },
+                    {
+                        "Key": "layer",
+                        "PropagateAtLaunch": "true",
+                        "Value": "ingest"
+                    },
+                    {
+                        "Key": "dpservice",
+                        "PropagateAtLaunch": "true",
+                        "Value": "dp-ingest-rawsplitter"
+                    },
+                    {
+                        "Key": "runtime",
+                        "PropagateAtLaunch": "true",
+                        "Value": "24/7"
+                    }
+                ],
+                "VPCZoneIdentifier": [
+                    {
+                        "Ref": "VpcSubnets"
+                    }
+                ]
+            },
+            "Type": "AWS::AutoScaling::AutoScalingGroup",
+            "UpdatePolicy": {
+                "AutoScalingRollingUpdate": {
+                    "MaxBatchSize": "5",
+                    "MinInstancesInService": "0",
+                    "PauseTime": "PT5M",
+                    "WaitOnResourceSignals": "false"
+                }
+            }
+        },
+        "CdnSplitted": {
+            "Properties": {
+                "BucketName": "dp-preprod-ingest-cdn-splitted"
+            },
+            "Type": "AWS::S3::Bucket"
+        },
+        "CpuAlarm": {
+            "Properties": {
+                "AlarmActions": [
+                    {
+                        "Ref": "ScaleUp1"
+                    }
+                ],
+                "AlarmDescription": "Alarm if CPU util is high, Scale-up if CPU > 50% for 3 minutes",
+                "ComparisonOperator": "GreaterThanThreshold",
+                "Dimensions": [
+                    {
+                        "Name": "AutoScalingGroupName",
+                        "Value": {
+                            "Ref": "AutoscalingGroup"
+                        }
+                    }
+                ],
+                "EvaluationPeriods": "1",
+                "MetricName": "CPUUtilization",
+                "Namespace": "AWS/EC2",
+                "Period": "180",
+                "Statistic": "Average",
+                "Threshold": "50"
+            },
+            "Type": "AWS::CloudWatch::Alarm"
+        },
+        "CpuAlarmLow": {
+            "Properties": {
+                "AlarmActions": [
+                    {
+                        "Ref": "ScaleDown1"
+                    }
+                ],
+                "AlarmDescription": "Alarm if CPU util is ok, Scale-down if CPU < 10% for 16 minutes",
+                "ComparisonOperator": "LessThanThreshold",
+                "Dimensions": [
+                    {
+                        "Name": "AutoScalingGroupName",
+                        "Value": {
+                            "Ref": "AutoscalingGroup"
+                        }
+                    }
+                ],
+                "EvaluationPeriods": "3",
+                "MetricName": "CPUUtilization",
+                "Namespace": "AWS/EC2",
+                "Period": "300",
+                "Statistic": "Average",
+                "Threshold": "10"
+            },
+            "Type": "AWS::CloudWatch::Alarm"
+        },
+        "DpIngestRawSplittingQueue": {
+            "Properties": {
+                "MessageRetentionPeriod": 1209600,
+                "VisibilityTimeout": 600
+            },
+            "Type": "AWS::SQS::Queue"
+        },
+        "InstanceRoleCdnSplitterDivider": {
+            "Properties": {
+                "AssumeRolePolicyDocument": {
+                    "Statement": [
+                        {
+                            "Action": [
+                                "sts:AssumeRole"
+                            ],
+                            "Effect": "Allow",
+                            "Principal": {
+                                "Service": [
+                                    "ec2.amazonaws.com"
+                                ]
+                            }
+                        }
+                    ],
+                    "Version": "2012-10-17"
+                },
+                "ManagedPolicyArns": [
+                    {
+                        "Ref": "PolicyLambdaDefaultVar"
+                    }
+                ],
+                "Path": "/ec2/"
+            },
+            "Type": "AWS::IAM::Role"
+        },
+        "InstanceRoleCdnSplitterDividerPolicy": {
+            "Properties": {
+                "PolicyDocument": {
+                    "Statement": [
+                        {
+                            "Action": [
+                                "sqs:GetQueueUrl",
+                                "sqs:GetQueueAttributes",
+                                "sqs:ReceiveMessage",
+                                "sqs:DeleteMessage"
+                            ],
+                            "Effect": "Allow",
+                            "Resource": [
+                                {
+                                    "Fn::GetAtt": [
+                                        "DpIngestRawSplittingQueue",
+                                        "Arn"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "Action": [
+                                "s3:GetObject"
+                            ],
+                            "Effect": "Allow",
+                            "Resource": [
+                                "arn:aws:s3:::dp-preprod-ingest-cdn-input",
+                                "arn:aws:s3:::dp-preprod-ingest-cdn-input/*"
+                            ]
+                        },
+                        {
+                            "Action": [
+                                "s3:PutObject"
+                            ],
+                            "Effect": "Allow",
+                            "Resource": [
+                                "arn:aws:s3:::dp-preprod-ingest-cdn-splitted/*"
+                            ]
+                        }
+                    ],
+                    "Version": "2012-10-17"
+                },
+                "PolicyName": "InstanceRoleCdnSplitterDividerPolicy",
+                "Roles": [
+                    {
+                        "Ref": "InstanceRoleCdnSplitterDivider"
+                    }
+                ]
+            },
+            "Type": "AWS::IAM::Policy"
+        },
+        "InstanceRoleSplitter": {
+            "Properties": {
+                "Roles": [
+                    {
+                        "Ref": "InstanceRoleCdnSplitterDivider"
+                    }
+                ]
+            },
+            "Type": "AWS::IAM::InstanceProfile"
+        },
+        "LambdaCdnSplitterJunction": {
+            "Properties": {
+                "AssumeRolePolicyDocument": {
+                    "Statement": [
+                        {
+                            "Action": [
+                                "sts:AssumeRole"
+                            ],
+                            "Effect": "Allow",
+                            "Principal": {
+                                "Service": [
+                                    "lambda.amazonaws.com"
+                                ]
+                            }
+                        }
+                    ],
+                    "Version": "2012-10-17"
+                },
+                "ManagedPolicyArns": [
+                    {
+                        "Ref": "PolicyLambdaDefaultVar"
+                    }
+                ],
+                "Path": "/lambda/"
+            },
+            "Type": "AWS::IAM::Role"
+        },
+        "LambdaCdnSplitterJunctionPolicy": {
+            "Properties": {
+                "PolicyDocument": {
+                    "Statement": [
+                        {
+                            "Action": [
+                                "s3:GetObject"
+                            ],
+                            "Effect": "Allow",
+                            "Resource": [
+                                "arn:aws:s3:::dp-preprod-ingest-cdn-input",
+                                "arn:aws:s3:::dp-preprod-ingest-cdn-input/*"
+                            ]
+                        },
+                        {
+                            "Action": [
+                                "sqs:GetQueueUrl",
+                                "sqs:SendMessage"
+                            ],
+                            "Effect": "Allow",
+                            "Resource": [
+                                {
+                                    "Fn::GetAtt": [
+                                        "DpIngestRawSplittingQueue",
+                                        "Arn"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "Action": [
+                                "s3:PutObject"
+                            ],
+                            "Effect": "Allow",
+                            "Resource": [
+                                "arn:aws:s3:::dp-preprod-ingest-cdn-splitted/*"
+                            ]
+                        }
+                    ],
+                    "Version": "2012-10-17"
+                },
+                "PolicyName": "LambdaCdnSplitterJunctionPolicy",
+                "Roles": [
+                    {
+                        "Ref": "LambdaCdnSplitterJunction"
+                    }
+                ]
+            },
+            "Type": "AWS::IAM::Policy"
+        },
+        "LaunchConfiguration": {
+            "Properties": {
+                "IamInstanceProfile": {
+                    "Ref": "InstanceRoleSplitter"
+                },
+                "ImageId": {
+                    "Ref": "AMI"
+                },
+                "InstanceType": {
+                    "Ref": "InstanceType"
+                },
+                "KeyName": {
+                    "Ref": "KeyName"
+                },
+                "SecurityGroups": [
+                    {
+                        "Fn::Select": [
+                            "0",
+                            {
+                                "Ref": "SecurityGroup"
+                            }
+                        ]
+                    },
+                    {
+                        "Fn::Select": [
+                            "1",
+                            {
+                                "Ref": "SecurityGroup"
+                            }
+                        ]
+                    },
+                    {
+                        "Fn::Select": [
+                            "2",
+                            {
+                                "Ref": "SecurityGroup"
+                            }
+                        ]
+                    }
+                ],
+                "SpotPrice": {
+                    "Ref": "SpotPrice"
+                },
+                "UserData": {
+                    "Fn::Base64": {
+                        "Fn::Join": [
+                            "",
+                            [
+                                "#!/bin/bash\n",
+                                "cfn-signal -e 0",
+                                "    --resource AutoscalingGroup",
+                                "    --stack ",
+                                {
+                                    "Ref": "AWS::StackName"
+                                },
+                                "    --region ",
+                                {
+                                    "Ref": "AWS::Region"
+                                },
+                                "\n",
+                                {
+                                    "Fn::Join": [
+                                        "",
+                                        [
+                                            "echo \"QUEUE_NAME=",
+                                            {
+                                                "Fn::GetAtt": [
+                                                    "DpIngestRawSplittingQueue",
+                                                    "QueueName"
+                                                ]
+                                            },
+                                            "\" >> /etc/glomex.env"
+                                        ]
+                                    ]
+                                },
+                                "\n",
+                                "mkdir -p /opt/glomex/bin",
+                                "\n",
+                                "echo \"eNplUVFP2zAQfvevONE8wKS2g/E0lElAswltpQhSaTwVxzmnXhM7s50SCvz3Xeyioc1SFN/57r7vvo8xNsoXswX9nOmsQJiiF9OqNg32E9RbenhEwB5bFB78GmGDT2BkuN59AlP8Gh64A66B26prUHs4xN8gVY2aN3jEvmf3aXLMRtVOtSBM01p0ThkNkgtvLEj6aJzD0OPAITYOvIEC4fjzKZuf/1wtlvnNMl9d3OfZXXr6MR42yy6W31LJa4csz+Y3s6vbNDlhjDWbUllI9jmKt5AQjXcZUf4NYrXpfNv5QYm2Vh6UpigwoiuR+ZcFiHWnNw4elV8Dp7067dGyneA+Yr1AHDS+hOS/5nHJBiRvSZJByoDjOilVD9KaJiQH+djXqx/Z9fk8Sx8K7oKicfyk2j3QiEE83KJ9inygwmjTltcdvhm1J0celRBcIFoFFxsSmY3IDWwKgh8q320d0CG4oygP/YczKA1l4rlcLK/zjPQ+RLE2kKgXQZ1jeUK7HfQHR/vCADcW9A5fYDKNIk+T57e1XlfJ837UK610xkqjkf0BJgfPwg==   \" >> /opt/glomex/bin/splitter.sh64",
+                                "\n",
+                                "echo  \"eNpNUV1PwjAUfe+vuOLiE1vBxCcFM2WYRdgQtmhiTAPjAk22tnQtH//eMsCYNGnPufecntve3tAFF3QxrzeETOJBj5pK0XUpKzwEii9JXSIqeCCEr+Ab/BV4rgt+HsFsUBAAjfMluEZ4aiqOwWIjwTtpAVQNvmoA9IEucUeFLcuTrOc9u60x9TT4uIXOP9eLS6tR8hoKqzUKUx5BWyG4WLdBSAN4wMIaB8HrgNnzAtuO4w0j5D4IgtbZzHHQdccVJ26dE3ouUhOZ1NLqAoGiKa6jo9gRPCipDXzkUR6xJBxHVyb8nLFBNAzzUcam0VucJj20/h5r43evPePwiyUpS4dsFCfRjE2iKRvGoz+PNM8mecZe8tf3KCNUKnO5uvmPrUWLrJCithXqQB3hvn/Xhb57xN1c01Kuaa1KbowrOkCIrs6z/AK/mY7F   \" >> /opt/glomex/bin/splitter_cron.sh64",
+                                "\n",
+                                "echo  \"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   \" >> /opt/glomex/bin/queue_consumer.py64",
+                                "\n",
+                                "echo  \"eNptU11vEzEQfPevWJKT0oqmF6iEhKAgBC9IIJCAp1Iqx97kTH228UdTBP3v7PouRyp4uvN6PTuzOzt/0K6Na9cydUKI+ecPbz6IOaiIMiOkrmTtdw6sV9ewMRZBOg2qQz76CCaDcZCCNTljFPOIuigEFQpIK2MP7fjFXhpL+DuEDWbVQSjZ9HSIvocQvRIlfELlnU7ns+ZIyQwth9sSat5v2EYMsPSw+HaxWj69/PpwcTyjR++NS+fN0VHzawK4o6pPVsfHrGegajZAhWUkRdlYC9obt4Wdj9eVkZIOSkLIHcLHt28GoZUZR/bqIHuY4ExepBFMqmxuUGyKox/vhpwr6s7V9PKXAAY+b3Mf2q31Pd6eBqMFhQnrApYbaLjw5TOu6CgMQBPQQEnwvN7VGKrOQ8Mv+RQSLEM9wgtoNd60rlg7PD5vXtafCt9EWOIPWN3DH9Fm9b1JoEqM6LL9CbE4R/05Aecz4C0qGhW1q1lB3hmFJxQzNeL87vT0dDbCRcwlOnhUjxsjDmIrUSPiTvxtU8o+TB26UtG7735dOzXw4vvAVcYrLjPXaDEPg7IyZbDGjZPirCzXcLTrDNmLBN2b3QhyvIdPqGFpgPoCiwb0AlpyZTuCMM855T0mc6csncJEShTSmMG0HtYlUm3aEW1yqntwtoLeuJIpUW643jtJOrvX3m3MtkTJigkyGcJiK2oPfWGahEY7pD0mt8jQy2vijI696HkOtHhuy9bryKJ/ixAUM2OH7A62lHfzVcn+k5K2GpztmYLkK+oSpm4SJKoxZrw1vEF3M1huM8zOVjO4FP945EuoKqfsPY8TyPEnVyK2zAKYxt4P850kacXRktyfRSdTnX5APaYOSf8uznit/fgzeWMPNWzgZFiuSD8HptTe4Z5PiHhDDme+E0D1DrUk1rDcSrNX/l9/iv+yOBB0UvtQwQ57MY1o2fHWiGGbbcJJ2EGrD8xETbeYqM9bv2+zRQxVIC3UHzSx2FA=   \" >> /opt/glomex/bin/shutdown_cron.sh64",
+                                "\n",
+                                "base64 -d /opt/glomex/bin/shutdown_cron.sh64 | openssl zlib -d > /opt/glomex/bin/shutdown_cron.sh",
+                                "\n",
+                                "base64 -d /opt/glomex/bin/splitter.sh64 | openssl zlib -d > /opt/glomex/bin/splitter.sh",
+                                "\n",
+                                "base64 -d /opt/glomex/bin/splitter_cron.sh64 | openssl zlib -d > /opt/glomex/bin/splitter_cron.sh",
+                                "\n",
+                                "base64 -d /opt/glomex/bin/queue_consumer.py64 | openssl zlib -d > /opt/glomex/bin/queue_consumer.py",
+                                "\n",
+                                "chmod +x /opt/glomex/bin/*",
+                                "\n",
+                                "echo  \"*/5 * * * * root /opt/glomex/bin/shutdown_cron.sh 2>&1 >> /var/log/splitter.log \" >> /etc/crontab",
+                                "\n",
+                                "echo  \"*/2 * * * * root /opt/glomex/bin/splitter_cron.sh 2>&1 >> /var/log/splitter.log \" >> /etc/crontab",
+                                "\n",
+                                "echo  \"#\n# This file is autogenerated by pip-compile\n# To update, run:\n#\n#    pip-compile --output-file requirements.txt requirements.in\n#\n--extra-index-url http://reposerver-prod-eu-west-1.infra.glomex.cloud/pypi/packages\n\n\nargs==0.1.0               # via clint\narrow==0.8.0              # via jinja2-time\nawacs==0.5.4              # via dphelper\nbinaryornot==0.4.0        # via cookiecutter\nboto3==1.3.1              # via dphelper, glomex-utils\nbotocore==1.4.32          # via boto3, glomex-utils, s3transfer\nchardet==2.3.0            # via binaryornot\nclick==6.6                # via cookiecutter\nclint==0.5.1              # via dphelper\ncookiecutter==1.4.0       # via dphelper\ndocopt==0.6.2             # via dphelper\ndocutils==0.12            # via botocore, glomex-utils\ndphelper==0.0.38\nfuture==0.15.2            # via cookiecutter\nfutures==3.0.5            # via boto3, glomex-utils, s3transfer\ngitdb==0.6.4              # via gitpython\ngitpython==0.3.6          # via pypi-publisher\nglomex-utils==0.0.6       # via dphelper\njinja2-time==0.2.0        # via cookiecutter\njinja2==2.8               # via cookiecutter, jinja2-time\njmespath==0.9.0           # via boto3, botocore, glomex-utils\nMarkupSafe==0.23          # via jinja2\npathspec==0.3.4           # via dphelper\npoyo==0.4.0               # via cookiecutter\npybars3==0.9.1            # via dphelper\npyhocon==0.3.29           # via dphelper, glomex-utils\nPyMeta3==0.5.1            # via pybars3\npyparsing==2.1.5          # via glomex-utils, pyhocon\npypi-publisher==0.0.4     # via dphelper\npyspin==1.0.1             # via dphelper\npython-dateutil==2.5.3    # via arrow, botocore, glomex-utils\nrequests==2.10.0          # via slacker\ns3transfer==0.0.1\nsix==1.10.0               # via glomex-utils, python-dateutil\nslacker==0.9.9            # via dphelper\nsmmap==0.9.0              # via gitdb\ntabulate==0.7.5           # via dphelper\ntroposphere==1.6.0        # via dphelper\nwhichcraft==0.4.0         # via cookiecutter\n   \" >> /tmp/requirements.txt",
+                                "\n",
+                                "echo  \"MAX_NO_OF_LINES_PER_FILE=100000\nOUTPUT_BUCKET=dp-preprod-ingest-cdn-splitted\n   \" >> /etc/glomex.env",
+                                "\n",
+                                "source /etc/glomex.env\n\n#install aws logs agent\nsudo yum install -y awslogs htop\n\n#configure aws log agent to pick up splitter logs\ncat <<EOF >> /etc/awslogs/awslogs.conf\n\n[/var/log/splitter.log]\nfile = /var/log/splitter.log\nbuffer_duration = 5000\nlog_stream_name = dp-raw-splitter-worker\ninitial_position = start_of_file\nlog_group_name = splitter\nEOF\n\n#change region to eu-west-1\nsed -i -e 's/us-east-1/eu-west-1/g' /etc/awslogs/awscli.conf\n\n#start agent restart at reboot\nsudo service awslogs start\nsudo chkconfig awslogs on\n\ntouch $HOME/\n\nmkdir -p /root/.pip\ncat <<EOF >> /root/.pip/pip.conf\n\n[global]\ntimeout = 60\nextra-index-url = https://reposerver-prod-eu-west-1.infra.glomex.cloud/pypi/packages\ntrusted-host = reposerver-prod-eu-west-1.infra.glomex.cloud\nEOF\n\n\npip install -r /tmp/requirements.txt\n"
+                            ]
+                        ]
+                    }
+                }
+            },
+            "Type": "AWS::AutoScaling::LaunchConfiguration"
+        },
+        "QueueDepthAlarm": {
+            "Properties": {
+                "AlarmActions": [
+                    {
+                        "Ref": "ScaleUp1"
+                    }
+                ],
+                "AlarmDescription": "Alarm if queue depth grows beyond 10 messages",
+                "ComparisonOperator": "GreaterThanThreshold",
+                "Dimensions": [
+                    {
+                        "Name": "QueueName",
+                        "Value": {
+                            "Fn::GetAtt": [
+                                "DpIngestRawSplittingQueue",
+                                "QueueName"
+                            ]
+                        }
+                    }
+                ],
+                "EvaluationPeriods": "1",
+                "MetricName": "ApproximateNumberOfMessagesVisible",
+                "Namespace": "AWS/SQS",
+                "Period": "300",
+                "Statistic": "Sum",
+                "Threshold": "5"
+            },
+            "Type": "AWS::CloudWatch::Alarm"
+        },
+        "QueueLowDepthAlarm": {
+            "Properties": {
+                "AlarmActions": [
+                    {
+                        "Ref": "ScaleDown1"
+                    }
+                ],
+                "AlarmDescription": "Alarm if queue goes below 5 messages",
+                "ComparisonOperator": "LessThanThreshold",
+                "Dimensions": [
+                    {
+                        "Name": "QueueName",
+                        "Value": {
+                            "Fn::GetAtt": [
+                                "DpIngestRawSplittingQueue",
+                                "QueueName"
+                            ]
+                        }
+                    }
+                ],
+                "EvaluationPeriods": "1",
+                "MetricName": "ApproximateNumberOfMessagesVisible",
+                "Namespace": "AWS/SQS",
+                "Period": "300",
+                "Statistic": "Sum",
+                "Threshold": "5"
+            },
+            "Type": "AWS::CloudWatch::Alarm"
+        },
+        "ScaleDown1": {
+            "Properties": {
+                "AdjustmentType": "ChangeInCapacity",
+                "AutoScalingGroupName": {
+                    "Ref": "AutoscalingGroup"
+                },
+                "Cooldown": "180",
+                "ScalingAdjustment": "-1"
+            },
+            "Type": "AWS::AutoScaling::ScalingPolicy"
+        },
+        "ScaleUp1": {
+            "Properties": {
+                "AdjustmentType": "ChangeInCapacity",
+                "AutoScalingGroupName": {
+                    "Ref": "AutoscalingGroup"
+                },
+                "Cooldown": "60",
+                "ScalingAdjustment": "3"
+            },
+            "Type": "AWS::AutoScaling::ScalingPolicy"
+        }
+    }
+}
