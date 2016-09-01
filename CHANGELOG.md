@@ -2,6 +2,11 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.0.45] - 2016-09-01
+### Added
+- ADD: ramuda autowire functionality
+- ADD: gcdt sends metrics and events to datadog 
+
 ## [0.0.35] - 2016-08-29
 ### Added
 - ADD: consolidated slack configuration to .gcdt files
