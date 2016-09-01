@@ -62,11 +62,8 @@ def retries(max_tries, delay=1, backoff=2, exceptions=(Exception,), hook=None):
                         if hook is not None:
                             hook(tries_remaining, e, mydelay)
                         sleep(mydelay)
-                        mydelay = mydelay * backoff
+                        mydelay *= backoff
                     else:
                         raise
-                else:
-                    # break out of the retry loop in success case
-                    break
         return f2
     return dec
