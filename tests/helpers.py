@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import print_function
 import os
-import six
-from collections import deque
 import random
 import string
 from tempfile import NamedTemporaryFile

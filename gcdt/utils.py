@@ -146,21 +146,35 @@ def _get_user():
     return getpass.getuser()
 
 
+def _get_env():
+    """
+    Read environment from ENV and mangle it to a (lower case) representation
+    :return: Environment as lower case string (or None if not matched)
+    """
+    env = os.getenv('ENV', os.getenv('env', None))
+    if env:
+        env = env.lower()
+    return env
+
+
 def get_context(tool, command):
     """This assembles the tool context. Private members are preceded by a '_'.
 
     :param tool:
     :param command:
-    :return: dictionary containing the tool context
+    :return: dictionary containing the gcdt tool context
     """
-    # TODO: elapsed, artifact (stack, depl-grp, lambda, api)
+    # TODO: elapsed, artifact(stack, depl-grp, lambda, api)
     context = {
         'tool': tool,
         'command': command,
-        'env': os.environ.get('ENV').lower(),
         'version': __version__,
         'user': _get_user()
     }
+
+    env = _get_env()
+    if env:
+        context['env'] = env
 
     datadog_api_key = _get_datadog_api_key()
     if datadog_api_key:
@@ -175,4 +189,4 @@ def get_command(arguments):
     :param arguments parsed by docopt:
     :return: command
     """
-    return [k for k, v in arguments.iteritems() if v == True][0]
+    return [k for k, v in arguments.iteritems() if v is True][0]
