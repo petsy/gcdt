@@ -547,7 +547,8 @@ def _ensure_lambdas_permissions(lambdas, api):
 
 def _ensure_lambda_permissions(lmbda, api, client):
     if not lmbda.get('arn'):
-        print('Lambda function could not be found')
+        lambda_name = lmbda.get('name', '(no name provided)')
+        print('Lambda function {} could not be found'.format(lambda_name))
         return
 
     lambda_arn = lmbda.get('arn')
@@ -564,10 +565,10 @@ def _ensure_lambda_permissions(lmbda, api, client):
     )
 
     if _invoke_lambda_permission_exists(client, lambda_arn, source_arn):
-        print('API already has permission to invoke lambda function')
+        print('API already has permission to invoke lambda {}'.format(lambda_name))
         return
 
-    print('Adding lambda permission for API Gateway')
+    print('Adding lambda permission for API Gateway for lambda {}'.format(lambda_name))
     response = client.add_permission(
         FunctionName=lambda_name,
         StatementId=str(uuid.uuid1()),
