@@ -127,7 +127,6 @@ def send_to_slack(channel, cloudwatch_event, slack_token):
 '''
 
 
-# TODO: maybe move to utils?
 def slack_notification(channel, message, slack_token, out=sys.stdout):
     if channel and slack_token:
         try:
@@ -174,6 +173,12 @@ def datadog_notification(context):
     tags = _datadog_get_tags(context)
 
     datadog_metric(api_key, metric, tags)
+
+    # report main events
+    # note: you need to blacklist events you do not want to report
+    if context['command'] not in ['version', 'list', 'info', 'bundle', 'generate',
+            'preview', 'metrics', 'ping', 'export']:
+        datadog_event(api_key, metric, tags)
 
 
 def datadog_error(context, message):
