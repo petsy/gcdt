@@ -10,7 +10,7 @@ from gcdt.utils import read_gcdt_user_config, get_context
 
 def test_slack_notification():
     # read token from ~/.gcdt file
-    slack_token, _ = read_gcdt_user_config()
+    slack_token, _ = read_gcdt_user_config(compatibility_mode='kumo')
     channel = 'test_do_not_join'
     message = 'testing gcdt and tools...'
     out = StringIO()

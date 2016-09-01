@@ -81,6 +81,7 @@ $ pip install -e .
 ```bash
 $ export AWS_DEFAULT_PROFILE=superuser-dp-dev
 $ export ENV=DEV
+$ export ACCOUNT=dp # => or your team account
 ```
 
 
