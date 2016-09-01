@@ -14,6 +14,8 @@ from pybars import Compiler
 from tabulate import tabulate
 
 SWAGGER_FILE = 'swagger.yaml'
+INVOKE_FUNCTION_ACTION = 'lambda:InvokeFunction'
+AMAZON_API_PRINCIPAL = 'apigateway.amazonaws.com'
 
 
 # WIP
@@ -86,8 +88,7 @@ def deploy_api(boto_session, api_name, api_description, stage_name, api_key,
 
         api = _api_by_name(api_name)
         if api is not None:
-            for lmbda in lambdas:
-                _add_lambda_permissions(lmbda, api)
+            _ensure_lambdas_permissions(lambdas, api)
             _create_deployment(api_name, stage_name)
             _wire_api_key(api_name, api_key, stage_name)
             message = 'yugen bot: created api *%s*' % api_name
@@ -103,6 +104,7 @@ def deploy_api(boto_session, api_name, api_description, stage_name, api_key,
 
         api = _api_by_name(api_name)
         if api is not None:
+            _ensure_lambdas_permissions(lambdas, api)
             _create_deployment(api_name, stage_name)
             message = 'yugen bot: updated api *%s*' % api_name
             monitoring.slack_notification(slack_channel, message, slack_token)
@@ -227,13 +229,13 @@ def create_custom_domain(api_name, api_target_stage, api_base_path, domain_name,
                                    route_53_record,
                                    cloudfront_distribution)
     if record_correct:
-        print('Route53 record correctly set: %s --> %s'(route_53_record,
+        print('Route53 record correctly set: %s --> %s' % (route_53_record,
                                                         cloudfront_distribution))
     else:
         _ensure_correct_route_53_record(hosted_zone_id,
                                         record_name=route_53_record,
                                         record_value=cloudfront_distribution)
-        print('Route53 record set: %s --> %s'(route_53_record,
+        print('Route53 record set: %s --> %s' % (route_53_record,
                                               cloudfront_distribution))
     return 0
 
@@ -537,43 +539,63 @@ def _template_variables_to_dict(api_name, api_description, api_target_stage,
     return return_dict
 
 
-def _add_lambda_permissions(lmbda, api):
+def _ensure_lambdas_permissions(lambdas, api):
     client = boto3.client('lambda')
+    for lmbda in lambdas:
+        _ensure_lambda_permissions(lmbda, api, client)
 
-    print('Adding lambda permission for API Gateway')
 
-    # lambda_full_name = lambda_name if lambda_alias is None else
-    # lambda_name + '/' + lambda_alias
+def _ensure_lambda_permissions(lmbda, api, client):
+    if not lmbda.get('arn'):
+        lambda_name = lmbda.get('name', '(no name provided)')
+        print('Lambda function {} could not be found'.format(lambda_name))
+        return
 
-    if lmbda.get('arn'):
+    lambda_arn = lmbda.get('arn')
+    lambda_alias = lmbda.get('alias')
+    lambda_name = lmbda.get('name')
 
-        # Get info from the lambda instead of API Gateway as there is not
-        # other boto possibility
-        lambda_arn = lmbda.get('arn')
-        lambda_alias = lmbda.get('alias')
-        lambda_name = lmbda.get('name')
+    lambda_region, lambda_account_id = \
+        _get_region_and_account_from_lambda_arn(lambda_arn)
 
-        lambda_region, lambda_account_id = \
-            _get_region_and_account_from_lambda_arn(lambda_arn)
+    source_arn = 'arn:aws:execute-api:{region}:{accountId}:{apiId}/*/*'.format(
+        region=lambda_region,
+        accountId=lambda_account_id,
+        apiId=api['id']
+    )
 
-        source_arn = 'arn:aws:execute-api:{region}:{accountId}:{apiId}/*/*'.format(
-            region=lambda_region,
-            accountId=lambda_account_id,
-            apiId=api['id']
-        )
+    if _invoke_lambda_permission_exists(client, lambda_arn, source_arn):
+        print('API already has permission to invoke lambda {}'.format(lambda_name))
+        return
 
-        response = client.add_permission(
-            FunctionName=lambda_name,
-            StatementId=str(uuid.uuid1()),
-            Action='lambda:InvokeFunction',
-            Principal='apigateway.amazonaws.com',
-            SourceArn=source_arn,
-            Qualifier=lambda_alias
-        )
+    print('Adding lambda permission for API Gateway for lambda {}'.format(lambda_name))
+    response = client.add_permission(
+        FunctionName=lambda_name,
+        StatementId=str(uuid.uuid1()),
+        Action=INVOKE_FUNCTION_ACTION,
+        Principal=AMAZON_API_PRINCIPAL,
+        SourceArn=source_arn,
+        Qualifier=lambda_alias
+    )
 
-        print(_json2table(json.loads(response['Statement'])))
-    else:
-        print('Lambda function could not be found')
+    print(_json2table(json.loads(response['Statement'])))
+
+
+def _invoke_lambda_permission_exists(client, lambda_arn, source_arn):
+    policy_resource_arn = lambda_arn + ':ACTIVE'
+    try:
+        response = client.get_policy(FunctionName=policy_resource_arn)
+    except ClientError:
+        return False
+
+    permissions = json.loads(response['Policy'])['Statement']
+    return [
+        p for p in permissions
+        if p.get('Condition', {}).get('ArnLike', {}).get('AWS:SourceArn') == source_arn
+            and p.get('Action') == INVOKE_FUNCTION_ACTION
+            and p.get('Effect') == 'Allow'
+            and p.get('Principal', {}).get('Service') == AMAZON_API_PRINCIPAL
+    ]
 
 
 # TODO: possible to consolidate this with the one for ramuda?

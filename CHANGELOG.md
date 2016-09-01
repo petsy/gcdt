@@ -6,6 +6,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - ADD: ramuda autowire functionality
 - ADD: gcdt sends metrics and events to datadog 
+- FIX: yugen will add invoke lambda permission for new paths in existing APIs
 
 ## [0.0.35] - 2016-08-29
 ### Added
