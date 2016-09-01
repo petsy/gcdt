@@ -7,6 +7,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - FIX: refactored yugen structure to yugen_main and yugen_core
 - FIX: improved yugen testability and test coverage
 - FIX: further improved ramuda test coverage
+- FEATURE: ramuda clean
 
 ## [0.0.33] - 2016-08-18
 ### Added
