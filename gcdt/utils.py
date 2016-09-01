@@ -151,9 +151,9 @@ def get_context(tool, command):
 
     :param tool:
     :param command:
-    :return: dictionary containing the tool context
+    :return: dictionary containing the gcdt tool context
     """
-    # TODO: elapsed, artifact (stack, depl-grp, lambda, api)
+    # TODO: elapsed, artifact(stack, depl-grp, lambda, api)
     context = {
         'tool': tool,
         'command': command,
@@ -175,4 +175,4 @@ def get_command(arguments):
     :param arguments parsed by docopt:
     :return: command
     """
-    return [k for k, v in arguments.iteritems() if v == True][0]
+    return [k for k, v in arguments.iteritems() if v is True][0]
