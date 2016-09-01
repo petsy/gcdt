@@ -1,7 +1,7 @@
 Glomex Cloud Deployment Tools
 ============================= 
 
-version number: 0.0.42.dev0
+version number: 0.0.45.dev0
 
 author: Glomex DevOps Team
 
@@ -409,8 +409,23 @@ lambda {
   memorySize = "128"
   events {
     s3Sources = [
-        { bucket = "dp-dev-store-cdn-redshift-manifests", type = "s3:ObjectCreated:*", suffix = ".json" }
+        { bucket = "dp-dev-store-cdn-redshift-manifests", type = "s3:ObjectCreated:*", suffix = ".json" },
+        { 
+            bucket = "dp-dev-store-cdn-redshift-manifests",
+            type = "s3:ObjectCreated:*",
+            prefix = "folder",
+            suffix = ".gz",
+            ensure="exists"
+         }
     ]
+        timeSchedules = [
+           {
+               ensure = "exists",
+               ruleName = "time-event-test-T1",
+               ruleDescription = "run every 5 min from 0-5 UTC",
+               scheduleExpression = "cron(0/5 0-5 ? * * *)"
+           },
+        ]
   }
   vpc  {
     subnetIds = ["subnet-87685dde", "subnet-9f39ccfb", "subnet-166d7061"]
@@ -427,7 +442,8 @@ bundling {
 }
 
 deployment {
-  region = "eu-west-1"
+  region = "eu-west-1",
+  artifactBucket = "7finity-$PROJECT-deployment"
 }
 
 ```
@@ -440,6 +456,7 @@ ramuda can upload your lambda functions to S3 instead of inline through the API.
 To enable this feature add this to your lambda.conf:
 
 deployment {
+region = "eu-west-1",
     artifactBucket = "7finity-$PROJECT-deployment"
 }
 
