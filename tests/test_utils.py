@@ -6,7 +6,7 @@ import nose
 from StringIO import StringIO
 from gcdt import utils
 from gcdt.utils import version, __version__, retries, configure, \
-    read_gcdt_user_config, get_context
+    read_gcdt_user_config, get_context, get_command
 
 
 def test_version():
@@ -125,3 +125,23 @@ def test_read_user_config_comp_mode():
     # cleanup the testfile
     tf.close()
     os.unlink(tf.name)
+
+
+def test_command_version():
+    arguments = {
+        '-f': False,
+        'configure': False,
+        'delete': False,
+        'version': True
+    }
+    assert_equal(get_command(arguments), 'version')
+
+
+def test_command_delete_f():
+    arguments = {
+        '-f': True,
+        'configure': False,
+        'delete': True,
+        'version': False
+    }
+    assert_equal(get_command(arguments), 'delete')

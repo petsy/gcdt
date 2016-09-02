@@ -188,4 +188,5 @@ def get_command(arguments):
     :param arguments parsed by docopt:
     :return: command
     """
-    return [k for k, v in arguments.iteritems() if v is True][0]
+    return [k for k, v in arguments.iteritems()
+            if not k.startswith('-') and v is True][0]
