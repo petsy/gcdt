@@ -165,7 +165,6 @@ def _datadog_get_tags(context):
 
 
 def datadog_notification(context):
-    # the api_key is currently not rolled out see OPS-126
     if not '_datadog_api_key' in context:
         return
     api_key = context['_datadog_api_key']
@@ -181,12 +180,12 @@ def datadog_notification(context):
         datadog_event(api_key, metric, tags)
 
 
-def datadog_error(context, message):
-    # the api_key is currently not rolled out see OPS-126
+def datadog_error(context, message=None):
     if not '_datadog_api_key' in context:
         return
     api_key = context['_datadog_api_key']
     tags = _datadog_get_tags(context)
-    tags.append('error:%s' % message)
+    if message:
+        tags.append('error:%s' % message)
 
     datadog_metric(api_key, 'gcdt.error', tags)
