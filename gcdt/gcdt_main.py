@@ -7,7 +7,7 @@
 from __future__ import print_function
 import sys
 from docopt import docopt
-from gcdt.utils import configure, version
+from gcdt.utils import configure, version, get_command
 
 # creating docopt parameters and usage help
 DOC = ''''Usage:

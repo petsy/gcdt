@@ -100,7 +100,7 @@ def main():
         are_credentials_still_valid(boto_session)
         change_set, stack_name = create_change_set(boto_session, conf,
                                                    cloudformation)
-        describe_change_set(change_set, stack_name)
+        describe_change_set(boto_session, change_set, stack_name)
 
     if exit_code:
         datadog_error(context)
