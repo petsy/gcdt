@@ -69,16 +69,19 @@ def print_parameter_diff(boto_session, config, out=sys.stdout):
     table = []
     table.append(['Parameter', 'Current Value', 'New Value'])
 
-    for param in stack.parameters:
-        try:
-            old = param['ParameterValue']
-            new = config.get('cloudformation.' + param['ParameterKey'])
-            if old != new:
-                table.append([param['ParameterKey'], old, new])
-                changed += 1
-        except pyhocon.exceptions.ConfigMissingException:
-            print('Did not find %s in local config file' % param['ParameterKey'],
-                  file=out)
+    # Check if there are parameters for the stack
+    if stack.parameters is not None:
+
+        for param in stack.parameters:
+            try:
+                old = param['ParameterValue']
+                new = config.get('cloudformation.' + param['ParameterKey'])
+                if old != new:
+                    table.append([param['ParameterKey'], old, new])
+                    changed += 1
+            except pyhocon.exceptions.ConfigMissingException:
+                print('Did not find %s in local config file' % param['ParameterKey'],
+                      file=out)
 
     if changed > 0:
         print(tabulate(table, tablefmt='fancy_grid'), file=out)
