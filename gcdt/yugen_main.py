@@ -9,7 +9,8 @@ from gcdt.yugen_core import list_api_keys, get_lambdas, delete_api, \
     export_to_swagger, create_api_key, list_apis, \
     create_custom_domain, delete_api_key, deploy_api
 from gcdt.utils import version, read_gcdt_user_config, get_context, get_command
-from gcdt.monitoring import datadog_notification, datadog_error
+from gcdt.monitoring import datadog_notification, datadog_error, \
+    datadog_event_detail
 
 # creating docopt parameters and usage help
 DOC = '''Usage:
@@ -97,6 +98,8 @@ def main():
                                  route_53_record=route_53_record,
                                  ssl_cert=ssl_cert,
                                  hosted_zone_id=hosted_zone_id)
+        event = 'yugen bot: deployed api *%s*' % api_name
+        datadog_event_detail(context, event)
     elif arguments['delete']:
         slack_token, slack_channel = get_user_config()
         are_credentials_still_valid()
@@ -107,6 +110,8 @@ def main():
             slack_token=slack_token,
             slack_channel=slack_channel
         )
+        event = 'yugen bot: deleted api *%s*' % api_name
+        datadog_event_detail(context, event)
     elif arguments['export']:
         are_credentials_still_valid()
         conf = read_api_config()

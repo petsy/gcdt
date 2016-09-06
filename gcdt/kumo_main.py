@@ -17,7 +17,8 @@ from gcdt.kumo_core import call_pre_hook, print_parameter_diff, delete_stack, \
     deploy_stack, generate_template_file, list_stacks, create_change_set, \
     describe_change_set, load_cloudformation_template
 from gcdt.utils import read_gcdt_user_config, get_context, get_command
-from gcdt.monitoring import datadog_notification, datadog_error
+from gcdt.monitoring import datadog_notification, datadog_error, \
+    datadog_event_detail
 
 
 # creating docopt parameters and usage help
@@ -80,12 +81,16 @@ def main():
         are_credentials_still_valid(boto_session)
         exit_code = deploy_stack(boto_session, conf, cloudformation, slack_token, \
             slack_channel, override_stack_policy=arguments['--override-stack-policy'])
+        event = 'kumo bot: deployed stack %s ' % conf.get('cloudformation.StackName')
+        datadog_event_detail(context, event)
     elif arguments['delete']:
         slack_token, slack_channel = get_user_config()
         cloudformation = load_template()  # TODO: is this really necessary?
         conf = read_config()
         are_credentials_still_valid(boto_session)
         exit_code = delete_stack(boto_session, conf, slack_token, slack_channel)
+        event = 'kumo bot: deleted stack %s ' % conf.get('cloudformation.StackName')
+        datadog_event_detail(context, event)
     elif arguments['generate']:
         cloudformation = load_template()
         conf = read_config()

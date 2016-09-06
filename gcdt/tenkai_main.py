@@ -13,7 +13,7 @@ from gcdt import utils
 from gcdt.tenkai_core import prepare_artifacts_bucket, deploy, deployment_status, \
     bundle_revision
 from gcdt.utils import get_context, get_command
-from gcdt.monitoring import datadog_notification, datadog_error
+from gcdt.monitoring import datadog_notification, datadog_error, datadog_event_detail
 
 
 DOC = '''Usage:
@@ -49,6 +49,9 @@ def main():
         if exit_code:
             datadog_error(context)
             sys.exit(1)
+        event = 'tenkai bot: deployed deployment group %s ' % \
+                  conf.get('codedeploy.deploymentGroupName')
+        datadog_event_detail(context, event)
     elif arguments['bundle']:
         print('created bundle at %s' % bundle_revision())
 
