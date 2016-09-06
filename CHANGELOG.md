@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.0.52] - 2016-09-06
+### Added
+- FEATURE: kumo now supports host zones as a parameter for creating route53 records
+
 ## [0.0.51] - 2016-09-05
 ### Added
 - FIX: kumo parameter diff now checks if stack has parameters beforehand
