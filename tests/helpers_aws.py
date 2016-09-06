@@ -2,6 +2,8 @@
 from __future__ import print_function
 
 import json
+import os
+import textwrap
 import time
 import boto3
 from gcdt.logger import setup_logger
@@ -61,6 +63,22 @@ def create_lambda_helper(lambda_name, role_arn, handler_filename,
 
     role_arn = role['Arn']
     '''
+    # prepare ./vendored folder and settings file
+    settings_file = os.path.join('settings_dev.conf')
+    with open(settings_file, 'w') as settings:
+        setting_string = textwrap.dedent("""\
+            sample_lambda {
+                cw_name = "dp-dev-sample"
+            }""")
+        settings.write(setting_string)
+    requirements_txt = os.path.join('requirements.txt')
+    with open(requirements_txt, 'w') as req:
+        req.write('pyhocon==0.3.28\n')
+    # ./vendored folder
+    if not os.path.exists('./vendored'):
+        # reuse ./vendored folder to save us some time during pip install...
+        os.makedirs('./vendored')
+
     lambda_description = 'lambda created for unittesting ramuda deployment'
     # lambda_handler = 'handler.handle'
     timeout = 300
