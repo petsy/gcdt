@@ -173,11 +173,27 @@ def datadog_notification(context):
 
     datadog_metric(api_key, metric, tags)
 
+    # disable implicit event reporting for now
     # report main events
     # note: you need to blacklist events you do not want to report
-    if context['command'] not in ['version', 'list', 'info', 'bundle', 'generate',
-            'preview', 'metrics', 'ping', 'export']:
-        datadog_event(api_key, metric, tags)
+    #if context['command'] not in ['version', 'list', 'info', 'bundle', 'generate',
+    #                              'preview', 'metrics', 'ping', 'export']:
+    #    datadog_event(api_key, metric, tags)
+
+
+def datadog_event_detail(context, message):
+    """This is a temporary means to add events without changing the structure
+    of the gcdt tools.
+
+    :param context:
+    :param message:
+    """
+    if not '_datadog_api_key' in context:
+        return
+    api_key = context['_datadog_api_key']
+    metric = 'gcdt.%s' % context['tool']
+    tags = _datadog_get_tags(context)
+    datadog_event(api_key, metric, tags, text=message)
 
 
 def datadog_error(context, message=None):
