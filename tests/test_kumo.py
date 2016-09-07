@@ -4,14 +4,14 @@ from nose.tools import assert_equal, assert_true, \
     assert_regexp_matches, assert_list_equal, raises
 import nose
 import os
-import shutil
 import json
-from tempfile import NamedTemporaryFile, mkdtemp
+from tempfile import NamedTemporaryFile
 from pyhocon import ConfigFactory
 from gcdt.kumo_core import _generate_parameters, \
     load_cloudformation_template, generate_template_file, _get_stack_name, \
     _get_stack_policy, _get_stack_policy_during_update, _get_conf_value, \
     _generate_parameter_entry
+from .helpers import cleanup_tempfiles, temp_folder
 from pyhocon.exceptions import ConfigMissingException
 
 
@@ -42,17 +42,14 @@ def test_parameter_substitution():
     assert_equal(converted_conf, expected)
 
 
-def test_load_cloudformation_template():
+def test_load_cloudformation_template(cleanup_tempfiles):
     tf = NamedTemporaryFile(delete=False, suffix='py')
     open(tf.name, 'w').write('def plus(a, b):\n    return a+b')
+    cleanup_tempfiles.append(tf.name)
 
     module, success = load_cloudformation_template(tf.name)
     assert_equal(success, True)
     assert_equal(module.plus(1, 2), 3)
-
-    # cleanup the testfile
-    tf.close()
-    os.unlink(tf.name)
 
 
 def test_cloudformation_template_not_available():
@@ -61,11 +58,11 @@ def test_cloudformation_template_not_available():
     assert_equal(success, False)
 
 
-def test_load_cloudformation_template_from_cwd():
-    cwd = (os.getcwd())
+def test_load_cloudformation_template_from_cwd(temp_folder):
+    #cwd = (os.getcwd())
+    #folder = mkdtemp()
+    #os.chdir(folder)
     # prepare dummy template for test
-    folder = mkdtemp()
-    os.chdir(folder)
     open('cloudformation.py', 'w').write('def plus(a, b):\n    return a+b\n')
 
     module, success = load_cloudformation_template()
@@ -73,8 +70,8 @@ def test_load_cloudformation_template_from_cwd():
     assert_equal(module.plus(1, 2), 3)
 
     # cleanup
-    os.chdir(cwd)
-    shutil.rmtree(folder)
+    #os.chdir(cwd)
+    #shutil.rmtree(folder)
 
 
 def test_simple_cloudformation_stack():

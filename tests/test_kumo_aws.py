@@ -3,17 +3,16 @@ import boto3
 import os
 from StringIO import StringIO
 from nose.tools import assert_equal, assert_false, \
-    assert_regexp_matches, with_setup
-import nose
+    assert_regexp_matches
 from nose.tools import assert_is_not
-from nose.plugins.attrib import attr
+import pytest
+from .helpers_aws import check_preconditions, cleanup_buckets
 from pyhocon import ConfigFactory
 from pyhocon.config_tree import ConfigTree
 from gcdt.kumo_core import load_cloudformation_template, list_stacks, \
     print_parameter_diff, are_credentials_still_valid, deploy_stack, \
     delete_stack, create_change_set, _get_stack_name, describe_change_set, \
     _get_artifact_bucket, _s3_upload
-from helpers import check_preconditions
 
 
 def here(p): return os.path.join(os.path.dirname(__file__), p)
@@ -29,16 +28,16 @@ config = ConfigFactory.parse_file(
 )
 
 
-@attr('aws')
-@with_setup(check_preconditions)
+@pytest.mark.aws
+@check_preconditions
 def test_list_stacks():
     out = StringIO()
     list_stacks(boto_session, out=out)
     assert_regexp_matches(out.getvalue().strip(), 'listed \d+ stacks')
 
 
-@attr('aws')
-@with_setup(check_preconditions)
+@pytest.mark.aws
+@check_preconditions
 def test_print_parameter_diff():
     out = StringIO()
     empty_conf = ConfigTree([('cloudfoundation', ConfigTree([]))])
@@ -49,9 +48,9 @@ def test_print_parameter_diff():
 
 
 # TODO: this needs a cleanup of the bucket
-@attr('aws')
-@with_setup(check_preconditions)
-def test_s3_upload():
+@pytest.mark.aws
+@check_preconditions
+def test_s3_upload(cleanup_buckets):
     # bucket helpers borrowed from tenkai
     def _prepare_artifacts_bucket(bucket):
         if not _bucket_exists(bucket):
@@ -86,6 +85,7 @@ def test_s3_upload():
 
     artifact_bucket = _get_artifact_bucket(upload_conf)
     _prepare_artifacts_bucket(artifact_bucket)
+    cleanup_buckets.append(artifact_bucket)
     dest_key = 'kumo/%s/%s-cloudformation.json' % (region,
                                                    _get_stack_name(upload_conf))
     expected_s3url = 'https://s3-%s.amazonaws.com/%s/%s' % (region,
@@ -100,6 +100,16 @@ def test_s3_upload():
 # since the stack creation for a simple stack takes some time we decided
 # to test the stack related operations together
 
+@pytest.fixture(scope='function')  # 'function' or 'module'
+def cleanup_stack():
+    yield
+    # cleanup
+    exit_code = delete_stack(boto_session, config)
+    # check whether delete was completed!
+    assert_false(exit_code, 'delete_stack was not completed\n' +
+             'please make sure to clean up the stack manually')
+
+'''
 def cleanup_stack():
     """Remove the stack to cleanup after test run.
 
@@ -108,11 +118,12 @@ def cleanup_stack():
     # check whether delete was completed!
     assert_false(exit_code, 'delete_stack was not completed\n' +
                  'please make sure to clean up the stack manually')
+'''
 
 
-@attr('aws')
-@with_setup(check_preconditions, cleanup_stack)
-def test_kumo_stack_lifecycle():
+@pytest.mark.aws
+@check_preconditions
+def test_kumo_stack_lifecycle(cleanup_stack):
     # create a stack we use for the test lifecycle
     print_parameter_diff(boto_session, config)
     are_credentials_still_valid(boto_session)

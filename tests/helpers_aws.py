@@ -6,8 +6,10 @@ import os
 import textwrap
 import time
 import boto3
+import pytest
 from gcdt.logger import setup_logger
 from gcdt.ramuda_core import deploy_lambda
+from tests.helpers import random_string
 
 log = setup_logger(__name__)
 
@@ -166,3 +168,44 @@ def create_role_helper(name, policies=None):
     time.sleep(15)
 
     return role
+
+
+def _precond_check():
+    """Make sure the default AWS profile is set so the test can run on AWS."""
+    if os.getenv('USER', None) != 'jenkins' and \
+            not os.getenv('AWS_DEFAULT_PROFILE', None):
+        print("AWS_DEFAULT_PROFILE variable not set! Test is skipped.")
+        return True
+    if not os.getenv('ENV', None):
+        print("ENV environment variable not set! Test is skipped.")
+        return True
+    if not os.getenv('ACCOUNT', None):
+        print("ACCOUNT environment variable not set! Test is skipped.")
+        return True
+
+    return False
+
+
+# skipif helper check_preconditions
+check_preconditions = pytest.mark.skipif(_precond_check(),
+    reason="Set environment variables to run tests on AWS (see README.md).")
+
+
+@pytest.fixture(scope='function')  # 'function' or 'module'
+def cleanup_buckets():
+    items = []
+    yield items
+    # cleanup
+    for i in items:
+        delete_bucket(i)
+
+
+@pytest.fixture(scope='function')  # 'function' or 'module'
+def temp_bucket():
+    # create a bucket
+    temp_string = random_string()
+    bucket_name = 'unittest-lambda-s3-event-source-%s' % temp_string
+    create_bucket(bucket_name)
+    yield bucket_name
+    # cleanup
+    delete_bucket(bucket_name)
