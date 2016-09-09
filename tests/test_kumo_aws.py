@@ -166,7 +166,7 @@ def test_kumo_stack_lifecycle():
     assert_equal(exit_code, 0)
 
 
-@attr('aws' )
+@attr('aws')
 @with_setup(check_preconditions, cleanup_stack_autoscaling)
 def test_kumo_utils_ensure_autoscaling_ebs_tags():
     are_credentials_still_valid(boto_session)
@@ -197,14 +197,13 @@ def test_kumo_utils_ensure_autoscaling_ebs_tags():
     ec2_client = boto3.client('ec2')
     ec2_resource = boto3.resource('ec2')
     response = ec2_client.describe_instances( Filters = [ autoscale_filter ])
-    instances = response['Reservations'][0]['Instances']
-
-    for i in instances:
-        instance_id = i['InstanceId']
-        instance  = ec2_resource.Instance(instance_id)
-        for vol in instance.volumes.all():
-            for tag in tags_v1:
-                assert_true(assert_volume_tagged(vol, tag))
+    for r in response['Reservations']:
+        for i in r['Instances']:
+            instance_id = i['InstanceId']
+            instance  = ec2_resource.Instance(instance_id)
+            for vol in instance.volumes.all():
+                for tag in tags_v1:
+                    assert_true(assert_volume_tagged(vol, tag))
 
     tag_v2 = {
         'Key':'kumo-test',
@@ -214,14 +213,16 @@ def test_kumo_utils_ensure_autoscaling_ebs_tags():
         tag_v2
     ]
     ensure_ebs_volume_tags_autoscaling_group(as_group_name, tags_v2)
-    for i in instances:
-        instance_id = i['InstanceId']
-        instance  = ec2_resource.Instance(instance_id)
-        for vol in instance.volumes.all():
-            for tag in tags_v2:
-                assert_true(assert_volume_tagged(vol, tag))
-            for tag in tags_v1:
-                assert_false(assert_volume_tagged(vol, tag))
+    for r in response['Reservations']:
+        for i in r['Instances']:
+            instance_id = i['InstanceId']
+            instance  = ec2_resource.Instance(instance_id)
+            for vol in instance.volumes.all():
+                for tag in tags_v2:
+                    assert_true(assert_volume_tagged(vol, tag))
+                for tag in tags_v1:
+                    assert_false(assert_volume_tagged(vol, tag))
+
 
 
 @attr('aws')

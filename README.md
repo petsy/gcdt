@@ -96,6 +96,10 @@ Please make sure that you do not lower the gcdt test coverage. You can use the f
 ```bash
 $ nosetests --with-coverage --cover-erase --cover-package=gcdt tests/test_kumo*
 ```
+This requires the `coverage` package, which can be installed via pip;
+```bash
+$ pip install coverage
+```
 
 To suppress debug output to more easily find out why (if) the tests break, please run nosetests with the `nologcapture` option:
 ```bash

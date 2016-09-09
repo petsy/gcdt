@@ -78,12 +78,10 @@ def ensure_ebs_volume_tags_autoscaling_group(as_group_name, tags):
         'Name':'tag:aws:autoscaling:groupName',
         'Values': [ as_group_name ]
     }
-
     response = ec2_client.describe_instances( Filters = [ autoscale_filter ])
-    instances = response['Reservations'][0]['Instances']
-
-    for instance in instances:
-        ensure_ebs_volume_tags_ec2_instance(instance['InstanceId'], tags)
+    for r in response['Reservations']:
+        for i in r['Instances']:
+            ensure_ebs_volume_tags_ec2_instance(i['InstanceId'], tags)
 
 
 def ensure_ebs_volume_tags_ec2_instance(instance_id, tags):
