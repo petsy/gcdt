@@ -97,6 +97,10 @@ Please make sure that you do not lower the gcdt test coverage. You can use the f
 $ nosetests --with-coverage --cover-erase --cover-package=gcdt tests/test_kumo*
 ```
 
+To suppress debug output to more easily find out why (if) the tests break, please run nosetests with the `nologcapture` option:
+```bash
+$ nosetets tests/* --nologcapture
+```
 ## Cloudformation Deploy Tool  
 ### gcdt
 
