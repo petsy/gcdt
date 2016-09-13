@@ -37,4 +37,4 @@ simplejson==3.8.2         # via datadog
 six==1.10.0               # via glomex-credstash, glomex-utils, mock, python-dateutil
 slacker==0.9.24
 tabulate==0.7.5
-troposphere==1.8.0
+troposphere==1.8.1
