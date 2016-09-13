@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+
+### Added
+- ADD: kumo utils EBS tagging functinality (intended for post hooks)
+
 ## [0.0.51] - 2016-09-05
 ### Added
 - FIX: kumo parameter diff now checks if stack has parameters beforehand
