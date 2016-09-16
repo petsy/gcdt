@@ -91,6 +91,9 @@ Note: You need to enter an MFA code to run the tests.
 $ nosetests tests/test_kumo*
 ```
 
+Hint: If you want to see the print outputs use `NOSE_NOCAPTURE=1` as a prefix. 
+
+
 Please make sure that you do not lower the gcdt test coverage. You can use the following command to make sure:
 
 ```bash
