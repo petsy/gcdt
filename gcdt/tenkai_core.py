@@ -21,7 +21,7 @@ def deploy(applicationName, deploymentGroupName, deploymentConfigName, bucket, p
     :return: deploymentId from create_deployment
     """
     if pre_budle_scripts:
-        exit_code = execute_pre_bundle_scripts(pre_budle_scripts)
+        exit_code = _execute_pre_bundle_scripts(pre_budle_scripts)
         if exit_code != 0:
             print('Pre budle script exited with error')
             sys.exit(1)
