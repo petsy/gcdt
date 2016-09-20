@@ -108,14 +108,14 @@ def _upload_revision_to_s3(bucket, applicationName, file):
 
     return response['ETag'], response['VersionId']
 
-def execute_pre_bundle_scripts(scripts):
+def _execute_pre_bundle_scripts(scripts):
     for script in scripts:
-        exit_code = execute_script(script)
+        exit_code = _execute_script(script)
         if exit_code != 0:
             return exit_code
     return 0
 
-def execute_script(file_name):
+def _execute_script(file_name):
     if os.path.isfile(file_name):
         print('Executing %s ...' % file_name)
         exit_code = subprocess.call([file_name, '-e'])
