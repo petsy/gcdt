@@ -106,7 +106,7 @@ $ pip install coverage
 
 To suppress debug output to more easily find out why (if) the tests break, please run nosetests with the `nologcapture` option:
 ```bash
-$ nosetets tests/* --nologcapture
+$ nosetests tests/* --nologcapture
 ```
 ## Cloudformation Deploy Tool  
 ### gcdt
