@@ -44,7 +44,7 @@ def main():
             deploymentGroupName=conf.get('codedeploy.deploymentGroupName'),
             deploymentConfigName=conf.get('codedeploy.deploymentConfigName'),
             bucket=conf.get('codedeploy.artifactsBucket'),
-            pre_budle_scripts=conf.get('preBundle', None)
+            pre_bundle_scripts=conf.get('preBundle', None)
         )
         exit_code = deployment_status(deployment)
         if exit_code:

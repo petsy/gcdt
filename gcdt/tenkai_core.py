@@ -10,7 +10,7 @@ from boto3.s3.transfer import S3Transfer
 from clint.textui import colored
 
 
-def deploy(applicationName, deploymentGroupName, deploymentConfigName, bucket, pre_budle_scripts=None):
+def deploy(applicationName, deploymentGroupName, deploymentConfigName, bucket, pre_bundle_scripts=None):
     """Upload bundle and deploy to deployment group.
     This includes the bundle-action.
 
@@ -20,10 +20,11 @@ def deploy(applicationName, deploymentGroupName, deploymentConfigName, bucket, p
     :param bucket:
     :return: deploymentId from create_deployment
     """
-    if pre_budle_scripts:
-        exit_code = _execute_pre_bundle_scripts(pre_budle_scripts)
+    print('%s\n%s\n%s' % (applicationName, deploymentGroupName, deploymentConfigName))
+    if pre_bundle_scripts:
+        exit_code = _execute_pre_bundle_scripts(pre_bundle_scripts)
         if exit_code != 0:
-            print('Pre budle script exited with error')
+            print('Pre bundle script exited with error')
             sys.exit(1)
     bundlefile = bundle_revision()
     etag, version = _upload_revision_to_s3(bucket, applicationName, bundlefile)
