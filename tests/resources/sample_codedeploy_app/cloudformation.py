@@ -100,6 +100,20 @@ CodeDeployRolePolicies = iam.build_policy(
                 "ec2:Describe*"
             ]
         },
+        {
+            "Effect": "Allow",
+            "Resource": [
+                "*"
+            ],
+            "Action": [
+                "autoscaling:CompleteLifecycleAction",
+                "autoscaling:DeleteLifecycleHook",
+                "autoscaling:DescribeLifecycleHooks",
+                "autoscaling:DescribeAutoScalingGroups",
+                "autoscaling:PutLifecycleHook",
+                "autoscaling:RecordLifecycleActionHeartbeat"
+            ]
+        },
     ],
     [
         Ref(role_code_deploy_trust_role)
