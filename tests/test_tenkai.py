@@ -61,20 +61,11 @@ def test_build_bundle_key():
 def test_bundle_scripts():
     start_dir = here('.')
     codedeploy_dir = here('resources/sample_pre_bundle_script_codedeploy')
-    file_in_bundle = here('resources/sample_pre_bundle_script_codedeploy/codedeploy/file_to_bundle.txt')
-
-    try:
-        os.remove(file_in_bundle)
-    except OSError:
-        pass
-    assert_false(os.path.isfile(file_in_bundle))
     os.chdir(codedeploy_dir)
     config = read_config('codedeploy')
     pre_bundle_scripts = config.get('preBundle', None)
     assert_is_not_none(pre_bundle_scripts)
     exit_code = _execute_pre_bundle_scripts(pre_bundle_scripts)
     assert_equal(exit_code, 0)
-    assert_true(os.path.isfile(file_in_bundle))
-    os.remove(file_in_bundle)
     os.chdir(start_dir)
 
