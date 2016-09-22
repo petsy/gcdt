@@ -1,7 +1,7 @@
 Glomex Cloud Deployment Tools
 ============================= 
 
-version number: 0.0.57.dev0
+version number: 0.0.57.dev1
 
 author: Glomex DevOps Team
 
@@ -106,7 +106,7 @@ $ pip install coverage
 
 To suppress debug output to more easily find out why (if) the tests break, please run nosetests with the `nologcapture` option:
 ```bash
-$ nosetets tests/* --nologcapture
+$ nosetests tests/* --nologcapture
 ```
 ## Cloudformation Deploy Tool  
 ### gcdt
