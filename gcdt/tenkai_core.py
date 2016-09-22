@@ -21,7 +21,6 @@ def deploy(applicationName, deploymentGroupName, deploymentConfigName, bucket, p
     :param bucket:
     :return: deploymentId from create_deployment
     """
-    print('%s\n%s\n%s' % (applicationName, deploymentGroupName, deploymentConfigName))
     if pre_bundle_scripts:
         exit_code = _execute_pre_bundle_scripts(pre_bundle_scripts)
         if exit_code != 0:
