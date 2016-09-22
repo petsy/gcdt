@@ -6,11 +6,12 @@ import json
 import time
 import tarfile
 import boto3
+import subprocess
 from boto3.s3.transfer import S3Transfer
 from clint.textui import colored
 
 
-def deploy(applicationName, deploymentGroupName, deploymentConfigName, bucket):
+def deploy(applicationName, deploymentGroupName, deploymentConfigName, bucket, pre_bundle_scripts=None):
     """Upload bundle and deploy to deployment group.
     This includes the bundle-action.
 
@@ -20,6 +21,12 @@ def deploy(applicationName, deploymentGroupName, deploymentConfigName, bucket):
     :param bucket:
     :return: deploymentId from create_deployment
     """
+    print('%s\n%s\n%s' % (applicationName, deploymentGroupName, deploymentConfigName))
+    if pre_bundle_scripts:
+        exit_code = _execute_pre_bundle_scripts(pre_bundle_scripts)
+        if exit_code != 0:
+            print('Pre bundle script exited with error')
+            sys.exit(1)
     bundlefile = bundle_revision()
     etag, version = _upload_revision_to_s3(bucket, applicationName, bundlefile)
 
@@ -106,10 +113,24 @@ def _upload_revision_to_s3(bucket, applicationName, file):
     transfer.upload_file(file, bucket, _build_bundle_key(applicationName))
     response = client.head_object(Bucket=bucket,
                                   Key=_build_bundle_key(applicationName))
-    # print "\n"
-    # print response["ETag"]
-    # print response["VersionId"]
+
     return response['ETag'], response['VersionId']
+
+def _execute_pre_bundle_scripts(scripts):
+    for script in scripts:
+        exit_code = _execute_script(script)
+        if exit_code != 0:
+            return exit_code
+    return 0
+
+def _execute_script(file_name):
+    if os.path.isfile(file_name):
+        print('Executing %s ...' % file_name)
+        exit_code = subprocess.call([file_name, '-e'])
+        return exit_code
+    else:
+        print('No file found matching %s...' % file_name)
+        return 1
 
 
 def _bucket_exists(bucket):
