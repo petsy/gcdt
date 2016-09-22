@@ -71,7 +71,6 @@ def test_bundle_scripts():
     os.chdir(codedeploy_dir)
     config = read_config('codedeploy')
     pre_bundle_scripts = config.get('preBundle', None)
-    print(pre_bundle_scripts)
     assert_is_not_none(pre_bundle_scripts)
     exit_code = _execute_pre_bundle_scripts(pre_bundle_scripts)
     assert_equal(exit_code, 0)
