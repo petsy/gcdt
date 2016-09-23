@@ -40,6 +40,7 @@ def cleanup_stack_tenkai():
 @with_setup(check_preconditions, cleanup_stack_tenkai)
 def test_tenkai_exit_codes():
     are_credentials_still_valid(boto_session)
+    # Set up stack with an ec2 and deployment
     cloudformation, _ = load_cloudformation_template(
         here('resources/sample_codedeploy_app/cloudformation.py')
     )
@@ -56,8 +57,8 @@ def test_tenkai_exit_codes():
     not_working_deploy_dir = here('./resources/sample_codedeploy_app/not_working')
     working_deploy_dir = here('./resources/sample_codedeploy_app/working')
     os.chdir(not_working_deploy_dir)
+    
     # test deployment which should exit with exit code 1
-
     deploy_id_1 = tenkai_deploy(app_name,
                               deployment_group,
                               'CodeDeployDefault.AllAtOnce',
