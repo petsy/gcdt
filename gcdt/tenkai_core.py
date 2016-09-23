@@ -2,6 +2,7 @@
 from __future__ import print_function
 import os
 import sys
+import json
 import time
 import tarfile
 import boto3
@@ -20,7 +21,6 @@ def deploy(applicationName, deploymentGroupName, deploymentConfigName, bucket, p
     :param bucket:
     :return: deploymentId from create_deployment
     """
-    print('%s\n%s\n%s' % (applicationName, deploymentGroupName, deploymentConfigName))
     if pre_bundle_scripts:
         exit_code = _execute_pre_bundle_scripts(pre_bundle_scripts)
         if exit_code != 0:
@@ -60,22 +60,28 @@ def deployment_status(deploymentId, iterations=100):
     counter = 0
     steady_states = ['Succeeded', 'Failed', 'Stopped']
     client = boto3.client('codedeploy')
+
     while counter <= iterations:
         response = client.get_deployment(deploymentId=deploymentId)
         status = response['deploymentInfo']['status']
+
         if status not in steady_states:
             print('Deployment: %s - State: %s' % (deploymentId, status))
             sys.stdout.flush()
             time.sleep(10)
-        elif status is 'Failed':
-            print(colored.red(
-                'Deployment: %s failed: %s' %
-                (deploymentId, response['deploymentInfo']['errorInformation'])))
+        elif status == 'Failed':
+            print(
+                colored.red('Deployment: {} failed: {}'.format(
+                    deploymentId,
+                    json.dumps(response['deploymentInfo']['errorInformation'], indent=2)
+                ))
+            )
             # sys.exit(1)
             return 1
         else:
             print('Deployment: %s - State: %s' % (deploymentId, status))
             break
+
     return 0
 
 

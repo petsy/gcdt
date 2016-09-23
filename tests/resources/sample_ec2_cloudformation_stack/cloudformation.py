@@ -19,8 +19,8 @@ template.add_mapping('RegionMap', {
 
 ec2_instance = template.add_resource(ec2.Instance(
     "Ec2Instance",
-    ImageId=FindInMap("RegionMap", Ref("AWS::Region"), "AMI"),
-    InstanceType="t1.micro",
+    ImageId='ami-25681456',
+    InstanceType='t2.micro',
     KeyName='dev-ec2',
     SecurityGroupIds=["sg-c8bce3ac"], # hard coded to glomex default sg
     SubnetId='subnet-feb7ac9b', # hard coded to glomex subnet eu-west-1a

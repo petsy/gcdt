@@ -1,0 +1,29 @@
+# Define CodeDeploy lifecylce hooks
+# http://docs.aws.amazon.com/codedeploy/latest/userguide/app-spec-ref-example.html
+version: 0.0
+os: linux
+files:
+  - source: /
+    destination: /etc/ansible/codedeploy
+hooks:
+  # Hint: This lifecycle event is only used from the last deployment
+  ApplicationStop:
+    - location: appspec.sh
+      timeout: 10
+      runas: root
+  BeforeInstall:
+    - location: appspec.sh
+      timeout: 10
+      runas: root
+  AfterInstall:
+    - location: appspec.sh
+      timeout: 10
+      runas: root
+  ApplicationStart:
+    - location: appspec.sh
+      timeout: 10
+      runas: root
+  ValidateService:
+    - location: appspec.sh
+      timeout: 10
+      runas: root
