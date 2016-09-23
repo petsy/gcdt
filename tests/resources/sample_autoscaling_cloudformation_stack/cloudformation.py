@@ -41,9 +41,9 @@ LaunchConfiguration = t.add_resource(LaunchConfiguration(
         '    --stack ', Ref('AWS::StackName'),
         '    --region ', Ref('AWS::Region'), '\n'
     ])),
-    ImageId=FindInMap("RegionMap", Ref("AWS::Region"), "AMI"),
+    ImageId='ami-25681456',
+    InstanceType='t2.micro',
     KeyName='dev-ec2',
-    InstanceType='t1.micro',
     SecurityGroups=["sg-c8bce3ac"], # hard coded to glomex default sg
 ))
 
