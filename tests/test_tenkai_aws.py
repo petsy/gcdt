@@ -56,6 +56,7 @@ def test_tenkai_exit_codes():
     not_working_deploy_dir = here('./resources/sample_codedeploy_app/not_working')
     working_deploy_dir = here('./resources/sample_codedeploy_app/working')
     os.chdir(not_working_deploy_dir)
+    # test deployment which should exit with exit code 1
 
     deploy_id_1 = tenkai_deploy(app_name,
                               deployment_group,
@@ -65,7 +66,7 @@ def test_tenkai_exit_codes():
 
     exit_code = deployment_status(deploy_id_1)
     assert_equal(exit_code, 1)
-
+    # test deployment which should exit with exit code 0
     os.chdir(working_deploy_dir)
     deploy_id_2 = tenkai_deploy(app_name,
                               deployment_group,
