@@ -2,6 +2,12 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.0.57] - 2016-09-23
+### Added
+- FEATURE tenkai now supports execution of bash scripts before bundling, can be used
+to bundle packages at runtime. 
+- FIX tenkai now returns proper exit codes when deployment fails.
+
 ## [0.0.55] - 2016-09-16
 ### Added
 - ADD: kumo utils EBS tagging functinality (intended for post hooks)
