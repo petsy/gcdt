@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.0.59] - TBD
+### Added
+- FEATURE: ramuda clean
+
 ## [0.0.57] - 2016-09-23
 ### Added
 - FEATURE tenkai now supports execution of bash scripts before bundling, can be used
@@ -33,7 +37,6 @@ to bundle packages at runtime.
 - FIX: refactored yugen structure to yugen_main and yugen_core
 - FIX: improved yugen testability and test coverage
 - FIX: further improved ramuda test coverage
-- FEATURE: ramuda clean
 
 ## [0.0.33] - 2016-08-18
 ### Added
