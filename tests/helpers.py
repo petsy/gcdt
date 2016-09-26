@@ -113,3 +113,25 @@ def random_string():
     """Create a random 6 character string.
     """
     return ''.join([random.choice(string.ascii_lowercase) for i in xrange(6)])
+
+
+'''
+class FakeSocket(object):
+    """ A fake socket for testing datadog statsd. """
+
+    def __init__(self):
+        self.payloads = deque()
+
+    def send(self, payload):
+        assert type(payload) == six.binary_type
+        self.payloads.append(payload)
+
+    def recv(self):
+        try:
+            return self.payloads.popleft().decode('utf-8')
+        except IndexError:
+            return None
+
+    def __repr__(self):
+        return str(self.payloads)
+'''

@@ -142,8 +142,14 @@ tests/vendored
 tests/settings_dev.conf
 vendored
 tests/requirements.txt
+
+# local confs and tools
 set_qa
 set_dp
+set_vvs
 howto.txt
 build_pr.sh
 tests/MyStringIO.py
+remove_*.py
+pytests/*
+remove_gcdt_version.sh

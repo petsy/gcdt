@@ -1,20 +1,21 @@
 # -*- coding: utf-8 -*-
 from __future__ import print_function
+
+import codecs
+import json
 import os
 import uuid
-import json
-import codecs
 
 import boto3
 from botocore.exceptions import ClientError
-from pyhocon import ConfigFactory
-from clint.textui import colored, prompt
+from clint.textui import colored
+from gcdt import monitoring
 from pybars import Compiler
 from tabulate import tabulate
 
-from gcdt import monitoring
-
 SWAGGER_FILE = 'swagger.yaml'
+INVOKE_FUNCTION_ACTION = 'lambda:InvokeFunction'
+AMAZON_API_PRINCIPAL = 'apigateway.amazonaws.com'
 
 
 # WIP
@@ -62,7 +63,7 @@ def list_apis():
 
 
 def deploy_api(boto_session, api_name, api_description, stage_name, api_key,
-               lambdas, slack_token):
+               lambdas, slack_token=None, slack_channel='systemmessages'):
     """Deploy API Gateway to AWS cloud.
     
     :param boto_session:
@@ -71,7 +72,8 @@ def deploy_api(boto_session, api_name, api_description, stage_name, api_key,
     :param stage_name: 
     :param api_key: 
     :param lambdas: 
-    :param slack_token: 
+    :param slack_token:
+    :param slack_channel:
     """
     if not _api_exists(api_name):
         if os.path.isfile(SWAGGER_FILE):
@@ -86,13 +88,11 @@ def deploy_api(boto_session, api_name, api_description, stage_name, api_key,
 
         api = _api_by_name(api_name)
         if api is not None:
-            for lmbda in lambdas:
-                _add_lambda_permissions(lmbda, api)
+            _ensure_lambdas_permissions(lambdas, api)
             _create_deployment(api_name, stage_name)
             _wire_api_key(api_name, api_key, stage_name)
             message = 'yugen bot: created api *%s*' % api_name
-            monitoring.slacker_notification('systemmessages', message,
-                                            slack_token)
+            monitoring.slack_notification(slack_channel, message, slack_token)
         else:
             print('API name unknown')
     else:
@@ -104,19 +104,20 @@ def deploy_api(boto_session, api_name, api_description, stage_name, api_key,
 
         api = _api_by_name(api_name)
         if api is not None:
+            _ensure_lambdas_permissions(lambdas, api)
             _create_deployment(api_name, stage_name)
             message = 'yugen bot: updated api *%s*' % api_name
-            monitoring.slacker_notification('systemmessages', message,
-                                            slack_token)
+            monitoring.slack_notification(slack_channel, message, slack_token)
         else:
             print('API name unknown')
 
 
-def delete_api(api_name, slack_token):
+def delete_api(api_name, slack_token=None, slack_channel='systemmessages'):
     """Delete the API.
 
     :param api_name:
     :param slack_token:
+    :param slack_channel:
     """
     client = boto3.client('apigateway')
 
@@ -132,7 +133,7 @@ def delete_api(api_name, slack_token):
 
         print(_json2table(response))
         message = 'yugen bot: deleted api *%s*' % api_name
-        monitoring.slacker_notification('systemmessages', message, slack_token)
+        monitoring.slack_notification(slack_channel, message, slack_token)
     else:
         print('API name unknown')
 
@@ -228,13 +229,13 @@ def create_custom_domain(api_name, api_target_stage, api_base_path, domain_name,
                                    route_53_record,
                                    cloudfront_distribution)
     if record_correct:
-        print('Route53 record correctly set: %s --> %s'(route_53_record,
+        print('Route53 record correctly set: %s --> %s' % (route_53_record,
                                                         cloudfront_distribution))
     else:
         _ensure_correct_route_53_record(hosted_zone_id,
                                         record_name=route_53_record,
                                         record_value=cloudfront_distribution)
-        print('Route53 record set: %s --> %s'(route_53_record,
+        print('Route53 record set: %s --> %s' % (route_53_record,
                                               cloudfront_distribution))
     return 0
 
@@ -279,24 +280,6 @@ def are_credentials_still_valid():
         # sys.exit(1)
         return 1
     return 0
-
-
-def read_yugen_config(config_file=None):
-    """Read .yugen config file from user home.
-
-    :return: pyhocon configuration, exit_code
-    """
-    if not config_file:
-        config_file = os.path.expanduser('~') + '/' + '.yugen'
-    try:
-        config = ConfigFactory.parse_file(config_file)
-        return config, 0
-    except Exception as e:
-        # print(e)
-        print(colored.red('Cannot find file .yugen in your home directory %s' %
-                          config_file))
-        print(colored.red("Please run 'yugen configure'"))
-        return None, 1
 
 
 def _import_from_swagger(boto_session, api_name, api_description, stage_name,
@@ -556,43 +539,63 @@ def _template_variables_to_dict(api_name, api_description, api_target_stage,
     return return_dict
 
 
-def _add_lambda_permissions(lmbda, api):
+def _ensure_lambdas_permissions(lambdas, api):
     client = boto3.client('lambda')
+    for lmbda in lambdas:
+        _ensure_lambda_permissions(lmbda, api, client)
 
-    print('Adding lambda permission for API Gateway')
 
-    # lambda_full_name = lambda_name if lambda_alias is None else
-    # lambda_name + '/' + lambda_alias
+def _ensure_lambda_permissions(lmbda, api, client):
+    if not lmbda.get('arn'):
+        lambda_name = lmbda.get('name', '(no name provided)')
+        print('Lambda function {} could not be found'.format(lambda_name))
+        return
 
-    if lmbda.get('arn'):
+    lambda_arn = lmbda.get('arn')
+    lambda_alias = lmbda.get('alias')
+    lambda_name = lmbda.get('name')
 
-        # Get info from the lambda instead of API Gateway as there is not
-        # other boto possibility
-        lambda_arn = lmbda.get('arn')
-        lambda_alias = lmbda.get('alias')
-        lambda_name = lmbda.get('name')
+    lambda_region, lambda_account_id = \
+        _get_region_and_account_from_lambda_arn(lambda_arn)
 
-        lambda_region, lambda_account_id = \
-            _get_region_and_account_from_lambda_arn(lambda_arn)
+    source_arn = 'arn:aws:execute-api:{region}:{accountId}:{apiId}/*/*'.format(
+        region=lambda_region,
+        accountId=lambda_account_id,
+        apiId=api['id']
+    )
 
-        source_arn = 'arn:aws:execute-api:{region}:{accountId}:{apiId}/*/*'.format(
-            region=lambda_region,
-            accountId=lambda_account_id,
-            apiId=api['id']
-        )
+    if _invoke_lambda_permission_exists(client, lambda_arn, source_arn):
+        print('API already has permission to invoke lambda {}'.format(lambda_name))
+        return
 
-        response = client.add_permission(
-            FunctionName=lambda_name,
-            StatementId=str(uuid.uuid1()),
-            Action='lambda:InvokeFunction',
-            Principal='apigateway.amazonaws.com',
-            SourceArn=source_arn,
-            Qualifier=lambda_alias
-        )
+    print('Adding lambda permission for API Gateway for lambda {}'.format(lambda_name))
+    response = client.add_permission(
+        FunctionName=lambda_name,
+        StatementId=str(uuid.uuid1()),
+        Action=INVOKE_FUNCTION_ACTION,
+        Principal=AMAZON_API_PRINCIPAL,
+        SourceArn=source_arn,
+        Qualifier=lambda_alias
+    )
 
-        print(_json2table(json.loads(response['Statement'])))
-    else:
-        print('Lambda function could not be found')
+    print(_json2table(json.loads(response['Statement'])))
+
+
+def _invoke_lambda_permission_exists(client, lambda_arn, source_arn):
+    policy_resource_arn = lambda_arn + ':ACTIVE'
+    try:
+        response = client.get_policy(FunctionName=policy_resource_arn)
+    except ClientError:
+        return False
+
+    permissions = json.loads(response['Policy'])['Statement']
+    return [
+        p for p in permissions
+        if p.get('Condition', {}).get('ArnLike', {}).get('AWS:SourceArn') == source_arn
+            and p.get('Action') == INVOKE_FUNCTION_ACTION
+            and p.get('Effect') == 'Allow'
+            and p.get('Principal', {}).get('Service') == AMAZON_API_PRINCIPAL
+    ]
 
 
 # TODO: possible to consolidate this with the one for ramuda?
@@ -673,9 +676,3 @@ def _arn_to_uri(lambda_arn, lambda_alias):
                  ':lambda:path/2015-03-31/functions/'
     arn_suffix = '/invocations'
     return arn_prefix + lambda_arn + ':' + lambda_alias + arn_suffix
-
-
-# TODO: consolidate with other tools!
-def _get_input():
-    name = prompt.query('Please enter your Slack API token: ')
-    return name

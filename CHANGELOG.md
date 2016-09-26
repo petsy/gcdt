@@ -2,6 +2,32 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.0.57] - 2016-09-23
+### Added
+- FEATURE tenkai now supports execution of bash scripts before bundling, can be used
+to bundle packages at runtime. 
+- FIX tenkai now returns proper exit codes when deployment fails.
+
+## [0.0.55] - 2016-09-16
+### Added
+- ADD: kumo utils EBS tagging functinality (intended for post hooks)
+- FEATURE: kumo now supports host zones as a parameter for creating route53 records
+
+## [0.0.51] - 2016-09-05
+### Added
+- FIX: kumo parameter diff now checks if stack has parameters beforehand
+
+## [0.0.45] - 2016-09-01
+### Added
+- ADD: ramuda autowire functionality
+- ADD: gcdt sends metrics and events to datadog 
+- FIX: yugen will add invoke lambda permission for new paths in existing APIs
+
+## [0.0.35] - 2016-08-29
+### Added
+- ADD: consolidated slack configuration to .gcdt files
+- ADD: configuration for slack_channel
+
 ## [0.0.34] - 2016-08-tbd
 ### Added
 - FIX: refactored yugen structure to yugen_main and yugen_core

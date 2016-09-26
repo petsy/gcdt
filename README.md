@@ -1,7 +1,7 @@
 Glomex Cloud Deployment Tools
 ============================= 
 
-version number: 0.0.39.dev0
+version number: 0.0.59.dev0
 
 author: Glomex DevOps Team
 
@@ -81,6 +81,7 @@ $ pip install -e .
 ```bash
 $ export AWS_DEFAULT_PROFILE=superuser-dp-dev
 $ export ENV=DEV
+$ export ACCOUNT=dp # => or your team account
 ```
 
 
@@ -90,14 +91,46 @@ Note: You need to enter an MFA code to run the tests.
 $ nosetests tests/test_kumo*
 ```
 
+Hint: If you want to see the print outputs use `NOSE_NOCAPTURE=1` as a prefix. 
+
+
 Please make sure that you do not lower the gcdt test coverage. You can use the following command to make sure:
 
 ```bash
 $ nosetests --with-coverage --cover-erase --cover-package=gcdt tests/test_kumo*
 ```
+This requires the `coverage` package, which can be installed via pip;
+```bash
+$ pip install coverage
+```
 
-
+To suppress debug output to more easily find out why (if) the tests break, please run nosetests with the `nologcapture` option:
+```bash
+$ nosetests tests/* --nologcapture
+```
 ## Cloudformation Deploy Tool  
+### gcdt
+
+### Usage
+
+To see available commands, call gcdt without any arguments:
+
+```bash
+$kumo
+Usage:
+        gcdt configure
+        gcdt version
+```
+
+### Commands
+
+#### configure
+you need to run this on first run
+
+#### version
+will print the version of gcdt you are using
+
+
 ### kumo (雲 from Japanese: cloud)
 
 ### Usage
@@ -111,7 +144,6 @@ Usage:
         kumo list
         kumo delete -f
         kumo generate
-        kumo configure
         kumo preview
         kumo version
 ```
@@ -131,9 +163,6 @@ will delete a CloudFormation stack
 
 #### generate
 will generate the CloudFormation template for the given stack and write it to your current working directory.
-
-#### configure
-you need to run this on first run
 
 #### preview
 will create a CloudFormation ChangeSet with your current changes to the template
@@ -395,8 +424,23 @@ lambda {
   memorySize = "128"
   events {
     s3Sources = [
-        { bucket = "dp-dev-store-cdn-redshift-manifests", type = "s3:ObjectCreated:*", suffix = ".json" }
+        { bucket = "dp-dev-store-cdn-redshift-manifests", type = "s3:ObjectCreated:*", suffix = ".json" },
+        { 
+            bucket = "dp-dev-store-cdn-redshift-manifests",
+            type = "s3:ObjectCreated:*",
+            prefix = "folder",
+            suffix = ".gz",
+            ensure="exists"
+         }
     ]
+        timeSchedules = [
+           {
+               ensure = "exists",
+               ruleName = "time-event-test-T1",
+               ruleDescription = "run every 5 min from 0-5 UTC",
+               scheduleExpression = "cron(0/5 0-5 ? * * *)"
+           },
+        ]
   }
   vpc  {
     subnetIds = ["subnet-87685dde", "subnet-9f39ccfb", "subnet-166d7061"]
@@ -413,7 +457,8 @@ bundling {
 }
 
 deployment {
-  region = "eu-west-1"
+  region = "eu-west-1",
+  artifactBucket = "7finity-$PROJECT-deployment"
 }
 
 ```
@@ -426,6 +471,7 @@ ramuda can upload your lambda functions to S3 instead of inline through the API.
 To enable this feature add this to your lambda.conf:
 
 deployment {
+region = "eu-west-1",
     artifactBucket = "7finity-$PROJECT-deployment"
 }
 
