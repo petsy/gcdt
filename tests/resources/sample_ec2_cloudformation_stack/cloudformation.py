@@ -17,6 +17,8 @@ template.add_mapping('RegionMap', {
     "ap-northeast-1": {"AMI": "ami-dcfa4edd"}
 })
 
+# TODO: 'subnet-feb7ac9b' is a problem since the test can now only run on the
+# dp account
 ec2_instance = template.add_resource(ec2.Instance(
     "Ec2Instance",
     ImageId='ami-25681456',

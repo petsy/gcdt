@@ -2,11 +2,10 @@
 import boto3
 import os
 from StringIO import StringIO
-from nose.tools import assert_equal, assert_false, \
-    assert_regexp_matches, assert_is_not_none, with_setup
-import nose
-from nose.tools import assert_is_not, assert_true
-from nose.plugins.attrib import attr
+from nose.tools import assert_equal, assert_false, assert_is_not, \
+    assert_regexp_matches, assert_is_not_none, assert_true
+import pytest
+from .helpers_aws import check_preconditions, cleanup_buckets
 from pyhocon import ConfigFactory
 from pyhocon.config_tree import ConfigTree
 from gcdt.kumo_core import load_cloudformation_template, list_stacks, \
@@ -15,7 +14,6 @@ from gcdt.kumo_core import load_cloudformation_template, list_stacks, \
     _get_artifact_bucket, _s3_upload
 from gcdt.kumo_util import ensure_ebs_volume_tags_ec2_instance, ensure_ebs_volume_tags_autoscaling_group
 from glomex_utils.servicediscovery import get_outputs_for_stack
-from helpers import check_preconditions
 
 
 def here(p): return os.path.join(os.path.dirname(__file__), p)
@@ -35,16 +33,16 @@ config_autoscaling = ConfigFactory.parse_file(
     here('resources/sample_autoscaling_cloudformation_stack/settings_dev.conf')
 )
 
-@attr('aws')
-@with_setup(check_preconditions)
+@pytest.mark.aws
+@check_preconditions
 def test_list_stacks():
     out = StringIO()
     list_stacks(boto_session, out=out)
     assert_regexp_matches(out.getvalue().strip(), 'listed \d+ stacks')
 
 
-@attr('aws')
-@with_setup(check_preconditions)
+@pytest.mark.aws
+@check_preconditions
 def test_print_parameter_diff():
     out = StringIO()
     empty_conf = ConfigTree([('cloudfoundation', ConfigTree([]))])
@@ -55,9 +53,9 @@ def test_print_parameter_diff():
 
 
 # TODO: this needs a cleanup of the bucket
-@attr('aws')
-@with_setup(check_preconditions)
-def test_s3_upload():
+@pytest.mark.aws
+@check_preconditions
+def test_s3_upload(cleanup_buckets):
     # bucket helpers borrowed from tenkai
     def _prepare_artifacts_bucket(bucket):
         if not _bucket_exists(bucket):
@@ -92,6 +90,7 @@ def test_s3_upload():
 
     artifact_bucket = _get_artifact_bucket(upload_conf)
     _prepare_artifacts_bucket(artifact_bucket)
+    cleanup_buckets.append(artifact_bucket)
     dest_key = 'kumo/%s/%s-cloudformation.json' % (region,
                                                    _get_stack_name(upload_conf))
     expected_s3url = 'https://s3-%s.amazonaws.com/%s/%s' % (region,
@@ -100,7 +99,8 @@ def test_s3_upload():
     cloudformation_simple_stack, _ = load_cloudformation_template(
         here('resources/simple_cloudformation_stack/cloudformation.py')
     )
-    actual_s3url = _s3_upload(boto_session, upload_conf, cloudformation_simple_stack)
+    actual_s3url = _s3_upload(boto_session, upload_conf,
+                              cloudformation_simple_stack)
     assert_equal(expected_s3url, actual_s3url)
 
 
@@ -108,73 +108,88 @@ def test_s3_upload():
 # since the stack creation for a simple stack takes some time we decided
 # to test the stack related operations together
 
+@pytest.fixture(scope='function')  # 'function' or 'module'
 def cleanup_stack():
     """Remove the stack to cleanup after test run.
 
     This is intended to be called during test teardown"""
+    yield
+    # cleanup
     exit_code = delete_stack(boto_session, config_simple_stack)
     # check whether delete was completed!
     assert_false(exit_code, 'delete_stack was not completed\n' +
                  'please make sure to clean up the stack manually')
 
+
+@pytest.fixture(scope='function')  # 'function' or 'module'
 def cleanup_stack_autoscaling():
     """Remove the autoscaling stack to cleanup after test run.
 
     This is intended to be called during test teardown"""
+    yield
+    # cleanup
     exit_code = delete_stack(boto_session, config_autoscaling)
     # check whether delete was completed!
     assert_false(exit_code, 'delete_stack was not completed\n' +
                  'please make sure to clean up the stack manually')
 
+
+@pytest.fixture(scope='function')  # 'function' or 'module'
 def cleanup_stack_ec2():
     """Remove the ec2 stack to cleanup after test run.
 
     This is intended to be called during test teardown"""
+    yield
+    # cleanup
     exit_code = delete_stack(boto_session, config_ec2)
     # check whether delete was completed!
     assert_false(exit_code, 'delete_stack was not completed\n' +
                  'please make sure to clean up the stack manually')
 
 
-@attr('aws')
-@with_setup(check_preconditions, cleanup_stack)
-def test_kumo_stack_lifecycle():
+@pytest.mark.aws
+@check_preconditions
+def test_kumo_stack_lifecycle(cleanup_stack):
     # create a stack we use for the test lifecycle
-
-
     print_parameter_diff(boto_session, config_simple_stack)
     are_credentials_still_valid(boto_session)
     cloudformation_simple_stack, _ = load_cloudformation_template(
         here('resources/simple_cloudformation_stack/cloudformation.py')
     )
-    exit_code = deploy_stack(boto_session, config_simple_stack, cloudformation_simple_stack,
+    exit_code = deploy_stack(boto_session, config_simple_stack,
+                             cloudformation_simple_stack,
                              override_stack_policy=False)
     assert_equal(exit_code, 0)
 
-    ## preview (with identical stack)
+    # preview (with identical stack)
     # TODO: add more asserts!
     change_set_name, stackname = \
-        create_change_set(boto_session, config_simple_stack, cloudformation_simple_stack)
+        create_change_set(boto_session, config_simple_stack,
+                          cloudformation_simple_stack)
     assert_equal(stackname, _get_stack_name(config_simple_stack))
     assert_is_not(change_set_name, '')
     describe_change_set(boto_session, change_set_name, stackname)
 
-    ## update the stack
+    # update the stack
     print_parameter_diff(boto_session, config_simple_stack)
-    exit_code = deploy_stack(boto_session, config_simple_stack, cloudformation_simple_stack,
+    exit_code = deploy_stack(boto_session, config_simple_stack,
+                             cloudformation_simple_stack,
                              override_stack_policy=False)
     assert_equal(exit_code, 0)
 
 
-@attr('aws')
-@with_setup(check_preconditions, cleanup_stack_autoscaling)
-def test_kumo_utils_ensure_autoscaling_ebs_tags():
+# TODO hardcoded dev-ec2 key is a problem since this is only available on the
+# dp account
+@pytest.mark.aws
+@check_preconditions
+def test_kumo_utils_ensure_autoscaling_ebs_tags(cleanup_stack_autoscaling):
     are_credentials_still_valid(boto_session)
     cloudformation_autoscaling, _ = load_cloudformation_template(
         here('resources/sample_autoscaling_cloudformation_stack/cloudformation.py')
     )
 
-    exit_code = deploy_stack(boto_session, config_autoscaling, cloudformation_autoscaling,
+    exit_code = deploy_stack(boto_session, config_autoscaling,
+                             cloudformation_autoscaling,
                              override_stack_policy=False)
     assert_equal(exit_code, 0)
     stack_name = _get_stack_name(config_autoscaling)
@@ -182,8 +197,8 @@ def test_kumo_utils_ensure_autoscaling_ebs_tags():
     as_group_name = stack_output.get('AutoScalingGroupName', None)
     assert_is_not_none(as_group_name)
     tag_v1 = {
-        'Key':'kumo-test',
-        'Value':'version1'
+        'Key': 'kumo-test',
+        'Value': 'version1'
     }
     tags_v1 = [
         tag_v1
@@ -191,25 +206,25 @@ def test_kumo_utils_ensure_autoscaling_ebs_tags():
     ensure_ebs_volume_tags_autoscaling_group(as_group_name, tags_v1)
 
     autoscale_filter = {
-        'Name':'tag:aws:autoscaling:groupName',
-        'Values': [ as_group_name ]
+        'Name': 'tag:aws:autoscaling:groupName',
+        'Values': [as_group_name]
     }
     ec2_client = boto3.client('ec2')
     ec2_resource = boto3.resource('ec2')
-    response = ec2_client.describe_instances( Filters = [ autoscale_filter ])
+    response = ec2_client.describe_instances(Filters=[autoscale_filter])
     for r in response['Reservations']:
         for i in r['Instances']:
             instance_id = i['InstanceId']
             instance  = ec2_resource.Instance(instance_id)
             for vol in instance.volumes.all():
                 for tag in tags_v1:
-                    assert_true(assert_volume_tagged(vol, tag))
+                    assert_true(check_volume_tagged(vol, tag))
 
     tag_v2 = {
-        'Key':'kumo-test',
-        'Value':'version2'
+        'Key': 'kumo-test',
+        'Value': 'version2'
     }
-    tags_v2  = [
+    tags_v2 = [
         tag_v2
     ]
     ensure_ebs_volume_tags_autoscaling_group(as_group_name, tags_v2)
@@ -219,16 +234,16 @@ def test_kumo_utils_ensure_autoscaling_ebs_tags():
             instance  = ec2_resource.Instance(instance_id)
             for vol in instance.volumes.all():
                 for tag in tags_v2:
-                    assert_true(assert_volume_tagged(vol, tag))
+                    assert_true(check_volume_tagged(vol, tag))
                 for tag in tags_v1:
-                    assert_false(assert_volume_tagged(vol, tag))
+                    assert_false(check_volume_tagged(vol, tag))
 
 
-
-@attr('aws')
-@with_setup(check_preconditions, cleanup_stack_ec2)
-def test_kumo_utils_ensure_ebs_tags():
-
+# TODO: 'subnet-feb7ac9b' is a problem since the test can now only run on the
+# dp account
+@pytest.mark.aws
+@check_preconditions
+def test_kumo_utils_ensure_ebs_tags(cleanup_stack_ec2):
     are_credentials_still_valid(boto_session)
     cloudformation_ec2, _ = load_cloudformation_template(
         here('resources/sample_ec2_cloudformation_stack/cloudformation.py')
@@ -242,20 +257,21 @@ def test_kumo_utils_ensure_ebs_tags():
     instance_id = stack_output.get('InstanceId', None)
     assert_is_not_none(instance_id)
     tag = {
-        'Key':'kumo-test',
-        'Value':'Success'
+        'Key': 'kumo-test',
+        'Value': 'Success'
     }
     tags = [
         tag
     ]
     ensure_ebs_volume_tags_ec2_instance(instance_id, tags)
     ec2_resource = boto3.resource('ec2')
-    instance  = ec2_resource.Instance(instance_id)
+    instance = ec2_resource.Instance(instance_id)
     for vol in instance.volumes.all():
         for tag in tags:
-            assert_true(assert_volume_tagged(vol, tag))
+            assert_true(check_volume_tagged(vol, tag))
 
-def assert_volume_tagged(vol, tag):
+
+def check_volume_tagged(vol, tag):
     if vol.tags:
         if tag in vol.tags:
             return True
@@ -263,5 +279,3 @@ def assert_volume_tagged(vol, tag):
             return False
     else:
         return False
-
-

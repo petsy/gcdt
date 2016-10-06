@@ -1,4 +1,5 @@
 import os
+import pytest
 import boto3
 from nose.plugins.attrib import attr
 from nose.tools import with_setup, assert_equal, assert_false
@@ -16,8 +17,11 @@ from gcdt.tenkai_core import (
 )
 from glomex_utils.servicediscovery import get_outputs_for_stack
 from pyhocon import ConfigFactory
-from helpers import check_preconditions
+from .helpers_aws import check_preconditions, cleanup_buckets
+
+
 log = setup_logger(logger_name='tenkai_test_aws')
+
 
 def here(p): return os.path.join(os.path.dirname(__file__), p)
 # read template and config
@@ -27,6 +31,21 @@ config_sample_codeploy_stack = ConfigFactory.parse_file(
 
 boto_session = boto3.session.Session()
 
+
+@pytest.fixture(scope='function')  # 'function' or 'module'
+def cleanup_stack_tenkai():
+    """Remove the ec2 stack to cleanup after test run.
+
+    This is intended to be called during test teardown"""
+    yield
+    # cleanup
+    exit_code = delete_stack(boto_session, config_sample_codeploy_stack)
+    # check whether delete was completed!
+    assert_false(exit_code, 'delete_stack was not completed\n' +
+                 'please make sure to clean up the stack manually')
+
+
+'''
 def cleanup_stack_tenkai():
     """Remove the ec2 stack to cleanup after test run.
 
@@ -35,10 +54,13 @@ def cleanup_stack_tenkai():
     # check whether delete was completed!
     assert_false(exit_code, 'delete_stack was not completed\n' +
                  'please make sure to clean up the stack manually')
+'''
+
 
 @attr('aws')
 @with_setup(check_preconditions, cleanup_stack_tenkai)
-def test_tenkai_exit_codes():
+def test_tenkai_exit_codes(cleanup_stack_tenkai):
+    # TDODO: cleanup two tests in one
     are_credentials_still_valid(boto_session)
     # Set up stack with an ec2 and deployment
     cloudformation, _ = load_cloudformation_template(

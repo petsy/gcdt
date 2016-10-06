@@ -1,5 +1,5 @@
 Glomex Cloud Deployment Tools
-============================= 
+=============================
 
 version number: 0.0.60.dev0
 
@@ -67,10 +67,18 @@ $ pip install -r requirements_dev.txt
 ```
 
 
+gcdt design principles
+----------------------
+
+* tests need to run on all accounts
+* make sure additions and changes have powerful tests
+* use pylint to increase the coding style
+
+
 Running Unit-Tests
 ------------------
 
-Use the nosetest test-runner to run the gcdt unit tests. A few tests (with '_aws' in the file name) need AWS. Please turn on your VPN and set the AWS_DEFAULT_PROFILE, ENV, and ACCOUNT environment variables. Details here: https://confluence.glomex.com/display/OPSSHARED/Deployment+on+AWS.
+Use the pytest test-runner to run the gcdt unit tests. A few tests (with '_aws' in the file name) need AWS. Please turn on your VPN and set the AWS_DEFAULT_PROFILE, ENV, and ACCOUNT environment variables. Details here: https://confluence.glomex.com/display/OPSSHARED/Deployment+on+AWS.
 
 You need to install the development version of this package so you can run the tests:
 
@@ -88,7 +96,7 @@ $ export ACCOUNT=dp # => or your team account
 Note: You need to enter an MFA code to run the tests.
 
 ```bash
-$ nosetests tests/test_kumo*
+$ python -m pytest tests/test_kumo*
 ```
 
 Hint: If you want to see the print outputs use `NOSE_NOCAPTURE=1` as a prefix. 
@@ -97,7 +105,7 @@ Hint: If you want to see the print outputs use `NOSE_NOCAPTURE=1` as a prefix.
 Please make sure that you do not lower the gcdt test coverage. You can use the following command to make sure:
 
 ```bash
-$ nosetests --with-coverage --cover-erase --cover-package=gcdt tests/test_kumo*
+$ python -m pytest --cov gcdt tests/test_ramuda*
 ```
 This requires the `coverage` package, which can be installed via pip;
 ```bash

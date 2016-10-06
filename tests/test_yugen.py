@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 import os
 import textwrap
-from nose.tools import assert_true, assert_equal, assert_not_in
+from nose.tools import assert_equal, assert_not_in
 from gcdt.yugen_core import _compile_template, _arn_to_uri, \
     _get_region_and_account_from_lambda_arn, _template_variables_to_dict
-from .helpers import create_tempfile, with_setup_args
+from .helpers import create_tempfile, cleanup_tempfiles
 
 
 def _setup():
@@ -16,8 +16,7 @@ def _teardown(temp_files=[]):
         os.unlink(t)
 
 
-@with_setup_args(_setup, _teardown)
-def test_compile_template(temp_files):
+def test_compile_template(cleanup_tempfiles):
     swagger_template_file = create_tempfile(textwrap.dedent("""\
         ---
           swagger: "2.0"
@@ -28,6 +27,7 @@ def test_compile_template(temp_files):
           basePath: "/{{apiBasePath}}"
           host: "{{apiHostname}}"
     """))
+    cleanup_tempfiles.append(swagger_template_file)
 
     template_params = {
         'apiName': 'apiName',
@@ -49,7 +49,6 @@ def test_compile_template(temp_files):
 
     assert_equal(_compile_template(swagger_template_file, template_params),
                  expected)
-    return {'temp_files': [swagger_template_file]}
 
 
 def test_get_region_and_account_from_lambda_arn():

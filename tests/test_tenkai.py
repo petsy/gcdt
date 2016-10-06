@@ -1,48 +1,36 @@
 # -*- coding: utf-8 -*-
-from nose.tools import assert_equal, assert_true, assert_items_equal, assert_false, assert_is_not_none
-from nose.plugins.attrib import attr
-import nose
 import os
-import shutil
-from tempfile import mkdtemp
+from nose.tools import assert_equal, assert_true, assert_items_equal, \
+    assert_is_not_none
 from glomex_utils.config_reader import read_config
 from gcdt.tenkai_core import _make_tar_file, _files_to_bundle, bundle_revision, \
     _build_bundle_key, _execute_pre_bundle_scripts
+from .helpers import temp_folder
 
 
 def here(p): return os.path.join(os.path.dirname(__file__), p)
 
 
-def test_make_tar_file():
+def test_make_tar_file(temp_folder):
     # _make_tar_file implements bundle
     codedeploy = here('resources/simple_codedeploy/codedeploy')
-    folder = mkdtemp()
     file_suffix = os.getenv('BUILD_TAG', '')
-    expected_filename = '%s/tenkai-bundle%s.tar.gz' % (folder, file_suffix)
+    expected_filename = '%s/tenkai-bundle%s.tar.gz' % (temp_folder[0], file_suffix)
 
     tarfile_name = _make_tar_file(path=codedeploy,
-                                  outputpath=folder)
+                                  outputpath=temp_folder[0])
     assert_equal(tarfile_name, expected_filename)
     assert_true(os.path.isfile(expected_filename))
 
-    # cleanup
-    shutil.rmtree(folder)
 
-
-def test_bundle_revision():
-    cwd = (os.getcwd())
+def test_bundle_revision(temp_folder):
     os.chdir(here('resources/simple_codedeploy'))
-    folder = mkdtemp()
     file_suffix = os.getenv('BUILD_TAG', '')
-    expected_filename = '%s/tenkai-bundle%s.tar.gz' % (folder, file_suffix)
+    expected_filename = '%s/tenkai-bundle%s.tar.gz' % (temp_folder[0], file_suffix)
 
-    tarfile_name = bundle_revision(outputpath=folder)
+    tarfile_name = bundle_revision(outputpath=temp_folder[0])
     assert_equal(tarfile_name, expected_filename)
     assert_true(os.path.isfile(expected_filename))
-
-    # cleanup
-    os.chdir(cwd)
-    shutil.rmtree(folder)
 
 
 def test_files_to_bundle():
