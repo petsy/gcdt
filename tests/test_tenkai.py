@@ -3,9 +3,11 @@ import os
 import shutil
 from tempfile import mkdtemp
 from nose.tools import assert_equal, assert_true, assert_items_equal
+from glomex_utils.config_reader import read_config
 from gcdt.tenkai_core import _make_tar_file, _files_to_bundle, bundle_revision, \
     _build_bundle_key
 from .helpers import temp_folder
+    _build_bundle_key, _execute_pre_bundle_scripts
 
 
 def here(p): return os.path.join(os.path.dirname(__file__), p)
@@ -45,3 +47,15 @@ def test_build_bundle_key():
     application_name = 'sample_name'
     expected = '%s/bundle.tar.gz' % application_name
     assert_equal(_build_bundle_key(application_name), expected)
+
+def test_bundle_scripts():
+    start_dir = here('.')
+    codedeploy_dir = here('resources/sample_pre_bundle_script_codedeploy')
+    os.chdir(codedeploy_dir)
+    config = read_config('codedeploy')
+    pre_bundle_scripts = config.get('preBundle', None)
+    assert_is_not_none(pre_bundle_scripts)
+    exit_code = _execute_pre_bundle_scripts(pre_bundle_scripts)
+    assert_equal(exit_code, 0)
+    os.chdir(start_dir)
+

@@ -1,7 +1,7 @@
 Glomex Cloud Deployment Tools
 =============================
 
-version number: 0.0.53.dev0
+version number: 0.0.60.dev0
 
 author: Glomex DevOps Team
 
@@ -91,12 +91,23 @@ Note: You need to enter an MFA code to run the tests.
 $ python -m pytest tests/test_kumo*
 ```
 
+Hint: If you want to see the print outputs use `NOSE_NOCAPTURE=1` as a prefix. 
+
+
 Please make sure that you do not lower the gcdt test coverage. You can use the following command to make sure:
 
 ```bash
 $ python -m pytest --cov gcdt tests/test_ramuda*
 ```
+This requires the `coverage` package, which can be installed via pip;
+```bash
+$ pip install coverage
+```
 
+To suppress debug output to more easily find out why (if) the tests break, please run nosetests with the `nologcapture` option:
+```bash
+$ nosetests tests/* --nologcapture
+```
 ## Cloudformation Deploy Tool  
 ### gcdt
 
