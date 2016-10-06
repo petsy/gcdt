@@ -67,6 +67,14 @@ $ pip install -r requirements_dev.txt
 ```
 
 
+gcdt design principles
+----------------------
+
+* tests need to run on all accounts
+* make sure additions and changes have powerful tests
+* use pylint to increase the coding style
+
+
 Running Unit-Tests
 ------------------
 

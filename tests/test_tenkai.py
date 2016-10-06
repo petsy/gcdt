@@ -1,13 +1,11 @@
 # -*- coding: utf-8 -*-
 import os
-import shutil
-from tempfile import mkdtemp
-from nose.tools import assert_equal, assert_true, assert_items_equal
+from nose.tools import assert_equal, assert_true, assert_items_equal, \
+    assert_is_not_none
 from glomex_utils.config_reader import read_config
 from gcdt.tenkai_core import _make_tar_file, _files_to_bundle, bundle_revision, \
-    _build_bundle_key
-from .helpers import temp_folder
     _build_bundle_key, _execute_pre_bundle_scripts
+from .helpers import temp_folder
 
 
 def here(p): return os.path.join(os.path.dirname(__file__), p)
