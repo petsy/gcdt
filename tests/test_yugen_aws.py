@@ -4,15 +4,16 @@ from __future__ import print_function
 import os
 import botocore.session
 
-from nose.plugins.attrib import attr
 from nose.tools import assert_equal, assert_greater_equal, \
     assert_in, assert_not_in, assert_regexp_matches
+import pytest
 
 from gcdt.logger import setup_logger
 from gcdt.yugen_core import deploy_api, delete_api, delete_api_key, \
     create_api_key
 
-from .helpers import check_preconditions, random_string, with_setup_args
+from .helpers import random_string
+from .helpers_aws import check_preconditions
 
 log = setup_logger(__name__)
 
@@ -20,23 +21,27 @@ log = setup_logger(__name__)
 def here(p): return os.path.join(os.path.dirname(__file__), p)
 
 
-def _setup():
-    check_preconditions()  # check whether required AWS env variables are set?
-    return {}
+@pytest.fixture(scope='function')  # 'function' or 'module'
+def cleanup_apis():
+    apis = []
+    yield apis
+    # cleanup
+    for i in apis:
+        delete_api(i)
 
 
-def _teardown(api_keys=[], apis=[]):
-    # delete apis
-    for api_name in apis:
-        delete_api(api_name)
-    # delete api keys
-    for key in api_keys:
-        delete_api_key(key)
+@pytest.fixture(scope='function')  # 'function' or 'module'
+def cleanup_api_keys():
+    items = []
+    yield items
+    # cleanup
+    for i in items:
+        delete_api_key(i)
 
 
-@attr('aws')
-@with_setup_args(_setup, _teardown)
-def test_create_api():
+@pytest.mark.aws
+@check_preconditions
+def test_create_api(cleanup_api_keys, cleanup_apis):
     log.info('running test_create_api')
     boto_session = botocore.session.get_session()
 
@@ -46,10 +51,9 @@ def test_create_api():
     api_description = 'Gcdt sample API based on dp api-mock'
     target_stage = 'mock'
     api_key = create_api_key(api_name, api_key_name)
-    print(api_key)
+    cleanup_api_keys.append(api_key)
 
     lambdas = []
-
     deploy_api(
         boto_session=boto_session,
         api_name=api_name,
@@ -58,10 +62,7 @@ def test_create_api():
         api_key=api_key,
         lambdas=lambdas
     )
-
-    api_keys = [api_key]
-    apis = [api_name]
-    return {'api_keys': api_keys, 'apis': apis}
+    cleanup_apis.append(api_name)
 
 
 # FIXME: tests

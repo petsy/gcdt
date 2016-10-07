@@ -44,14 +44,14 @@ LaunchConfiguration = t.add_resource(LaunchConfiguration(
     ImageId='ami-25681456',
     InstanceType='t2.micro',
     KeyName='dev-ec2',
-    SecurityGroups=["sg-c8bce3ac"], # hard coded to glomex default sg
+    SecurityGroups=["sg-c8bce3ac"]  # hard coded to glomex default sg
 ))
 
 as_group = t.add_resource(AutoScalingGroup(
     'AutoscalingGroup',
     DesiredCapacity=1,
     Tags=[
-        Tag('Name','gcdt-test-autoscaling-ebs-tagging', True)
+        Tag('Name', 'gcdt-test-autoscaling-ebs-tagging', True)
     ],
     LaunchConfigurationName=Ref(LaunchConfiguration),
     MinSize='1',
@@ -67,6 +67,7 @@ t.add_output(
         Value=Ref(as_group),
     ),
 )
+
 
 def generate_template():
     return t.to_json()
