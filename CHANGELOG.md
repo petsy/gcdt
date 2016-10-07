@@ -2,9 +2,11 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## [0.0.59] - TBD
+## [0.0.60] - 2016-10-07
 ### Added
-- FEATURE: ramuda clean
+- FEATURE kumo now has the visualize cmd. Req. dot installation (#136).
+- FEATURE ramuda clean (#86).
+- FIX moved tests to pytest to improve cleanup after tests (#119).
 
 ## [0.0.57] - 2016-09-23
 ### Added
