@@ -9,11 +9,11 @@ import pytest
 
 
 def create_tempfile(contents):
-    """Helper to create a named tempoary file with contents.
+    """Helper to create a named temporary file with contents.
     Note: caller has responsibility to clean up the temp file!
 
-    :param contents: define the contents of the tempoary file
-    :return: filename of the tempoary file
+    :param contents: define the contents of the temporary file
+    :return: filename of the temporary file
     """
 
     # helper to create a named temp file

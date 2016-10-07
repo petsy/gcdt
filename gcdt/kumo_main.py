@@ -8,9 +8,12 @@ to AWS cloud.
 from __future__ import print_function
 
 import sys
-import boto3
+import json
+
 from docopt import docopt
 from clint.textui import colored
+import boto3
+
 from glomex_utils.config_reader import read_config
 from gcdt import utils
 from gcdt.kumo_core import call_pre_hook, print_parameter_diff, delete_stack, \
@@ -19,6 +22,7 @@ from gcdt.kumo_core import call_pre_hook, print_parameter_diff, delete_stack, \
 from gcdt.utils import read_gcdt_user_config, get_context, get_command
 from gcdt.monitoring import datadog_notification, datadog_error, \
     datadog_event_detail
+from gcdt.kumo_viz import cfn_viz
 
 
 # creating docopt parameters and usage help
@@ -29,6 +33,7 @@ DOC = '''Usage:
         kumo generate
         kumo preview
         kumo version
+        kumo dot | dot -Tsvg -ocloudformation.svg
 
 -h --help           show this
 '''
@@ -66,6 +71,11 @@ def main():
     arguments = docopt(DOC)
     if arguments['version']:
         utils.version()
+        sys.exit(0)
+    elif arguments['dot']:
+        cloudformation = load_template()
+        conf = read_config()
+        cfn_viz(json.loads(cloudformation.generate_template()), parameters=conf)
         sys.exit(0)
 
     context = get_context('kumo', get_command(arguments))

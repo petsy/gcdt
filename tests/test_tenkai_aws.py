@@ -45,18 +45,6 @@ def cleanup_stack_tenkai():
                  'please make sure to clean up the stack manually')
 
 
-'''
-def cleanup_stack_tenkai():
-    """Remove the ec2 stack to cleanup after test run.
-
-    This is intended to be called during test teardown"""
-    exit_code = delete_stack(boto_session, config_sample_codeploy_stack)
-    # check whether delete was completed!
-    assert_false(exit_code, 'delete_stack was not completed\n' +
-                 'please make sure to clean up the stack manually')
-'''
-
-
 @attr('aws')
 @with_setup(check_preconditions, cleanup_stack_tenkai)
 def test_tenkai_exit_codes(cleanup_stack_tenkai):
