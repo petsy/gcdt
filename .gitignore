@@ -151,5 +151,5 @@ howto.txt
 build_pr.sh
 tests/MyStringIO.py
 remove_*.py
-pytests/*
 remove_gcdt_version.sh
+viz_sample/*
