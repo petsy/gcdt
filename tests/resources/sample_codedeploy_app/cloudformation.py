@@ -163,5 +163,6 @@ template.add_output([
     ),
 ])
 
+
 def generate_template():
     return template.to_json()
