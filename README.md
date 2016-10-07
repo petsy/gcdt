@@ -1,7 +1,7 @@
 Glomex Cloud Deployment Tools
 =============================
 
-version number: 0.0.60.dev1
+version number: 0.0.60.dev2
 
 author: Glomex DevOps Team
 
@@ -70,9 +70,10 @@ $ pip install -r requirements_dev.txt
 gcdt design principles
 ----------------------
 
-* tests need to run on all accounts
+* tests need to run on all accounts (not just dp account)
 * make sure additions and changes have powerful tests
-* use pylint to increase the coding style
+* use pylint to increase your coding style
+* we adhere to [Semantic Versioning](http://semver.org/).
 
 
 Running Unit-Tests
@@ -154,6 +155,7 @@ Usage:
         kumo generate
         kumo preview
         kumo version
+        kumo dot | dot -Tsvg -ocloudformation.svg
 ```
 
 ### Commands
@@ -177,6 +179,9 @@ will create a CloudFormation ChangeSet with your current changes to the template
 
 #### version
 will print the version of gcdt you are using
+
+#### dot
+Visualize the cloudformation template (does not need AWS). Installation of the dot binary is required to convert the dot output into svg (http://www.graphviz.org/Download_macos.php).
 
 ### Folder Layout
 

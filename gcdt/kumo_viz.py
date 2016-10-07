@@ -228,7 +228,3 @@ def _render(graph, subgraph=False, out=sys.stdout):
     for e in graph['edges']:
         print('"%s" -> "%s";' % (e['from'], e['to']), file=out)
     print('}', file=out)
-
-
-#if __name__ == '__main__':
-#    main()
