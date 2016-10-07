@@ -7,16 +7,11 @@ import time
 import tarfile
 import boto3
 import subprocess
-
 from boto3.s3.transfer import S3Transfer
 from clint.textui import colored
 
-from gcdt import monitoring
 
-
-def deploy(applicationName, deploymentGroupName, deploymentConfigName, bucket,
-           slack_token=None, slack_channel='systemmessages',
-           pre_bundle_scripts=None):
+def deploy(applicationName, deploymentGroupName, deploymentConfigName, bucket, pre_bundle_scripts=None):
     """Upload bundle and deploy to deployment group.
     This includes the bundle-action.
 
@@ -24,8 +19,6 @@ def deploy(applicationName, deploymentGroupName, deploymentConfigName, bucket,
     :param deploymentGroupName:
     :param deploymentConfigName:
     :param bucket:
-    :param slack_token:
-    :param slack_channel:
     :return: deploymentId from create_deployment
     """
     if pre_bundle_scripts:
@@ -54,9 +47,6 @@ def deploy(applicationName, deploymentGroupName, deploymentConfigName, bucket,
         description='deploy with tenkai',
         ignoreApplicationStopFailures=True
     )
-    message = 'tenkai bot: deployed deployment group %s ' % deploymentGroupName
-    monitoring.slack_notification(slack_channel, message, slack_token)
-
     return response['deploymentId']
 
 
@@ -125,14 +115,12 @@ def _upload_revision_to_s3(bucket, applicationName, file):
 
     return response['ETag'], response['VersionId']
 
-
 def _execute_pre_bundle_scripts(scripts):
     for script in scripts:
         exit_code = _execute_script(script)
         if exit_code != 0:
             return exit_code
     return 0
-
 
 def _execute_script(file_name):
     if os.path.isfile(file_name):

@@ -5,7 +5,6 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ## [0.0.60] - 2016-10-07
 ### Added
 - FEATURE kumo now has the visualize cmd. Req. dot installation (#136).
-- FEATURE tenkai now has the slack notifications (#79).
 - FIX moved tests to pytest to improve cleanup after tests (#119).
 
 ## [0.0.57] - 2016-09-23

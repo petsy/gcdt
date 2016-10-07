@@ -12,7 +12,7 @@ from glomex_utils.config_reader import read_config
 from gcdt import utils
 from gcdt.tenkai_core import prepare_artifacts_bucket, deploy, deployment_status, \
     bundle_revision
-from gcdt.utils import get_context, get_command, read_gcdt_user_config
+from gcdt.utils import get_context, get_command
 from gcdt.monitoring import datadog_notification, datadog_error, datadog_event_detail
 
 
@@ -25,14 +25,6 @@ DOC = '''Usage:
 '''
 
 
-def get_user_config():
-    slack_token, slack_channel = read_gcdt_user_config(compatibility_mode='tenkai')
-    if not slack_token and not isinstance(slack_token, basestring):
-        sys.exit(1)
-    else:
-        return slack_token, slack_channel
-
-
 def main():
     arguments = docopt(DOC)
     if arguments['version']:
@@ -43,7 +35,6 @@ def main():
     datadog_notification(context)
 
     if arguments['deploy']:
-        slack_token, slack_channel = get_user_config()
         conf = read_config(config_base_name='codedeploy')
 
         # are_credentials_still_valid()
@@ -53,9 +44,7 @@ def main():
             deploymentGroupName=conf.get('codedeploy.deploymentGroupName'),
             deploymentConfigName=conf.get('codedeploy.deploymentConfigName'),
             bucket=conf.get('codedeploy.artifactsBucket'),
-            pre_bundle_scripts=conf.get('preBundle', None),
-            slack_token=slack_token,
-            slack_channel=slack_channel
+            pre_bundle_scripts=conf.get('preBundle', None)
         )
         exit_code = deployment_status(deployment)
         if exit_code:
