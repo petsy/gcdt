@@ -71,3 +71,5 @@ to bundle packages at runtime.
 - FIX: removed debug output
 - FIX: removed some unnecessary import validations
 - FIX: kumo will now exit when importing a cloudformation.py not from your current working directory
+
+...
