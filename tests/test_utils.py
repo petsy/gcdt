@@ -5,7 +5,8 @@ from nose.tools import assert_equal
 from StringIO import StringIO
 from gcdt import utils
 from gcdt.utils import version, __version__, retries, configure, \
-    read_gcdt_user_config, get_context, get_command
+    read_gcdt_user_config, get_context, get_command, read_gcdt_config_value
+from .helpers import create_tempfile, cleanup_tempfiles
 
 
 def test_version():
@@ -124,6 +125,24 @@ def test_read_user_config_comp_mode():
     # cleanup the testfile
     tf.close()
     os.unlink(tf.name)
+
+
+def test_read_gcdt_user_config_value(cleanup_tempfiles):
+    tf = create_tempfile('gcdt {\nfailedDeployWithUnsuccessfullPing=true\n}')
+    cleanup_tempfiles.append(tf)
+
+    value = read_gcdt_config_value('failedDeployWithUnsuccessfullPing',
+                                   gcdt_file=tf)
+    assert value is True
+
+
+def test_read_gcdt_user_config_value_default(cleanup_tempfiles):
+    tf = create_tempfile('gcdt {\nfailedDeployWithUnsuccessfullPing=true\n}')
+    cleanup_tempfiles.append(tf)
+
+    value = read_gcdt_config_value('thisValueIsNotPresent', default='my_default',
+                                   gcdt_file=tf)
+    assert value == 'my_default'
 
 
 def test_command_version():
