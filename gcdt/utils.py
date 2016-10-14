@@ -113,8 +113,9 @@ def read_gcdt_user_config(gcdt_file=None, compatibility_mode=None):
         return None, None
 
 
-def read_gcdt_suer_config_value(key, default=None, gcdt_file=None):
+def read_gcdt_user_config_value(key, default=None, gcdt_file=None):
     """Read .gcdt config file from user home and return value for key.
+    Configuration keys are in the form <command>.<key>
 
     :return: value if present, or default
     """
@@ -123,7 +124,7 @@ def read_gcdt_suer_config_value(key, default=None, gcdt_file=None):
         gcdt_file = os.path.expanduser('~') + '/.' + extension
     try:
         config = ConfigFactory.parse_file(gcdt_file)
-        value = config.get('%s.%s' % (extension, key))
+        value = config.get(key)
     except Exception:
         value = default
     return value

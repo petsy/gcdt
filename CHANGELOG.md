@@ -7,6 +7,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - FEATURE kumo now has the visualize cmd. Req. dot installation (#136).
 - FIX moved tests to pytest to improve cleanup after tests (#119).
 - FIX ramuda rollback to previous version.
+- FIX ramuda fail deployment on failing ping (#113).
 
 ## [0.0.57] - 2016-09-23
 ### Added
