@@ -1,18 +1,22 @@
 # -*- coding: utf-8 -*-
+
+import os
+import json
+from tempfile import NamedTemporaryFile
+from StringIO import StringIO
+
 from nose.tools import assert_dict_equal
 from nose.tools import assert_equal, assert_true, \
     assert_regexp_matches, assert_list_equal, raises
 import nose
-import os
-import json
-from tempfile import NamedTemporaryFile
 from pyhocon import ConfigFactory
+from pyhocon.exceptions import ConfigMissingException
+
 from gcdt.kumo_core import _generate_parameters, \
     load_cloudformation_template, generate_template_file, _get_stack_name, \
     _get_stack_policy, _get_stack_policy_during_update, _get_conf_value, \
-    _generate_parameter_entry
+    _generate_parameter_entry, _call_hook
 from .helpers import cleanup_tempfiles, temp_folder
-from pyhocon.exceptions import ConfigMissingException
 
 
 def here(p): return os.path.join(os.path.dirname(__file__), p)
@@ -59,19 +63,12 @@ def test_cloudformation_template_not_available():
 
 
 def test_load_cloudformation_template_from_cwd(temp_folder):
-    #cwd = (os.getcwd())
-    #folder = mkdtemp()
-    #os.chdir(folder)
     # prepare dummy template for test
     open('cloudformation.py', 'w').write('def plus(a, b):\n    return a+b\n')
 
     module, success = load_cloudformation_template()
     assert_true(success, True)
     assert_equal(module.plus(1, 2), 3)
-
-    # cleanup
-    #os.chdir(cwd)
-    #shutil.rmtree(folder)
 
 
 def test_simple_cloudformation_stack():
@@ -243,3 +240,40 @@ def test_generate_parameter_entry():
                           'ParameterValue': 'value1',
                           'UsePreviousValue': False
                       })
+
+
+def _create_cfn_with_hook():
+    # http://code.activestate.com/recipes/52308-the-simple-but-handy-collector-of-a-bunch-of-named/?in=user-97991
+    class Bunch:
+        def __init__(self, **kwds):
+            self.__dict__.update(kwds)
+
+    def hook():
+        pass
+
+    # use Bunch to create group of variables:
+    # cf = Bunch(datum=y, squared=y*y, coord=x)
+    cfn = Bunch(pre_hook=hook)
+    return cfn
+
+
+def test_call_hook_unknown_hook():
+    out = StringIO()
+    # def _call_hook(boto_session, config, stack_name, parameters,
+    #                cloudformation, hook, message=None, out=sys.stdout):
+    _call_hook(None, None, None, None, None, 'unknown_hook', out=out)
+    assert_equal(out.getvalue().strip(), 'Unknown hook: unknown_hook')
+
+
+def test_call_hook_backward_compatible():
+    out = StringIO()
+    _call_hook(None, None, None, None, _create_cfn_with_hook(), 'pre_hook',
+               out=out)
+    assert_equal(out.getvalue().strip(), 'Executing pre hook...')
+
+
+def test_call_hook_not_present():
+    out = StringIO()
+    _call_hook(None, None, None, None, _create_cfn_with_hook(),
+               'pre_create_hook', out=out)
+    assert_equal(out.getvalue().strip(), '')

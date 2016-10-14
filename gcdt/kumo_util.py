@@ -71,6 +71,7 @@ class StackLookup(object):
                 parameter
             )
 
+
 def ensure_ebs_volume_tags_autoscaling_group(as_group_name, tags):
     ec2_client = boto3.client('ec2')
 
