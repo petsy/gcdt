@@ -323,11 +323,11 @@ def deploy_stack(boto_session, conf, cloudformation, slack_token=None,
                hook='pre_hook')
     if _stack_exists(boto_session, stackname):
         exit_code = _update_stack(boto_session, conf, cloudformation,
-                                  override_stack_policy, slack_token,
-                                  slack_channel)
+                                  parameters, override_stack_policy,
+                                  slack_token, slack_channel)
     else:
         exit_code = _create_stack(boto_session, conf, cloudformation,
-                                  slack_token, slack_channel)
+                                  parameters, slack_token, slack_channel)
     _call_hook(boto_session, conf, stackname, parameters, cloudformation,
                hook='post_hook',
                message='CloudFormation is done, now executing post hook...')
