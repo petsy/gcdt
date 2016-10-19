@@ -1,7 +1,7 @@
 Glomex Cloud Deployment Tools
 =============================
 
-version number: 0.0.60.dev2
+version number: 0.0.60.dev4
 
 author: Glomex DevOps Team
 
@@ -363,6 +363,7 @@ To see available commands, call this:
 ```bash
 	$ramuda
   Usage:
+        ramuda clean
         ramuda bundle
         ramuda deploy
         ramuda list
@@ -373,6 +374,8 @@ To see available commands, call this:
         ramuda rollback <lambda> [<version>]
         ramuda version
 ```
+#### clean
+removes local bundle files.
 
 #### bundle
 zips all the files belonging to your lambda according to your config and requirements.txt and puts it in your current working directory as `bundle.zip`. Useful for debugging as you can still provide different environments.
