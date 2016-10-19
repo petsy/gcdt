@@ -94,7 +94,6 @@ def main():
         datadog_event_detail(context, event)
     elif arguments['delete']:
         slack_token, slack_channel = get_user_config()
-        #cloudformation = load_template()  # TODO: is this really necessary?
         conf = read_config()
         are_credentials_still_valid(boto_session)
         exit_code = delete_stack(boto_session, conf, slack_token, slack_channel)
