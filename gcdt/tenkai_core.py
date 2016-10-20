@@ -36,7 +36,8 @@ def deploy(applicationName, deploymentGroupName, deploymentConfigName, bucket,
     bundlefile = bundle_revision()
     etag, version = _upload_revision_to_s3(bucket, applicationName, bundlefile)
 
-    client = boto3.client('codedeploy')
+    session = boto3.session.Session()
+    client = session.client('codedeploy')
     response = client.create_deployment(
         applicationName=applicationName,
         deploymentGroupName=deploymentGroupName,
@@ -54,6 +55,14 @@ def deploy(applicationName, deploymentGroupName, deploymentConfigName, bucket,
         description='deploy with tenkai',
         ignoreApplicationStopFailures=True
     )
+
+    print("Deployment: {} -> URL: https://{}.console.aws.amazon.com/codedeploy/home?region={}#/deployments/{}".format(
+        response['deploymentId'],
+        session.region_name,
+        session.region_name,
+        response['deploymentId'],
+    ))
+
     message = 'tenkai bot: deployed deployment group %s ' % deploymentGroupName
     monitoring.slack_notification(slack_channel, message, slack_token)
 

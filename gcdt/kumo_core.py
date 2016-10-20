@@ -75,6 +75,8 @@ def print_parameter_diff(boto_session, config, out=sys.stdout):
         for param in stack.parameters:
             try:
                 old = param['ParameterValue']
+                if ',' in old:
+                    old = old.split(',')
                 new = config.get('cloudformation.' + param['ParameterKey'])
                 if old != new:
                     table.append([param['ParameterKey'], old, new])
@@ -578,16 +580,14 @@ def describe_change_set(boto_session, change_set_name, stack_name):
     """
     client = boto_session.client('cloudformation')
 
-    completed_status = 'CREATE_COMPLETE'
-    failed_status = 'FAILED'
-    status = ''
-    while status not in [completed_status, failed_status]:
+    status = None
+    while status not in ['CREATE_COMPLETE', 'FAILED']:
         response = client.describe_change_set(
             ChangeSetName=change_set_name,
             StackName=stack_name)
         status = response['Status']
         print('##### %s' % status)
-        if status == completed_status:
+        if status == 'CREATE_COMPLETE':
             for change in response['Changes']:
                 print(_json2table(change['ResourceChange']))
 

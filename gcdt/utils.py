@@ -113,6 +113,23 @@ def read_gcdt_user_config(gcdt_file=None, compatibility_mode=None):
         return None, None
 
 
+def read_gcdt_user_config_value(key, default=None, gcdt_file=None):
+    """Read .gcdt config file from user home and return value for key.
+    Configuration keys are in the form <command>.<key>
+
+    :return: value if present, or default
+    """
+    extension = 'gcdt'
+    if not gcdt_file:
+        gcdt_file = os.path.expanduser('~') + '/.' + extension
+    try:
+        config = ConfigFactory.parse_file(gcdt_file)
+        value = config.get(key)
+    except Exception:
+        value = default
+    return value
+
+
 def _get_slack_token_from_user():
     slack_token = prompt.query('Please enter your Slack API token: ')
     return slack_token
