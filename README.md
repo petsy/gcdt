@@ -217,7 +217,7 @@ cloudformation {
 5. call `kumo deploy`to deploy your stack to AWS
 
 ### Hooks
-kumo offers numerous hook functions that get called during the lifecycle of a kumo run:
+kumo offers numerous hook functions that get called during the lifecycle of a kumo deploy run:
 
 * pre_hook()
   * gets called before everything else - even config reading. Useful for e.g. creating secrets in credstash if they don't exist
@@ -232,8 +232,15 @@ kumo offers numerous hook functions that get called during the lifecycle of a ku
 * post_hook()
   * gets called after a stack is either updated or created
 
-You can basically call any custom code you want. Just implement the function in
-cloudformation.py
+You can basically call any custom code you want. Just implement 
+the function in cloudformation.py
+
+multiple ways of using parameters in your hook functions:
+
+* no arguments (as previous to version 0.0.60)
+* use kwargs dict and just access the arguments you need e.g. "def pre_hook(**kwargs):"
+* use all positional arguments e.g. "def pre_hook(boto_session, config, parameters, stack_outputs, stack_state):"
+* use all arguments as keyword arguments or mix.
 
 ### Stack Policies
 kumo does offer support for stack policies. It has a default stack policy that will get applied to each stack:
