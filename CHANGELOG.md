@@ -9,6 +9,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - FIX ramuda rollback to previous version.
 - FIX ramuda fail deployment on failing ping (#113).
 - FIX kumo Parameter diffing does not work for aws coma-seperated inputs (#77).
+- FIX [kumo] Parameter diffing does not work for aws coma-seperated inputs (#77).
 
 ## [0.0.57] - 2016-09-23
 ### Added

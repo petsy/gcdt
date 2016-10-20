@@ -18,30 +18,6 @@ from pyhocon.exceptions import ConfigMissingException
 def here(p): return os.path.join(os.path.dirname(__file__), p)
 
 
-def test_parameter_substitution():
-    config_string = '''
-    cloudformation {
-        ConfigOne = value1
-        ConfigTwo = [value2, value3]
-    }
-    '''
-    expected = [
-        {
-            'ParameterKey': 'ConfigOne',
-            'ParameterValue': 'value1',
-            'UsePreviousValue': False
-        },
-        {
-            'ParameterKey': 'ConfigTwo',
-            'ParameterValue': 'value2,value3',
-            'UsePreviousValue': False
-        }
-    ]
-    conf = ConfigFactory.parse_string(config_string)
-    converted_conf = _generate_parameters(conf)
-    assert_equal(converted_conf, expected)
-
-
 def test_load_cloudformation_template(cleanup_tempfiles):
     tf = NamedTemporaryFile(delete=False, suffix='py')
     open(tf.name, 'w').write('def plus(a, b):\n    return a+b')
@@ -59,19 +35,12 @@ def test_cloudformation_template_not_available():
 
 
 def test_load_cloudformation_template_from_cwd(temp_folder):
-    #cwd = (os.getcwd())
-    #folder = mkdtemp()
-    #os.chdir(folder)
     # prepare dummy template for test
     open('cloudformation.py', 'w').write('def plus(a, b):\n    return a+b\n')
 
     module, success = load_cloudformation_template()
     assert_true(success, True)
     assert_equal(module.plus(1, 2), 3)
-
-    # cleanup
-    #os.chdir(cwd)
-    #shutil.rmtree(folder)
 
 
 def test_simple_cloudformation_stack():
@@ -86,8 +55,8 @@ def test_simple_cloudformation_stack():
     # read the configuration
     config = ConfigFactory.parse_file(config_path)
 
-    expected_templ_file_name = '%s-generated-cf-template.json' % _get_stack_name(
-        config)
+    expected_templ_file_name = '%s-generated-cf-template.json' % \
+                               _get_stack_name(config)
     actual = generate_template_file(config, cloudformation)
     assert_equal(actual, expected_templ_file_name)
 
