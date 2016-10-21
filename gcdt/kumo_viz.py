@@ -5,7 +5,6 @@
 
 from __future__ import print_function
 import sys
-import json
 from numbers import Number
 from compiler.ast import flatten
 
@@ -15,7 +14,7 @@ from compiler.ast import flatten
 
 
 # sample use:
-#def main():
+# def main():
 #    # python kumo_viz.py | dot -Tsvg -osample.svg
 #    with open('ELBStickinessSample.template', 'r') as tfile:
 #        template = json.loads(tfile.read())
@@ -40,10 +39,11 @@ def _analyze_sg(elem):
     # helper to analyzse the security groups in the stack
     # returns known, open
 
-    #"InstanceSecurityGroup" : {
+    # "InstanceSecurityGroup" : {
     #    "Type" : "AWS::EC2::SecurityGroup",
     #    "Properties" : {
-    #        "GroupDescription" : "Enable SSH access and HTTP access on the inbound port",
+    #        "GroupDescription" :
+    #            "Enable SSH access and HTTP access on the inbound port",
     #        "SecurityGroupIngress" : [ {
     #            "IpProtocol" : "tcp",
     #            "FromPort" : "22",

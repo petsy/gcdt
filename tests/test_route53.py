@@ -1,13 +1,8 @@
 # -*- coding: utf-8 -*-
-
-from nose.tools import (
-    assert_true,
-    assert_equal,
-)
+from nose.tools import assert_equal
+from troposphere.ec2 import Instance
 
 from gcdt import route53
-
-from troposphere.ec2 import Instance
 
 
 def test_create_record_with_given_hostname():

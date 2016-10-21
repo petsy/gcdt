@@ -1,0 +1,40 @@
+{
+    "status_code": 201, 
+    "data": {
+        "description": "Created for unittest-gcdt-sample-api-llenlo", 
+        "ResponseMetadata": {
+            "HTTPStatusCode": 201, 
+            "RequestId": "b270ecc3-9758-11e6-9caa-3941140c78b4", 
+            "HTTPHeaders": {
+                "x-amzn-requestid": "b270ecc3-9758-11e6-9caa-3941140c78b4", 
+                "date": "Fri, 21 Oct 2016 06:36:28 GMT", 
+                "content-length": "290", 
+                "content-type": "application/json"
+            }
+        }, 
+        "enabled": true, 
+        "stageKeys": [], 
+        "lastUpdatedDate": {
+            "hour": 8, 
+            "__class__": "datetime", 
+            "month": 10, 
+            "second": 28, 
+            "microsecond": 0, 
+            "year": 2016, 
+            "day": 21, 
+            "minute": 36
+        }, 
+        "createdDate": {
+            "hour": 8, 
+            "__class__": "datetime", 
+            "month": 10, 
+            "second": 28, 
+            "microsecond": 0, 
+            "year": 2016, 
+            "day": 21, 
+            "minute": 36
+        }, 
+        "id": "ANC1kFNgZ28lqOvO2iNzU2bkY0h0HfEf9YiHadku", 
+        "name": "unittest-gcdt-sample-api-key-llenlo"
+    }
+}

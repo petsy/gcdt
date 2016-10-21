@@ -1,0 +1,25 @@
+{
+    "status_code": 200, 
+    "data": {
+        "MaxKeys": 1000, 
+        "Prefix": "", 
+        "Name": "unittest-lambda-s3-event-source-ppyaez", 
+        "ResponseMetadata": {
+            "HTTPStatusCode": 200, 
+            "HostId": "LBdaKT94/EdWz1xpJ02w/MwqSnVDlfuyVTdtxKyCiiqGQCL7mrv3StYN7/MTRDglI5RHV2rqJmk=", 
+            "RequestId": "AE9E3D9AAE6BD5D3", 
+            "HTTPHeaders": {
+                "x-amz-bucket-region": "eu-west-1", 
+                "x-amz-id-2": "LBdaKT94/EdWz1xpJ02w/MwqSnVDlfuyVTdtxKyCiiqGQCL7mrv3StYN7/MTRDglI5RHV2rqJmk=", 
+                "server": "AmazonS3", 
+                "transfer-encoding": "chunked", 
+                "x-amz-request-id": "AE9E3D9AAE6BD5D3", 
+                "date": "Fri, 21 Oct 2016 13:40:35 GMT", 
+                "content-type": "application/xml"
+            }
+        }, 
+        "Marker": "", 
+        "EncodingType": "url", 
+        "IsTruncated": false
+    }
+}

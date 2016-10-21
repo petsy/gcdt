@@ -1,0 +1,99 @@
+{
+    "status_code": 200, 
+    "data": {
+        "StackEvents": [
+            {
+                "StackId": "arn:aws:cloudformation:eu-west-1:644239850139:stack/dp-dev-gcdt-test-ensure-ebs-for-autoscaling/be275be0-97a4-11e6-890d-50faeb539036", 
+                "EventId": "LaunchConfiguration-CREATE_COMPLETE-2016-10-21T15:40:56.399Z", 
+                "ResourceStatus": "CREATE_COMPLETE", 
+                "ResourceType": "AWS::AutoScaling::LaunchConfiguration", 
+                "Timestamp": {
+                    "hour": 15, 
+                    "__class__": "datetime", 
+                    "month": 10, 
+                    "second": 56, 
+                    "microsecond": 399000, 
+                    "year": 2016, 
+                    "day": 21, 
+                    "minute": 40
+                }, 
+                "StackName": "dp-dev-gcdt-test-ensure-ebs-for-autoscaling", 
+                "ResourceProperties": "{\"KeyName\":\"dev-ec2\",\"SecurityGroups\":[\"sg-c8bce3ac\"],\"UserData\":\"IyEvYmluL2Jhc2gKY2ZuLXNpZ25hbCAtZSAwICAgIC0tcmVzb3VyY2UgQXV0b3NjYWxpbmdHcm91cCAgICAtLXN0YWNrIGRwLWRldi1nY2R0LXRlc3QtZW5zdXJlLWVicy1mb3ItYXV0b3NjYWxpbmcgICAgLS1yZWdpb24gZXUtd2VzdC0xCg==\",\"ImageId\":\"ami-25681456\",\"InstanceType\":\"t2.micro\"}\n", 
+                "PhysicalResourceId": "dp-dev-gcdt-test-ensure-ebs-for-autoscaling-LaunchConfiguration-1F6CK0W4QQNUT", 
+                "LogicalResourceId": "LaunchConfiguration"
+            }, 
+            {
+                "StackId": "arn:aws:cloudformation:eu-west-1:644239850139:stack/dp-dev-gcdt-test-ensure-ebs-for-autoscaling/be275be0-97a4-11e6-890d-50faeb539036", 
+                "EventId": "LaunchConfiguration-CREATE_IN_PROGRESS-2016-10-21T15:40:56.044Z", 
+                "ResourceStatus": "CREATE_IN_PROGRESS", 
+                "ResourceType": "AWS::AutoScaling::LaunchConfiguration", 
+                "Timestamp": {
+                    "hour": 15, 
+                    "__class__": "datetime", 
+                    "month": 10, 
+                    "second": 56, 
+                    "microsecond": 44000, 
+                    "year": 2016, 
+                    "day": 21, 
+                    "minute": 40
+                }, 
+                "ResourceStatusReason": "Resource creation Initiated", 
+                "StackName": "dp-dev-gcdt-test-ensure-ebs-for-autoscaling", 
+                "ResourceProperties": "{\"KeyName\":\"dev-ec2\",\"SecurityGroups\":[\"sg-c8bce3ac\"],\"UserData\":\"IyEvYmluL2Jhc2gKY2ZuLXNpZ25hbCAtZSAwICAgIC0tcmVzb3VyY2UgQXV0b3NjYWxpbmdHcm91cCAgICAtLXN0YWNrIGRwLWRldi1nY2R0LXRlc3QtZW5zdXJlLWVicy1mb3ItYXV0b3NjYWxpbmcgICAgLS1yZWdpb24gZXUtd2VzdC0xCg==\",\"ImageId\":\"ami-25681456\",\"InstanceType\":\"t2.micro\"}\n", 
+                "PhysicalResourceId": "dp-dev-gcdt-test-ensure-ebs-for-autoscaling-LaunchConfiguration-1F6CK0W4QQNUT", 
+                "LogicalResourceId": "LaunchConfiguration"
+            }, 
+            {
+                "StackId": "arn:aws:cloudformation:eu-west-1:644239850139:stack/dp-dev-gcdt-test-ensure-ebs-for-autoscaling/be275be0-97a4-11e6-890d-50faeb539036", 
+                "EventId": "LaunchConfiguration-CREATE_IN_PROGRESS-2016-10-21T15:40:55.169Z", 
+                "ResourceStatus": "CREATE_IN_PROGRESS", 
+                "ResourceType": "AWS::AutoScaling::LaunchConfiguration", 
+                "Timestamp": {
+                    "hour": 15, 
+                    "__class__": "datetime", 
+                    "month": 10, 
+                    "second": 55, 
+                    "microsecond": 169000, 
+                    "year": 2016, 
+                    "day": 21, 
+                    "minute": 40
+                }, 
+                "StackName": "dp-dev-gcdt-test-ensure-ebs-for-autoscaling", 
+                "ResourceProperties": "{\"KeyName\":\"dev-ec2\",\"SecurityGroups\":[\"sg-c8bce3ac\"],\"UserData\":\"IyEvYmluL2Jhc2gKY2ZuLXNpZ25hbCAtZSAwICAgIC0tcmVzb3VyY2UgQXV0b3NjYWxpbmdHcm91cCAgICAtLXN0YWNrIGRwLWRldi1nY2R0LXRlc3QtZW5zdXJlLWVicy1mb3ItYXV0b3NjYWxpbmcgICAgLS1yZWdpb24gZXUtd2VzdC0xCg==\",\"ImageId\":\"ami-25681456\",\"InstanceType\":\"t2.micro\"}\n", 
+                "PhysicalResourceId": "", 
+                "LogicalResourceId": "LaunchConfiguration"
+            }, 
+            {
+                "StackId": "arn:aws:cloudformation:eu-west-1:644239850139:stack/dp-dev-gcdt-test-ensure-ebs-for-autoscaling/be275be0-97a4-11e6-890d-50faeb539036", 
+                "EventId": "be284640-97a4-11e6-890d-50faeb539036", 
+                "ResourceStatus": "CREATE_IN_PROGRESS", 
+                "ResourceType": "AWS::CloudFormation::Stack", 
+                "Timestamp": {
+                    "hour": 15, 
+                    "__class__": "datetime", 
+                    "month": 10, 
+                    "second": 50, 
+                    "microsecond": 214000, 
+                    "year": 2016, 
+                    "day": 21, 
+                    "minute": 40
+                }, 
+                "ResourceStatusReason": "User Initiated", 
+                "StackName": "dp-dev-gcdt-test-ensure-ebs-for-autoscaling", 
+                "PhysicalResourceId": "arn:aws:cloudformation:eu-west-1:644239850139:stack/dp-dev-gcdt-test-ensure-ebs-for-autoscaling/be275be0-97a4-11e6-890d-50faeb539036", 
+                "LogicalResourceId": "dp-dev-gcdt-test-ensure-ebs-for-autoscaling"
+            }
+        ], 
+        "ResponseMetadata": {
+            "HTTPStatusCode": 200, 
+            "RequestId": "c23ac216-97a4-11e6-8569-6f4935944654", 
+            "HTTPHeaders": {
+                "x-amzn-requestid": "c23ac216-97a4-11e6-8569-6f4935944654", 
+                "vary": "Accept-Encoding", 
+                "content-length": "4743", 
+                "content-type": "text/xml", 
+                "date": "Fri, 21 Oct 2016 15:40:56 GMT"
+            }
+        }
+    }
+}

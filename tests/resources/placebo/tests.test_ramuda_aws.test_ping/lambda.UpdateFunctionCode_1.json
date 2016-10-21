@@ -1,0 +1,28 @@
+{
+    "status_code": 200, 
+    "data": {
+        "CodeSha256": "Bptvt4nP5q7nQ9gXZdzLFzl9prKGRIn5aQc2n3rIkzo=", 
+        "FunctionName": "jenkins_test_odpakf", 
+        "ResponseMetadata": {
+            "HTTPStatusCode": 200, 
+            "RequestId": "d8132187-97a1-11e6-80c1-c97bb0a90191", 
+            "HTTPHeaders": {
+                "date": "Fri, 21 Oct 2016 15:20:07 GMT", 
+                "x-amzn-requestid": "d8132187-97a1-11e6-80c1-c97bb0a90191", 
+                "content-length": "543", 
+                "content-type": "application/json", 
+                "connection": "keep-alive"
+            }
+        }, 
+        "CodeSize": 332431, 
+        "MemorySize": 128, 
+        "FunctionArn": "arn:aws:lambda:eu-west-1:644239850139:function:jenkins_test_odpakf:2", 
+        "Version": "2", 
+        "Role": "arn:aws:iam::644239850139:role/unittest_odpakf_lambda", 
+        "Timeout": 300, 
+        "LastModified": "2016-10-21T15:20:06.033+0000", 
+        "Handler": "handler.handle", 
+        "Runtime": "python2.7", 
+        "Description": "lambda created for unittesting ramuda deployment"
+    }
+}

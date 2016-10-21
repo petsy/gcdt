@@ -1,12 +1,7 @@
 # -*- coding: utf-8 -*-
 import troposphere
 from nose.tools import assert_equal
-from gcdt.kumo_util import create_dp_name, StackLookup
-
-
-def test_create_dp_name():
-    stackname = create_dp_name('ENV', 'LAYER', 'NAME')
-    assert_equal(stackname, 'dp-env-LAYER-NAME')
+from gcdt.kumo_util import StackLookup
 
 
 def test_StackLookup():

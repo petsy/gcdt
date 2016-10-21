@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from __future__ import print_function
-
 import imp
 import json
 import os
@@ -13,12 +12,12 @@ from datetime import tzinfo, timedelta, datetime
 
 import pyhocon.exceptions
 from clint.textui import colored, prompt
-from gcdt import monitoring
-from glomex_utils.config_reader import get_env
-from pyhocon import ConfigFactory
 from pyhocon.exceptions import ConfigMissingException
 from pyspin.spin import Default, Spinner
 from tabulate import tabulate
+
+from gcdt import monitoring
+from glomex_utils.config_reader import get_env
 
 
 def load_cloudformation_template(path=None):
@@ -181,8 +180,8 @@ def _get_stack_id(boto_session, stackname):
     return stack_id
 
 
-def _poll_stack_events(boto_session, stackname):
-    # http://stackoverflow.com/questions/796008/cant-subtract-offset-naive-and-offset-aware-datetimes/25662061#25662061
+def _get_stack_events_last_timestamp(boto_session, stackname):
+    '''
     ZERO = timedelta(0)
 
     class UTC(tzinfo):
@@ -196,6 +195,30 @@ def _poll_stack_events(boto_session, stackname):
             return ZERO
 
     utc = UTC()
+
+    # now_aware = unaware.replace(tzinfo=pytz.UTC)
+    # http://stackoverflow.com/questions/5802108/how-to-check-if-a-datetime-object-is-localized-with-pytz
+    # d.tzinfo is None or d.tzinfo.utcoffset(d) is None
+    #if event['Timestamp'].tzinfo is None or \
+    #        event['Timestamp'].tzinfo.utcoffset(event['Timestamp']):
+    #    # we have a native timestamp and need to add tzinfo
+    #    # most likely this is happening within a test driven by placebo.
+    #    event['Timestamp'] = event['Timestamp'].replace(tzinfo=utc)
+
+    # the actual call to AWS has a little headstart
+    now = datetime.now(utc) - timedelta(seconds=10)
+    return now
+    '''
+
+    # we need to get the last event since updatedTime is when the update stated
+    client = boto_session.client('cloudformation')
+    stack_id = _get_stack_id(boto_session, stackname)
+    response = client.describe_stack_events(StackName=stack_id)
+    return response['StackEvents'][-1]['Timestamp']
+
+
+def _poll_stack_events(boto_session, stackname, last_event=None):
+    # http://stackoverflow.com/questions/796008/cant-subtract-offset-naive-and-offset-aware-datetimes/25662061#25662061
 
     finished_statuses = ['CREATE_COMPLETE',
                          'CREATE_FAILED',
@@ -225,8 +248,6 @@ def _poll_stack_events(boto_session, stackname):
     seen_events = []
     # print len(seen_events)
     client = boto_session.client('cloudformation')
-    # the actual call to AWS has a little headstart
-    now = datetime.now(utc) - timedelta(seconds=10)
     status = ''
     # for the delete command we need the stack_id
     stack_id = _get_stack_id(boto_session, stackname)
@@ -235,7 +256,8 @@ def _poll_stack_events(boto_session, stackname):
     while status not in finished_statuses:
         response = client.describe_stack_events(StackName=stack_id)
         for event in response['StackEvents'][::-1]:
-            if event['EventId'] not in seen_events and event['Timestamp'] > now:
+            if event['EventId'] not in seen_events and \
+                    (not last_event or event['Timestamp'] > last_event):
                 seen_events.append(event['EventId'])
                 resource_status = event['ResourceStatus']
                 resource_id = event['LogicalResourceId']
@@ -421,6 +443,7 @@ def _create_stack(boto_session, conf, cloudformation, slack_token=None,
                   slack_channel='systemmessages'):
     # create stack with all the information we have
     client_cf = boto_session.client('cloudformation')
+    stackname = _get_stack_name(conf)
     _call_pre_create_hook(cloudformation)
     try:
         _get_artifact_bucket(conf)
@@ -447,7 +470,7 @@ def _create_stack(boto_session, conf, cloudformation, slack_token=None,
 
     message = 'kumo bot: created stack %s ' % _get_stack_name(conf)
     monitoring.slack_notification(slack_channel, message, slack_token)
-    stackname = _get_stack_name(conf)
+    # create means no last_event!
     exit_code = _poll_stack_events(boto_session, stackname)
     _call_post_create_hook(cloudformation)
     _call_post_hook(cloudformation)
@@ -459,6 +482,8 @@ def _update_stack(boto_session, conf, cloudformation, override_stack_policy,
     # update stack with all the information we have
     exit_code = 0
     client_cf = boto_session.client('cloudformation')
+    stackname = _get_stack_name(conf)
+    last_event = _get_stack_events_last_timestamp(boto_session, stackname)
     try:
         _call_pre_update_hook(cloudformation)
         try:
@@ -492,8 +517,7 @@ def _update_stack(boto_session, conf, cloudformation, override_stack_policy,
 
         message = 'kumo bot: updated stack %s ' % _get_stack_name(conf)
         monitoring.slack_notification(slack_channel, message, slack_token)
-        stackname = _get_stack_name(conf)
-        exit_code = _poll_stack_events(boto_session, stackname)
+        exit_code = _poll_stack_events(boto_session, stackname, last_event)
         _call_post_update_hook(cloudformation)
         _call_post_hook(cloudformation)
     except Exception as e:
@@ -516,13 +540,14 @@ def delete_stack(boto_session, conf, slack_token=None,
     :param slack_channel:
     """
     client_cf = boto_session.client('cloudformation')
+    stackname = _get_stack_name(conf)
+    last_event = _get_stack_events_last_timestamp(boto_session, stackname)
     response = client_cf.delete_stack(
         StackName=_get_stack_name(conf),
     )
     message = 'kumo bot: deleted stack %s ' % _get_stack_name(conf)
     monitoring.slack_notification(slack_channel, message, slack_token)
-    stackname = _get_stack_name(conf)
-    return _poll_stack_events(boto_session, stackname)
+    return _poll_stack_events(boto_session, stackname, last_event)
 
 
 def list_stacks(boto_session, out=sys.stdout):

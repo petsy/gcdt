@@ -1,0 +1,20 @@
+{
+    "status_code": 200, 
+    "data": {
+        "AliasArn": "arn:aws:lambda:eu-west-1:644239850139:function:jenkins_test_svzbia:ACTIVE", 
+        "FunctionVersion": "$LATEST", 
+        "Name": "ACTIVE", 
+        "ResponseMetadata": {
+            "HTTPStatusCode": 200, 
+            "RequestId": "656ff56f-979b-11e6-8726-1d32a36a60d8", 
+            "HTTPHeaders": {
+                "date": "Fri, 21 Oct 2016 14:33:55 GMT", 
+                "x-amzn-requestid": "656ff56f-979b-11e6-8726-1d32a36a60d8", 
+                "content-length": "149", 
+                "content-type": "application/json", 
+                "connection": "keep-alive"
+            }
+        }, 
+        "Description": ""
+    }
+}

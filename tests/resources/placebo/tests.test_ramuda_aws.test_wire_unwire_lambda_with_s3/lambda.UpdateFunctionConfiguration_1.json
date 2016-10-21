@@ -1,0 +1,28 @@
+{
+    "status_code": 200, 
+    "data": {
+        "CodeSha256": "9IIbLvhBIFEUApdR9RlhTeaCfb4j6pgYIDogfa4efZc=", 
+        "FunctionName": "jenkins_test_matsoi", 
+        "ResponseMetadata": {
+            "HTTPStatusCode": 200, 
+            "RequestId": "806c6717-97a3-11e6-a835-45f9b9b026f6", 
+            "HTTPHeaders": {
+                "date": "Fri, 21 Oct 2016 15:31:56 GMT", 
+                "x-amzn-requestid": "806c6717-97a3-11e6-a835-45f9b9b026f6", 
+                "content-length": "555", 
+                "content-type": "application/json", 
+                "connection": "keep-alive"
+            }
+        }, 
+        "CodeSize": 332472, 
+        "MemorySize": 128, 
+        "FunctionArn": "arn:aws:lambda:eu-west-1:644239850139:function:jenkins_test_matsoi", 
+        "Version": "$LATEST", 
+        "Role": "arn:aws:iam::644239850139:role/unittest_matsoi_lambda", 
+        "Timeout": 300, 
+        "LastModified": "2016-10-21T15:31:57.149+0000", 
+        "Handler": "handler_counter.handle", 
+        "Runtime": "python2.7", 
+        "Description": "lambda created for unittesting ramuda deployment"
+    }
+}

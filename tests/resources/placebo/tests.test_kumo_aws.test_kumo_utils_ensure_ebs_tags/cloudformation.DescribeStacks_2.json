@@ -1,0 +1,39 @@
+{
+    "status_code": 200, 
+    "data": {
+        "Stacks": [
+            {
+                "StackId": "arn:aws:cloudformation:eu-west-1:644239850139:stack/dp-dev-gcdt-test-ensure-ebs/49ae8170-97a5-11e6-90ac-500c423358d2", 
+                "Tags": [], 
+                "StackStatusReason": "User Initiated", 
+                "CreationTime": {
+                    "hour": 15, 
+                    "__class__": "datetime", 
+                    "month": 10, 
+                    "second": 44, 
+                    "microsecond": 303000, 
+                    "year": 2016, 
+                    "day": 21, 
+                    "minute": 44
+                }, 
+                "Capabilities": [
+                    "CAPABILITY_IAM"
+                ], 
+                "StackName": "dp-dev-gcdt-test-ensure-ebs", 
+                "NotificationARNs": [], 
+                "StackStatus": "CREATE_IN_PROGRESS", 
+                "DisableRollback": false
+            }
+        ], 
+        "ResponseMetadata": {
+            "HTTPStatusCode": 200, 
+            "RequestId": "4a2dc45d-97a5-11e6-9942-c7660edee04f", 
+            "HTTPHeaders": {
+                "x-amzn-requestid": "4a2dc45d-97a5-11e6-9942-c7660edee04f", 
+                "date": "Fri, 21 Oct 2016 15:44:44 GMT", 
+                "content-length": "890", 
+                "content-type": "text/xml"
+            }
+        }
+    }
+}

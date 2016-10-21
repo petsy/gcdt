@@ -1,0 +1,19 @@
+{
+    "status_code": 200, 
+    "data": {
+        "Location": "http://unittest-lambda-s3-event-source-ppyaez.s3.amazonaws.com/", 
+        "ResponseMetadata": {
+            "HTTPStatusCode": 200, 
+            "HostId": "TgZv1Y5cQcmf7RuzstR5iFYMpDcVqKst8Jnq0MTMgZe4oIPHO6IQY9DiShl8Zr33j29ffHPrPk0=", 
+            "RequestId": "EB2912D422070B21", 
+            "HTTPHeaders": {
+                "content-length": "0", 
+                "x-amz-id-2": "TgZv1Y5cQcmf7RuzstR5iFYMpDcVqKst8Jnq0MTMgZe4oIPHO6IQY9DiShl8Zr33j29ffHPrPk0=", 
+                "server": "AmazonS3", 
+                "x-amz-request-id": "EB2912D422070B21", 
+                "location": "http://unittest-lambda-s3-event-source-ppyaez.s3.amazonaws.com/", 
+                "date": "Fri, 21 Oct 2016 13:39:39 GMT"
+            }
+        }
+    }
+}

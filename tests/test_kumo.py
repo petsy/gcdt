@@ -1,18 +1,20 @@
 # -*- coding: utf-8 -*-
+import os
+import json
+from tempfile import NamedTemporaryFile
+
+from pyhocon import ConfigFactory
+from pyhocon.exceptions import ConfigMissingException
 from nose.tools import assert_dict_equal
 from nose.tools import assert_equal, assert_true, \
     assert_regexp_matches, assert_list_equal, raises
 import nose
-import os
-import json
-from tempfile import NamedTemporaryFile
-from pyhocon import ConfigFactory
+
 from gcdt.kumo_core import _generate_parameters, \
     load_cloudformation_template, generate_template_file, _get_stack_name, \
     _get_stack_policy, _get_stack_policy_during_update, _get_conf_value, \
     _generate_parameter_entry
 from .helpers import cleanup_tempfiles, temp_folder
-from pyhocon.exceptions import ConfigMissingException
 
 
 def here(p): return os.path.join(os.path.dirname(__file__), p)

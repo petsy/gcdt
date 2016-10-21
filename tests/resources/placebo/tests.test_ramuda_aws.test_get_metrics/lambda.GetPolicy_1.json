@@ -1,0 +1,21 @@
+{
+    "status_code": 404, 
+    "data": {
+        "ResponseMetadata": {
+            "HTTPStatusCode": 404, 
+            "RequestId": "b5881cd1-979b-11e6-8040-8ddd189efa41", 
+            "HTTPHeaders": {
+                "x-amzn-requestid": "b5881cd1-979b-11e6-8040-8ddd189efa41", 
+                "content-length": "70", 
+                "connection": "keep-alive", 
+                "date": "Fri, 21 Oct 2016 14:36:10 GMT", 
+                "content-type": "application/json", 
+                "x-amzn-errortype": "ResourceNotFoundException"
+            }
+        }, 
+        "Error": {
+            "Message": "The resource you requested does not exist.", 
+            "Code": "ResourceNotFoundException"
+        }
+    }
+}

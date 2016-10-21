@@ -1,0 +1,17 @@
+{
+    "status_code": 200, 
+    "data": {
+        "Policy": "{\"Version\":\"2012-10-17\",\"Id\":\"default\",\"Statement\":[{\"Sid\":\"882d5d06-97a3-11e6-9d40-c4850848610b\",\"Effect\":\"Allow\",\"Principal\":{\"Service\":\"s3.amazonaws.com\"},\"Action\":\"lambda:InvokeFunction\",\"Resource\":\"arn:aws:lambda:eu-west-1:644239850139:function:jenkins_test_matsoi:ACTIVE\",\"Condition\":{\"ArnLike\":{\"AWS:SourceArn\":\"arn:aws:s3:::unittest-lambda-s3-event-source-ndmbkl\"}}}]}", 
+        "ResponseMetadata": {
+            "HTTPStatusCode": 200, 
+            "RequestId": "9844fca5-97a3-11e6-a633-191f35406106", 
+            "HTTPHeaders": {
+                "date": "Fri, 21 Oct 2016 15:32:36 GMT", 
+                "x-amzn-requestid": "9844fca5-97a3-11e6-a633-191f35406106", 
+                "content-length": "429", 
+                "content-type": "application/json", 
+                "connection": "keep-alive"
+            }
+        }
+    }
+}

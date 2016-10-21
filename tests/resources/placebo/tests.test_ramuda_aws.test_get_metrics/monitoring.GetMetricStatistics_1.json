@@ -1,0 +1,17 @@
+{
+    "status_code": 200, 
+    "data": {
+        "Datapoints": [], 
+        "ResponseMetadata": {
+            "HTTPStatusCode": 200, 
+            "RequestId": "b4e9e0d3-979b-11e6-b79c-7d36fc1db98a", 
+            "HTTPHeaders": {
+                "x-amzn-requestid": "b4e9e0d3-979b-11e6-b79c-7d36fc1db98a", 
+                "date": "Fri, 21 Oct 2016 14:36:08 GMT", 
+                "content-length": "331", 
+                "content-type": "text/xml"
+            }
+        }, 
+        "Label": "Duration"
+    }
+}

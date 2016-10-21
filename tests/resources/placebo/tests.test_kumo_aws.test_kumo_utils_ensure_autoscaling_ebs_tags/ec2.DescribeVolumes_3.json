@@ -1,0 +1,63 @@
+{
+    "status_code": 200, 
+    "data": {
+        "ResponseMetadata": {
+            "HTTPStatusCode": 200, 
+            "RequestId": "64ce8974-87ee-4066-86d4-67c14be7eda8", 
+            "HTTPHeaders": {
+                "transfer-encoding": "chunked", 
+                "vary": "Accept-Encoding", 
+                "server": "AmazonEC2", 
+                "content-type": "text/xml;charset=UTF-8", 
+                "date": "Fri, 21 Oct 2016 15:42:32 GMT"
+            }
+        }, 
+        "Volumes": [
+            {
+                "AvailabilityZone": "eu-west-1a", 
+                "Attachments": [
+                    {
+                        "AttachTime": {
+                            "hour": 15, 
+                            "__class__": "datetime", 
+                            "month": 10, 
+                            "second": 33, 
+                            "microsecond": 0, 
+                            "year": 2016, 
+                            "day": 21, 
+                            "minute": 41
+                        }, 
+                        "InstanceId": "i-5a8601d1", 
+                        "VolumeId": "vol-03208e81", 
+                        "State": "attached", 
+                        "DeleteOnTermination": true, 
+                        "Device": "/dev/xvda"
+                    }
+                ], 
+                "Tags": [
+                    {
+                        "Value": "version1", 
+                        "Key": "kumo-test"
+                    }
+                ], 
+                "Encrypted": false, 
+                "VolumeType": "gp2", 
+                "VolumeId": "vol-03208e81", 
+                "State": "in-use", 
+                "Iops": 100, 
+                "SnapshotId": "snap-0c1e86f8", 
+                "CreateTime": {
+                    "hour": 15, 
+                    "__class__": "datetime", 
+                    "month": 10, 
+                    "second": 33, 
+                    "microsecond": 97000, 
+                    "year": 2016, 
+                    "day": 21, 
+                    "minute": 41
+                }, 
+                "Size": 8
+            }
+        ]
+    }
+}

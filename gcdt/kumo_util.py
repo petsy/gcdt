@@ -5,9 +5,9 @@ templates or from other external code.
 """
 
 from __future__ import print_function
+
 import troposphere
 from troposphere.cloudformation import AWSCustomObject
-import boto3
 
 
 class StackLookup(object):
@@ -71,27 +71,32 @@ class StackLookup(object):
                 parameter
             )
 
-def ensure_ebs_volume_tags_autoscaling_group(as_group_name, tags):
-    ec2_client = boto3.client('ec2')
+
+def ensure_ebs_volume_tags_autoscaling_group(boto_session, as_group_name, tags):
+    # I think this is only relevant to test code!
+    ec2_client = boto_session.client('ec2')
 
     autoscale_filter = {
-        'Name':'tag:aws:autoscaling:groupName',
-        'Values': [ as_group_name ]
+        'Name': 'tag:aws:autoscaling:groupName',
+        'Values': [as_group_name]
     }
-    response = ec2_client.describe_instances( Filters = [ autoscale_filter ])
+    response = ec2_client.describe_instances(Filters=[autoscale_filter])
     for r in response['Reservations']:
         for i in r['Instances']:
-            ensure_ebs_volume_tags_ec2_instance(i['InstanceId'], tags)
+            ensure_ebs_volume_tags_ec2_instance(boto_session, i['InstanceId'],
+                                                tags)
 
 
-def ensure_ebs_volume_tags_ec2_instance(instance_id, tags):
-    ec2_resource = boto3.resource('ec2')
+def ensure_ebs_volume_tags_ec2_instance(boto_session, instance_id, tags):
+    # I think this is only relevant to test code!
+    ec2_resource = boto_session.resource('ec2')
     instance  = ec2_resource.Instance(instance_id)
     for vol in instance.volumes.all():
         ensure_tags_ebs_volume(vol, tags)
 
 
 def ensure_tags_ebs_volume(volume, tags):
+    # I think this is only relevant to test code!
     tags_to_add = []
     if volume.tags:
         for tag in tags:
@@ -101,16 +106,3 @@ def ensure_tags_ebs_volume(volume, tags):
             volume.create_tags(Tags = tags_to_add)
     else:
         volume.create_tags(Tags = tags)
-
-
-# TODO: move this to dp_helper!
-def create_dp_name(env, layer, name):
-    """Deprecated! Please move this to dp_helper!
-
-    :param env:
-    :param layer:
-    :param name:
-    :return:
-    """
-    #TODO: lower() should be used on whole name!
-    return 'dp-' + env.lower() + '-' + layer + '-' + name

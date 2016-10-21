@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 from __future__ import print_function
-
-import getpass
 import os
 import sys
 from time import sleep
+import getpass
 
 from clint.textui import prompt, colored
 from pyhocon import ConfigFactory
 import credstash
+
 from gcdt import __version__
 
 
@@ -207,3 +207,13 @@ def get_command(arguments):
     """
     return [k for k, v in arguments.iteritems()
             if not k.startswith('-') and v is True][0]
+
+
+# gets Outputs for a given StackName (from glomex-utils/servicediscovery.py)
+def get_outputs_for_stack(boto_session, stack_name):
+    client_cf = boto_session.client('cloudformation')
+    response = client_cf.describe_stacks(StackName=stack_name)
+    result = {}
+    for output in response["Stacks"][0]["Outputs"]:
+        result[output["OutputKey"]] = output["OutputValue"]
+    return result

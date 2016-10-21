@@ -5,9 +5,11 @@
 """
 
 from __future__ import print_function
-
 import sys
+
+import boto3
 from docopt import docopt
+
 from glomex_utils.config_reader import read_config
 from gcdt import utils
 from gcdt.tenkai_core import prepare_artifacts_bucket, deploy, deployment_status, \
@@ -39,6 +41,7 @@ def main():
         utils.version()
         sys.exit(0)
 
+    boto_session = boto3.session.Session()
     context = get_context('tenkai', get_command(arguments))
     datadog_notification(context)
 
@@ -49,6 +52,7 @@ def main():
         # are_credentials_still_valid()
         prepare_artifacts_bucket(conf.get('codedeploy.artifactsBucket'))
         deployment = deploy(
+            boto_session=boto_session,
             applicationName=conf.get('codedeploy.applicationName'),
             deploymentGroupName=conf.get('codedeploy.deploymentGroupName'),
             deploymentConfigName=conf.get('codedeploy.deploymentConfigName'),
