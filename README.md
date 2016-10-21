@@ -1,7 +1,7 @@
 Glomex Cloud Deployment Tools
 =============================
 
-version number: 0.0.60.dev4
+version number: 0.0.60.dev7
 
 author: Glomex DevOps Team
 
@@ -117,6 +117,8 @@ To suppress debug output to more easily find out why (if) the tests break, pleas
 ```bash
 $ nosetests tests/* --nologcapture
 ```
+
+
 ## Cloudformation Deploy Tool  
 ### gcdt
 
@@ -207,8 +209,6 @@ cloudformation {
 }
 ```
 
-You can create a new folder with this structure by calling `kumo scaffold`.
-
 ### Howto
 1. create a new local folder from the template: `kumo scaffold`
 2. fill `cloudformation.py`with the contents of your stack
@@ -217,7 +217,7 @@ You can create a new folder with this structure by calling `kumo scaffold`.
 5. call `kumo deploy`to deploy your stack to AWS
 
 ### Hooks
-kumo offers numerous hook functions that get called during the lifecycle of a kumo run:
+kumo offers numerous hook functions that get called during the lifecycle of a kumo deploy run:
 
 * pre_hook()
   * gets called before everything else - even config reading. Useful for e.g. creating secrets in credstash if they don't exist
@@ -232,8 +232,15 @@ kumo offers numerous hook functions that get called during the lifecycle of a ku
 * post_hook()
   * gets called after a stack is either updated or created
 
-You can basically call any custom code you want. Just implement the function in
-cloudformation.py
+You can basically call any custom code you want. Just implement 
+the function in cloudformation.py
+
+multiple ways of using parameters in your hook functions:
+
+* no arguments (as previous to version 0.0.60)
+* use kwargs dict and just access the arguments you need e.g. "def pre_hook(**kwargs):"
+* use all positional arguments e.g. "def pre_hook(boto_session, config, parameters, stack_outputs, stack_state):"
+* use all arguments as keyword arguments or mix.
 
 ### Stack Policies
 kumo does offer support for stack policies. It has a default stack policy that will get applied to each stack:
@@ -476,7 +483,25 @@ deployment {
 
 ```
 
-settings_env.conf -> settings for your code
+### configuration
+
+#### user configuration in ~/.gcdt
+
+The .gcdt config file resides in your home folder and is created with "$ gcdt configure" as described above.
+We use .gcdt config file also for user specific configuration:
+
+```hocon
+ramuda {
+  failDeploymentOnUnsuccessfulPing = true
+}
+```
+
+*failDeploymentOnUnsuccessfulPing*: ramuda deploy command fails if the lambda function does not implement ping or ping fails.
+
+
+#### lambda configuration
+
+settings_<env>.conf -> settings for your code
 
 
 #### S3 upload
@@ -489,6 +514,7 @@ region = "eu-west-1",
 }
 
 You can get the name of the bucket from Ops and it should be part of the stack outputs of the base stack in your account (s3DeploymentBucket).
+
 
 ## AWS CodeDeploy Tool
 ### tenkai (展開 from Japanese: deployment)
@@ -503,13 +529,11 @@ To see available commands, call this:
         tenkai version
 ```
 
-
 #### deploy
 bundles your code then uploads it to S3 as a new revision and triggers a new deployment
 
 #### version
 will print the version of gcdt you are using
-
 
 
 ### Folder Layout

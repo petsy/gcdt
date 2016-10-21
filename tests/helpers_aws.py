@@ -87,7 +87,7 @@ def create_lambda_helper(lambda_name, role_arn, handler_filename,
     memory_size = 128
     folders_from_file = [
         {'source': './vendored', 'target': '.'},
-        {'source': './impl', 'target': 'impl'}
+        {'source': './resources/sample_lambda/impl', 'target': 'impl'}
     ]
     artifact_bucket = None
 

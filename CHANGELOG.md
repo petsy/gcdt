@@ -7,6 +7,11 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - FEATURE kumo now has the visualize cmd. Req. dot installation (#136).
 - FIX moved tests to pytest to improve cleanup after tests (#119).
 - FIX ramuda rollback to previous version.
+- FIX kumo Parameter diffing does not work for aws coma-seperated inputs (#77).
+- FIX ramuda fail deployment on failing ping (#113).
+- FEATURE tenkai now has the slack notifications (#79).- FIX moved tests to pytest to improve cleanup after tests (#119).
+- FIX moved tests to pytest to improve cleanup after tests (#119).
+- FEATURE kumo now has parametrized hooks (#34).
 
 ## [0.0.57] - 2016-09-23
 ### Added
@@ -70,3 +75,5 @@ to bundle packages at runtime.
 - FIX: removed debug output
 - FIX: removed some unnecessary import validations
 - FIX: kumo will now exit when importing a cloudformation.py not from your current working directory
+
+...

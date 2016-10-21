@@ -16,7 +16,7 @@ import boto3
 
 from glomex_utils.config_reader import read_config
 from gcdt import utils
-from gcdt.kumo_core import call_pre_hook, print_parameter_diff, delete_stack, \
+from gcdt.kumo_core import print_parameter_diff, delete_stack, \
     deploy_stack, generate_template_file, list_stacks, create_change_set, \
     describe_change_set, load_cloudformation_template
 from gcdt.utils import read_gcdt_user_config, get_context, get_command
@@ -85,7 +85,6 @@ def main():
     if arguments['deploy']:
         slack_token, slack_channel = get_user_config()
         cloudformation = load_template()
-        call_pre_hook(cloudformation)
         conf = read_config()
         print_parameter_diff(boto_session, conf)
         are_credentials_still_valid(boto_session)
@@ -95,7 +94,6 @@ def main():
         datadog_event_detail(context, event)
     elif arguments['delete']:
         slack_token, slack_channel = get_user_config()
-        cloudformation = load_template()  # TODO: is this really necessary?
         conf = read_config()
         are_credentials_still_valid(boto_session)
         exit_code = delete_stack(boto_session, conf, slack_token, slack_channel)

@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from __future__ import print_function
-
 import imp
 import json
 import os
@@ -11,14 +10,14 @@ import sys
 import time
 from datetime import tzinfo, timedelta, datetime
 
-import pyhocon.exceptions
 from clint.textui import colored, prompt
-from gcdt import monitoring
-from glomex_utils.config_reader import get_env
-from pyhocon import ConfigFactory
+import pyhocon.exceptions
 from pyhocon.exceptions import ConfigMissingException
 from pyspin.spin import Default, Spinner
 from tabulate import tabulate
+
+from gcdt import monitoring
+from glomex_utils.config_reader import get_env
 
 
 def load_cloudformation_template(path=None):
@@ -75,6 +74,8 @@ def print_parameter_diff(boto_session, config, out=sys.stdout):
         for param in stack.parameters:
             try:
                 old = param['ParameterValue']
+                if ',' in old:
+                    old = old.split(',')
                 new = config.get('cloudformation.' + param['ParameterKey'])
                 if old != new:
                     table.append([param['ParameterKey'], old, new])
@@ -99,45 +100,44 @@ def print_parameter_diff(boto_session, config, out=sys.stdout):
         print('\n', file=out)
 
 
-def call_pre_hook(cloudformation):
-    """This is called from kumo_main during deploy.
-
-    :param cloudformation:
-    """
-    if 'pre_hook' in dir(cloudformation):
-        print(colored.green('Executing pre hook...'))
-        cloudformation.pre_hook()
-
-
-def _call_pre_create_hook(cloudformation):
-    if 'pre_create_hook' in dir(cloudformation):
-        print(colored.green('Executing pre create hook...'))
-        cloudformation.pre_create_hook()
-
-
-def _call_pre_update_hook(cloudformation):
-    if 'pre_update_hook' in dir(cloudformation):
-        print(colored.green('Executing pre update hook...'))
-        cloudformation.pre_update_hook()
-
-
-def _call_post_create_hook(cloudformation):
-    if 'post_create_hook' in dir(cloudformation):
-        print(colored.green('CloudFormation is done, now executing post create hook...'))
-        cloudformation.post_create_hook()
+def _call_hook(boto_session, config, stack_name, parameters, cloudformation,
+               hook, message=None, out=sys.stdout):
+    if hook not in ['pre_hook', 'pre_create_hook', 'pre_update_hook',
+                    'post_create_hook', 'post_update_hook', 'post_hook']:
+        print(colored.green('Unknown hook: %s' % hook), file=out)
+        return
+    if not hasattr(cloudformation, hook):
+        # hook is not present
+        return
+    if not message:
+        message = 'Executing %s...' % hook.replace('_', ' ')
+    print(colored.green(message), file=out)
+    hook_func = getattr(cloudformation, hook)
+    if not hook_func.func_code.co_argcount:
+        hook_func()  # for compatibility with existing templates
+    else:
+        # new call for templates with parametrized hooks
+        cfn_client = boto_session.client('cloudformation')
+        stack_outputs = _get_stack_outputs(cfn_client, stack_name)
+        stack_state = _get_stack_state(cfn_client, stack_name)
+        hook_func(boto_session=boto_session, config=config,
+                  parameters=parameters, stack_outputs=stack_outputs,
+                  stack_state=stack_state)
 
 
-def _call_post_update_hook(cloudformation):
-    if 'post_update_hook' in dir(cloudformation):
-        print(colored.green('CloudFormation is done, now executing post update hook...'))
-        cloudformation.post_update_hook()
+def _get_stack_outputs(cfn_client, stack_name):
+    stacks = cfn_client.describe_stacks(stack_name)
+    if len(stacks) == 1:
+        return stacks[0]
 
 
-# FIXME does not get called when no changes from CF to apply
-def _call_post_hook(cloudformation):
-    if 'post_hook' in dir(cloudformation):
-        print(colored.green('CloudFormation is done, now executing post hook...'))
-        cloudformation.post_hook()
+def _get_stack_state(cfn_client, stack_name):
+    try:
+        stack = cfn_client.Stack(stack_name)
+    except:
+        print('Failed to get stack state.')
+        return
+    return stack.stack_status
 
 
 def _json2table(data):
@@ -320,12 +320,20 @@ def deploy_stack(boto_session, conf, cloudformation, slack_token=None,
     :return: exit_code
     """
     stackname = _get_stack_name(conf)
+    parameters = _generate_parameters(conf)
+    _call_hook(boto_session, conf, stackname, parameters, cloudformation,
+               hook='pre_hook')
     if _stack_exists(boto_session, stackname):
-        return _update_stack(boto_session, conf, cloudformation,
-                             override_stack_policy, slack_token, slack_channel)
+        exit_code = _update_stack(boto_session, conf, cloudformation,
+                                  parameters, override_stack_policy,
+                                  slack_token, slack_channel)
     else:
-        return _create_stack(boto_session, conf, cloudformation, slack_token,
-                             slack_channel)
+        exit_code = _create_stack(boto_session, conf, cloudformation,
+                                  parameters, slack_token, slack_channel)
+    _call_hook(boto_session, conf, stackname, parameters, cloudformation,
+               hook='post_hook',
+               message='CloudFormation is done, now executing post hook...')
+    return exit_code
 
 
 def _s3_upload(boto_session, conf, cloudformation):
@@ -415,17 +423,19 @@ def _get_stack_policy_during_update(cloudformation, override_stack_policy):
     return stack_policy_during_update
 
 
-def _create_stack(boto_session, conf, cloudformation, slack_token=None,
-                  slack_channel='systemmessages'):
+def _create_stack(boto_session, conf, cloudformation, parameters,
+                  slack_token=None, slack_channel='systemmessages'):
     # create stack with all the information we have
     client_cf = boto_session.client('cloudformation')
-    _call_pre_create_hook(cloudformation)
+    stackname = _get_stack_name(conf)
+    _call_hook(boto_session, conf, stackname, parameters, cloudformation,
+               hook='pre_create_hook')
     try:
         _get_artifact_bucket(conf)
         response = client_cf.create_stack(
             StackName=_get_stack_name(conf),
             TemplateURL=_s3_upload(boto_session, conf, cloudformation),
-            Parameters=_generate_parameters(conf),
+            Parameters=parameters,
             Capabilities=[
                 'CAPABILITY_IAM',
             ],
@@ -436,7 +446,7 @@ def _create_stack(boto_session, conf, cloudformation, slack_token=None,
         response = client_cf.create_stack(
             StackName=_get_stack_name(conf),
             TemplateBody=cloudformation.generate_template(),
-            Parameters=_generate_parameters(conf),
+            Parameters=parameters,
             Capabilities=[
                 'CAPABILITY_IAM',
             ],
@@ -445,26 +455,29 @@ def _create_stack(boto_session, conf, cloudformation, slack_token=None,
 
     message = 'kumo bot: created stack %s ' % _get_stack_name(conf)
     monitoring.slack_notification(slack_channel, message, slack_token)
-    stackname = _get_stack_name(conf)
     exit_code = _poll_stack_events(boto_session, stackname)
-    _call_post_create_hook(cloudformation)
-    _call_post_hook(cloudformation)
+    _call_hook(boto_session, conf, stackname, parameters, cloudformation,
+               hook='post_create_hook',
+               message='CloudFormation is done, now executing post create hook...')
     return exit_code
 
 
-def _update_stack(boto_session, conf, cloudformation, override_stack_policy,
-                  slack_token=None, slack_channel='systemmessages'):
+def _update_stack(boto_session, conf, cloudformation, parameters,
+                  override_stack_policy, slack_token=None,
+                  slack_channel='systemmessages'):
     # update stack with all the information we have
     exit_code = 0
     client_cf = boto_session.client('cloudformation')
     try:
-        _call_pre_update_hook(cloudformation)
+        stackname = _get_stack_name(conf)
+        _call_hook(boto_session, conf, stackname, parameters, cloudformation,
+                   hook='pre_update_hook')
         try:
             _get_artifact_bucket(conf)
             response = client_cf.update_stack(
                 StackName=_get_stack_name(conf),
                 TemplateURL=_s3_upload(boto_session, conf, cloudformation),
-                Parameters=_generate_parameters(conf),
+                Parameters=parameters,
                 Capabilities=[
                     'CAPABILITY_IAM',
                 ],
@@ -478,7 +491,7 @@ def _update_stack(boto_session, conf, cloudformation, override_stack_policy,
             response = client_cf.update_stack(
                 StackName=_get_stack_name(conf),
                 TemplateBody=cloudformation.generate_template(),
-                Parameters=_generate_parameters(conf),
+                Parameters=parameters,
                 Capabilities=[
                     'CAPABILITY_IAM',
                 ],
@@ -490,10 +503,10 @@ def _update_stack(boto_session, conf, cloudformation, override_stack_policy,
 
         message = 'kumo bot: updated stack %s ' % _get_stack_name(conf)
         monitoring.slack_notification(slack_channel, message, slack_token)
-        stackname = _get_stack_name(conf)
         exit_code = _poll_stack_events(boto_session, stackname)
-        _call_post_update_hook(cloudformation)
-        _call_post_hook(cloudformation)
+        _call_hook(boto_session, conf, stackname, parameters, cloudformation,
+                   hook='post_update_hook',
+                   message='CloudFormation is done, now executing post update hook...')
     except Exception as e:
         if 'No updates' in repr(e):
             print(colored.yellow('No updates are to be performed.'))
@@ -578,16 +591,14 @@ def describe_change_set(boto_session, change_set_name, stack_name):
     """
     client = boto_session.client('cloudformation')
 
-    completed_status = 'CREATE_COMPLETE'
-    failed_status = 'FAILED'
-    status = ''
-    while status not in [completed_status, failed_status]:
+    status = None
+    while status not in ['CREATE_COMPLETE', 'FAILED']:
         response = client.describe_change_set(
             ChangeSetName=change_set_name,
             StackName=stack_name)
         status = response['Status']
         print('##### %s' % status)
-        if status == completed_status:
+        if status == 'CREATE_COMPLETE':
             for change in response['Changes']:
                 print(_json2table(change['ResourceChange']))
 
