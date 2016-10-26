@@ -32,9 +32,9 @@ if (environ != 'dev') {
 
 //    config.jobs.each {
 
-def repository = it.repository
-def packageName = it.name
-def jobName = "packages" + "/" + it.name
+//def packageName = it.name
+//def jobName = "packages" + "/" + it.name
+//def repository = it.repository
 
 job(jobName) {
     environmentVariables {
