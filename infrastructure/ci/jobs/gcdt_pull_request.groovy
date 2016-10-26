@@ -7,8 +7,8 @@ def slackChannel = DpUtilities.getSlackChannel()
 out.println(branchToCheckout)
 
 def credentialsToCheckout = "psd-frontend-jenkins_username-password"
-def configFile = readFileFromWorkspace("./operations/continous-delivery/packages-config.json")
-def config = new groovy.json.JsonSlurper().parseText(configFile)
+//def configFile = readFileFromWorkspace("./operations/continous-delivery/packages-config.json")
+//def config = new groovy.json.JsonSlurper().parseText(configFile)
 def artifactBucket = "glomex-infra-reposerver-prod"
 def venvScript = "operations/continous-delivery/scripts/gcdt/prepare_virtualenv.sh"
 def buildScript = "operations/continous-delivery/scripts/gcdt/build_package.sh"
