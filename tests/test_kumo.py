@@ -2,6 +2,7 @@
 import os
 import json
 from tempfile import NamedTemporaryFile
+from StringIO import StringIO
 
 from pyhocon import ConfigFactory
 from pyhocon.exceptions import ConfigMissingException

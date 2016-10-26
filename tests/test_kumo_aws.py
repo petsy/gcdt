@@ -15,7 +15,7 @@ from gcdt.kumo_core import load_cloudformation_template, list_stacks, \
     _get_artifact_bucket, _s3_upload
 from gcdt.kumo_util import ensure_ebs_volume_tags_ec2_instance, \
     ensure_ebs_volume_tags_autoscaling_group
-
+from gcdt.utils import get_outputs_for_stack
 
 def here(p): return os.path.join(os.path.dirname(__file__), p)
 

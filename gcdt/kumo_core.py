@@ -8,7 +8,6 @@ import six
 import string
 import sys
 import time
-from datetime import tzinfo, timedelta, datetime
 
 from clint.textui import colored, prompt
 import pyhocon.exceptions
@@ -180,35 +179,6 @@ def _get_stack_id(boto_session, stackname):
 
 
 def _get_stack_events_last_timestamp(boto_session, stackname):
-    '''
-    ZERO = timedelta(0)
-
-    class UTC(tzinfo):
-        def utcoffset(self, dt):
-            return ZERO
-
-        def tzname(self, dt):
-            return 'UTC'
-
-        def dst(self, dt):
-            return ZERO
-
-    utc = UTC()
-
-    # now_aware = unaware.replace(tzinfo=pytz.UTC)
-    # http://stackoverflow.com/questions/5802108/how-to-check-if-a-datetime-object-is-localized-with-pytz
-    # d.tzinfo is None or d.tzinfo.utcoffset(d) is None
-    #if event['Timestamp'].tzinfo is None or \
-    #        event['Timestamp'].tzinfo.utcoffset(event['Timestamp']):
-    #    # we have a native timestamp and need to add tzinfo
-    #    # most likely this is happening within a test driven by placebo.
-    #    event['Timestamp'] = event['Timestamp'].replace(tzinfo=utc)
-
-    # the actual call to AWS has a little headstart
-    now = datetime.now(utc) - timedelta(seconds=10)
-    return now
-    '''
-
     # we need to get the last event since updatedTime is when the update stated
     client = boto_session.client('cloudformation')
     stack_id = _get_stack_id(boto_session, stackname)
@@ -218,7 +188,6 @@ def _get_stack_events_last_timestamp(boto_session, stackname):
 
 def _poll_stack_events(boto_session, stackname, last_event=None):
     # http://stackoverflow.com/questions/796008/cant-subtract-offset-naive-and-offset-aware-datetimes/25662061#25662061
-
     finished_statuses = ['CREATE_COMPLETE',
                          'CREATE_FAILED',
                          'DELETE_COMPLETE',
@@ -529,7 +498,7 @@ def _update_stack(boto_session, conf, cloudformation, parameters,
 
         message = 'kumo bot: updated stack %s ' % _get_stack_name(conf)
         monitoring.slack_notification(slack_channel, message, slack_token)
-        exit_code = _poll_stack_events(boto_session, stackname)
+        exit_code = _poll_stack_events(boto_session, stackname, last_event)
         _call_hook(boto_session, conf, stackname, parameters, cloudformation,
                    hook='post_update_hook',
                    message='CloudFormation is done, now executing post update hook...')
@@ -553,13 +522,14 @@ def delete_stack(boto_session, conf, slack_token=None,
     :param slack_channel:
     """
     client_cf = boto_session.client('cloudformation')
+    stackname = _get_stack_name(conf)
+    last_event = _get_stack_events_last_timestamp(boto_session, stackname)
     response = client_cf.delete_stack(
         StackName=_get_stack_name(conf),
     )
     message = 'kumo bot: deleted stack %s ' % _get_stack_name(conf)
     monitoring.slack_notification(slack_channel, message, slack_token)
-    stackname = _get_stack_name(conf)
-    return _poll_stack_events(boto_session, stackname)
+    return _poll_stack_events(boto_session, stackname, last_event)
 
 
 def list_stacks(boto_session, out=sys.stdout):

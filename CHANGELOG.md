@@ -12,6 +12,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - FEATURE tenkai now has the slack notifications (#79).- FIX moved tests to pytest to improve cleanup after tests (#119).
 - FIX moved tests to pytest to improve cleanup after tests (#119).
 - FEATURE kumo now has parametrized hooks (#34).
+- FIX speedup tests by use of mocked service calls to AWS services (#151). 
 
 ## [0.0.57] - 2016-09-23
 ### Added
