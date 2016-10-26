@@ -275,10 +275,11 @@ def are_credentials_still_valid(boto_session):
     # TODO: refactor to utils
     client_api = boto_session.client('apigateway')
     try:
-        client_api.list_functions()
+        client_api.get_account()
     except Exception as e:
         print(colored.red(
             'Your credentials have expired... Please renew and try again!'))
+        print(e)
         # sys.exit(1)
         return 1
     return 0
