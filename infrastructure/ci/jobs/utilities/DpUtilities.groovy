@@ -1,4 +1,4 @@
-package infrastructure.ci.jobs.utilities
+package utilities
 
 import groovy.json.JsonSlurper;
 
