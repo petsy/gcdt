@@ -126,8 +126,9 @@ def main():
         target_stage = conf.get('api.targetStage')
         api_description = conf.get('api.description')
 
-        lambdas = get_lambdas(conf, add_arn=True)
+        lambdas = get_lambdas(boto_session, conf, add_arn=True)
         export_to_swagger(
+            boto_session=boto_session,
             api_name=api_name,
             stage_name=target_stage,
             api_description=api_description,
