@@ -1,0 +1,16 @@
+{
+    "status_code": 200, 
+    "data": {
+        "Id": "arn:aws:cloudformation:eu-west-1:644239850139:changeSet/LPBVLIQF/e285b8f6-5c31-4ac8-ac41-259f5e4faa7a", 
+        "ResponseMetadata": {
+            "HTTPStatusCode": 200, 
+            "RequestId": "1a85b662-97a4-11e6-af29-c35503787ba2", 
+            "HTTPHeaders": {
+                "x-amzn-requestid": "1a85b662-97a4-11e6-af29-c35503787ba2", 
+                "date": "Fri, 21 Oct 2016 15:36:15 GMT", 
+                "content-length": "388", 
+                "content-type": "text/xml"
+            }
+        }
+    }
+}

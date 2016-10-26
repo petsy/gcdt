@@ -1,0 +1,28 @@
+{
+    "status_code": 201, 
+    "data": {
+        "CodeSha256": "8/Hv7Ys8Us6VeO8a9to4sjn66T+jO0B6JNsPD+/Ct4c=", 
+        "FunctionName": "jenkins_test_npxchg", 
+        "ResponseMetadata": {
+            "HTTPStatusCode": 201, 
+            "RequestId": "d13a2339-9798-11e6-95f6-356173cc98b1", 
+            "HTTPHeaders": {
+                "date": "Fri, 21 Oct 2016 14:15:29 GMT", 
+                "x-amzn-requestid": "d13a2339-9798-11e6-95f6-356173cc98b1", 
+                "content-length": "541", 
+                "content-type": "application/json", 
+                "connection": "keep-alive"
+            }
+        }, 
+        "CodeSize": 332357, 
+        "MemorySize": 128, 
+        "FunctionArn": "arn:aws:lambda:eu-west-1:644239850139:function:jenkins_test_npxchg", 
+        "Version": "1", 
+        "Role": "arn:aws:iam::644239850139:role/unittest_npxchg_lambda", 
+        "Timeout": 300, 
+        "LastModified": "2016-10-21T14:15:29.143+0000", 
+        "Handler": "handler.handle", 
+        "Runtime": "python2.7", 
+        "Description": "lambda created for unittesting ramuda deployment"
+    }
+}

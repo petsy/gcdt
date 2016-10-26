@@ -2,8 +2,10 @@
 import os
 import json
 from StringIO import StringIO
+
 from nose.tools import assert_equal
 import nose
+
 from gcdt.kumo_viz import cfn_viz, _analyze_sg
 
 

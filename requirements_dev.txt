@@ -7,6 +7,8 @@ coverage==4.2.0
 testfixtures
 pytest>=3.0.1
 pytest-cov>=2.3.1
+placebo>=0.8.1
+aws-mfa>=0.0.6
 
 # build-tools
 setuptools>=25.1.3

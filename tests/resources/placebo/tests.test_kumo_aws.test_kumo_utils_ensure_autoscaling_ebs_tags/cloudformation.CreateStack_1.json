@@ -1,0 +1,16 @@
+{
+    "status_code": 200, 
+    "data": {
+        "StackId": "arn:aws:cloudformation:eu-west-1:644239850139:stack/dp-dev-gcdt-test-ensure-ebs-for-autoscaling/be275be0-97a4-11e6-890d-50faeb539036", 
+        "ResponseMetadata": {
+            "HTTPStatusCode": 200, 
+            "RequestId": "be1f6d24-97a4-11e6-9942-c7660edee04f", 
+            "HTTPHeaders": {
+                "x-amzn-requestid": "be1f6d24-97a4-11e6-9942-c7660edee04f", 
+                "date": "Fri, 21 Oct 2016 15:40:50 GMT", 
+                "content-length": "413", 
+                "content-type": "text/xml"
+            }
+        }
+    }
+}

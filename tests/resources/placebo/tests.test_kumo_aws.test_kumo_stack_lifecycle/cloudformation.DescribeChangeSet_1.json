@@ -1,0 +1,43 @@
+{
+    "status_code": 200, 
+    "data": {
+        "StackId": "arn:aws:cloudformation:eu-west-1:644239850139:stack/dp-dev-kumo-sample-stack/0170cfe0-97a4-11e6-868a-50faeb59c036", 
+        "Status": "FAILED", 
+        "ChangeSetName": "LPBVLIQF", 
+        "ResponseMetadata": {
+            "HTTPStatusCode": 200, 
+            "RequestId": "1ae2a328-97a4-11e6-9c9c-050eb314105b", 
+            "HTTPHeaders": {
+                "x-amzn-requestid": "1ae2a328-97a4-11e6-9c9c-050eb314105b", 
+                "date": "Fri, 21 Oct 2016 15:36:15 GMT", 
+                "content-length": "1203", 
+                "content-type": "text/xml"
+            }
+        }, 
+        "Parameters": [
+            {
+                "ParameterValue": "t2.medium", 
+                "ParameterKey": "InstanceType"
+            }
+        ], 
+        "Changes": [], 
+        "CreationTime": {
+            "hour": 15, 
+            "__class__": "datetime", 
+            "month": 10, 
+            "second": 15, 
+            "microsecond": 997000, 
+            "year": 2016, 
+            "day": 21, 
+            "minute": 36
+        }, 
+        "StatusReason": "The submitted information didn't contain changes. Submit different information to create a change set.", 
+        "StackName": "dp-dev-kumo-sample-stack", 
+        "NotificationARNs": [], 
+        "Capabilities": [
+            "CAPABILITY_IAM"
+        ], 
+        "ExecutionStatus": "UNAVAILABLE", 
+        "ChangeSetId": "arn:aws:cloudformation:eu-west-1:644239850139:changeSet/LPBVLIQF/e285b8f6-5c31-4ac8-ac41-259f5e4faa7a"
+    }
+}

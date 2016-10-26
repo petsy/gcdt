@@ -1,0 +1,60 @@
+{
+    "status_code": 200, 
+    "data": {
+        "ResponseMetadata": {
+            "HTTPStatusCode": 200, 
+            "RequestId": "e4471e97-979b-11e6-82e4-5b262f567fc5", 
+            "HTTPHeaders": {
+                "date": "Fri, 21 Oct 2016 14:37:27 GMT", 
+                "x-amzn-requestid": "e4471e97-979b-11e6-82e4-5b262f567fc5", 
+                "content-length": "1676", 
+                "content-type": "application/json", 
+                "connection": "keep-alive"
+            }
+        }, 
+        "Versions": [
+            {
+                "Version": "$LATEST", 
+                "CodeSha256": "zjd+BYAWVAoAx+lrb3QHgU6cGOPfvELmPeqDoTzX8as=", 
+                "FunctionName": "jenkins_test_csdfuw", 
+                "MemorySize": 128, 
+                "CodeSize": 332392, 
+                "FunctionArn": "arn:aws:lambda:eu-west-1:644239850139:function:jenkins_test_csdfuw:$LATEST", 
+                "Handler": "handler.handle", 
+                "Role": "arn:aws:iam::644239850139:role/unittest_csdfuw_lambda", 
+                "Timeout": 300, 
+                "LastModified": "2016-10-21T14:37:14.997+0000", 
+                "Runtime": "python2.7", 
+                "Description": "lambda created for unittesting ramuda deployment"
+            }, 
+            {
+                "Version": "1", 
+                "CodeSha256": "8/Hv7Ys8Us6VeO8a9to4sjn66T+jO0B6JNsPD+/Ct4c=", 
+                "FunctionName": "jenkins_test_csdfuw", 
+                "MemorySize": 128, 
+                "CodeSize": 332357, 
+                "FunctionArn": "arn:aws:lambda:eu-west-1:644239850139:function:jenkins_test_csdfuw:1", 
+                "Handler": "handler.handle", 
+                "Role": "arn:aws:iam::644239850139:role/unittest_csdfuw_lambda", 
+                "Timeout": 300, 
+                "LastModified": "2016-10-21T14:36:43.552+0000", 
+                "Runtime": "python2.7", 
+                "Description": "lambda created for unittesting ramuda deployment"
+            }, 
+            {
+                "Version": "2", 
+                "CodeSha256": "zjd+BYAWVAoAx+lrb3QHgU6cGOPfvELmPeqDoTzX8as=", 
+                "FunctionName": "jenkins_test_csdfuw", 
+                "MemorySize": 128, 
+                "CodeSize": 332392, 
+                "FunctionArn": "arn:aws:lambda:eu-west-1:644239850139:function:jenkins_test_csdfuw:2", 
+                "Handler": "handler.handle", 
+                "Role": "arn:aws:iam::644239850139:role/unittest_csdfuw_lambda", 
+                "Timeout": 300, 
+                "LastModified": "2016-10-21T14:37:14.561+0000", 
+                "Runtime": "python2.7", 
+                "Description": "lambda created for unittesting ramuda deployment"
+            }
+        ]
+    }
+}

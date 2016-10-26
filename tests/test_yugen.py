@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 import os
 import textwrap
+
 from nose.tools import assert_equal, assert_not_in
+
 from gcdt.yugen_core import _compile_template, _arn_to_uri, \
     _get_region_and_account_from_lambda_arn, _template_variables_to_dict
 from .helpers import create_tempfile, cleanup_tempfiles

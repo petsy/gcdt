@@ -1,16 +1,15 @@
 # -*- coding: utf-8 -*-
-
 import os
 import json
 from tempfile import NamedTemporaryFile
 from StringIO import StringIO
 
+from pyhocon import ConfigFactory
+from pyhocon.exceptions import ConfigMissingException
 from nose.tools import assert_dict_equal
 from nose.tools import assert_equal, assert_true, \
     assert_regexp_matches, assert_list_equal, raises
 import nose
-from pyhocon import ConfigFactory
-from pyhocon.exceptions import ConfigMissingException
 
 from gcdt.kumo_core import _generate_parameters, \
     load_cloudformation_template, generate_template_file, _get_stack_name, \

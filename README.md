@@ -70,6 +70,7 @@ $ pip install -r requirements_dev.txt
 gcdt design principles
 ----------------------
 
+* write testable code
 * tests need to run on all accounts (not just dp account)
 * make sure additions and changes have powerful tests
 * use pylint to increase your coding style
@@ -113,10 +114,37 @@ This requires the `coverage` package, which can be installed via pip;
 $ pip install coverage
 ```
 
-To suppress debug output to more easily find out why (if) the tests break, please run nosetests with the `nologcapture` option:
+To suppress debug output to more easily find out why (if) the tests break, please run nosetests with the `-vv` option.
+
+
+Mock calls to AWS services
+--------------------------
+
+For testing gcdt together with boto3 and AWS services we use placebo (a tool by the boto maintainers). The way placebo works is that it is attached to the boto session and used to record and later playback the communication with AWS services (https://github.com/garnaat/placebo).
+
+The recorded placebo json files for gcdt tests are are stored in 'tests/resources/placebo'.
+
+gcdt testing using placebo playback is transparent (if you know how to run gcdt tests nothing changes for you).
+
+To record a test using placebo (first remove old recordings if any):
+
 ```bash
-$ nosetests tests/* --nologcapture
+$ rm -rf tests/resources/placebo/tests.test_tenkai_aws.test_tenkai_exit_codes/
+$ export PLACEBO_MODE=record
+$ python -m pytest -vv --cov-report term-missing --cov gcdt tests/test_tenkai_aws.py::test_tenkai_exit_codes
 ```
+
+To switch off placebo record mode:
+
+```bash
+$ export PLACEBO_MODE=playback
+```
+
+Please note:
+
+* prerequisite for placebo to work is that all gcdt tools support that the boto session is handed in as parameter (by the test or main). If a module creates its own boto session it breaks gcdt testability.
+* in order to avoid merging placebo json files please never record all tests (it would take to long anyway). only record aws tests which are impacted by your change.
+* gcdt testing using placebo works well together with aws-mfa.
 
 
 ## Cloudformation Deploy Tool  

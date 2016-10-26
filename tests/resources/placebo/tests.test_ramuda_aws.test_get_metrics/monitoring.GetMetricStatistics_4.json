@@ -1,0 +1,17 @@
+{
+    "status_code": 200, 
+    "data": {
+        "Datapoints": [], 
+        "ResponseMetadata": {
+            "HTTPStatusCode": 200, 
+            "RequestId": "b513fd64-979b-11e6-baa8-0de9a9ea3c16", 
+            "HTTPHeaders": {
+                "x-amzn-requestid": "b513fd64-979b-11e6-baa8-0de9a9ea3c16", 
+                "date": "Fri, 21 Oct 2016 14:36:08 GMT", 
+                "content-length": "332", 
+                "content-type": "text/xml"
+            }
+        }, 
+        "Label": "Throttles"
+    }
+}

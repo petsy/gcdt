@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 from StringIO import StringIO
+
 from nose.tools import assert_true, assert_regexp_matches, assert_equal, \
     assert_items_equal
 import nose
+
 from gcdt.monitoring import slack_notification, datadog_notification, \
     _datadog_get_tags, datadog_error
 from gcdt.utils import read_gcdt_user_config, get_context

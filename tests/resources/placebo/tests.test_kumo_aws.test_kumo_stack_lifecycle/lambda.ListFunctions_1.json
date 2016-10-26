@@ -1,0 +1,830 @@
+{
+    "status_code": 200, 
+    "data": {
+        "Functions": [
+            {
+                "Version": "$LATEST", 
+                "CodeSha256": "/A6PU9VpSKf8z3QQMRg1IKXOx7Qosl1HFYoocxK1DvU=", 
+                "FunctionName": "jenkins_test_dptksm", 
+                "MemorySize": 128, 
+                "CodeSize": 332176, 
+                "FunctionArn": "arn:aws:lambda:eu-west-1:644239850139:function:jenkins_test_dptksm", 
+                "Handler": "handler_counter.handle", 
+                "Role": "arn:aws:iam::644239850139:role/unittest_dptksm_lambda", 
+                "Timeout": 300, 
+                "LastModified": "2016-10-05T14:20:40.534+0000", 
+                "Runtime": "python2.7", 
+                "Description": "lambda created for unittesting ramuda deployment"
+            }, 
+            {
+                "Version": "$LATEST", 
+                "CodeSha256": "aJHTpwdvNdr69Rm3c4OIC2hYTQ8iQEDGZAYCPYw9Pag=", 
+                "FunctionName": "hello-world-cloudwatch-test", 
+                "VpcConfig": {
+                    "SubnetIds": [
+                        "subnet-166d7061", 
+                        "subnet-87685dde", 
+                        "subnet-9f39ccfb"
+                    ], 
+                    "VpcId": "vpc-ffdbd89a", 
+                    "SecurityGroupIds": [
+                        "sg-ae6850ca"
+                    ]
+                }, 
+                "MemorySize": 128, 
+                "CodeSize": 375, 
+                "FunctionArn": "arn:aws:lambda:eu-west-1:644239850139:function:hello-world-cloudwatch-test", 
+                "Handler": "lambda_function.lambda_handler", 
+                "Role": "arn:aws:iam::644239850139:role/lambda/dp-dev-serve-api-LambdaApibilling-1MWGV159ZP9M3", 
+                "Timeout": 3, 
+                "LastModified": "2016-09-06T10:12:13.221+0000", 
+                "Runtime": "python2.7", 
+                "Description": "A starter AWS Lambda function."
+            }, 
+            {
+                "Version": "$LATEST", 
+                "CodeSha256": "f4HcR6qsADu69Xp315+AnZkl/IGzccoWdIc0SFg5xlc=", 
+                "FunctionName": "jenkins_test_pmaswv", 
+                "MemorySize": 128, 
+                "CodeSize": 429828, 
+                "FunctionArn": "arn:aws:lambda:eu-west-1:644239850139:function:jenkins_test_pmaswv", 
+                "Handler": "handler_counter.handle", 
+                "Role": "arn:aws:iam::644239850139:role/unittest_pmaswv_lambda", 
+                "Timeout": 300, 
+                "LastModified": "2016-09-26T12:52:23.582+0000", 
+                "Runtime": "python2.7", 
+                "Description": "lambda created for unittesting ramuda deployment"
+            }, 
+            {
+                "Version": "$LATEST", 
+                "CodeSha256": "/A6PU9VpSKf8z3QQMRg1IKXOx7Qosl1HFYoocxK1DvU=", 
+                "FunctionName": "jenkins_test_hwqizc", 
+                "MemorySize": 128, 
+                "CodeSize": 332176, 
+                "FunctionArn": "arn:aws:lambda:eu-west-1:644239850139:function:jenkins_test_hwqizc", 
+                "Handler": "handler_counter.handle", 
+                "Role": "arn:aws:iam::644239850139:role/unittest_hwqizc_lambda", 
+                "Timeout": 300, 
+                "LastModified": "2016-10-05T15:11:05.680+0000", 
+                "Runtime": "python2.7", 
+                "Description": "lambda created for unittesting ramuda deployment"
+            }, 
+            {
+                "Version": "$LATEST", 
+                "CodeSha256": "Znlct6BwDDhujLQlDE6PhWIpf6QczhoICjmNyxKm2Mg=", 
+                "FunctionName": "dp-dev-operations-reprocessing-consumer", 
+                "MemorySize": 128, 
+                "CodeSize": 7218149, 
+                "FunctionArn": "arn:aws:lambda:eu-west-1:644239850139:function:dp-dev-operations-reprocessing-consumer", 
+                "Handler": "handler.lambda_handler", 
+                "Role": "arn:aws:iam::644239850139:role/lambda/dp-dev-operations-reproce-LambdaReprocessingConsum-1MT4GVM6D3M4V", 
+                "Timeout": 300, 
+                "LastModified": "2016-09-19T10:06:56.986+0000", 
+                "Runtime": "python2.7", 
+                "Description": "Reprocessing files from SQS queue"
+            }, 
+            {
+                "Version": "$LATEST", 
+                "CodeSha256": "0UZUWSECgQ/AT2lYH6cG5Lc91Umy1Ld91na0I+5c4j8=", 
+                "FunctionName": "jenkins_test_drhpiv", 
+                "MemorySize": 128, 
+                "CodeSize": 429828, 
+                "FunctionArn": "arn:aws:lambda:eu-west-1:644239850139:function:jenkins_test_drhpiv", 
+                "Handler": "handler_counter.handle", 
+                "Role": "arn:aws:iam::644239850139:role/unittest_drhpiv_lambda", 
+                "Timeout": 300, 
+                "LastModified": "2016-09-07T14:35:30.632+0000", 
+                "Runtime": "python2.7", 
+                "Description": "lambda created for unittesting ramuda deployment"
+            }, 
+            {
+                "Version": "$LATEST", 
+                "CodeSha256": "GMyAsF/kJsBQrOAUdOG9HR9I6xylczE1a6RrwUOx1eE=", 
+                "FunctionName": "dp-dev-store-redshift-load", 
+                "VpcConfig": {
+                    "SubnetIds": [
+                        "subnet-166d7061", 
+                        "subnet-87685dde", 
+                        "subnet-9f39ccfb"
+                    ], 
+                    "VpcId": "vpc-ffdbd89a", 
+                    "SecurityGroupIds": [
+                        "sg-ae6850ca"
+                    ]
+                }, 
+                "MemorySize": 128, 
+                "CodeSize": 9961048, 
+                "FunctionArn": "arn:aws:lambda:eu-west-1:644239850139:function:dp-dev-store-redshift-load", 
+                "Handler": "handler.lambda_handler", 
+                "Role": "arn:aws:iam::644239850139:role/lambda/dp-dev-store-redshift-cdn-lo-LambdaCdnRedshiftLoad-DD2S84CZFGT4", 
+                "Timeout": 300, 
+                "LastModified": "2016-09-19T10:14:44.127+0000", 
+                "Runtime": "python2.7", 
+                "Description": "Lambda function which loads normalized files into redshift"
+            }, 
+            {
+                "Version": "$LATEST", 
+                "CodeSha256": "/59rh+IQDuR8zD8K8IklTcADDnYJS55ONSENP8bxJ8U=", 
+                "FunctionName": "jenkins_test_bexrec", 
+                "MemorySize": 128, 
+                "CodeSize": 429828, 
+                "FunctionArn": "arn:aws:lambda:eu-west-1:644239850139:function:jenkins_test_bexrec", 
+                "Handler": "handler_counter.handle", 
+                "Role": "arn:aws:iam::644239850139:role/unittest_bexrec_lambda", 
+                "Timeout": 300, 
+                "LastModified": "2016-10-10T20:58:46.668+0000", 
+                "Runtime": "python2.7", 
+                "Description": "lambda created for unittesting ramuda deployment"
+            }, 
+            {
+                "Version": "$LATEST", 
+                "CodeSha256": "ezyrJMj+3Cp3amlvtDSi15A2Dl8N27Egq3OQj1Gwekg=", 
+                "FunctionName": "dp-dev-ingest-lambda-rawsplitting", 
+                "MemorySize": 128, 
+                "CodeSize": 7215895, 
+                "FunctionArn": "arn:aws:lambda:eu-west-1:644239850139:function:dp-dev-ingest-lambda-rawsplitting", 
+                "Handler": "handler.handle", 
+                "Role": "arn:aws:iam::644239850139:role/lambda/dp-dev-ingest-raw-file-sp-LambdaCdnSplitterJunctio-1VP5TXCKWOSQ4", 
+                "Timeout": 300, 
+                "LastModified": "2016-09-19T09:54:04.544+0000", 
+                "Runtime": "python2.7", 
+                "Description": "lambda function to decide whether or not a file has to be split"
+            }, 
+            {
+                "Version": "$LATEST", 
+                "CodeSha256": "RfeDO/2XsLZ3AQhbpYH3eZGDwZucyCGzazy19p1mWck=", 
+                "FunctionName": "dp-dev-lambdaEC2Basics-VXBP73NNZFKS", 
+                "VpcConfig": {
+                    "SubnetIds": [], 
+                    "SecurityGroupIds": []
+                }, 
+                "MemorySize": 128, 
+                "CodeSize": 861832, 
+                "FunctionArn": "arn:aws:lambda:eu-west-1:644239850139:function:dp-dev-lambdaEC2Basics-VXBP73NNZFKS", 
+                "Handler": "EC2Basics.lambda_handler", 
+                "Role": "arn:aws:iam::644239850139:role/7f-selfassign/dp-dev-CommonLambdaRole-J0BHM7LHBTG3", 
+                "Timeout": 30, 
+                "LastModified": "2016-07-11T09:11:49.522+0000", 
+                "Runtime": "python2.7", 
+                "Description": "basic helper function to be used as custom CloudFormation resource"
+            }, 
+            {
+                "Version": "$LATEST", 
+                "CodeSha256": "9IIbLvhBIFEUApdR9RlhTeaCfb4j6pgYIDogfa4efZc=", 
+                "FunctionName": "jenkins_test_rlzxqi", 
+                "MemorySize": 128, 
+                "CodeSize": 332472, 
+                "FunctionArn": "arn:aws:lambda:eu-west-1:644239850139:function:jenkins_test_rlzxqi", 
+                "Handler": "handler_counter.handle", 
+                "Role": "arn:aws:iam::644239850139:role/unittest_rlzxqi_lambda", 
+                "Timeout": 300, 
+                "LastModified": "2016-10-21T14:23:49.762+0000", 
+                "Runtime": "python2.7", 
+                "Description": "lambda created for unittesting ramuda deployment"
+            }, 
+            {
+                "Version": "$LATEST", 
+                "CodeSha256": "mzGYM5e2MeVFoZNujrOGgL1f5gt34uKL1oU3kLBnyUs=", 
+                "FunctionName": "dp-dev-ingest-lambda-elasticsearch", 
+                "VpcConfig": {
+                    "SubnetIds": [
+                        "subnet-166d7061", 
+                        "subnet-87685dde", 
+                        "subnet-9f39ccfb"
+                    ], 
+                    "VpcId": "vpc-ffdbd89a", 
+                    "SecurityGroupIds": [
+                        "sg-ae6850ca"
+                    ]
+                }, 
+                "MemorySize": 128, 
+                "CodeSize": 27347917, 
+                "FunctionArn": "arn:aws:lambda:eu-west-1:644239850139:function:dp-dev-ingest-lambda-elasticsearch", 
+                "Handler": "handler.lambda_handler", 
+                "Role": "arn:aws:iam::644239850139:role/lambda/dp-dev-ingest-elasticsear-LambdaElasticsearchIndex-11IN4K67EGF0D", 
+                "Timeout": 300, 
+                "LastModified": "2016-10-10T12:44:48.900+0000", 
+                "Runtime": "python2.7", 
+                "Description": "Indexes incoming logdata to ElasticSearch"
+            }, 
+            {
+                "Version": "$LATEST", 
+                "CodeSha256": "Pd7XOsyqR22rT1UlfJgaO4TEFE+rgeRcwSflBcqXmic=", 
+                "FunctionName": "module-helper-jobs", 
+                "VpcConfig": {
+                    "SubnetIds": [], 
+                    "SecurityGroupIds": []
+                }, 
+                "MemorySize": 128, 
+                "CodeSize": 284, 
+                "FunctionArn": "arn:aws:lambda:eu-west-1:644239850139:function:module-helper-jobs", 
+                "Handler": "lambda_function.lambda_handler", 
+                "Role": "arn:aws:iam::644239850139:role/7f-selfassign/dp-dev-CommonLambdaRole-J0BHM7LHBTG3", 
+                "Timeout": 9, 
+                "LastModified": "2016-06-07T06:38:20.821+0000", 
+                "Runtime": "python2.7", 
+                "Description": "A starter AWS Lambda function."
+            }, 
+            {
+                "Version": "$LATEST", 
+                "CodeSha256": "9IIbLvhBIFEUApdR9RlhTeaCfb4j6pgYIDogfa4efZc=", 
+                "FunctionName": "jenkins_test_xawpjw", 
+                "MemorySize": 128, 
+                "CodeSize": 332472, 
+                "FunctionArn": "arn:aws:lambda:eu-west-1:644239850139:function:jenkins_test_xawpjw", 
+                "Handler": "handler_counter.handle", 
+                "Role": "arn:aws:iam::644239850139:role/unittest_xawpjw_lambda", 
+                "Timeout": 300, 
+                "LastModified": "2016-10-21T15:29:06.013+0000", 
+                "Runtime": "python2.7", 
+                "Description": "lambda created for unittesting ramuda deployment"
+            }, 
+            {
+                "Version": "$LATEST", 
+                "CodeSha256": "9IIbLvhBIFEUApdR9RlhTeaCfb4j6pgYIDogfa4efZc=", 
+                "FunctionName": "jenkins_test_oohano", 
+                "MemorySize": 128, 
+                "CodeSize": 332472, 
+                "FunctionArn": "arn:aws:lambda:eu-west-1:644239850139:function:jenkins_test_oohano", 
+                "Handler": "handler_counter.handle", 
+                "Role": "arn:aws:iam::644239850139:role/unittest_oohano_lambda", 
+                "Timeout": 300, 
+                "LastModified": "2016-10-21T15:26:42.838+0000", 
+                "Runtime": "python2.7", 
+                "Description": "lambda created for unittesting ramuda deployment"
+            }, 
+            {
+                "Version": "$LATEST", 
+                "CodeSha256": "+GVmCcwo6QLq+8RBrXNEiJKrFqClOy4Ymk6ZsW/4Py8=", 
+                "FunctionName": "dp-dev-serve-api-billing-redshift-query", 
+                "VpcConfig": {
+                    "SubnetIds": [
+                        "subnet-166d7061", 
+                        "subnet-87685dde", 
+                        "subnet-9f39ccfb"
+                    ], 
+                    "VpcId": "vpc-ffdbd89a", 
+                    "SecurityGroupIds": [
+                        "sg-ae6850ca"
+                    ]
+                }, 
+                "MemorySize": 128, 
+                "CodeSize": 21579017, 
+                "FunctionArn": "arn:aws:lambda:eu-west-1:644239850139:function:dp-dev-serve-api-billing-redshift-query", 
+                "Handler": "handler.lambda_handler", 
+                "Role": "arn:aws:iam::644239850139:role/lambda/dp-dev-serve-api-LambdaApibilling-1MWGV159ZP9M3", 
+                "Timeout": 180, 
+                "LastModified": "2016-09-22T06:51:14.166+0000", 
+                "Runtime": "python2.7", 
+                "Description": "Lambda function which handles API calls to Redshift query"
+            }, 
+            {
+                "Version": "$LATEST", 
+                "CodeSha256": "dYYaOOiDWvIkYpV8RaUzfDFTOyNawX2XCy+TeUBGQaE=", 
+                "FunctionName": "dp-dev-process-content-extraction", 
+                "VpcConfig": {
+                    "SubnetIds": [], 
+                    "SecurityGroupIds": []
+                }, 
+                "MemorySize": 128, 
+                "CodeSize": 371, 
+                "FunctionArn": "arn:aws:lambda:eu-west-1:644239850139:function:dp-dev-process-content-extraction", 
+                "Handler": "lambda_function.lambda_handler", 
+                "Role": "arn:aws:iam::644239850139:role/lambda/dp-dev-ingest-cdn-normalization-LambdaCdnNorm-8DIX5LMJAJAB", 
+                "Timeout": 3, 
+                "LastModified": "2016-08-23T08:52:10.220+0000", 
+                "Runtime": "python2.7", 
+                "Description": "Trying out if we can get boiler pipe working with python on AWS"
+            }, 
+            {
+                "Version": "$LATEST", 
+                "CodeSha256": "qYk2NlQWEG6/7+LwFcWXYfbUkjJ8iYL0kdFuhabFepU=", 
+                "FunctionName": "dp-dev-EBSSnapshotter-LUBOW5EYPEMF", 
+                "MemorySize": 128, 
+                "CodeSize": 1863, 
+                "FunctionArn": "arn:aws:lambda:eu-west-1:644239850139:function:dp-dev-EBSSnapshotter-LUBOW5EYPEMF", 
+                "Handler": "ebs_snapshotter.lambda_handler", 
+                "Role": "arn:aws:iam::644239850139:role/dp-dev-LambdaEBSSNapshotRole-150OF72AMEVUZ", 
+                "Timeout": 30, 
+                "LastModified": "2016-07-04T11:53:31.984+0000", 
+                "Runtime": "python2.7", 
+                "Description": "create automatically snapshots of EBS Volumes attached to instances"
+            }, 
+            {
+                "Version": "$LATEST", 
+                "CodeSha256": "zjd+BYAWVAoAx+lrb3QHgU6cGOPfvELmPeqDoTzX8as=", 
+                "FunctionName": "jenkins_test_pemmig", 
+                "MemorySize": 128, 
+                "CodeSize": 332392, 
+                "FunctionArn": "arn:aws:lambda:eu-west-1:644239850139:function:jenkins_test_pemmig", 
+                "Handler": "handler.handle", 
+                "Role": "arn:aws:iam::644239850139:role/unittest_pemmig_lambda", 
+                "Timeout": 300, 
+                "LastModified": "2016-10-21T09:23:12.099+0000", 
+                "Runtime": "python2.7", 
+                "Description": "lambda created for unittesting ramuda deployment"
+            }, 
+            {
+                "Version": "$LATEST", 
+                "CodeSha256": "rNZPg+9prV4vQRUMfla78SxWDtlTC404Gh7zEPEGCyI=", 
+                "FunctionName": "jenkins_test_wfedmz", 
+                "MemorySize": 128, 
+                "CodeSize": 429828, 
+                "FunctionArn": "arn:aws:lambda:eu-west-1:644239850139:function:jenkins_test_wfedmz", 
+                "Handler": "handler_counter.handle", 
+                "Role": "arn:aws:iam::644239850139:role/unittest_wfedmz_lambda", 
+                "Timeout": 300, 
+                "LastModified": "2016-09-16T14:34:38.141+0000", 
+                "Runtime": "python2.7", 
+                "Description": "lambda created for unittesting ramuda deployment"
+            }, 
+            {
+                "Version": "$LATEST", 
+                "CodeSha256": "9IIbLvhBIFEUApdR9RlhTeaCfb4j6pgYIDogfa4efZc=", 
+                "FunctionName": "jenkins_test_yyqxvn", 
+                "MemorySize": 128, 
+                "CodeSize": 332472, 
+                "FunctionArn": "arn:aws:lambda:eu-west-1:644239850139:function:jenkins_test_yyqxvn", 
+                "Handler": "handler_counter.handle", 
+                "Role": "arn:aws:iam::644239850139:role/unittest_yyqxvn_lambda", 
+                "Timeout": 300, 
+                "LastModified": "2016-10-21T09:26:40.523+0000", 
+                "Runtime": "python2.7", 
+                "Description": "lambda created for unittesting ramuda deployment"
+            }, 
+            {
+                "Version": "$LATEST", 
+                "CodeSha256": "9IIbLvhBIFEUApdR9RlhTeaCfb4j6pgYIDogfa4efZc=", 
+                "FunctionName": "jenkins_test_bljukk", 
+                "MemorySize": 128, 
+                "CodeSize": 332472, 
+                "FunctionArn": "arn:aws:lambda:eu-west-1:644239850139:function:jenkins_test_bljukk", 
+                "Handler": "handler_counter.handle", 
+                "Role": "arn:aws:iam::644239850139:role/unittest_bljukk_lambda", 
+                "Timeout": 300, 
+                "LastModified": "2016-10-21T14:17:32.046+0000", 
+                "Runtime": "python2.7", 
+                "Description": "lambda created for unittesting ramuda deployment"
+            }, 
+            {
+                "Version": "$LATEST", 
+                "CodeSha256": "aWVGWH/Nlc9YYXMepzvjpu7PtHecTtbOMv+licpFkRI=", 
+                "FunctionName": "jenkins_test_czrpoj", 
+                "MemorySize": 128, 
+                "CodeSize": 429828, 
+                "FunctionArn": "arn:aws:lambda:eu-west-1:644239850139:function:jenkins_test_czrpoj", 
+                "Handler": "handler_counter.handle", 
+                "Role": "arn:aws:iam::644239850139:role/unittest_czrpoj_lambda", 
+                "Timeout": 300, 
+                "LastModified": "2016-09-19T13:57:45.217+0000", 
+                "Runtime": "python2.7", 
+                "Description": "lambda created for unittesting ramuda deployment"
+            }, 
+            {
+                "Version": "$LATEST", 
+                "CodeSha256": "IADkRRaO0MQSWVJz21ItGeHXqQEqQOdtcUcM8K6FqN4=", 
+                "FunctionName": "jenkins_test_kpeyol", 
+                "MemorySize": 128, 
+                "CodeSize": 457656, 
+                "FunctionArn": "arn:aws:lambda:eu-west-1:644239850139:function:jenkins_test_kpeyol", 
+                "Handler": "handler_counter.handle", 
+                "Role": "arn:aws:iam::644239850139:role/unittest_kpeyol_lambda", 
+                "Timeout": 300, 
+                "LastModified": "2016-09-22T08:25:46.401+0000", 
+                "Runtime": "python2.7", 
+                "Description": "lambda created for unittesting ramuda deployment"
+            }, 
+            {
+                "Version": "$LATEST", 
+                "CodeSha256": "/A6PU9VpSKf8z3QQMRg1IKXOx7Qosl1HFYoocxK1DvU=", 
+                "FunctionName": "jenkins_test_lqjiby", 
+                "MemorySize": 128, 
+                "CodeSize": 332176, 
+                "FunctionArn": "arn:aws:lambda:eu-west-1:644239850139:function:jenkins_test_lqjiby", 
+                "Handler": "handler_counter.handle", 
+                "Role": "arn:aws:iam::644239850139:role/unittest_lqjiby_lambda", 
+                "Timeout": 300, 
+                "LastModified": "2016-10-05T14:19:02.995+0000", 
+                "Runtime": "python2.7", 
+                "Description": "lambda created for unittesting ramuda deployment"
+            }, 
+            {
+                "Version": "$LATEST", 
+                "CodeSha256": "/853RMIfRWITZpn2ncXeD3LgDgtn6hVibgWs1mHd7Rg=", 
+                "FunctionName": "dp-dev-operations-cloudwatch-logs-cleaner", 
+                "MemorySize": 128, 
+                "CodeSize": 27786103, 
+                "FunctionArn": "arn:aws:lambda:eu-west-1:644239850139:function:dp-dev-operations-cloudwatch-logs-cleaner", 
+                "Handler": "handler.lambda_handler", 
+                "Role": "arn:aws:iam::644239850139:role/lambda/dp-dev-operations-cloudwa-LambdaCloudwatchLogsClea-4ME4XMCUFDSG", 
+                "Timeout": 300, 
+                "LastModified": "2016-09-26T11:58:19.173+0000", 
+                "Runtime": "python2.7", 
+                "Description": "Cleaning up old CloudWatch Log Groups."
+            }, 
+            {
+                "Version": "$LATEST", 
+                "CodeSha256": "/A6PU9VpSKf8z3QQMRg1IKXOx7Qosl1HFYoocxK1DvU=", 
+                "FunctionName": "jenkins_test_oxmtan", 
+                "MemorySize": 128, 
+                "CodeSize": 332176, 
+                "FunctionArn": "arn:aws:lambda:eu-west-1:644239850139:function:jenkins_test_oxmtan", 
+                "Handler": "handler_counter.handle", 
+                "Role": "arn:aws:iam::644239850139:role/unittest_oxmtan_lambda", 
+                "Timeout": 300, 
+                "LastModified": "2016-10-05T15:40:47.467+0000", 
+                "Runtime": "python2.7", 
+                "Description": "lambda created for unittesting ramuda deployment"
+            }, 
+            {
+                "Version": "$LATEST", 
+                "CodeSha256": "aWVGWH/Nlc9YYXMepzvjpu7PtHecTtbOMv+licpFkRI=", 
+                "FunctionName": "jenkins_test_nlnepk", 
+                "MemorySize": 128, 
+                "CodeSize": 429828, 
+                "FunctionArn": "arn:aws:lambda:eu-west-1:644239850139:function:jenkins_test_nlnepk", 
+                "Handler": "handler_counter.handle", 
+                "Role": "arn:aws:iam::644239850139:role/unittest_nlnepk_lambda", 
+                "Timeout": 300, 
+                "LastModified": "2016-09-19T14:02:40.732+0000", 
+                "Runtime": "python2.7", 
+                "Description": "lambda created for unittesting ramuda deployment"
+            }, 
+            {
+                "Version": "$LATEST", 
+                "CodeSha256": "vO7wa8LuU0q/y4+FCSuL8BodDf9hGXEv326oJ59t+Ug=", 
+                "FunctionName": "dp-dev-serve-api-query-elasticsearch", 
+                "VpcConfig": {
+                    "SubnetIds": [
+                        "subnet-166d7061", 
+                        "subnet-87685dde", 
+                        "subnet-9f39ccfb"
+                    ], 
+                    "VpcId": "vpc-ffdbd89a", 
+                    "SecurityGroupIds": [
+                        "sg-ae6850ca"
+                    ]
+                }, 
+                "MemorySize": 128, 
+                "CodeSize": 9896111, 
+                "FunctionArn": "arn:aws:lambda:eu-west-1:644239850139:function:dp-dev-serve-api-query-elasticsearch", 
+                "Handler": "handler.lambda_handler", 
+                "Role": "arn:aws:iam::644239850139:role/lambda/dp-dev-serve-api-LambdaApi-1W33DS3YA1QXA", 
+                "Timeout": 180, 
+                "LastModified": "2016-10-17T14:34:42.610+0000", 
+                "Runtime": "python2.7", 
+                "Description": "Lambda function which can handle API calls and translates them to ElasticSearch queries"
+            }, 
+            {
+                "Version": "$LATEST", 
+                "CodeSha256": "rZLEa7YUovl+FU/PyNGfZAyZt+G3WV+cjJ9WcjObGA4=", 
+                "FunctionName": "dp-dev-store-redshift-table-cleaner", 
+                "VpcConfig": {
+                    "SubnetIds": [
+                        "subnet-166d7061", 
+                        "subnet-87685dde", 
+                        "subnet-9f39ccfb"
+                    ], 
+                    "VpcId": "vpc-ffdbd89a", 
+                    "SecurityGroupIds": [
+                        "sg-ae6850ca"
+                    ]
+                }, 
+                "MemorySize": 128, 
+                "CodeSize": 10811449, 
+                "FunctionArn": "arn:aws:lambda:eu-west-1:644239850139:function:dp-dev-store-redshift-table-cleaner", 
+                "Handler": "handler.lambda_handler", 
+                "Role": "arn:aws:iam::644239850139:role/lambda/dp-dev-store-redshift-table-LambdaRedshiftCleaner-RFTXOVVXYAFZ", 
+                "Timeout": 300, 
+                "LastModified": "2016-09-20T10:05:45.621+0000", 
+                "Runtime": "python2.7", 
+                "Description": "Deletes tables older than X weeks from Redshift"
+            }, 
+            {
+                "Version": "$LATEST", 
+                "CodeSha256": "ngxWZmsQE8sfZzPiMfbcWVgep1WX6IJp9/UBKxKjsdg=", 
+                "FunctionName": "jenkins_test_hcadmy", 
+                "MemorySize": 128, 
+                "CodeSize": 332096, 
+                "FunctionArn": "arn:aws:lambda:eu-west-1:644239850139:function:jenkins_test_hcadmy", 
+                "Handler": "handler.handle", 
+                "Role": "arn:aws:iam::644239850139:role/unittest_hcadmy_lambda", 
+                "Timeout": 300, 
+                "LastModified": "2016-10-05T14:14:41.313+0000", 
+                "Runtime": "python2.7", 
+                "Description": "lambda created for unittesting ramuda deployment"
+            }, 
+            {
+                "Version": "$LATEST", 
+                "CodeSha256": "rNZPg+9prV4vQRUMfla78SxWDtlTC404Gh7zEPEGCyI=", 
+                "FunctionName": "jenkins_test_wplevr", 
+                "MemorySize": 128, 
+                "CodeSize": 429828, 
+                "FunctionArn": "arn:aws:lambda:eu-west-1:644239850139:function:jenkins_test_wplevr", 
+                "Handler": "handler_counter.handle", 
+                "Role": "arn:aws:iam::644239850139:role/unittest_wplevr_lambda", 
+                "Timeout": 300, 
+                "LastModified": "2016-09-16T14:39:36.466+0000", 
+                "Runtime": "python2.7", 
+                "Description": "lambda created for unittesting ramuda deployment"
+            }, 
+            {
+                "Version": "$LATEST", 
+                "CodeSha256": "IADkRRaO0MQSWVJz21ItGeHXqQEqQOdtcUcM8K6FqN4=", 
+                "FunctionName": "jenkins_test_lhqjhv", 
+                "MemorySize": 128, 
+                "CodeSize": 457656, 
+                "FunctionArn": "arn:aws:lambda:eu-west-1:644239850139:function:jenkins_test_lhqjhv", 
+                "Handler": "handler_counter.handle", 
+                "Role": "arn:aws:iam::644239850139:role/unittest_lhqjhv_lambda", 
+                "Timeout": 300, 
+                "LastModified": "2016-09-22T08:38:15.693+0000", 
+                "Runtime": "python2.7", 
+                "Description": "lambda created for unittesting ramuda deployment"
+            }, 
+            {
+                "Version": "$LATEST", 
+                "CodeSha256": "tGhGOnGfNIPk0JLoHKU7W8nJ57OqOLUWLY4qDp9utXw=", 
+                "FunctionName": "jenkins_test_mtvkyr", 
+                "MemorySize": 128, 
+                "CodeSize": 429748, 
+                "FunctionArn": "arn:aws:lambda:eu-west-1:644239850139:function:jenkins_test_mtvkyr", 
+                "Handler": "handler.handle", 
+                "Role": "arn:aws:iam::644239850139:role/unittest_mtvkyr_lambda", 
+                "Timeout": 300, 
+                "LastModified": "2016-09-26T13:12:45.319+0000", 
+                "Runtime": "python2.7", 
+                "Description": "lambda created for unittesting ramuda deployment"
+            }, 
+            {
+                "Version": "$LATEST", 
+                "CodeSha256": "ivyngq40noIxX+VTu1Up1iCQtraA0YL+xECafjj/Glw=", 
+                "FunctionName": "dp-dev-serve-api-query-apis", 
+                "VpcConfig": {
+                    "SubnetIds": [
+                        "subnet-166d7061", 
+                        "subnet-87685dde", 
+                        "subnet-9f39ccfb"
+                    ], 
+                    "VpcId": "vpc-ffdbd89a", 
+                    "SecurityGroupIds": [
+                        "sg-ae6850ca"
+                    ]
+                }, 
+                "MemorySize": 128, 
+                "CodeSize": 1753, 
+                "FunctionArn": "arn:aws:lambda:eu-west-1:644239850139:function:dp-dev-serve-api-query-apis", 
+                "Handler": "handler.lambda_handler", 
+                "Role": "arn:aws:iam::644239850139:role/lambda/dp-dev-serve-api-LambdaApilist-537EMIVIK284", 
+                "Timeout": 10, 
+                "LastModified": "2016-09-19T09:50:59.350+0000", 
+                "Runtime": "python2.7", 
+                "Description": "Lambda function which can returns list of available APIs"
+            }, 
+            {
+                "Version": "$LATEST", 
+                "CodeSha256": "E7+fXdBIT6qv3ZseBX/XWFocN3Fbl/029Y5DDY4IeS4=", 
+                "FunctionName": "dp-ingest-lambda-prod2dev-sync", 
+                "MemorySize": 512, 
+                "CodeSize": 8573836, 
+                "FunctionArn": "arn:aws:lambda:eu-west-1:644239850139:function:dp-ingest-lambda-prod2dev-sync", 
+                "Handler": "handler.lambda_handler", 
+                "Role": "arn:aws:iam::644239850139:role/lambda/dp-dev-ingest-sync-prod-dev-LambdaSyncProdDev-1EKF0UNY42VKO", 
+                "Timeout": 300, 
+                "LastModified": "2016-09-16T19:14:30.144+0000", 
+                "Runtime": "python2.7", 
+                "Description": "Copies files from PROD account to DEV account"
+            }, 
+            {
+                "Version": "$LATEST", 
+                "CodeSha256": "9IIbLvhBIFEUApdR9RlhTeaCfb4j6pgYIDogfa4efZc=", 
+                "FunctionName": "jenkins_test_egmlez", 
+                "MemorySize": 128, 
+                "CodeSize": 332472, 
+                "FunctionArn": "arn:aws:lambda:eu-west-1:644239850139:function:jenkins_test_egmlez", 
+                "Handler": "handler_counter.handle", 
+                "Role": "arn:aws:iam::644239850139:role/unittest_egmlez_lambda", 
+                "Timeout": 300, 
+                "LastModified": "2016-10-21T09:34:04.027+0000", 
+                "Runtime": "python2.7", 
+                "Description": "lambda created for unittesting ramuda deployment"
+            }, 
+            {
+                "Version": "$LATEST", 
+                "CodeSha256": "9TU0zV56fNYMpCs0YiCm1KfmFjqEBRVBQe/UIAaTTMs=", 
+                "FunctionName": "dp-dev-store-redshift-create-manifest-file", 
+                "MemorySize": 128, 
+                "CodeSize": 8548234, 
+                "FunctionArn": "arn:aws:lambda:eu-west-1:644239850139:function:dp-dev-store-redshift-create-manifest-file", 
+                "Handler": "handler.lambda_handler", 
+                "Role": "arn:aws:iam::644239850139:role/lambda/dp-dev-store-redshift-cdn-LambdaCdnRedshiftManifes-18KTC99011DMF", 
+                "Timeout": 300, 
+                "LastModified": "2016-09-19T10:18:44.999+0000", 
+                "Runtime": "python2.7", 
+                "Description": "Lambda function which creating manifest files"
+            }, 
+            {
+                "Version": "$LATEST", 
+                "CodeSha256": "9IIbLvhBIFEUApdR9RlhTeaCfb4j6pgYIDogfa4efZc=", 
+                "FunctionName": "jenkins_test_smrnlj", 
+                "MemorySize": 128, 
+                "CodeSize": 332472, 
+                "FunctionArn": "arn:aws:lambda:eu-west-1:644239850139:function:jenkins_test_smrnlj", 
+                "Handler": "handler_counter.handle", 
+                "Role": "arn:aws:iam::644239850139:role/unittest_smrnlj_lambda", 
+                "Timeout": 300, 
+                "LastModified": "2016-10-21T13:49:31.484+0000", 
+                "Runtime": "python2.7", 
+                "Description": "lambda created for unittesting ramuda deployment"
+            }, 
+            {
+                "Version": "$LATEST", 
+                "CodeSha256": "9IIbLvhBIFEUApdR9RlhTeaCfb4j6pgYIDogfa4efZc=", 
+                "FunctionName": "jenkins_test_qyxxxh", 
+                "MemorySize": 128, 
+                "CodeSize": 332472, 
+                "FunctionArn": "arn:aws:lambda:eu-west-1:644239850139:function:jenkins_test_qyxxxh", 
+                "Handler": "handler_counter.handle", 
+                "Role": "arn:aws:iam::644239850139:role/unittest_qyxxxh_lambda", 
+                "Timeout": 300, 
+                "LastModified": "2016-10-21T13:43:38.085+0000", 
+                "Runtime": "python2.7", 
+                "Description": "lambda created for unittesting ramuda deployment"
+            }, 
+            {
+                "Version": "$LATEST", 
+                "CodeSha256": "9IIbLvhBIFEUApdR9RlhTeaCfb4j6pgYIDogfa4efZc=", 
+                "FunctionName": "jenkins_test_uyykkh", 
+                "MemorySize": 128, 
+                "CodeSize": 332472, 
+                "FunctionArn": "arn:aws:lambda:eu-west-1:644239850139:function:jenkins_test_uyykkh", 
+                "Handler": "handler_counter.handle", 
+                "Role": "arn:aws:iam::644239850139:role/unittest_uyykkh_lambda", 
+                "Timeout": 300, 
+                "LastModified": "2016-10-21T09:08:33.550+0000", 
+                "Runtime": "python2.7", 
+                "Description": "lambda created for unittesting ramuda deployment"
+            }, 
+            {
+                "Version": "$LATEST", 
+                "CodeSha256": "oTvWBFHKeZUbrWoqpFGOy7i+Nl1SHU4n1bnYVevOkyI=", 
+                "FunctionName": "jenkins_test_jdqsqs", 
+                "MemorySize": 128, 
+                "CodeSize": 430124, 
+                "FunctionArn": "arn:aws:lambda:eu-west-1:644239850139:function:jenkins_test_jdqsqs", 
+                "Handler": "handler_counter.handle", 
+                "Role": "arn:aws:iam::644239850139:role/unittest_jdqsqs_lambda", 
+                "Timeout": 300, 
+                "LastModified": "2016-10-20T13:49:03.727+0000", 
+                "Runtime": "python2.7", 
+                "Description": "lambda created for unittesting ramuda deployment"
+            }, 
+            {
+                "Version": "$LATEST", 
+                "CodeSha256": "Y3vpwJf3ne/Mgss8l5X2olz0v0x4XKap7gJtHbSaFu0=", 
+                "FunctionName": "LogsToElasticsearch_ludwigm-test", 
+                "MemorySize": 128, 
+                "CodeSize": 2557, 
+                "FunctionArn": "arn:aws:lambda:eu-west-1:644239850139:function:LogsToElasticsearch_ludwigm-test", 
+                "Handler": "index.handler", 
+                "Role": "arn:aws:iam::644239850139:role/lambda_elasticsearch_execution", 
+                "Timeout": 60, 
+                "LastModified": "2016-09-06T12:06:34.077+0000", 
+                "Runtime": "nodejs", 
+                "Description": "CloudWatch Logs to Amazon ES streaming"
+            }, 
+            {
+                "Version": "$LATEST", 
+                "CodeSha256": "GY75jy47/thK6NDC5shvIihMwkTETQw7AguvXbYm5qM=", 
+                "FunctionName": "dp-dev-ingest-lambda-cdnnorm", 
+                "MemorySize": 1024, 
+                "CodeSize": 30750439, 
+                "FunctionArn": "arn:aws:lambda:eu-west-1:644239850139:function:dp-dev-ingest-lambda-cdnnorm", 
+                "Handler": "handler.lambda_handler", 
+                "Role": "arn:aws:iam::644239850139:role/lambda/dp-dev-ingest-cdn-normalization-LambdaCdnNorm-8DIX5LMJAJAB", 
+                "Timeout": 300, 
+                "LastModified": "2016-10-20T17:47:46.135+0000", 
+                "Runtime": "python2.7", 
+                "Description": "Normalizes CDN files into JSON format"
+            }, 
+            {
+                "Version": "$LATEST", 
+                "CodeSha256": "Ul/6zOdBN0Bt1K480ucMXvnQTrLZyJxTDx6ChOGmglY=", 
+                "FunctionName": "dp-dev-store-redshift-monitoring", 
+                "VpcConfig": {
+                    "SubnetIds": [
+                        "subnet-166d7061", 
+                        "subnet-87685dde", 
+                        "subnet-9f39ccfb"
+                    ], 
+                    "VpcId": "vpc-ffdbd89a", 
+                    "SecurityGroupIds": [
+                        "sg-ae6850ca"
+                    ]
+                }, 
+                "MemorySize": 256, 
+                "CodeSize": 35372856, 
+                "FunctionArn": "arn:aws:lambda:eu-west-1:644239850139:function:dp-dev-store-redshift-monitoring", 
+                "Handler": "handler.lambda_handler", 
+                "Role": "arn:aws:iam::644239850139:role/lambda/dp-dev-store-redshift-monito-LambdaRedshiftMonitor-SKO3BM79HRZ0", 
+                "Timeout": 300, 
+                "LastModified": "2016-04-21T19:12:53.467+0000", 
+                "Runtime": "python2.7", 
+                "Description": "Lambda function which writes Redshift monitoring to CloudWatch."
+            }, 
+            {
+                "Version": "$LATEST", 
+                "CodeSha256": "PYZ5EJW+5Cyxqaf3dZbxIMiQPSUPRAfuV+sqUf81jkE=", 
+                "FunctionName": "dp-dev-store-elasticsearch-index-cleaner", 
+                "VpcConfig": {
+                    "SubnetIds": [
+                        "subnet-166d7061", 
+                        "subnet-87685dde", 
+                        "subnet-9f39ccfb"
+                    ], 
+                    "VpcId": "vpc-ffdbd89a", 
+                    "SecurityGroupIds": [
+                        "sg-ae6850ca"
+                    ]
+                }, 
+                "MemorySize": 128, 
+                "CodeSize": 8965372, 
+                "FunctionArn": "arn:aws:lambda:eu-west-1:644239850139:function:dp-dev-store-elasticsearch-index-cleaner", 
+                "Handler": "handler.lambda_handler", 
+                "Role": "arn:aws:iam::644239850139:role/lambda/dp-dev-store-elasticsearc-LambdaElasticsearchClean-8XJYB5TKHW3E", 
+                "Timeout": 300, 
+                "LastModified": "2016-09-19T09:58:22.347+0000", 
+                "Runtime": "python2.7", 
+                "Description": "Deletes indices older than X days from ElasticSearch"
+            }, 
+            {
+                "Version": "$LATEST", 
+                "CodeSha256": "e79Fwn00BHRVbd6l0PCMjRV7cswWcXbgYRi0jBHWRvM=", 
+                "FunctionName": "dp-dev-store-redshift-cdn-loading-sqs-file-queuer", 
+                "MemorySize": 128, 
+                "CodeSize": 8540317, 
+                "FunctionArn": "arn:aws:lambda:eu-west-1:644239850139:function:dp-dev-store-redshift-cdn-loading-sqs-file-queuer", 
+                "Handler": "handler.lambda_handler", 
+                "Role": "arn:aws:iam::644239850139:role/lambda/dp-dev-store-redshift-cdn-LambdaCdnRedshiftMessage-C9JKXIJKWJDJ", 
+                "Timeout": 180, 
+                "LastModified": "2016-09-19T10:17:22.818+0000", 
+                "Runtime": "python2.7", 
+                "Description": "Lambda function which reacts to S3 Object creations and put the events on a SQS queue (After they are normalized and should be loaded to Redshift)"
+            }, 
+            {
+                "Version": "$LATEST", 
+                "CodeSha256": "e3Q8eS/KoMfr8yuZ8IeN9nBlQHr7NSnLuYrnMRgmP3o=", 
+                "FunctionName": "jenkins_test_oppjip", 
+                "MemorySize": 128, 
+                "CodeSize": 429828, 
+                "FunctionArn": "arn:aws:lambda:eu-west-1:644239850139:function:jenkins_test_oppjip", 
+                "Handler": "handler_counter.handle", 
+                "Role": "arn:aws:iam::644239850139:role/unittest_oppjip_lambda", 
+                "Timeout": 300, 
+                "LastModified": "2016-09-20T12:35:27.256+0000", 
+                "Runtime": "python2.7", 
+                "Description": "lambda created for unittesting ramuda deployment"
+            }, 
+            {
+                "Version": "$LATEST", 
+                "CodeSha256": "orzY6OKji/1B49iP2I1KDBMPpyjV1zbd8RX2NzdgJi0=", 
+                "FunctionName": "LambdaStreamToFirehose", 
+                "MemorySize": 128, 
+                "CodeSize": 2766563, 
+                "FunctionArn": "arn:aws:lambda:eu-west-1:644239850139:function:LambdaStreamToFirehose", 
+                "Handler": "index.handler", 
+                "Role": "arn:aws:iam::644239850139:role/7f-managed/dp-dev-DdbLambdaExecRole-1MEXXYRF5XTT2", 
+                "Timeout": 60, 
+                "LastModified": "2016-10-20T15:03:42.105+0000", 
+                "Runtime": "nodejs", 
+                "Description": "AWS Lambda Streams to Kinesis Firehose Replicator"
+            }, 
+            {
+                "Version": "$LATEST", 
+                "CodeSha256": "9IIbLvhBIFEUApdR9RlhTeaCfb4j6pgYIDogfa4efZc=", 
+                "FunctionName": "jenkins_test_pmtzgt", 
+                "MemorySize": 128, 
+                "CodeSize": 332472, 
+                "FunctionArn": "arn:aws:lambda:eu-west-1:644239850139:function:jenkins_test_pmtzgt", 
+                "Handler": "handler_counter.handle", 
+                "Role": "arn:aws:iam::644239850139:role/unittest_pmtzgt_lambda", 
+                "Timeout": 300, 
+                "LastModified": "2016-10-21T09:11:23.393+0000", 
+                "Runtime": "python2.7", 
+                "Description": "lambda created for unittesting ramuda deployment"
+            }
+        ], 
+        "NextMarker": "lslTXFcbLQKkb0vP9Kgh5kjhZp8/oRlHMLS0tUu7uVek3eiDRMkct7D8EmptWfHSXssPdS7Bo66iQPTMpVOHZn68DOSf8Fsu57LH3ECsAfb0NcIx3FtHvPkBcsNycLPj7wwzC1HIpLhvrh2jhwTuY7bhXyruF0xsQCaIu1ttijgDFACSslcabxXl3/jDI4rfFnIsUVdzTLBgPF1hzwrE1f3lcdkBvUp+QgY+Pn3w5QsmlHnLiwnJIAOcBHKinzYzHKwUsKQjxd8XKCRfs9PBVR39qjosEZiS5IA8Xpi+C/DjPz0m7PuldwPJPopqMfLeiKGIYu3Bw7lSNrLd+q3+wGOqtwcdyR2ktmLMJsLhcqeGeECo81+HWQB+2OAzU1SseNDW9n1N03dIxDyUqsBS/U0gtxwbt2k9G8mkzpz52qEMQVuM01xPsn+AzMRTV/y7VNzQIfoa7qx9HSdKShH8K+/OtO6UtFsJAA+h8hMzMfBU99q0jOYJVftlPhUGWp+TRTFkd7dSRCQCX9th3v1s4dbyAGmDH+iGcchbrmuN0mK9qKAkNX1Br83Kb1m56bym", 
+        "ResponseMetadata": {
+            "HTTPStatusCode": 200, 
+            "RequestId": "00ff22d5-97a4-11e6-a735-49bdf38bce50", 
+            "HTTPHeaders": {
+                "date": "Fri, 21 Oct 2016 15:35:31 GMT", 
+                "x-amzn-requestid": "00ff22d5-97a4-11e6-a735-49bdf38bce50", 
+                "content-length": "31253", 
+                "content-type": "application/json", 
+                "connection": "keep-alive"
+            }
+        }
+    }
+}

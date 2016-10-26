@@ -1,0 +1,38 @@
+{
+    "status_code": 200, 
+    "data": {
+        "AcceptRanges": "bytes", 
+        "ContentType": "binary/octet-stream", 
+        "ResponseMetadata": {
+            "HTTPStatusCode": 200, 
+            "HostId": "6JJ9oxaygRT8ctaRwaDDhkOxjIKe3bISOTjimwOzxSRC5aaAdiQMRZ7f/GsxbC76zu9kuxqq9jg=", 
+            "RequestId": "55AA2FBB5D4D91D7", 
+            "HTTPHeaders": {
+                "content-length": "463", 
+                "x-amz-id-2": "6JJ9oxaygRT8ctaRwaDDhkOxjIKe3bISOTjimwOzxSRC5aaAdiQMRZ7f/GsxbC76zu9kuxqq9jg=", 
+                "accept-ranges": "bytes", 
+                "server": "AmazonS3", 
+                "last-modified": "Fri, 21 Oct 2016 15:35:32 GMT", 
+                "x-amz-request-id": "55AA2FBB5D4D91D7", 
+                "etag": "\"87c81a057ab234e60b0ba9d38117953e\"", 
+                "date": "Fri, 21 Oct 2016 15:35:32 GMT", 
+                "x-amz-version-id": "OdwR3mxiVgO5zMl5YbGi23HKH5qDTgsT", 
+                "content-type": "binary/octet-stream"
+            }
+        }, 
+        "LastModified": {
+            "hour": 15, 
+            "__class__": "datetime", 
+            "month": 10, 
+            "second": 32, 
+            "microsecond": 0, 
+            "year": 2016, 
+            "day": 21, 
+            "minute": 35
+        }, 
+        "ContentLength": 463, 
+        "VersionId": "OdwR3mxiVgO5zMl5YbGi23HKH5qDTgsT", 
+        "ETag": "\"87c81a057ab234e60b0ba9d38117953e\"", 
+        "Metadata": {}
+    }
+}

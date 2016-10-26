@@ -1,0 +1,67 @@
+{
+    "status_code": 200, 
+    "data": {
+        "Name": "unittest-lambda-s3-event-source-ndmbkl", 
+        "ResponseMetadata": {
+            "HTTPStatusCode": 200, 
+            "HostId": "PW/9tcP3u8vMxYOVkdd3mY36yn52X3G+CmbH2z5SInAHyTCkWPoyq3K17RSfZWRUbqfQaBspDck=", 
+            "RequestId": "EDD92F875E8634C9", 
+            "HTTPHeaders": {
+                "x-amz-bucket-region": "eu-west-1", 
+                "x-amz-id-2": "PW/9tcP3u8vMxYOVkdd3mY36yn52X3G+CmbH2z5SInAHyTCkWPoyq3K17RSfZWRUbqfQaBspDck=", 
+                "server": "AmazonS3", 
+                "transfer-encoding": "chunked", 
+                "x-amz-request-id": "EDD92F875E8634C9", 
+                "date": "Fri, 21 Oct 2016 15:32:56 GMT", 
+                "content-type": "application/xml"
+            }
+        }, 
+        "MaxKeys": 1000, 
+        "Prefix": "", 
+        "Marker": "", 
+        "EncodingType": "url", 
+        "IsTruncated": false, 
+        "Contents": [
+            {
+                "LastModified": {
+                    "hour": 15, 
+                    "__class__": "datetime", 
+                    "month": 10, 
+                    "second": 16, 
+                    "microsecond": 0, 
+                    "year": 2016, 
+                    "day": 21, 
+                    "minute": 32
+                }, 
+                "ETag": "\"736db904ad222bf88ee6b8d103fceb8e\"", 
+                "StorageClass": "STANDARD", 
+                "Key": "test_file.gz", 
+                "Owner": {
+                    "DisplayName": "aws-dp-dev", 
+                    "ID": "003a87b825e17149b14db54e5177e832c9cedda326bfc0f038722dd68b90a310"
+                }, 
+                "Size": 20
+            }, 
+            {
+                "LastModified": {
+                    "hour": 15, 
+                    "__class__": "datetime", 
+                    "month": 10, 
+                    "second": 45, 
+                    "microsecond": 0, 
+                    "year": 2016, 
+                    "day": 21, 
+                    "minute": 32
+                }, 
+                "ETag": "\"736db904ad222bf88ee6b8d103fceb8e\"", 
+                "StorageClass": "STANDARD", 
+                "Key": "test_file_2.gz", 
+                "Owner": {
+                    "DisplayName": "aws-dp-dev", 
+                    "ID": "003a87b825e17149b14db54e5177e832c9cedda326bfc0f038722dd68b90a310"
+                }, 
+                "Size": 20
+            }
+        ]
+    }
+}

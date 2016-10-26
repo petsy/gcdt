@@ -1,0 +1,23 @@
+{
+    "status_code": 200, 
+    "data": {
+        "Payload": {
+            "body": "{\"ramuda_action\": \"ping\"}", 
+            "__module__": "botocore.response", 
+            "__class__": "StreamingBody"
+        }, 
+        "ResponseMetadata": {
+            "HTTPStatusCode": 200, 
+            "RequestId": "d9d9ff6f-97a1-11e6-8257-ff3186c8d426", 
+            "HTTPHeaders": {
+                "x-amzn-requestid": "d9d9ff6f-97a1-11e6-8257-ff3186c8d426", 
+                "content-length": "25", 
+                "x-amzn-remapped-content-length": "0", 
+                "connection": "keep-alive", 
+                "date": "Fri, 21 Oct 2016 15:20:08 GMT", 
+                "content-type": "application/json"
+            }
+        }, 
+        "StatusCode": 200
+    }
+}

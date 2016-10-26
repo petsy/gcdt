@@ -1,0 +1,16 @@
+{
+    "status_code": 200, 
+    "data": {
+        "StackId": "arn:aws:cloudformation:eu-west-1:644239850139:stack/dp-dev-kumo-sample-stack/0170cfe0-97a4-11e6-868a-50faeb59c036", 
+        "ResponseMetadata": {
+            "HTTPStatusCode": 200, 
+            "RequestId": "0167cffe-97a4-11e6-b081-2b5f2cb35286", 
+            "HTTPHeaders": {
+                "x-amzn-requestid": "0167cffe-97a4-11e6-b081-2b5f2cb35286", 
+                "date": "Fri, 21 Oct 2016 15:35:33 GMT", 
+                "content-length": "394", 
+                "content-type": "text/xml"
+            }
+        }
+    }
+}
