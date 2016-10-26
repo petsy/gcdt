@@ -61,7 +61,7 @@ def main():
             slack_token=slack_token,
             slack_channel=slack_channel
         )
-        exit_code = deployment_status(deployment)
+        exit_code = deployment_status(boto_session, deployment)
         if exit_code:
             datadog_error(context)
             sys.exit(1)
