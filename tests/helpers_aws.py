@@ -85,7 +85,6 @@ def create_lambda_helper(boto_session, lambda_name, role_arn, handler_filename,
     requirements_txt = os.path.join('requirements.txt')
     with open(requirements_txt, 'w') as req:
         req.write('pyhocon==0.3.28\n')
-        req.write('pyparsing==2.1.1\n')
     # ./vendored folder
     if not os.path.exists('./vendored'):
         # reuse ./vendored folder to save us some time during pip install...
