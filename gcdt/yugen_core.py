@@ -20,8 +20,8 @@ AMAZON_API_PRINCIPAL = 'apigateway.amazonaws.com'
 
 
 # WIP
-def export_to_swagger(api_name, stage_name, api_description, lambdas,
-                      custom_hostname=False, custom_base_path=False):
+def export_to_swagger(boto_session, api_name, stage_name, api_description,
+                      lambdas, custom_hostname=False, custom_base_path=False):
     """Export the API design as swagger file. 
     
     :param api_name: 
@@ -33,7 +33,7 @@ def export_to_swagger(api_name, stage_name, api_description, lambdas,
     """
     print('Exporting to swagger...')
 
-    api = _api_by_name(api_name)
+    api = _api_by_name(boto_session, api_name)
     if api is not None:
 
         print(_json2table(api))
@@ -219,7 +219,8 @@ def create_custom_domain(boto_session, api_name, api_target_stage,
         cloudfront_distribution = domain['distributionDomainName']
 
     if _base_path_mapping_exists(boto_session, domain_name, api_base_path):
-        _ensure_correct_base_path_mapping(domain_name, api_base_path, api['id'],
+        _ensure_correct_base_path_mapping(boto_session, domain_name,
+                                          api_base_path, api['id'],
                                           api_target_stage)
     else:
         _create_base_path_mapping(boto_session, domain_name, api_base_path,
@@ -289,7 +290,7 @@ def _import_from_swagger(boto_session, api_name, api_description, stage_name,
 
     print('Import from swagger file')
 
-    api = _api_by_name(api_name)
+    api = _api_by_name(boto_session, api_name)
     if api is None:
         print(_json2table(api))
         api_id = False
@@ -315,7 +316,7 @@ def _update_from_swagger(boto_session, api_name, api_description, stage_name,
 
     print('update from swagger file')
 
-    api = _api_by_name(api_name)
+    api = _api_by_name(boto_session, api_name)
 
     if api is not None:
         api_id = api['id']
@@ -356,7 +357,7 @@ def _wire_api_key(boto_session, api_name, api_key, stage_name):
     client_api = boto_session.client('apigateway')
     print('updating api key')
 
-    api = _api_by_name(api_name)
+    api = _api_by_name(boto_session, api_name)
 
     if api is not None:
 
@@ -384,7 +385,7 @@ def _create_deployment(boto_session, api_name, stage_name):
     client_api = boto_session.client('apigateway')
     print('create deployment')
 
-    api = _api_by_name(api_name)
+    api = _api_by_name(boto_session, api_name)
 
     if api is not None:
 

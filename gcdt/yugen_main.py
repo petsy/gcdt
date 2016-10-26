@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
 import sys
+
 from docopt import docopt
-import botocore.session
+import boto3
+
 from glomex_utils.config_reader import read_api_config
 from gcdt.yugen_core import list_api_keys, get_lambdas, delete_api, \
     export_to_swagger, create_api_key, list_apis, \
@@ -51,7 +52,7 @@ def get_user_config():
 
 def main():
     exit_code = 0
-    boto_session = botocore.session.get_session()
+    boto_session = boto3.session.Session()
     arguments = docopt(DOC)
     if arguments['version']:
         version()
@@ -71,7 +72,7 @@ def main():
         api_description = conf.get('api.description')
         target_stage = conf.get('api.targetStage')
         api_key = conf.get('api.apiKey')
-        lambdas = get_lambdas(conf, add_arn=True)
+        lambdas = get_lambdas(boto_session, conf, add_arn=True)
         deploy_api(
             boto_session=boto_session,
             api_name=api_name,

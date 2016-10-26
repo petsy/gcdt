@@ -1,0 +1,28 @@
+{
+    "status_code": 201, 
+    "data": {
+        "CodeSha256": "30EcwnMft8WSPKYYvW8HJ/2Kq7gTCFGsYgFwEXS9VIw=", 
+        "FunctionName": "jenkins_test_avaxcr", 
+        "ResponseMetadata": {
+            "HTTPStatusCode": 201, 
+            "RequestId": "8416abbc-9b61-11e6-9e51-d50253d3ba21", 
+            "HTTPHeaders": {
+                "date": "Wed, 26 Oct 2016 09:49:41 GMT", 
+                "x-amzn-requestid": "8416abbc-9b61-11e6-9e51-d50253d3ba21", 
+                "content-length": "515", 
+                "content-type": "application/json", 
+                "connection": "keep-alive"
+            }
+        }, 
+        "CodeSize": 332061, 
+        "MemorySize": 256, 
+        "FunctionArn": "arn:aws:lambda:eu-west-1:644239850139:function:jenkins_test_avaxcr", 
+        "Version": "1", 
+        "Role": "arn:aws:iam::644239850139:role/unittest_avaxcr_lambda", 
+        "Timeout": 300, 
+        "LastModified": "2016-10-26T09:49:41.298+0000", 
+        "Handler": "handler.handle", 
+        "Runtime": "python2.7", 
+        "Description": "lambda test for ramuda"
+    }
+}
