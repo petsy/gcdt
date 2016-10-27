@@ -68,7 +68,7 @@ job(jobName) {
             branch('origin', '$BRANCH')
             branch('origin', 'develop')
         }
-        slackNotifier {
+        /*slackNotifier {
             room(slackChannel)
             notifyAborted(false)
             notifyFailure(true)
@@ -86,7 +86,7 @@ job(jobName) {
             commitInfoChoice('NONE')
             teamDomain(null)
             authToken(null)
-        }
+        }*/
     }
 
     triggers {
