@@ -22,7 +22,7 @@ folder("packages") {
 }
 
 def packageName = 'gcdt'
-def jobName = "packages/" + packageName + "_pull_request"
+def jobName = "glomex cloud deployment tools/" + packageName + "_pull_request"
 def repository = "glomex/glomex-cloud-deployment-tools"
 
 // this job is setup only on dev!
