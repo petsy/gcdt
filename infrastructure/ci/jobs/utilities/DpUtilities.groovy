@@ -6,8 +6,9 @@ public class DpUtilities {
 
     // "http://169.254.169.254/latest/dynamic/instance-identity/document"
     private static final String METADATA_URL = "http://169.254.169.254/latest/dynamic/instance-identity/document"
-    private static final Map accountMap = [644239850139: 'dev', 111537987451: 'preprod', 814767085700: 'prod']
-    private static final String TEAM_EMAIL = "team-dp@services.glomex.com"
+    // TODO: for now I removed the other accounts!
+    private static final Map accountMap = [420189626185: 'dev']
+    private static final String TEAM_EMAIL = "ops@services.glomex.com"
 
     public static def getTeamEmail() {
         return TEAM_EMAIL
@@ -41,13 +42,13 @@ public class DpUtilities {
     }
 
     public static def getBranch() {
-        Map branchMap = [dev: "develop", preprod: "develop", prod: "master"]
+        Map branchMap = [dev: "develop"]
         String branch = branchMap.get(getEnv())
         return branch
     }
 
     public static def getSlackChannel() {
-        Map channelMap = [dev: "ds-sysmes", preprod: "ds-sysmes-preprod", prod: "ds-sysmes-prod"]
+        Map channelMap = [dev: "gcdt"]
         String channel = channelMap.get(getEnv())
         return channel
     }

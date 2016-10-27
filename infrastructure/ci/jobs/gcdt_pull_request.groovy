@@ -40,7 +40,7 @@ job(jobName) {
         // http://chase-seibert.github.io/blog/2014/01/12/python-unicode-console-output.html
         env('PYTHONIOENCODING', 'UTF-8')
         // vars specific to gcdt
-        env('ACCOUNT', 'dp')
+        env('ACCOUNT', 'infra')
         env('AWS_DEFAULT_REGION', 'eu-west-1')
         env('BUCKET', artifactBucket + '/pypi/packages/' + packageName + '/')
     }
