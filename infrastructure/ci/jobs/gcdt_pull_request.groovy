@@ -6,7 +6,7 @@ def slackChannel = DpUtilities.getSlackChannel()
 
 out.println(branchToCheckout)
 
-def credentialsToCheckout = "git_username-password"
+def credentialsToCheckout = "9daf9a2d-61b6-4c88-9d02-e35a7f0630e8"
 def baseFolder = "infrastructure/ci"
 def artifactBucket = "glomex-infra-reposerver-prod"
 def venvScript = baseFolder + "/scripts/prepare_virtualenv.sh"
@@ -76,7 +76,7 @@ job(jobName) {
     triggers {
         githubPullRequest {
             orgWhitelist(['glomex'])  // ma_github_org
-            cron('H/5 * * * *')
+            cron('H/2 * * * *')
             onlyTriggerPhrase(false)
             useGitHubHooks(false)
             permitAll()
@@ -104,7 +104,8 @@ job(jobName) {
         colorizeOutput()
 
         credentialsBinding {
-            usernamePassword('GIT_CREDENTIALS', 'psd-frontend-jenkins_username-password')
+            usernamePassword('GIT_CREDENTIALS',
+                    '9daf9a2d-61b6-4c88-9d02-e35a7f0630e8')
         }
     }
 
@@ -127,7 +128,6 @@ job(jobName) {
         shell(readFileFromWorkspace(venvScript))
 
         // run the unit tests
-        // shell('./venv/bin/nosetests --with-coverage --cover-erase --cover-package=gcdt tests/test_*')
         shell('./venv/bin/python -m pytest --cov gcdt tests/test_*')
 
         // run the style checks
