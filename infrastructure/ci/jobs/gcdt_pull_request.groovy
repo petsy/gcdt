@@ -1,6 +1,8 @@
 import utilities.DpUtilities
 
-environ = DpUtilities.getEnv()
+//TODO: this does not work with central Jenkins:
+//environ = DpUtilities.getEnv()
+environ = "dev"
 def branchToCheckout = DpUtilities.getBranch()
 def slackChannel = DpUtilities.getSlackChannel()
 
