@@ -2,7 +2,7 @@ package utilities
 
 import groovy.json.JsonSlurper;
 
-public class DpUtilities {
+public class InfraUtilities {
 
     // "http://169.254.169.254/latest/dynamic/instance-identity/document"
     private static final String METADATA_URL = "http://169.254.169.254/latest/dynamic/instance-identity/document"
@@ -32,13 +32,14 @@ public class DpUtilities {
     }
 
     public static def getEnvFromAccountId(String accountId) {
-
         return accountMap.get(accountId.toLong())
     }
 
     public static def getEnv() {
-        String accountId = getAccountId()
-        return getEnvFromAccountId(accountId)
+        // TODO this does not work on a centralized Jenkins
+        // String accountId = getAccountId()
+        // return getEnvFromAccountId(accountId)
+        return "dev"
     }
 
     public static def getBranch() {
@@ -52,5 +53,4 @@ public class DpUtilities {
         String channel = channelMap.get(getEnv())
         return channel
     }
-
 }

@@ -1,8 +1,8 @@
-import utilities.DpUtilities
+import utilities.InfraUtilities
 
-environ = DpUtilities.getEnv()
-def branchToCheckout = DpUtilities.getBranch()
-def slackChannel = DpUtilities.getSlackChannel()
+environ = InfraUtilities.getEnv()
+def branchToCheckout = InfraUtilities.getBranch()
+def slackChannel = InfraUtilities.getSlackChannel()
 
 out.println(branchToCheckout)
 
@@ -103,8 +103,6 @@ job(jobName) {
     }
 
     steps {
-
         shell(readFileFromWorkspace(buildScript))
-
     }
 }

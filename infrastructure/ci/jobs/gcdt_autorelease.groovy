@@ -1,7 +1,7 @@
-import utilities.DpUtilities
+import utilities.InfraUtilities
 
-environ = DpUtilities.getEnv()
-def branchToCheckout = DpUtilities.getBranch()
+environ = InfraUtilities.getEnv()
+def branchToCheckout = InfraUtilities.getBranch()
 out.println(branchToCheckout)
 
 def credentialsToCheckout = "psd-frontend-jenkins_username-password"

@@ -1,10 +1,9 @@
-import utilities.DpUtilities
+import utilities.InfraUtilities
 
 //TODO: this does not work with central Jenkins:
-//environ = DpUtilities.getEnv()
-environ = "dev"
-def branchToCheckout = DpUtilities.getBranch()
-def slackChannel = DpUtilities.getSlackChannel()
+environ = InfraUtilities.getEnv()
+def branchToCheckout = InfraUtilities.getBranch()
+def slackChannel = InfraUtilities.getSlackChannel()
 
 out.println(branchToCheckout)
 
