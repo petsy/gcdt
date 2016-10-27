@@ -6,10 +6,7 @@ def slackChannel = DpUtilities.getSlackChannel()
 
 out.println(branchToCheckout)
 
-// TODO
-def credentialsToCheckout = "psd-frontend-jenkins_username-password"
-//def configFile = readFileFromWorkspace("./operations/continous-delivery/packages-config.json")
-//def config = new groovy.json.JsonSlurper().parseText(configFile)
+def credentialsToCheckout = "git_username-password"
 def baseFolder = "infrastructure/ci"
 def artifactBucket = "glomex-infra-reposerver-prod"
 def venvScript = baseFolder + "/scripts/prepare_virtualenv.sh"
@@ -17,7 +14,7 @@ def buildScript = baseFolder + "/scripts/build_package.sh"
 def lifecycleScript = baseFolder + "/scripts/gcdt_lifecycle.sh"
 
 
-folder("packages") {
+folder("glomex cloud deployment tools") {
 
 }
 
@@ -25,6 +22,7 @@ def packageName = 'gcdt'
 def jobName = "glomex cloud deployment tools/" + packageName + "_pull_request"
 def repository = "glomex/glomex-cloud-deployment-tools"
 
+// not necessary
 // this job is setup only on dev!
 //if (environ != 'dev') {
 //    return
@@ -45,6 +43,11 @@ job(jobName) {
         env('ACCOUNT', 'dp')
         env('AWS_DEFAULT_REGION', 'eu-west-1')
         env('BUCKET', artifactBucket + '/pypi/packages/' + packageName + '/')
+    }
+    parameters {
+        labelParam('NODE') {
+            defaultValue('infra-dev')
+        }
     }
     scm {
         git {
