@@ -22,7 +22,7 @@ def packageName = 'gcdt'
 def jobName = "glomex cloud deployment tools/" + packageName + "_pull_request"
 def repository = "glomex/glomex-cloud-deployment-tools"
 
-// not necessary
+// in this setup we set the environment via NODE parameter
 // this job is setup only on dev!
 //if (environ != 'dev') {
 //    return
@@ -44,15 +44,21 @@ job(jobName) {
         env('AWS_DEFAULT_REGION', 'eu-west-1')
         env('BUCKET', artifactBucket + '/pypi/packages/' + packageName + '/')
     }
+
     parameters {
         labelParam('NODE') {
             defaultValue('infra-dev')
         }
     }
+
+    //parameters {
+    //    stringParam('BRANCH', defaultValue = "develop")
+    //}
+
     scm {
         git {
             remote {
-                github(repository, 'https')
+                github(repository, 'git')
                 credentials(credentialsToCheckout)
                 branch('${sha1}')
                 refspec('+refs/pull/*:refs/remotes/origin/pr/*')
@@ -108,10 +114,6 @@ job(jobName) {
                     '9daf9a2d-61b6-4c88-9d02-e35a7f0630e8')
         }
     }
-
-    //parameters {
-    //    stringParam('BRANCH', defaultValue = "develop")
-    //}
 
     steps {
         // check env
