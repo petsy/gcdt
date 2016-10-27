@@ -10,4 +10,4 @@ aws s3 cp --acl bucket-owner-full-control ./dist/ s3://$BUCKET --recursive --exc
 # wait for package to be available on PyPi server
 # checked with Michael Ludwig, the sync interval is 30 sec
 # obviously this was misplaced
-sleep 330
+sleep 90
