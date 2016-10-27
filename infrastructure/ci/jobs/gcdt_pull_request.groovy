@@ -6,13 +6,15 @@ def slackChannel = DpUtilities.getSlackChannel()
 
 out.println(branchToCheckout)
 
+// TODO
 def credentialsToCheckout = "psd-frontend-jenkins_username-password"
 //def configFile = readFileFromWorkspace("./operations/continous-delivery/packages-config.json")
 //def config = new groovy.json.JsonSlurper().parseText(configFile)
+def baseFolder = "infrastructure/ci"
 def artifactBucket = "glomex-infra-reposerver-prod"
-def venvScript = "operations/continous-delivery/scripts/gcdt/prepare_virtualenv.sh"
-def buildScript = "operations/continous-delivery/scripts/gcdt/build_package.sh"
-def lifecycleScript = "operations/continous-delivery/scripts/gcdt/gcdt_lifecycle.sh"
+def venvScript = baseFolder + "/scripts/prepare_virtualenv.sh"
+def buildScript = baseFolder + "/scripts/build_package.sh"
+def lifecycleScript = baseFolder + "/scripts/gcdt_lifecycle.sh"
 
 
 folder("packages") {
@@ -24,9 +26,9 @@ def jobName = "packages/" + packageName + "_pull_request"
 def repository = "glomex/glomex-cloud-deployment-tools"
 
 // this job is setup only on dev!
-if (environ != 'dev') {
-    return
-}
+//if (environ != 'dev') {
+//    return
+//}
 
 job(jobName) {
     environmentVariables {
