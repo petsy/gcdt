@@ -21,9 +21,10 @@ def jobName = "packages/" + packageName
 def repository = "glomex/glomex-cloud-deployment-tools"
 
 // this job is setup only on dev!
-if (environ != 'dev') {
-    return
-}
+//if (environ != 'dev') {
+//    return
+//}
+def defaultBranch = "develop"
 
 // don't build packages on dev (preprod: develop, prod: master)
 //if (environ != "dev") {
