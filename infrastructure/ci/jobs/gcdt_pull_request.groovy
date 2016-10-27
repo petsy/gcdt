@@ -58,7 +58,7 @@ job(jobName) {
     scm {
         git {
             remote {
-                github(repository, 'git')
+                github(repository, 'ssh')
                 credentials(credentialsToCheckout)
                 branch('${sha1}')
                 refspec('+refs/pull/*:refs/remotes/origin/pr/*')
