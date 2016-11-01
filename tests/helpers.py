@@ -90,3 +90,7 @@ def temp_folder():
     # cleanup
     os.chdir(cwd)  # cd to original folder
     shutil.rmtree(folder)
+
+
+def here(p):
+    return os.path.join(os.path.dirname(__file__), p)

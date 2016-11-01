@@ -4,6 +4,7 @@ import os
 import sys
 from time import sleep
 import getpass
+import subprocess
 
 from clint.textui import prompt, colored
 from pyhocon import ConfigFactory
@@ -217,3 +218,21 @@ def get_outputs_for_stack(boto_session, stack_name):
     for output in response["Stacks"][0]["Outputs"]:
         result[output["OutputKey"]] = output["OutputValue"]
     return result
+
+
+def execute_scripts(scripts):
+    for script in scripts:
+        exit_code = _execute_script(script)
+        if exit_code != 0:
+            return exit_code
+    return 0
+
+
+def _execute_script(file_name):
+    if os.path.isfile(file_name):
+        print('Executing %s ...' % file_name)
+        exit_code = subprocess.call([file_name, '-e'])
+        return exit_code
+    else:
+        print('No file found matching %s...' % file_name)
+        return 1
