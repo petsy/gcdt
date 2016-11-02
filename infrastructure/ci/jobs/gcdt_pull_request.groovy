@@ -59,7 +59,7 @@ job(jobName) {
     scm {
         git {
             remote {
-                github(repository, 'ssh')
+                github(repository, 'https')
                 credentials(credentialsToCheckout)
                 branch('${sha1}')
                 refspec('+refs/pull/*:refs/remotes/origin/pr/*')
@@ -83,7 +83,7 @@ job(jobName) {
     triggers {
         githubPullRequest {
             orgWhitelist(['glomex'])  // ma_github_org
-            cron('H/2 * * * *')
+            cron('H/5 * * * *')
             onlyTriggerPhrase(false)
             useGitHubHooks(false)
             permitAll()
