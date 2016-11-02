@@ -1,9 +1,12 @@
 import utilities.InfraUtilities
 
-//TODO: this does not work with central Jenkins:
-environ = InfraUtilities.getEnv()
+// this is the pull request builder job
+// TODO: activate the github hook to speed up the build
+
+
+environ = InfraUtilities.getEnv() //TODO: this does not work with central Jenkins:
 def branchToCheckout = InfraUtilities.getBranch()
-def slackChannel = InfraUtilities.getSlackChannel()
+//def slackChannel = InfraUtilities.getSlackChannel()
 
 out.println(branchToCheckout)
 
@@ -14,20 +17,12 @@ def venvScript = baseFolder + "/scripts/prepare_virtualenv.sh"
 def buildScript = baseFolder + "/scripts/build_package.sh"
 def lifecycleScript = baseFolder + "/scripts/gcdt_lifecycle.sh"
 
-
-folder("glomex cloud deployment tools") {
-
-}
-
 def packageName = 'gcdt'
-def jobName = "glomex cloud deployment tools/" + packageName + "_pull_request"
+def jobName = "glomex-cloud-deployment-tools/" + packageName + "_pull_request"
 def repository = "glomex/glomex-cloud-deployment-tools"
 
-// in this setup we set the environment via NODE parameter
-// this job is setup only on dev!
-//if (environ != 'dev') {
-//    return
-//}
+folder("glomex-cloud-deployment-tools") {
+}
 
 job(jobName) {
     environmentVariables {
@@ -37,12 +32,12 @@ job(jobName) {
         env('PACKAGE_NAME', packageName)
         env('ARTIFACT_BUCKET', artifactBucket)
         env('PYTHONUNBUFFERED', '1')
+        env('AWS_DEFAULT_REGION', 'eu-west-1')
         env('BRANCH', 'develop')
         // http://chase-seibert.github.io/blog/2014/01/12/python-unicode-console-output.html
         env('PYTHONIOENCODING', 'UTF-8')
         // vars specific to gcdt
         env('ACCOUNT', 'infra')
-        env('AWS_DEFAULT_REGION', 'eu-west-1')
         env('BUCKET', artifactBucket + '/pypi/packages/' + packageName + '/')
     }
 
@@ -51,10 +46,6 @@ job(jobName) {
             defaultValue('infra-dev')
         }
     }
-
-    //parameters {
-    //    stringParam('BRANCH', defaultValue = "develop")
-    //}
 
     scm {
         git {
@@ -75,10 +66,6 @@ job(jobName) {
     throttleConcurrentBuilds {
         maxTotal(1)
     }
-
-    /* I do not think we need publishers for pull requests
-    publishers {
-    }*/
 
     triggers {
         githubPullRequest {

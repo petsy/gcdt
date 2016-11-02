@@ -1,41 +1,28 @@
 import utilities.InfraUtilities
 
+// if a pull request is merged into develop this job bumps the dev level version
+// and releases a dev version to PyPi for testing
+
 environ = InfraUtilities.getEnv()
 def branchToCheckout = InfraUtilities.getBranch()
-def slackChannel = InfraUtilities.getSlackChannel()
+//def slackChannel = InfraUtilities.getSlackChannel()
 
 out.println(branchToCheckout)
 
-def credentialsToCheckout = "psd-frontend-jenkins_username-password"
-//def configFile = readFileFromWorkspace("./operations/continous-delivery/packages-config.json")
-//def config = new groovy.json.JsonSlurper().parseText(configFile)
+def credentialsToCheckout = "glomex-ops-deploy_username_password"
+def baseFolder = "infrastructure/ci"
 def artifactBucket = "glomex-infra-reposerver-prod"
-def buildScript = "infrastructure/ci/scripts/build_develop.sh"
+def venvScript = baseFolder + "/scripts/prepare_virtualenv.sh"
+def buildScript = baseFolder + "/scripts/build_develop.sh"
 
-
-folder("packages") {
-
-}
-def packageName = 'gcdt'
-def jobName = "packages/" + packageName
+def packageName = 'gcdt-bump-dev-level'
+def jobName = "glomex-cloud-deployment-tools/" + packageName
 def repository = "glomex/glomex-cloud-deployment-tools"
+def defaultBranch = "develop"  // the BRANCH config could be simplified
 
-// this job is setup only on dev!
-//if (environ != 'dev') {
-//    return
-//}
-def defaultBranch = "develop"
+folder("glomex-cloud-deployment-tools") {
+}
 
-// don't build packages on dev (preprod: develop, prod: master)
-//if (environ != "dev") {
-
-//    def defaultBranch = environ == "preprod" ? "develop" : "master"
-
-//    config.jobs.each {
-
-//def packageName = it.name
-//def jobName = "packages" + "/" + it.name
-//def repository = it.repository
 
 job(jobName) {
     environmentVariables {
@@ -45,6 +32,9 @@ job(jobName) {
         env('PACKAGE_NAME', packageName)
         env('ARTIFACT_BUCKET', artifactBucket)
         env('PYTHONUNBUFFERED', "1")
+        env('AWS_DEFAULT_REGION', 'eu-west-1')
+        // http://chase-seibert.github.io/blog/2014/01/12/python-unicode-console-output.html
+        env('PYTHONIOENCODING', 'UTF-8')
     }
 
     scm {
@@ -69,25 +59,6 @@ job(jobName) {
             branch('origin', '$BRANCH')
             branch('origin', 'develop')
         }
-        /*slackNotifier {
-            room(slackChannel)
-            notifyAborted(false)
-            notifyFailure(true)
-            notifyNotBuilt(false)
-            notifyUnstable(false)
-            notifyBackToNormal(true)
-            notifySuccess(false)
-            notifyRepeatedFailure(true)
-            startNotification(false)
-            includeTestSummary(false)
-            includeCustomMessage(false)
-            customMessage(null)
-            buildServerUrl(null)
-            sendAs(null)
-            commitInfoChoice('NONE')
-            teamDomain(null)
-            authToken(null)
-        }*/
     }
 
     triggers {
@@ -104,6 +75,8 @@ job(jobName) {
     }
 
     steps {
+        shell(readFileFromWorkspace(venvScript))
+
         shell(readFileFromWorkspace(buildScript))
     }
 }

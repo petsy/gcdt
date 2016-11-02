@@ -1,5 +1,7 @@
 #!/bin/bash -e
 
+# execute lifecycles for the gcdt tools on the infra stack via gcdt CLI
+
 # this script is supposed to run within the Jenkins gcdt pull request builder
 # check preconditions
 echo $ghprbPullId
@@ -26,7 +28,8 @@ git clone https://${username}:${password}@github.com/glomex/gcdt-sample-stack.gi
 
 
 # prepare virtualenv
-virtualenv -p /usr/bin/python2.7 venv --no-site-packages
+virtualenv --clear venv
+virtualenv -p /usr/bin/python2.7 --no-site-packages venv
 
 
 # create pip.conf file
@@ -47,12 +50,12 @@ export WORKSPACE=$(pwd)
 export BUILD_TAG=GCDT_PR$ghprbPullId
 export ENV=DEV
 
-# only for local troubleshooting
-#export AWS_DEFAULT_PROFILE=superuser-dp-dev
-
+#######
 ## kumo
 ./infrastructure/ci/jenkins_cloudformation.sh
 
+
+#######
 ## tenkai
 ./infrastructure/ci/jenkins_codedeploy.sh
 
@@ -64,6 +67,8 @@ curl --fail http://autotest:tsetotua@supercars-eu-west-1.dev.dp.glomex.cloud/hea
 cd ./infrastructure/cloudformation
 kumo delete -f
 
+
+#######
 # ramuda lifecycle
 cd $WORKSPACE/sample_lambda
 ramuda bundle
@@ -72,6 +77,8 @@ ramuda ping jenkins-gcdt-lifecycle-for-ramuda
 ramuda metrics jenkins-gcdt-lifecycle-for-ramuda
 ramuda delete -f jenkins-gcdt-lifecycle-for-ramuda
 
+
+#######
 # yugen lifecycle
 cd $WORKSPACE/sample_api
 echo "creating slack config"
@@ -104,6 +111,8 @@ yugen delete -f
 echo "$ yugen apikey-delete"
 yugen apikey-delete
 
+
+#######
 # cleanup the temp folder
 cd $cwd
 if [ "$folder" = "" ]; then
