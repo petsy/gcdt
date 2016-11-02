@@ -1,6 +1,5 @@
 #!/bin/bash -e
 
-
 # this script is supposed to run within the Jenkins gcdt pull request builder
 # check preconditions
 echo $ghprbPullId
