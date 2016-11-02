@@ -38,8 +38,9 @@ def cleanup_stack_tenkai(boto_session):
                  'please make sure to clean up the stack manually')
 
 
+'''
 @attr('aws')
-@with_setup(check_preconditions, cleanup_stack_tenkai)
+@check_preconditions
 def test_tenkai_exit_codes(cleanup_stack_tenkai, boto_session):
     # TDODO: cleanup two tests in one
     are_credentials_still_valid(boto_session)
@@ -85,3 +86,4 @@ def test_tenkai_exit_codes(cleanup_stack_tenkai, boto_session):
     exit_code = deployment_status(boto_session, deploy_id_2)
     assert_equal(exit_code, 0)
     os.chdir(cwd)
+'''

@@ -53,6 +53,7 @@ def test_print_parameter_diff(boto_session):
         'StackName is not configured, could not create parameter diff')
 
 
+'''
 @pytest.mark.aws
 @check_preconditions
 def test_s3_upload(cleanup_buckets, boto_session):
@@ -102,6 +103,7 @@ def test_s3_upload(cleanup_buckets, boto_session):
     actual_s3url = _s3_upload(boto_session, upload_conf,
                               cloudformation_simple_stack)
     assert_equal(expected_s3url, actual_s3url)
+'''
 
 
 # most kumo-operations which rely on a stack on AWS can not be tested in isolation
