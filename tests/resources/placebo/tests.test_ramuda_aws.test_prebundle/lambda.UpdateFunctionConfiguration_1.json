@@ -1,0 +1,29 @@
+{
+    "status_code": 200, 
+    "data": {
+        "CodeSha256": "+b9y9U51pNruCj65bmllnmAaN/sMD0UvU4e/tZP6q5g=", 
+        "FunctionName": "jenkins_test_pstjxc", 
+        "ResponseMetadata": {
+            "RetryAttempts": 0, 
+            "HTTPStatusCode": 200, 
+            "RequestId": "344d152a-a1dd-11e6-814a-a36df02fb49d", 
+            "HTTPHeaders": {
+                "date": "Thu, 03 Nov 2016 15:50:11 GMT", 
+                "x-amzn-requestid": "344d152a-a1dd-11e6-814a-a36df02fb49d", 
+                "content-length": "522", 
+                "content-type": "application/json", 
+                "connection": "keep-alive"
+            }
+        }, 
+        "CodeSize": 255, 
+        "MemorySize": 128, 
+        "FunctionArn": "arn:aws:lambda:eu-west-1:644239850139:function:jenkins_test_pstjxc", 
+        "Version": "$LATEST", 
+        "Role": "arn:aws:iam::644239850139:role/unittest_pstjxc_lambda", 
+        "Timeout": 300, 
+        "LastModified": "2016-11-03T15:50:11.876+0000", 
+        "Handler": "handler.handle", 
+        "Runtime": "python2.7", 
+        "Description": "Test lambda with prebundle"
+    }
+}
