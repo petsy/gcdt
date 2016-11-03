@@ -15,12 +15,12 @@ def buildScript = baseFolder + "/scripts/build_package.sh"
 def lifecycleScript = baseFolder + "/scripts/gcdt_lifecycle.sh"
 
 
-folder("glomex cloud deployment tools") {
+folder("glomex-cloud-deployment-tools") {
 
 }
 
 def packageName = 'gcdt'
-def jobName = "glomex cloud deployment tools/" + packageName + "_pull_request"
+def jobName = "glomex-cloud-deployment-tools/" + packageName + "_pull_request"
 def repository = "glomex/glomex-cloud-deployment-tools"
 
 // in this setup we set the environment via NODE parameter

@@ -13,11 +13,11 @@ def artifactBucket = "glomex-infra-reposerver-prod"
 def buildScript = "infrastructure/ci/scripts/build_develop.sh"
 
 
-folder("packages") {
+folder("glomex-cloud-deployment-tools") {
 
 }
 def packageName = 'gcdt'
-def jobName = "packages/" + packageName
+def jobName = "glomex-cloud-deployment-tools/" + packageName
 def repository = "glomex/glomex-cloud-deployment-tools"
 
 // this job is setup only on dev!

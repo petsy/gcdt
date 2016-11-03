@@ -9,11 +9,11 @@ def credentialsToCheckout = "psd-frontend-jenkins_username-password"
 //def config = new groovy.json.JsonSlurper().parseText(configFile)
 def artifactBucket = "glomex-infra-reposerver-prod"
 
-folder("packages") {
+folder("glomex-cloud-deployment-tools") {
 }
 
 def packageName = 'gcdt'
-def jobName = "packages/" + packageName + "_autorelease"
+def jobName = "glomex-cloud-deployment-tools/" + packageName + "_autorelease"
 def repository = "glomex/glomex-cloud-deployment-tools"
 
 // this job is setup only on dev!
