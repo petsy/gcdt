@@ -7,7 +7,7 @@ def slackChannel = InfraUtilities.getSlackChannel()
 
 out.println(branchToCheckout)
 
-def credentialsToCheckout = "glomex-ops-deploy_username_password"
+def credentialsToCheckout = "psd-frontend-jenkins_username-password"
 def baseFolder = "infrastructure/ci"
 def artifactBucket = "glomex-infra-reposerver-prod"
 def venvScript = baseFolder + "/scripts/prepare_virtualenv.sh"
@@ -112,7 +112,7 @@ job(jobName) {
 
         credentialsBinding {
             usernamePassword('GIT_CREDENTIALS',
-                    '9daf9a2d-61b6-4c88-9d02-e35a7f0630e8')
+                    'psd-frontend-jenkins_username-password')
         }
     }
 
