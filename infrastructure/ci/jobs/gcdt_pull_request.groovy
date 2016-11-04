@@ -99,7 +99,7 @@ job(jobName) {
 
         credentialsBinding {
             usernamePassword('GIT_CREDENTIALS',
-                    '9daf9a2d-61b6-4c88-9d02-e35a7f0630e8')
+                    'glomex-ops-deploy_username_password')
         }
     }
 

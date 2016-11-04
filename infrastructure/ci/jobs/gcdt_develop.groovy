@@ -12,13 +12,13 @@ out.println(branchToCheckout)
 def credentialsToCheckout = "glomex-ops-deploy_username_password"
 def baseFolder = "infrastructure/ci"
 def artifactBucket = "glomex-infra-reposerver-prod"
-def venvScript = baseFolder + "/scripts/prepare_virtualenv.sh"
+//def venvScript = baseFolder + "/scripts/prepare_virtualenv.sh"
 def buildScript = baseFolder + "/scripts/build_develop.sh"
 
 def packageName = 'gcdt-bump-dev-level'
 def jobName = "glomex-cloud-deployment-tools/" + packageName
 def repository = "glomex/glomex-cloud-deployment-tools"
-def defaultBranch = "develop"  // the BRANCH config could be simplified
+//def defaultBranch = "develop"  // the BRANCH config could be simplified
 
 folder("glomex-cloud-deployment-tools") {
 }
@@ -42,7 +42,8 @@ job(jobName) {
             remote {
                 github(repository, 'https')
                 credentials(credentialsToCheckout)
-                branch('$BRANCH')
+                //branch('$BRANCH')
+                branch('develop')
             }
 
             configure { gitScm ->
@@ -56,7 +57,7 @@ job(jobName) {
     publishers {
         git {
             pushOnlyIfSuccess()
-            branch('origin', '$BRANCH')
+            //branch('origin', '$BRANCH')
             branch('origin', 'develop')
         }
     }
@@ -70,12 +71,12 @@ job(jobName) {
         colorizeOutput()
     }
 
-    parameters {
-        stringParam('BRANCH', defaultValue = defaultBranch)
-    }
+    //parameters {
+    //    stringParam('BRANCH', defaultValue = defaultBranch)
+    //}
 
     steps {
-        shell(readFileFromWorkspace(venvScript))
+        //shell(readFileFromWorkspace(venvScript))
 
         shell(readFileFromWorkspace(buildScript))
     }
