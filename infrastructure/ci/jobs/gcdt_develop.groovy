@@ -37,6 +37,12 @@ job(jobName) {
         env('PYTHONIOENCODING', 'UTF-8')
     }
 
+    parameters {
+        labelParam('NODE') {
+            defaultValue('infra-dev')
+        }
+    }
+
     scm {
         git {
             remote {

@@ -31,3 +31,15 @@ https://github.com/glomex/data-platform/tree/develop/operations/jenkins
 * Credentials Binding Plugin
 * envinject
 * Slack Notification Plugin
+
+
+## on your github repo
+
+You need to setup the webhook for your jenkins within your repo. Go to https://github.com/glomex/glomex-cloud-deployment-tools and open the Webhooks tab.
+
+format of the webhook: "http://<Name of Jenkins server>:8080/github-webhook/"
+
+https://infra-jenkins01-prod.infra.glomex.cloud/github-webhook/
+
+here some docu:
+https://thepracticalsysadmin.com/setting-up-a-github-webhook-in-jenkins/
