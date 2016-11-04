@@ -1,8 +1,10 @@
 #!/bin/bash -e
 
-
 # prepare virtualenv
-virtualenv -p /usr/bin/python2.7 venv --no-site-packages
+
+# initialize
+virtualenv --clear venv
+virtualenv -p /usr/bin/python2.7 --no-site-packages venv
 
 # create pip.conf file
 echo "[global]
