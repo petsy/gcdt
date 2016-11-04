@@ -60,18 +60,10 @@ job(jobName) {
     }
 
     steps {
-        shell('''
-            #git checkout develop
-            #git checkout master
-            #git merge develop
-              '''.stripIndent()
-        )
-
         shell(readFileFromWorkspace(releaseScript))
 
         // are we done?
         shell("echo 'done done done'")
-
     }
 
     publishers {
@@ -87,7 +79,7 @@ job(jobName) {
             notifyNotBuilt(false)
             notifyUnstable(false)
             notifyBackToNormal(true)
-            notifySuccess(false)
+            notifySuccess(true)
             notifyRepeatedFailure(true)
             startNotification(false)
             includeTestSummary(false)
