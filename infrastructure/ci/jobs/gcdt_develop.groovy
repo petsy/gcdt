@@ -15,8 +15,8 @@ def artifactBucket = "glomex-infra-reposerver-prod"
 //def venvScript = baseFolder + "/scripts/prepare_virtualenv.sh"
 def buildScript = baseFolder + "/scripts/build_develop.sh"
 
-def packageName = 'gcdt-bump-dev-level'
-def jobName = "glomex-cloud-deployment-tools/" + packageName
+def packageName = 'gcdt'
+def jobName = "glomex-cloud-deployment-tools/" + packageName + "-bump-dev-level"
 def repository = "glomex/glomex-cloud-deployment-tools"
 //def defaultBranch = "develop"  // the BRANCH config could be simplified
 
@@ -35,6 +35,7 @@ job(jobName) {
         env('AWS_DEFAULT_REGION', 'eu-west-1')
         // http://chase-seibert.github.io/blog/2014/01/12/python-unicode-console-output.html
         env('PYTHONIOENCODING', 'UTF-8')
+        env('BUCKET', artifactBucket + '/pypi/packages/' + packageName + '/')
     }
 
     parameters {

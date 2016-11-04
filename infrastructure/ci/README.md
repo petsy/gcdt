@@ -41,5 +41,18 @@ format of the webhook: "http://<Name of Jenkins server>:8080/github-webhook/"
 
 https://infra-jenkins01-prod.infra.glomex.cloud/github-webhook/
 
+Add a new webhook for the two targets
+https://jenkins-webhook.YOUR_ENVIRONMENT.dp.glomex.cloud/github-webhook/
+https://jenkins-webhook.YOUR_ENVIRONMENT.dp.glomex.cloud/ghprbhook/ Pull-Request triggering
+
 here some docu:
 https://thepracticalsysadmin.com/setting-up-a-github-webhook-in-jenkins/
+
+
+# on the executor
+
+$ git config --list
+
+set the git user name and email... TODO
+
+
