@@ -5,20 +5,17 @@ import utilities.InfraUtilities
 
 environ = InfraUtilities.getEnv()
 def branchToCheckout = InfraUtilities.getBranch()
-//def slackChannel = InfraUtilities.getSlackChannel()
 
 out.println(branchToCheckout)
 
 def credentialsToCheckout = "psd-frontend-jenkins_username-password"
 def baseFolder = "infrastructure/ci"
 def artifactBucket = "glomex-infra-reposerver-prod"
-//def venvScript = baseFolder + "/scripts/prepare_virtualenv.sh"
 def buildScript = baseFolder + "/scripts/build_develop.sh"
 
 def packageName = 'gcdt'
 def jobName = "glomex-cloud-deployment-tools/" + packageName + "-bump-dev-level"
 def repository = "glomex/glomex-cloud-deployment-tools"
-//def defaultBranch = "develop"  // the BRANCH config could be simplified
 
 folder("glomex-cloud-deployment-tools") {
 }
@@ -49,7 +46,6 @@ job(jobName) {
             remote {
                 github(repository, 'https')
                 credentials(credentialsToCheckout)
-                //branch('$BRANCH')
                 branch('develop')
             }
 
@@ -64,13 +60,13 @@ job(jobName) {
     publishers {
         git {
             pushOnlyIfSuccess()
-            //branch('origin', '$BRANCH')
             branch('origin', 'develop')
         }
     }
 
     triggers {
-        githubPush()
+        //githubPush()
+        scm('H/5 * * * *')
     }
 
     wrappers {
@@ -78,13 +74,7 @@ job(jobName) {
         colorizeOutput()
     }
 
-    //parameters {
-    //    stringParam('BRANCH', defaultValue = defaultBranch)
-    //}
-
     steps {
-        //shell(readFileFromWorkspace(venvScript))
-
         shell(readFileFromWorkspace(buildScript))
     }
 }

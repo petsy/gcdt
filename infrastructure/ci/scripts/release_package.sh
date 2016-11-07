@@ -5,6 +5,7 @@
 # Setup virtualenv in temp folder
 TEMP_DIR=`mktemp -d` && cd ${TEMP_DIR}
 virtualenv -p /usr/bin/python2.7 --no-site-packages venv
+./venv/bin/pip install --upgrade pip
 
 # create pip.conf file
 echo "[global]
