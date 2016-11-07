@@ -1,9 +1,7 @@
 import os
 
-import boto3
 from pyhocon import ConfigFactory
-from nose.plugins.attrib import attr
-from nose.tools import with_setup, assert_equal, assert_false
+from nose.tools import assert_equal, assert_false
 import pytest
 
 from gcdt.logger import setup_logger
@@ -38,11 +36,10 @@ def cleanup_stack_tenkai(boto_session):
                  'please make sure to clean up the stack manually')
 
 
-'''
-@attr('aws')
+@pytest.mark.aws
 @check_preconditions
 def test_tenkai_exit_codes(cleanup_stack_tenkai, boto_session):
-    # TDODO: cleanup two tests in one
+    # TODO: cleanup two tests in one
     are_credentials_still_valid(boto_session)
     # Set up stack with an ec2 and deployment
     cloudformation, _ = load_cloudformation_template(
@@ -69,7 +66,7 @@ def test_tenkai_exit_codes(cleanup_stack_tenkai, boto_session):
         app_name,
         deployment_group,
         'CodeDeployDefault.AllAtOnce',
-        '7finity-dp-dev-deployment'
+        '7finity-infra-dev-deployment'
     )
 
     exit_code = deployment_status(boto_session, deploy_id_1)
@@ -81,9 +78,8 @@ def test_tenkai_exit_codes(cleanup_stack_tenkai, boto_session):
         app_name,
         deployment_group,
         'CodeDeployDefault.AllAtOnce',
-        '7finity-dp-dev-deployment'
+        '7finity-infra-dev-deployment'
     )
     exit_code = deployment_status(boto_session, deploy_id_2)
     assert_equal(exit_code, 0)
     os.chdir(cwd)
-'''
