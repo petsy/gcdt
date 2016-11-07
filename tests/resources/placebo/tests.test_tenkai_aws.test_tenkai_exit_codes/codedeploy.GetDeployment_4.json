@@ -2,16 +2,17 @@
     "status_code": 200, 
     "data": {
         "ResponseMetadata": {
+            "RetryAttempts": 0, 
             "HTTPStatusCode": 200, 
-            "RequestId": "3def7f68-97a6-11e6-8fa8-ad6fdd277603", 
+            "RequestId": "abcbff9a-a4f3-11e6-8591-b3c8e0506791", 
             "HTTPHeaders": {
-                "x-amzn-requestid": "3def7f68-97a6-11e6-8fa8-ad6fdd277603", 
-                "content-length": "860", 
+                "x-amzn-requestid": "abcbff9a-a4f3-11e6-8591-b3c8e0506791", 
+                "content-length": "959", 
                 "content-type": "application/x-amz-json-1.1"
             }
         }, 
         "deploymentInfo": {
-            "applicationName": "gcdt-test-tenkai-deploy-gcdtTenkaiTestingApp-NK98VY3U8092", 
+            "applicationName": "gcdt-test-tenkai-deploy-gcdtTenkaiTestingApp-1O8AIMXKL41O6", 
             "status": "InProgress", 
             "deploymentOverview": {
                 "Failed": 0, 
@@ -23,27 +24,27 @@
             "description": "deploy with tenkai", 
             "deploymentConfigName": "CodeDeployDefault.AllAtOnce", 
             "creator": "user", 
-            "deploymentId": "d-LJUA5TWBI", 
+            "deploymentId": "d-HYET3R4NI", 
             "ignoreApplicationStopFailures": true, 
-            "deploymentGroupName": "gcdt-test-tenkai-deploy-gcdtTestDeploymentGroup-MTZ1H773YZF4", 
+            "deploymentGroupName": "gcdt-test-tenkai-deploy-gcdtTestDeploymentGroup-1HP2LBQH9TZQ1", 
             "createTime": {
-                "hour": 17, 
+                "hour": 15, 
                 "__class__": "datetime", 
-                "month": 10, 
-                "second": 2, 
-                "microsecond": 333000, 
+                "month": 11, 
+                "second": 3, 
+                "microsecond": 391000, 
                 "year": 2016, 
-                "day": 21, 
-                "minute": 51
+                "day": 7, 
+                "minute": 8
             }, 
             "revision": {
                 "revisionType": "S3", 
                 "s3Location": {
                     "bundleType": "tgz", 
-                    "version": "NqJDkmRaA9K3OSsduuz3Zf.DEJehYQqy", 
-                    "bucket": "7finity-dp-dev-deployment", 
-                    "key": "gcdt-test-tenkai-deploy-gcdtTenkaiTestingApp-NK98VY3U8092/bundle.tar.gz", 
-                    "eTag": "\"fa953cc0877b6fbb5e16154d80dae3d6\""
+                    "version": "Md6VInVo3x1oJLxMpCYOCCT8TrLFRNZK", 
+                    "bucket": "7finity-infra-dev-deployment", 
+                    "key": "gcdt-test-tenkai-deploy-gcdtTenkaiTestingApp-1O8AIMXKL41O6/bundle.tar.gz", 
+                    "eTag": "\"c282bcd84b440f9d4ca50c628c23ed31\""
                 }
             }
         }

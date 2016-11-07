@@ -2,20 +2,21 @@
     "status_code": 200, 
     "data": {
         "ResponseMetadata": {
+            "RetryAttempts": 0, 
             "HTTPStatusCode": 200, 
-            "RequestId": "6f23a15e-97a6-11e6-8643-0ffda78cb7c6", 
+            "RequestId": "dcda97bb-a4f3-11e6-86fd-6347eb757509", 
             "HTTPHeaders": {
-                "x-amzn-requestid": "6f23a15e-97a6-11e6-8643-0ffda78cb7c6", 
-                "content-length": "1180", 
+                "x-amzn-requestid": "dcda97bb-a4f3-11e6-86fd-6347eb757509", 
+                "content-length": "959", 
                 "content-type": "application/x-amz-json-1.1"
             }
         }, 
         "deploymentInfo": {
-            "applicationName": "gcdt-test-tenkai-deploy-gcdtTenkaiTestingApp-NK98VY3U8092", 
-            "status": "Failed", 
+            "applicationName": "gcdt-test-tenkai-deploy-gcdtTenkaiTestingApp-1O8AIMXKL41O6", 
+            "status": "InProgress", 
             "deploymentOverview": {
-                "Failed": 1, 
-                "InProgress": 0, 
+                "Failed": 0, 
+                "InProgress": 1, 
                 "Skipped": 0, 
                 "Succeeded": 0, 
                 "Pending": 0
@@ -23,41 +24,27 @@
             "description": "deploy with tenkai", 
             "deploymentConfigName": "CodeDeployDefault.AllAtOnce", 
             "creator": "user", 
-            "errorInformation": {
-                "message": "The overall deployment failed because too many individual instances failed deployment, too few healthy instances are available for deployment, or some instances in your deployment group are experiencing problems.", 
-                "code": "HEALTH_CONSTRAINTS"
-            }, 
-            "deploymentId": "d-LJUA5TWBI", 
+            "deploymentId": "d-HYET3R4NI", 
             "ignoreApplicationStopFailures": true, 
-            "deploymentGroupName": "gcdt-test-tenkai-deploy-gcdtTestDeploymentGroup-MTZ1H773YZF4", 
+            "deploymentGroupName": "gcdt-test-tenkai-deploy-gcdtTestDeploymentGroup-1HP2LBQH9TZQ1", 
             "createTime": {
-                "hour": 17, 
+                "hour": 15, 
                 "__class__": "datetime", 
-                "month": 10, 
-                "second": 2, 
-                "microsecond": 333000, 
+                "month": 11, 
+                "second": 3, 
+                "microsecond": 391000, 
                 "year": 2016, 
-                "day": 21, 
-                "minute": 51
-            }, 
-            "completeTime": {
-                "hour": 17, 
-                "__class__": "datetime", 
-                "month": 10, 
-                "second": 48, 
-                "microsecond": 679000, 
-                "year": 2016, 
-                "day": 21, 
-                "minute": 52
+                "day": 7, 
+                "minute": 8
             }, 
             "revision": {
                 "revisionType": "S3", 
                 "s3Location": {
                     "bundleType": "tgz", 
-                    "version": "NqJDkmRaA9K3OSsduuz3Zf.DEJehYQqy", 
-                    "bucket": "7finity-dp-dev-deployment", 
-                    "key": "gcdt-test-tenkai-deploy-gcdtTenkaiTestingApp-NK98VY3U8092/bundle.tar.gz", 
-                    "eTag": "\"fa953cc0877b6fbb5e16154d80dae3d6\""
+                    "version": "Md6VInVo3x1oJLxMpCYOCCT8TrLFRNZK", 
+                    "bucket": "7finity-infra-dev-deployment", 
+                    "key": "gcdt-test-tenkai-deploy-gcdtTenkaiTestingApp-1O8AIMXKL41O6/bundle.tar.gz", 
+                    "eTag": "\"c282bcd84b440f9d4ca50c628c23ed31\""
                 }
             }
         }
