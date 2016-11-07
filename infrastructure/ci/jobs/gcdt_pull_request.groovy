@@ -71,8 +71,7 @@ job(jobName) {
         githubPullRequest {
             orgWhitelist(['glomex'])  // ma_github_org
             cron('H/5 * * * *')
-            //onlyTriggerPhrase(false)
-            onlyTriggerPhrase()
+            onlyTriggerPhrase(false)
             triggerPhrase('@alexa please test')
             useGitHubHooks(false)
             //useGitHubHooks()
