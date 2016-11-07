@@ -74,8 +74,8 @@ job(jobName) {
             //onlyTriggerPhrase(false)
             onlyTriggerPhrase()
             triggerPhrase('@alexa please test')
-            //useGitHubHooks(false)
-            useGitHubHooks()
+            useGitHubHooks(false)
+            //useGitHubHooks()
             permitAll()
 
             autoCloseFailedPullRequests(false)
