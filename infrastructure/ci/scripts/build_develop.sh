@@ -8,6 +8,13 @@
 # Setup virtualenv in temp folder
 TEMP_DIR=`mktemp -d` && cd ${TEMP_DIR}
 virtualenv -p /usr/bin/python2.7 --no-site-packages venv
+
+# create pip.conf file
+echo "[global]
+timeout = 20
+extra-index-url = https://reposerver-prod-eu-west-1.infra.glomex.cloud/pypi/packages
+trusted-host = reposerver-prod-eu-west-1.infra.glomex.cloud" >> ./venv/pip.conf
+
 source ./venv/bin/activate
 
 
@@ -31,7 +38,7 @@ echo "-INPUT END-----------"
 cd $WORKSPACE
 pip install -r requirements_dev.txt
 
-rm requirements.txt
+rm -f requirements.txt
 pip-compile requirements.in
 pip install -r requirements.txt -r requirements_dev.txt
 
@@ -55,6 +62,9 @@ bumpversion --commit dev
 # Release
 python setup.py sdist --dist-dir dist/
 ls -la dist/
+
+# install the awscli
+pip install awscli --ignore-installed six
 
 # publish to repo server
 aws s3 cp --acl bucket-owner-full-control ./dist/ s3://$BUCKET --recursive --exclude '*' --include '*.tar.gz'

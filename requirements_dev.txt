@@ -17,7 +17,6 @@ pip-tools>=1.7.0
 pep8>=1.7.0
 pylint>=1.6.4
 bumpversion>=0.5.3
-awscli>=1.11.12
 
 # misc
 #simplejson==3.8.2
