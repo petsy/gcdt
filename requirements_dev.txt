@@ -20,5 +20,5 @@ bumpversion>=0.5.3
 awscli>=1.11.12
 
 # misc
-simplejson==3.8.2
+#simplejson==3.8.2
 Werkzeug==0.9.4

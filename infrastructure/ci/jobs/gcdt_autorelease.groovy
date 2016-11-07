@@ -34,6 +34,13 @@ job(jobName) {
         // http://chase-seibert.github.io/blog/2014/01/12/python-unicode-console-output.html
         env('PYTHONIOENCODING', 'UTF-8')
     }
+
+    parameters {
+        labelParam('NODE') {
+            defaultValue('infra-dev')
+        }
+    }
+
     scm {
         git {
             remote {

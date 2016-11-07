@@ -33,7 +33,7 @@ pip install -r requirements_dev.txt
 
 rm requirements.txt
 pip-compile requirements.in
-pip install -r requirements.txt
+pip install -r requirements.txt -r requirements_dev.txt
 
 #Check if we need to commit changes to requirements.txt
 IS_DIRTY=$(git diff-index --quiet HEAD --; echo $?)

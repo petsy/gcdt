@@ -18,7 +18,7 @@ trusted-host = reposerver-prod-eu-west-1.infra.glomex.cloud" >> ./venv/pip.conf
 # compile and install requirements
 rm requirements.txt
 ./venv/bin/pip-compile requirements.in
-./venv/bin/pip install -r requirements.txt
+./venv/bin/pip install -r requirements.txt -r requirements_dev.txt
 
 # install gcdt development version
 ./venv/bin/pip install -e .
