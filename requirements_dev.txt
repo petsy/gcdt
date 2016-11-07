@@ -19,5 +19,5 @@ pylint>=1.6.4
 bumpversion>=0.5.3
 
 # misc
-simplejson==3.8.2
+#simplejson==3.8.2
 Werkzeug==0.9.4

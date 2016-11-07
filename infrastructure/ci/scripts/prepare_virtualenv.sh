@@ -1,8 +1,10 @@
 #!/bin/bash -e
 
-
 # prepare virtualenv
-virtualenv -p /usr/bin/python2.7 venv --no-site-packages
+
+# initialize
+virtualenv --clear venv
+virtualenv -p /usr/bin/python2.7 --no-site-packages venv
 
 # create pip.conf file
 echo "[global]
@@ -16,7 +18,7 @@ trusted-host = reposerver-prod-eu-west-1.infra.glomex.cloud" >> ./venv/pip.conf
 # compile and install requirements
 rm requirements.txt
 ./venv/bin/pip-compile requirements.in
-./venv/bin/pip install -r requirements.txt
+./venv/bin/pip install -r requirements.txt -r requirements_dev.txt
 
 # install gcdt development version
 ./venv/bin/pip install -e .

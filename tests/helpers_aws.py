@@ -184,7 +184,7 @@ def create_role_helper(boto_session, name, policies=None):
 
 def _precond_check():
     """Make sure the default AWS profile is set so the test can run on AWS."""
-    if os.getenv('USER', None) != 'jenkins' and \
+    if not os.getenv('USER', None).endswith('jenkins') and \
             not os.getenv('AWS_DEFAULT_PROFILE', None):
         print("AWS_DEFAULT_PROFILE variable not set! Test is skipped.")
         return True

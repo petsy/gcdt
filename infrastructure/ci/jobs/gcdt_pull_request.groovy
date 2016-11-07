@@ -1,33 +1,28 @@
 import utilities.InfraUtilities
 
-//TODO: this does not work with central Jenkins:
-environ = InfraUtilities.getEnv()
+// this is the pull request builder job
+// TODO: activate the github hook to speed up the build
+
+
+environ = InfraUtilities.getEnv() //TODO: this does not work with central Jenkins:
 def branchToCheckout = InfraUtilities.getBranch()
-def slackChannel = InfraUtilities.getSlackChannel()
+//def slackChannel = InfraUtilities.getSlackChannel()
 
 out.println(branchToCheckout)
 
-def credentialsToCheckout = "9daf9a2d-61b6-4c88-9d02-e35a7f0630e8"
+def credentialsToCheckout = "psd-frontend-jenkins_username-password"
 def baseFolder = "infrastructure/ci"
 def artifactBucket = "glomex-infra-reposerver-prod"
 def venvScript = baseFolder + "/scripts/prepare_virtualenv.sh"
 def buildScript = baseFolder + "/scripts/build_package.sh"
 def lifecycleScript = baseFolder + "/scripts/gcdt_lifecycle.sh"
 
-
-folder("glomex cloud deployment tools") {
-
-}
-
 def packageName = 'gcdt'
-def jobName = "glomex cloud deployment tools/" + packageName + "_pull_request"
+def jobName = "glomex-cloud-deployment-tools/" + packageName + "_pull_request"
 def repository = "glomex/glomex-cloud-deployment-tools"
 
-// in this setup we set the environment via NODE parameter
-// this job is setup only on dev!
-//if (environ != 'dev') {
-//    return
-//}
+folder("glomex-cloud-deployment-tools") {
+}
 
 job(jobName) {
     environmentVariables {
@@ -37,12 +32,12 @@ job(jobName) {
         env('PACKAGE_NAME', packageName)
         env('ARTIFACT_BUCKET', artifactBucket)
         env('PYTHONUNBUFFERED', '1')
+        env('AWS_DEFAULT_REGION', 'eu-west-1')
         env('BRANCH', 'develop')
         // http://chase-seibert.github.io/blog/2014/01/12/python-unicode-console-output.html
         env('PYTHONIOENCODING', 'UTF-8')
         // vars specific to gcdt
         env('ACCOUNT', 'infra')
-        env('AWS_DEFAULT_REGION', 'eu-west-1')
         env('BUCKET', artifactBucket + '/pypi/packages/' + packageName + '/')
     }
 
@@ -52,14 +47,10 @@ job(jobName) {
         }
     }
 
-    //parameters {
-    //    stringParam('BRANCH', defaultValue = "develop")
-    //}
-
     scm {
         git {
             remote {
-                github(repository, 'ssh')
+                github(repository, 'https')
                 credentials(credentialsToCheckout)
                 branch('${sha1}')
                 refspec('+refs/pull/*:refs/remotes/origin/pr/*')
@@ -76,16 +67,14 @@ job(jobName) {
         maxTotal(1)
     }
 
-    /* I do not think we need publishers for pull requests
-    publishers {
-    }*/
-
     triggers {
         githubPullRequest {
             orgWhitelist(['glomex'])  // ma_github_org
-            cron('H/2 * * * *')
+            cron('H/5 * * * *')
             onlyTriggerPhrase(false)
+            triggerPhrase('@alexa please test')
             useGitHubHooks(false)
+            //useGitHubHooks()
             permitAll()
 
             autoCloseFailedPullRequests(false)
@@ -112,7 +101,7 @@ job(jobName) {
 
         credentialsBinding {
             usernamePassword('GIT_CREDENTIALS',
-                    '9daf9a2d-61b6-4c88-9d02-e35a7f0630e8')
+                    'psd-frontend-jenkins_username-password')
         }
     }
 
