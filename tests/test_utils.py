@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 import os
 from tempfile import NamedTemporaryFile
-from nose.tools import assert_equal
 from StringIO import StringIO
+
+from nose.tools import assert_equal
+
 from gcdt import utils
 from gcdt.utils import version, __version__, retries, configure, \
     read_gcdt_user_config, get_context, get_command, read_gcdt_user_config_value

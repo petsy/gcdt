@@ -1,0 +1,17 @@
+{
+    "status_code": 200, 
+    "data": {
+        "ResponseMetadata": {
+            "HTTPStatusCode": 200, 
+            "HostId": "iYvNqu0prYISrQDijTXtP/IAvdWPg5hHBe6idY1/qkLmJWNW3wpqnAyqRBWfO0aor9WklWcjyrc=", 
+            "RequestId": "30F223F793E5C238", 
+            "HTTPHeaders": {
+                "x-amz-id-2": "iYvNqu0prYISrQDijTXtP/IAvdWPg5hHBe6idY1/qkLmJWNW3wpqnAyqRBWfO0aor9WklWcjyrc=", 
+                "date": "Fri, 21 Oct 2016 15:32:42 GMT", 
+                "transfer-encoding": "chunked", 
+                "x-amz-request-id": "30F223F793E5C238", 
+                "server": "AmazonS3"
+            }
+        }
+    }
+}

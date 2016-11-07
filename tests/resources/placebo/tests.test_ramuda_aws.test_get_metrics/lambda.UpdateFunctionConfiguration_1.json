@@ -1,0 +1,28 @@
+{
+    "status_code": 200, 
+    "data": {
+        "CodeSha256": "8/Hv7Ys8Us6VeO8a9to4sjn66T+jO0B6JNsPD+/Ct4c=", 
+        "FunctionName": "jenkins_test_waslur", 
+        "ResponseMetadata": {
+            "HTTPStatusCode": 200, 
+            "RequestId": "adf183c6-979b-11e6-8029-93e83217f9d1", 
+            "HTTPHeaders": {
+                "date": "Fri, 21 Oct 2016 14:35:56 GMT", 
+                "x-amzn-requestid": "adf183c6-979b-11e6-8029-93e83217f9d1", 
+                "content-length": "547", 
+                "content-type": "application/json", 
+                "connection": "keep-alive"
+            }
+        }, 
+        "CodeSize": 332357, 
+        "MemorySize": 128, 
+        "FunctionArn": "arn:aws:lambda:eu-west-1:644239850139:function:jenkins_test_waslur", 
+        "Version": "$LATEST", 
+        "Role": "arn:aws:iam::644239850139:role/unittest_waslur_lambda", 
+        "Timeout": 300, 
+        "LastModified": "2016-10-21T14:35:57.548+0000", 
+        "Handler": "handler.handle", 
+        "Runtime": "python2.7", 
+        "Description": "lambda created for unittesting ramuda deployment"
+    }
+}

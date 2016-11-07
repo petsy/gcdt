@@ -1,0 +1,28 @@
+{
+    "status_code": 201, 
+    "data": {
+        "CodeSha256": "9IIbLvhBIFEUApdR9RlhTeaCfb4j6pgYIDogfa4efZc=", 
+        "FunctionName": "jenkins_test_gimsaw", 
+        "ResponseMetadata": {
+            "HTTPStatusCode": 201, 
+            "RequestId": "1f08b863-97a2-11e6-ba66-2becd6f22346", 
+            "HTTPHeaders": {
+                "date": "Fri, 21 Oct 2016 15:22:04 GMT", 
+                "x-amzn-requestid": "1f08b863-97a2-11e6-ba66-2becd6f22346", 
+                "content-length": "549", 
+                "content-type": "application/json", 
+                "connection": "keep-alive"
+            }
+        }, 
+        "CodeSize": 332472, 
+        "MemorySize": 128, 
+        "FunctionArn": "arn:aws:lambda:eu-west-1:644239850139:function:jenkins_test_gimsaw", 
+        "Version": "1", 
+        "Role": "arn:aws:iam::644239850139:role/unittest_gimsaw_lambda", 
+        "Timeout": 300, 
+        "LastModified": "2016-10-21T15:22:05.019+0000", 
+        "Handler": "handler_counter.handle", 
+        "Runtime": "python2.7", 
+        "Description": "lambda created for unittesting ramuda deployment"
+    }
+}

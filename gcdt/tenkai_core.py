@@ -13,8 +13,7 @@ from clint.textui import colored
 
 from gcdt import monitoring
 
-
-def deploy(applicationName, deploymentGroupName, deploymentConfigName, bucket,
+def deploy(boto_session, applicationName, deploymentGroupName, deploymentConfigName, bucket,
            slack_token=None, slack_channel='systemmessages',
            pre_bundle_scripts=None):
     """Upload bundle and deploy to deployment group.
@@ -36,9 +35,8 @@ def deploy(applicationName, deploymentGroupName, deploymentConfigName, bucket,
     bundlefile = bundle_revision()
     etag, version = _upload_revision_to_s3(bucket, applicationName, bundlefile)
 
-    session = boto3.session.Session()
-    client = session.client('codedeploy')
-    response = client.create_deployment(
+    client_codedeploy = boto_session.client('codedeploy')
+    response = client_codedeploy.create_deployment(
         applicationName=applicationName,
         deploymentGroupName=deploymentGroupName,
         revision={
@@ -58,8 +56,8 @@ def deploy(applicationName, deploymentGroupName, deploymentConfigName, bucket,
 
     print("Deployment: {} -> URL: https://{}.console.aws.amazon.com/codedeploy/home?region={}#/deployments/{}".format(
         response['deploymentId'],
-        session.region_name,
-        session.region_name,
+        boto_session.region_name,
+        boto_session.region_name,
         response['deploymentId'],
     ))
 
@@ -69,7 +67,7 @@ def deploy(applicationName, deploymentGroupName, deploymentConfigName, bucket,
     return response['deploymentId']
 
 
-def deployment_status(deploymentId, iterations=100):
+def deployment_status(boto_session, deploymentId, iterations=100):
     """Wait until an deployment is in an steady state and output information.
 
     :param deploymentId:
@@ -78,10 +76,10 @@ def deployment_status(deploymentId, iterations=100):
     """
     counter = 0
     steady_states = ['Succeeded', 'Failed', 'Stopped']
-    client = boto3.client('codedeploy')
+    client_codedeploy = boto_session.client('codedeploy')
 
     while counter <= iterations:
-        response = client.get_deployment(deploymentId=deploymentId)
+        response = client_codedeploy.get_deployment(deploymentId=deploymentId)
         status = response['deploymentInfo']['status']
 
         if status not in steady_states:
@@ -125,11 +123,11 @@ def prepare_artifacts_bucket(bucket):
 
 
 def _upload_revision_to_s3(bucket, applicationName, file):
-    client = boto3.client('s3')
-    transfer = S3Transfer(client)
+    client_s3 = boto3.client('s3')
+    transfer = S3Transfer(client_s3)
     # Upload /tmp/myfile to s3://bucket/key and print upload progress.
     transfer.upload_file(file, bucket, _build_bundle_key(applicationName))
-    response = client.head_object(Bucket=bucket,
+    response = client_s3.head_object(Bucket=bucket,
                                   Key=_build_bundle_key(applicationName))
 
     return response['ETag'], response['VersionId']
@@ -154,16 +152,16 @@ def _execute_script(file_name):
 
 
 def _bucket_exists(bucket):
-    s3 = boto3.resource('s3')
-    return s3.Bucket(bucket) in s3.buckets.all()
+    client_s3 = boto3.resource('s3')
+    return client_s3.Bucket(bucket) in client_s3.buckets.all()
 
 
 def _create_bucket(bucket):
-    client = boto3.client('s3')
-    client.create_bucket(
+    client_s3 = boto3.client('s3')
+    client_s3.create_bucket(
         Bucket=bucket
     )
-    client.put_bucket_versioning(
+    client_s3.put_bucket_versioning(
         Bucket=bucket,
         VersioningConfiguration={
             'Status': 'Enabled'

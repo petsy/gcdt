@@ -1,0 +1,34 @@
+{
+    "status_code": 200, 
+    "data": {
+        "Code": {
+            "RepositoryType": "S3", 
+            "Location": "https://awslambda-eu-west-1-tasks.s3-eu-west-1.amazonaws.com/snapshots/644239850139/jenkins_test_avaxcr-6a8c6169-006f-48bc-94ff-79fd577e9f50?X-Amz-Security-Token=FQoDYXdzENL%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEaDPpXEFhyrrjfK2kNjSK3A0cMS4D5sUHLLYFdfehLhHQ%2B91bViOgcrj6R0S%2FzvMNrB0%2FNCPbWHiu7FpUqamR3IapZ33XepI8A3%2FKQIm0PqWebyyatJzsBuN34vnQfpIJ9NI%2BO1K7eFqAZfRiLejT35i3U2sIYFLUOusNOA2xPBX4HOVbmBIGKC3qK6W7ns0K%2Bs%2FFn%2FNNC32gwL7driDfQDOAqQWtNFZ3gjLfcajJz8tvvu08YNuLE9GBvxF2QGqznUsVeyGSvZjIFKyFRI84YPoilLZprwR0q9UOGa59yWiO8jLjX8QIKuRHnmGBH3f4sJXAmQb1SbhEbQyB%2B%2FrarWmH1on7sDHTV4eqrMKq8hfiWw6viqjzLhrhR4YWNdXWTm45QGe%2FI6vkfIW4BIZBWFFt8vCH15s1xK9zIkwTtacmizalzS2dLaO2wuZKxt6KHQ4wwUdmldD9oQUmDzj6JLxq9r%2BCrIASGvTyhZDYQhyjn27kf3Pk01kiKBTiv0uaRy13wG95U22g36%2FE2LtgRCugsx5F4zZEp7OnFOgFZk4%2BzZ3TYwxrMuWBBJ6NRxOjOJF9vycR8G%2FoKLHL2DEsTPWoXzU3i8%2B0ostnBwAU%3D&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Date=20161026T094959Z&X-Amz-SignedHeaders=host&X-Amz-Expires=600&X-Amz-Credential=ASIAJVXA4YQNF23OEORQ%2F20161026%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Signature=d96c91a21fb55c847caba51e54592da4d689eb1eed215980527ee998ecc7797b"
+        }, 
+        "Configuration": {
+            "Version": "$LATEST", 
+            "CodeSha256": "30EcwnMft8WSPKYYvW8HJ/2Kq7gTCFGsYgFwEXS9VIw=", 
+            "FunctionName": "jenkins_test_avaxcr", 
+            "MemorySize": 256, 
+            "CodeSize": 332061, 
+            "FunctionArn": "arn:aws:lambda:eu-west-1:644239850139:function:jenkins_test_avaxcr", 
+            "Handler": "handler.handle", 
+            "Role": "arn:aws:iam::644239850139:role/unittest_avaxcr_lambda", 
+            "Timeout": 300, 
+            "LastModified": "2016-10-26T09:49:56.834+0000", 
+            "Runtime": "python2.7", 
+            "Description": "lambda test for ramuda"
+        }, 
+        "ResponseMetadata": {
+            "HTTPStatusCode": 200, 
+            "RequestId": "8f1946df-9b61-11e6-b977-f9c4df425b86", 
+            "HTTPHeaders": {
+                "date": "Wed, 26 Oct 2016 09:49:59 GMT", 
+                "x-amzn-requestid": "8f1946df-9b61-11e6-b977-f9c4df425b86", 
+                "content-length": "1706", 
+                "content-type": "application/json", 
+                "connection": "keep-alive"
+            }
+        }
+    }
+}

@@ -1,0 +1,62 @@
+{
+    "status_code": 200, 
+    "data": {
+        "items": [
+            {
+                "description": "Mock Data API for Glomex-related applications", 
+                "createdDate": {
+                    "hour": 18, 
+                    "__class__": "datetime", 
+                    "month": 4, 
+                    "second": 53, 
+                    "microsecond": 0, 
+                    "year": 2016, 
+                    "day": 14, 
+                    "minute": 33
+                }, 
+                "id": "evoovpzo2e", 
+                "name": "dp-dev-serve-api-mock-2"
+            }, 
+            {
+                "description": "Data API for Glomex-related applications", 
+                "createdDate": {
+                    "hour": 17, 
+                    "__class__": "datetime", 
+                    "month": 5, 
+                    "second": 12, 
+                    "microsecond": 0, 
+                    "year": 2016, 
+                    "day": 17, 
+                    "minute": 30
+                }, 
+                "id": "s1ewm5z1fk", 
+                "name": "dp-dev-serve-api"
+            }, 
+            {
+                "description": "Data API for Glomex-related applications (Cloned)", 
+                "createdDate": {
+                    "hour": 10, 
+                    "__class__": "datetime", 
+                    "month": 8, 
+                    "second": 37, 
+                    "microsecond": 0, 
+                    "year": 2016, 
+                    "day": 9, 
+                    "minute": 0
+                }, 
+                "id": "unwf1t3hy5", 
+                "name": "dp-dev-serve-api-clone"
+            }
+        ], 
+        "ResponseMetadata": {
+            "HTTPStatusCode": 200, 
+            "RequestId": "b2eab0bb-9758-11e6-89e0-8733d6a92b23", 
+            "HTTPHeaders": {
+                "x-amzn-requestid": "b2eab0bb-9758-11e6-89e0-8733d6a92b23", 
+                "date": "Fri, 21 Oct 2016 06:36:28 GMT", 
+                "content-length": "743", 
+                "content-type": "application/json"
+            }
+        }
+    }
+}

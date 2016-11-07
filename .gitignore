@@ -147,6 +147,7 @@ tests/requirements.txt
 set_qa
 set_dp
 set_vvs
+set_infra
 howto.txt
 build_pr.sh
 tests/MyStringIO.py

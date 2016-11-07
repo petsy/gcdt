@@ -40,6 +40,10 @@ def get_size(start_path='.'):
 
 def random_string():
     """Create a random 6 character string.
+
+    note: in case you use this function in a test during test together with
+    a boto_session then this function is altered so you get reproducible results
+    that will work with your recorded placebo json files (see helpers_aws.py).
     """
     return ''.join([random.choice(string.ascii_lowercase) for i in xrange(6)])
 

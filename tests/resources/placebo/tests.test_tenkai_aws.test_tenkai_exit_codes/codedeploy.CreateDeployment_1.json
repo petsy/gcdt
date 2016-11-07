@@ -1,0 +1,15 @@
+{
+    "status_code": 200, 
+    "data": {
+        "deploymentId": "d-LJUA5TWBI", 
+        "ResponseMetadata": {
+            "HTTPStatusCode": 200, 
+            "RequestId": "2adcd695-97a6-11e6-8643-0ffda78cb7c6", 
+            "HTTPHeaders": {
+                "x-amzn-requestid": "2adcd695-97a6-11e6-8643-0ffda78cb7c6", 
+                "content-length": "30", 
+                "content-type": "application/x-amz-json-1.1"
+            }
+        }
+    }
+}

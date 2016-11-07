@@ -1,0 +1,713 @@
+{
+    "status_code": 200, 
+    "data": {
+        "Owner": {
+            "DisplayName": "aws-dp-dev", 
+            "ID": "003a87b825e17149b14db54e5177e832c9cedda326bfc0f038722dd68b90a310"
+        }, 
+        "Buckets": [
+            {
+                "CreationDate": {
+                    "hour": 15, 
+                    "__class__": "datetime", 
+                    "month": 8, 
+                    "second": 10, 
+                    "microsecond": 0, 
+                    "year": 2016, 
+                    "day": 26, 
+                    "minute": 19
+                }, 
+                "Name": "7finity-dp-dev-backup"
+            }, 
+            {
+                "CreationDate": {
+                    "hour": 9, 
+                    "__class__": "datetime", 
+                    "month": 4, 
+                    "second": 26, 
+                    "microsecond": 0, 
+                    "year": 2016, 
+                    "day": 26, 
+                    "minute": 44
+                }, 
+                "Name": "7finity-dp-dev-deployment"
+            }, 
+            {
+                "CreationDate": {
+                    "hour": 12, 
+                    "__class__": "datetime", 
+                    "month": 4, 
+                    "second": 23, 
+                    "microsecond": 0, 
+                    "year": 2016, 
+                    "day": 1, 
+                    "minute": 21
+                }, 
+                "Name": "cf-templates-12a9pepk32t9g-eu-west-1"
+            }, 
+            {
+                "CreationDate": {
+                    "hour": 8, 
+                    "__class__": "datetime", 
+                    "month": 9, 
+                    "second": 37, 
+                    "microsecond": 0, 
+                    "year": 2016, 
+                    "day": 23, 
+                    "minute": 19
+                }, 
+                "Name": "dp-dev-ingest-adproxy-input"
+            }, 
+            {
+                "CreationDate": {
+                    "hour": 8, 
+                    "__class__": "datetime", 
+                    "month": 9, 
+                    "second": 31, 
+                    "microsecond": 0, 
+                    "year": 2016, 
+                    "day": 23, 
+                    "minute": 18
+                }, 
+                "Name": "dp-dev-ingest-cdn-anonymized"
+            }, 
+            {
+                "CreationDate": {
+                    "hour": 16, 
+                    "__class__": "datetime", 
+                    "month": 4, 
+                    "second": 29, 
+                    "microsecond": 0, 
+                    "year": 2016, 
+                    "day": 6, 
+                    "minute": 9
+                }, 
+                "Name": "dp-dev-ingest-cdn-errors"
+            }, 
+            {
+                "CreationDate": {
+                    "hour": 8, 
+                    "__class__": "datetime", 
+                    "month": 9, 
+                    "second": 37, 
+                    "microsecond": 0, 
+                    "year": 2016, 
+                    "day": 23, 
+                    "minute": 18
+                }, 
+                "Name": "dp-dev-ingest-cdn-input"
+            }, 
+            {
+                "CreationDate": {
+                    "hour": 8, 
+                    "__class__": "datetime", 
+                    "month": 9, 
+                    "second": 19, 
+                    "microsecond": 0, 
+                    "year": 2016, 
+                    "day": 23, 
+                    "minute": 19
+                }, 
+                "Name": "dp-dev-ingest-cdn-normalized"
+            }, 
+            {
+                "CreationDate": {
+                    "hour": 8, 
+                    "__class__": "datetime", 
+                    "month": 9, 
+                    "second": 25, 
+                    "microsecond": 0, 
+                    "year": 2016, 
+                    "day": 23, 
+                    "minute": 18
+                }, 
+                "Name": "dp-dev-ingest-cdn-splitted"
+            }, 
+            {
+                "CreationDate": {
+                    "hour": 8, 
+                    "__class__": "datetime", 
+                    "month": 9, 
+                    "second": 40, 
+                    "microsecond": 0, 
+                    "year": 2016, 
+                    "day": 23, 
+                    "minute": 19
+                }, 
+                "Name": "dp-dev-ingest-player-enrichment"
+            }, 
+            {
+                "CreationDate": {
+                    "hour": 8, 
+                    "__class__": "datetime", 
+                    "month": 9, 
+                    "second": 39, 
+                    "microsecond": 0, 
+                    "year": 2016, 
+                    "day": 23, 
+                    "minute": 19
+                }, 
+                "Name": "dp-dev-ingest-player-input"
+            }, 
+            {
+                "CreationDate": {
+                    "hour": 11, 
+                    "__class__": "datetime", 
+                    "month": 9, 
+                    "second": 48, 
+                    "microsecond": 0, 
+                    "year": 2016, 
+                    "day": 29, 
+                    "minute": 45
+                }, 
+                "Name": "dp-dev-ingest-player-processed"
+            }, 
+            {
+                "CreationDate": {
+                    "hour": 8, 
+                    "__class__": "datetime", 
+                    "month": 9, 
+                    "second": 41, 
+                    "microsecond": 0, 
+                    "year": 2016, 
+                    "day": 23, 
+                    "minute": 19
+                }, 
+                "Name": "dp-dev-ingest-vas-input"
+            }, 
+            {
+                "CreationDate": {
+                    "hour": 10, 
+                    "__class__": "datetime", 
+                    "month": 6, 
+                    "second": 37, 
+                    "microsecond": 0, 
+                    "year": 2016, 
+                    "day": 17, 
+                    "minute": 56
+                }, 
+                "Name": "dp-dev-operations-settings"
+            }, 
+            {
+                "CreationDate": {
+                    "hour": 14, 
+                    "__class__": "datetime", 
+                    "month": 9, 
+                    "second": 59, 
+                    "microsecond": 0, 
+                    "year": 2016, 
+                    "day": 1, 
+                    "minute": 46
+                }, 
+                "Name": "dp-dev-rating-mes-export"
+            }, 
+            {
+                "CreationDate": {
+                    "hour": 15, 
+                    "__class__": "datetime", 
+                    "month": 9, 
+                    "second": 27, 
+                    "microsecond": 0, 
+                    "year": 2016, 
+                    "day": 5, 
+                    "minute": 18
+                }, 
+                "Name": "dp-dev-serve-api-billing-storage"
+            }, 
+            {
+                "CreationDate": {
+                    "hour": 12, 
+                    "__class__": "datetime", 
+                    "month": 5, 
+                    "second": 1, 
+                    "microsecond": 0, 
+                    "year": 2016, 
+                    "day": 23, 
+                    "minute": 58
+                }, 
+                "Name": "dp-dev-serve-emr-bootstrap"
+            }, 
+            {
+                "CreationDate": {
+                    "hour": 11, 
+                    "__class__": "datetime", 
+                    "month": 7, 
+                    "second": 4, 
+                    "microsecond": 0, 
+                    "year": 2016, 
+                    "day": 28, 
+                    "minute": 18
+                }, 
+                "Name": "dp-dev-serve-emr-code"
+            }, 
+            {
+                "CreationDate": {
+                    "hour": 12, 
+                    "__class__": "datetime", 
+                    "month": 5, 
+                    "second": 1, 
+                    "microsecond": 0, 
+                    "year": 2016, 
+                    "day": 23, 
+                    "minute": 58
+                }, 
+                "Name": "dp-dev-serve-emr-logs"
+            }, 
+            {
+                "CreationDate": {
+                    "hour": 12, 
+                    "__class__": "datetime", 
+                    "month": 5, 
+                    "second": 2, 
+                    "microsecond": 0, 
+                    "year": 2016, 
+                    "day": 23, 
+                    "minute": 58
+                }, 
+                "Name": "dp-dev-serve-emr-results"
+            }, 
+            {
+                "CreationDate": {
+                    "hour": 11, 
+                    "__class__": "datetime", 
+                    "month": 7, 
+                    "second": 5, 
+                    "microsecond": 0, 
+                    "year": 2016, 
+                    "day": 28, 
+                    "minute": 18
+                }, 
+                "Name": "dp-dev-serve-emr-temp"
+            }, 
+            {
+                "CreationDate": {
+                    "hour": 13, 
+                    "__class__": "datetime", 
+                    "month": 8, 
+                    "second": 0, 
+                    "microsecond": 0, 
+                    "year": 2016, 
+                    "day": 4, 
+                    "minute": 0
+                }, 
+                "Name": "dp-dev-serve-jupyter"
+            }, 
+            {
+                "CreationDate": {
+                    "hour": 8, 
+                    "__class__": "datetime", 
+                    "month": 9, 
+                    "second": 28, 
+                    "microsecond": 0, 
+                    "year": 2016, 
+                    "day": 23, 
+                    "minute": 19
+                }, 
+                "Name": "dp-dev-store-cdn-redshift-manifests"
+            }, 
+            {
+                "CreationDate": {
+                    "hour": 13, 
+                    "__class__": "datetime", 
+                    "month": 9, 
+                    "second": 15, 
+                    "microsecond": 0, 
+                    "year": 2016, 
+                    "day": 19, 
+                    "minute": 31
+                }, 
+                "Name": "dp-dev-store-elasticsearch-cluster-elb-logs"
+            }, 
+            {
+                "CreationDate": {
+                    "hour": 13, 
+                    "__class__": "datetime", 
+                    "month": 9, 
+                    "second": 48, 
+                    "microsecond": 0, 
+                    "year": 2016, 
+                    "day": 19, 
+                    "minute": 30
+                }, 
+                "Name": "dp-dev-store-elasticsearch-cluster-snapshots"
+            }, 
+            {
+                "CreationDate": {
+                    "hour": 13, 
+                    "__class__": "datetime", 
+                    "month": 8, 
+                    "second": 47, 
+                    "microsecond": 0, 
+                    "year": 2016, 
+                    "day": 16, 
+                    "minute": 36
+                }, 
+                "Name": "dp-unittest-kumo-artifact-bucket"
+            }, 
+            {
+                "CreationDate": {
+                    "hour": 12, 
+                    "__class__": "datetime", 
+                    "month": 9, 
+                    "second": 37, 
+                    "microsecond": 0, 
+                    "year": 2016, 
+                    "day": 22, 
+                    "minute": 34
+                }, 
+                "Name": "ds-dev-process-recommender-feedback-log"
+            }, 
+            {
+                "CreationDate": {
+                    "hour": 12, 
+                    "__class__": "datetime", 
+                    "month": 9, 
+                    "second": 28, 
+                    "microsecond": 0, 
+                    "year": 2016, 
+                    "day": 22, 
+                    "minute": 28
+                }, 
+                "Name": "ds-dev-process-recommender-log"
+            }, 
+            {
+                "CreationDate": {
+                    "hour": 9, 
+                    "__class__": "datetime", 
+                    "month": 9, 
+                    "second": 1, 
+                    "microsecond": 0, 
+                    "year": 2016, 
+                    "day": 7, 
+                    "minute": 16
+                }, 
+                "Name": "elasticbeanstalk-eu-west-1-644239850139"
+            }, 
+            {
+                "CreationDate": {
+                    "hour": 18, 
+                    "__class__": "datetime", 
+                    "month": 10, 
+                    "second": 23, 
+                    "microsecond": 0, 
+                    "year": 2016, 
+                    "day": 20, 
+                    "minute": 52
+                }, 
+                "Name": "jobr-test"
+            }, 
+            {
+                "CreationDate": {
+                    "hour": 9, 
+                    "__class__": "datetime", 
+                    "month": 9, 
+                    "second": 49, 
+                    "microsecond": 0, 
+                    "year": 2016, 
+                    "day": 22, 
+                    "minute": 16
+                }, 
+                "Name": "recommender-log-copy"
+            }, 
+            {
+                "CreationDate": {
+                    "hour": 12, 
+                    "__class__": "datetime", 
+                    "month": 9, 
+                    "second": 2, 
+                    "microsecond": 0, 
+                    "year": 2016, 
+                    "day": 22, 
+                    "minute": 35
+                }, 
+                "Name": "recommender.dev.ds.glomex.cloud"
+            }, 
+            {
+                "CreationDate": {
+                    "hour": 12, 
+                    "__class__": "datetime", 
+                    "month": 10, 
+                    "second": 14, 
+                    "microsecond": 0, 
+                    "year": 2016, 
+                    "day": 19, 
+                    "minute": 54
+                }, 
+                "Name": "test-dp-ingest-cdn-cloudfront-input"
+            }, 
+            {
+                "CreationDate": {
+                    "hour": 13, 
+                    "__class__": "datetime", 
+                    "month": 10, 
+                    "second": 29, 
+                    "microsecond": 0, 
+                    "year": 2016, 
+                    "day": 19, 
+                    "minute": 1
+                }, 
+                "Name": "test-dp-ingest-cdn-input"
+            }, 
+            {
+                "CreationDate": {
+                    "hour": 9, 
+                    "__class__": "datetime", 
+                    "month": 6, 
+                    "second": 16, 
+                    "microsecond": 0, 
+                    "year": 2016, 
+                    "day": 2, 
+                    "minute": 24
+                }, 
+                "Name": "test-repro"
+            }, 
+            {
+                "CreationDate": {
+                    "hour": 11, 
+                    "__class__": "datetime", 
+                    "month": 4, 
+                    "second": 9, 
+                    "microsecond": 0, 
+                    "year": 2016, 
+                    "day": 25, 
+                    "minute": 56
+                }, 
+                "Name": "test-reprocess-src"
+            }, 
+            {
+                "CreationDate": {
+                    "hour": 9, 
+                    "__class__": "datetime", 
+                    "month": 6, 
+                    "second": 6, 
+                    "microsecond": 0, 
+                    "year": 2016, 
+                    "day": 2, 
+                    "minute": 24
+                }, 
+                "Name": "test-reprocess-target"
+            }, 
+            {
+                "CreationDate": {
+                    "hour": 18, 
+                    "__class__": "datetime", 
+                    "month": 9, 
+                    "second": 47, 
+                    "microsecond": 0, 
+                    "year": 2016, 
+                    "day": 21, 
+                    "minute": 32
+                }, 
+                "Name": "unittest-lambda-s3-event-source-brexvq"
+            }, 
+            {
+                "CreationDate": {
+                    "hour": 13, 
+                    "__class__": "datetime", 
+                    "month": 9, 
+                    "second": 44, 
+                    "microsecond": 0, 
+                    "year": 2016, 
+                    "day": 19, 
+                    "minute": 43
+                }, 
+                "Name": "unittest-lambda-s3-event-source-grjuxx"
+            }, 
+            {
+                "CreationDate": {
+                    "hour": 20, 
+                    "__class__": "datetime", 
+                    "month": 9, 
+                    "second": 9, 
+                    "microsecond": 0, 
+                    "year": 2016, 
+                    "day": 21, 
+                    "minute": 34
+                }, 
+                "Name": "unittest-lambda-s3-event-source-hgwwdv"
+            }, 
+            {
+                "CreationDate": {
+                    "hour": 8, 
+                    "__class__": "datetime", 
+                    "month": 9, 
+                    "second": 28, 
+                    "microsecond": 0, 
+                    "year": 2016, 
+                    "day": 22, 
+                    "minute": 26
+                }, 
+                "Name": "unittest-lambda-s3-event-source-kpeyol"
+            }, 
+            {
+                "CreationDate": {
+                    "hour": 8, 
+                    "__class__": "datetime", 
+                    "month": 9, 
+                    "second": 51, 
+                    "microsecond": 0, 
+                    "year": 2016, 
+                    "day": 22, 
+                    "minute": 38
+                }, 
+                "Name": "unittest-lambda-s3-event-source-lhqjhv"
+            }, 
+            {
+                "CreationDate": {
+                    "hour": 14, 
+                    "__class__": "datetime", 
+                    "month": 9, 
+                    "second": 8, 
+                    "microsecond": 0, 
+                    "year": 2016, 
+                    "day": 19, 
+                    "minute": 3
+                }, 
+                "Name": "unittest-lambda-s3-event-source-nlnepk"
+            }, 
+            {
+                "CreationDate": {
+                    "hour": 21, 
+                    "__class__": "datetime", 
+                    "month": 9, 
+                    "second": 40, 
+                    "microsecond": 0, 
+                    "year": 2016, 
+                    "day": 21, 
+                    "minute": 3
+                }, 
+                "Name": "unittest-lambda-s3-event-source-obgkcm"
+            }, 
+            {
+                "CreationDate": {
+                    "hour": 18, 
+                    "__class__": "datetime", 
+                    "month": 9, 
+                    "second": 37, 
+                    "microsecond": 0, 
+                    "year": 2016, 
+                    "day": 21, 
+                    "minute": 32
+                }, 
+                "Name": "unittest-lambda-s3-event-source-oklsiz"
+            }, 
+            {
+                "CreationDate": {
+                    "hour": 8, 
+                    "__class__": "datetime", 
+                    "month": 9, 
+                    "second": 11, 
+                    "microsecond": 0, 
+                    "year": 2016, 
+                    "day": 23, 
+                    "minute": 26
+                }, 
+                "Name": "unittest-lambda-s3-event-source-qbrmok"
+            }, 
+            {
+                "CreationDate": {
+                    "hour": 20, 
+                    "__class__": "datetime", 
+                    "month": 9, 
+                    "second": 16, 
+                    "microsecond": 0, 
+                    "year": 2016, 
+                    "day": 21, 
+                    "minute": 22
+                }, 
+                "Name": "unittest-lambda-s3-event-source-soqfes"
+            }, 
+            {
+                "CreationDate": {
+                    "hour": 8, 
+                    "__class__": "datetime", 
+                    "month": 9, 
+                    "second": 19, 
+                    "microsecond": 0, 
+                    "year": 2016, 
+                    "day": 2, 
+                    "minute": 42
+                }, 
+                "Name": "unittest-lambda-s3-event-source-stjpeb"
+            }, 
+            {
+                "CreationDate": {
+                    "hour": 12, 
+                    "__class__": "datetime", 
+                    "month": 9, 
+                    "second": 32, 
+                    "microsecond": 0, 
+                    "year": 2016, 
+                    "day": 26, 
+                    "minute": 57
+                }, 
+                "Name": "unittest-lambda-s3-event-source-txzche"
+            }, 
+            {
+                "CreationDate": {
+                    "hour": 14, 
+                    "__class__": "datetime", 
+                    "month": 9, 
+                    "second": 5, 
+                    "microsecond": 0, 
+                    "year": 2016, 
+                    "day": 16, 
+                    "minute": 40
+                }, 
+                "Name": "unittest-lambda-s3-event-source-wplevr"
+            }, 
+            {
+                "CreationDate": {
+                    "hour": 18, 
+                    "__class__": "datetime", 
+                    "month": 9, 
+                    "second": 16, 
+                    "microsecond": 0, 
+                    "year": 2016, 
+                    "day": 21, 
+                    "minute": 32
+                }, 
+                "Name": "unittest-lambda-s3-event-source-xchpac"
+            }, 
+            {
+                "CreationDate": {
+                    "hour": 13, 
+                    "__class__": "datetime", 
+                    "month": 9, 
+                    "second": 24, 
+                    "microsecond": 0, 
+                    "year": 2016, 
+                    "day": 20, 
+                    "minute": 28
+                }, 
+                "Name": "unittest-lambda-s3-event-source-xezbdn"
+            }, 
+            {
+                "CreationDate": {
+                    "hour": 8, 
+                    "__class__": "datetime", 
+                    "month": 9, 
+                    "second": 56, 
+                    "microsecond": 0, 
+                    "year": 2016, 
+                    "day": 23, 
+                    "minute": 25
+                }, 
+                "Name": "unittest-lambda-s3-event-source-xjpibn"
+            }
+        ], 
+        "ResponseMetadata": {
+            "HTTPStatusCode": 200, 
+            "HostId": "Nt9rMfEQPEUSnXPzfeGMOJkoZ/xBLqDIYaK6J+Y3qIgCV0ArbE4UhAadZkzxl69A5X0uHc2MOg0=", 
+            "RequestId": "DE14041B1AC220EE", 
+            "HTTPHeaders": {
+                "x-amz-id-2": "Nt9rMfEQPEUSnXPzfeGMOJkoZ/xBLqDIYaK6J+Y3qIgCV0ArbE4UhAadZkzxl69A5X0uHc2MOg0=", 
+                "server": "AmazonS3", 
+                "transfer-encoding": "chunked", 
+                "x-amz-request-id": "DE14041B1AC220EE", 
+                "date": "Fri, 21 Oct 2016 15:35:31 GMT", 
+                "content-type": "application/xml"
+            }
+        }
+    }
+}

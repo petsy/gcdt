@@ -1,0 +1,37 @@
+{
+    "status_code": 200, 
+    "data": {
+        "StackEvents": [
+            {
+                "StackId": "arn:aws:cloudformation:eu-west-1:644239850139:stack/gcdt-test-tenkai-deploy/a8881f30-97a5-11e6-9fa3-500c4241c2fe", 
+                "EventId": "a8890990-97a5-11e6-9fa3-500c4241c2fe", 
+                "ResourceStatus": "CREATE_IN_PROGRESS", 
+                "ResourceType": "AWS::CloudFormation::Stack", 
+                "Timestamp": {
+                    "hour": 15, 
+                    "__class__": "datetime", 
+                    "month": 10, 
+                    "second": 23, 
+                    "microsecond": 438000, 
+                    "year": 2016, 
+                    "day": 21, 
+                    "minute": 47
+                }, 
+                "ResourceStatusReason": "User Initiated", 
+                "StackName": "gcdt-test-tenkai-deploy", 
+                "PhysicalResourceId": "arn:aws:cloudformation:eu-west-1:644239850139:stack/gcdt-test-tenkai-deploy/a8881f30-97a5-11e6-9fa3-500c4241c2fe", 
+                "LogicalResourceId": "gcdt-test-tenkai-deploy"
+            }
+        ], 
+        "ResponseMetadata": {
+            "HTTPStatusCode": 200, 
+            "RequestId": "a942e4af-97a5-11e6-bd00-f3104f225b32", 
+            "HTTPHeaders": {
+                "x-amzn-requestid": "a942e4af-97a5-11e6-bd00-f3104f225b32", 
+                "date": "Fri, 21 Oct 2016 15:47:24 GMT", 
+                "content-length": "1097", 
+                "content-type": "text/xml"
+            }
+        }
+    }
+}

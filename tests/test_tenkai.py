@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 import os
+
 from nose.tools import assert_equal, assert_true, assert_items_equal, \
     assert_is_not_none
+
 from glomex_utils.config_reader import read_config
 from gcdt.tenkai_core import _make_tar_file, _files_to_bundle, bundle_revision, \
     _build_bundle_key, _execute_pre_bundle_scripts

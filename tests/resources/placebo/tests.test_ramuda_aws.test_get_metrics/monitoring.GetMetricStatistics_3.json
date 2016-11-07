@@ -1,0 +1,17 @@
+{
+    "status_code": 200, 
+    "data": {
+        "Datapoints": [], 
+        "ResponseMetadata": {
+            "HTTPStatusCode": 200, 
+            "RequestId": "b5070589-979b-11e6-92af-a9ca50d67312", 
+            "HTTPHeaders": {
+                "x-amzn-requestid": "b5070589-979b-11e6-92af-a9ca50d67312", 
+                "date": "Fri, 21 Oct 2016 14:36:08 GMT", 
+                "content-length": "334", 
+                "content-type": "text/xml"
+            }
+        }, 
+        "Label": "Invocations"
+    }
+}

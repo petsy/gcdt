@@ -1,0 +1,25 @@
+{
+    "status_code": 200, 
+    "data": {
+        "FunctionError": "Unhandled", 
+        "Payload": {
+            "body": "{\"errorMessage\": \"Unable to import module 'handler'\"}", 
+            "__module__": "botocore.response", 
+            "__class__": "StreamingBody"
+        }, 
+        "ResponseMetadata": {
+            "HTTPStatusCode": 200, 
+            "RequestId": "dc50da64-979b-11e6-96af-63e84b8152e0", 
+            "HTTPHeaders": {
+                "x-amzn-requestid": "dc50da64-979b-11e6-96af-63e84b8152e0", 
+                "content-length": "53", 
+                "x-amzn-remapped-content-length": "0", 
+                "x-amz-function-error": "Unhandled", 
+                "connection": "keep-alive", 
+                "date": "Fri, 21 Oct 2016 14:37:14 GMT", 
+                "content-type": "application/json"
+            }
+        }, 
+        "StatusCode": 200
+    }
+}

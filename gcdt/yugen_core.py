@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from __future__ import print_function
-
 import codecs
 import json
 import os
@@ -9,9 +8,11 @@ import uuid
 import boto3
 from botocore.exceptions import ClientError
 from clint.textui import colored
-from gcdt import monitoring
 from pybars import Compiler
 from tabulate import tabulate
+
+from gcdt import monitoring
+
 
 SWAGGER_FILE = 'swagger.yaml'
 INVOKE_FUNCTION_ACTION = 'lambda:InvokeFunction'
@@ -19,8 +20,8 @@ AMAZON_API_PRINCIPAL = 'apigateway.amazonaws.com'
 
 
 # WIP
-def export_to_swagger(api_name, stage_name, api_description, lambdas,
-                      custom_hostname=False, custom_base_path=False):
+def export_to_swagger(boto_session, api_name, stage_name, api_description,
+                      lambdas, custom_hostname=False, custom_base_path=False):
     """Export the API design as swagger file. 
     
     :param api_name: 
@@ -32,7 +33,7 @@ def export_to_swagger(api_name, stage_name, api_description, lambdas,
     """
     print('Exporting to swagger...')
 
-    api = _api_by_name(api_name)
+    api = _api_by_name(boto_session, api_name)
     if api is not None:
 
         print(_json2table(api))
@@ -52,11 +53,11 @@ def export_to_swagger(api_name, stage_name, api_description, lambdas,
         print('API name unknown')
 
 
-def list_apis():
+def list_apis(boto_session):
     """List APIs in account."""
-    client = boto3.client('apigateway')
+    client_api = boto_session.client('apigateway')
 
-    apis = client.get_rest_apis()['items']
+    apis = client_api.get_rest_apis()['items']
 
     for api in apis:
         print(_json2table(api))
@@ -75,7 +76,7 @@ def deploy_api(boto_session, api_name, api_description, stage_name, api_key,
     :param slack_token:
     :param slack_channel:
     """
-    if not _api_exists(api_name):
+    if not _api_exists(boto_session, api_name):
         if os.path.isfile(SWAGGER_FILE):
             # this does an import from swagger file
             # the next step does not make sense since there is a check in
@@ -86,11 +87,11 @@ def deploy_api(boto_session, api_name, api_description, stage_name, api_key,
         else:
             print('No swagger file (%s) found' % SWAGGER_FILE)
 
-        api = _api_by_name(api_name)
+        api = _api_by_name(boto_session, api_name)
         if api is not None:
-            _ensure_lambdas_permissions(lambdas, api)
-            _create_deployment(api_name, stage_name)
-            _wire_api_key(api_name, api_key, stage_name)
+            _ensure_lambdas_permissions(boto_session, lambdas, api)
+            _create_deployment(boto_session, api_name, stage_name)
+            _wire_api_key(boto_session, api_name, api_key, stage_name)
             message = 'yugen bot: created api *%s*' % api_name
             monitoring.slack_notification(slack_channel, message, slack_token)
         else:
@@ -102,32 +103,32 @@ def deploy_api(boto_session, api_name, api_description, stage_name, api_key,
         else:
             _update_api()
 
-        api = _api_by_name(api_name)
+        api = _api_by_name(boto_session, api_name)
         if api is not None:
-            _ensure_lambdas_permissions(lambdas, api)
-            _create_deployment(api_name, stage_name)
+            _ensure_lambdas_permissions(boto_session, lambdas, api)
+            _create_deployment(boto_session, api_name, stage_name)
             message = 'yugen bot: updated api *%s*' % api_name
             monitoring.slack_notification(slack_channel, message, slack_token)
         else:
             print('API name unknown')
 
 
-def delete_api(api_name, slack_token=None, slack_channel='systemmessages'):
+def delete_api(boto_session, api_name, slack_token=None, slack_channel='systemmessages'):
     """Delete the API.
 
     :param api_name:
     :param slack_token:
     :param slack_channel:
     """
-    client = boto3.client('apigateway')
+    client_api = boto_session.client('apigateway')
 
     print('deleting api: %s' % api_name)
-    api = _api_by_name(api_name)
+    api = _api_by_name(boto_session, api_name)
 
     if api is not None:
         print(_json2table(api))
 
-        response = client.delete_rest_api(
+        response = client_api.delete_rest_api(
             restApiId=api['id']
         )
 
@@ -138,17 +139,17 @@ def delete_api(api_name, slack_token=None, slack_channel='systemmessages'):
         print('API name unknown')
 
 
-def create_api_key(api_name, api_key_name):
+def create_api_key(boto_session, api_name, api_key_name):
     """Create a new API key as reference for api.conf.
 
     :param api_name:
     :param api_key_name:
     :return: api_key
     """
-    client = boto3.client('apigateway')
+    client_api = boto_session.client('apigateway')
     print('create api key: %s' % api_key_name)
 
-    response = client.create_api_key(
+    response = client_api.create_api_key(
         name=api_key_name,
         description='Created for ' + api_name,
         enabled=True
@@ -160,35 +161,35 @@ def create_api_key(api_name, api_key_name):
     return response['id']
 
 
-def delete_api_key(api_key):
+def delete_api_key(boto_session, api_key):
     """Remove API key.
 
     :param api_key:
     """
-    client = boto3.client('apigateway')
+    client_api = boto_session.client('apigateway')
     print('delete api key: %s' % api_key)
 
-    response = client.delete_api_key(
+    response = client_api.delete_api_key(
         apiKey=api_key
     )
 
     print(_json2table(response))
 
 
-def list_api_keys():
+def list_api_keys(boto_session):
     """Print the defined API keys.
     """
-    client = boto3.client('apigateway')
+    client_api = boto_session.client('apigateway')
     print('listing api keys')
 
-    response = client.get_api_keys()['items']
+    response = client_api.get_api_keys()['items']
 
     for item in response:
         print(_json2table(item))
 
 
-def create_custom_domain(api_name, api_target_stage, api_base_path, domain_name,
-                         route_53_record,
+def create_custom_domain(boto_session, api_name, api_target_stage,
+                         api_base_path, domain_name, route_53_record,
                          ssl_cert, hosted_zone_id):
     """Add custom domain to your API.
 
@@ -202,37 +203,38 @@ def create_custom_domain(api_name, api_target_stage, api_base_path, domain_name,
     :return: exit_code
     """
     api_base_path = _basepath_to_string_if_null(api_base_path)
-    api = _api_by_name(api_name)
+    api = _api_by_name(boto_session, api_name)
 
     if not api:
         print("Api %s does not exist, aborting..." % api_name)
         # exit(1)
         return 1
 
-    domain = _custom_domain_name_exists(domain_name)
+    domain = _custom_domain_name_exists(boto_session, domain_name)
 
     if not domain:
-        response = _create_new_custom_domain(domain_name, ssl_cert)
+        response = _create_new_custom_domain(boto_session, domain_name, ssl_cert)
         cloudfront_distribution = response['distributionDomainName']
     else:
         cloudfront_distribution = domain['distributionDomainName']
 
-    if _base_path_mapping_exists(domain_name, api_base_path):
-        _ensure_correct_base_path_mapping(domain_name, api_base_path, api['id'],
+    if _base_path_mapping_exists(boto_session, domain_name, api_base_path):
+        _ensure_correct_base_path_mapping(boto_session, domain_name,
+                                          api_base_path, api['id'],
                                           api_target_stage)
     else:
-        _create_base_path_mapping(domain_name, api_base_path, api_target_stage,
-                                  api['id'])
+        _create_base_path_mapping(boto_session, domain_name, api_base_path,
+                                  api_target_stage, api['id'])
 
     record_exists, record_correct = \
-        _record_exists_and_correct(hosted_zone_id,
+        _record_exists_and_correct(boto_session, hosted_zone_id,
                                    route_53_record,
                                    cloudfront_distribution)
     if record_correct:
         print('Route53 record correctly set: %s --> %s' % (route_53_record,
                                                         cloudfront_distribution))
     else:
-        _ensure_correct_route_53_record(hosted_zone_id,
+        _ensure_correct_route_53_record(boto_session, hosted_zone_id,
                                         record_name=route_53_record,
                                         record_value=cloudfront_distribution)
         print('Route53 record set: %s --> %s' % (route_53_record,
@@ -240,14 +242,14 @@ def create_custom_domain(api_name, api_target_stage, api_base_path, domain_name,
     return 0
 
 
-def get_lambdas(config, add_arn=False):
+def get_lambdas(boto_session, config, add_arn=False):
     """Get the list of lambda functions.
 
     :param config:
     :param add_arn:
     :return: list containing lambda entries
     """
-    client = boto3.client('lambda')
+    client_api = boto_session.client('apigateway')
     lambda_entries = config.get('lambda.entries', [])
     lmbdas = []
     for lambda_entry in lambda_entries:
@@ -258,25 +260,26 @@ def get_lambdas(config, add_arn=False):
             'swagger_ref': lambda_entry.get('swaggerRef', None)
         }
         if add_arn:
-            response_lambda = client.get_function(FunctionName=lmbda['name'])
+            response_lambda = client_api.get_function(FunctionName=lmbda['name'])
             lmbda.update(
                 {'arn': response_lambda['Configuration']['FunctionArn']})
         lmbdas.append(lmbda)
     return lmbdas
 
 
-def are_credentials_still_valid():
+def are_credentials_still_valid(boto_session):
     """Check if credentials are still valid.
 
     :return: exit_codes
     """
     # TODO: refactor to utils
-    client = boto3.client('lambda')
+    client_api = boto_session.client('apigateway')
     try:
-        client.list_functions()
+        client_api.get_account()
     except Exception as e:
         print(colored.red(
             'Your credentials have expired... Please renew and try again!'))
+        print(e)
         # sys.exit(1)
         return 1
     return 0
@@ -284,11 +287,11 @@ def are_credentials_still_valid():
 
 def _import_from_swagger(boto_session, api_name, api_description, stage_name,
                          lambdas):
-    client = boto_session.create_client('apigateway')
+    client_api = boto_session.client('apigateway')
 
     print('Import from swagger file')
 
-    api = _api_by_name(api_name)
+    api = _api_by_name(boto_session, api_name)
     if api is None:
         print(_json2table(api))
         api_id = False
@@ -299,7 +302,7 @@ def _import_from_swagger(boto_session, api_name, api_description, stage_name,
                                                          lambdas)
         swagger_body = _compile_template(SWAGGER_FILE,
                                          template_variables)
-        response_swagger = client.import_rest_api(
+        response_swagger = client_api.import_rest_api(
             failOnWarnings=True,
             body=swagger_body
         )
@@ -310,11 +313,11 @@ def _import_from_swagger(boto_session, api_name, api_description, stage_name,
 
 def _update_from_swagger(boto_session, api_name, api_description, stage_name,
                          lambdas):
-    client = boto_session.create_client('apigateway')
+    client_api = boto_session.client('apigateway')
 
     print('update from swagger file')
 
-    api = _api_by_name(api_name)
+    api = _api_by_name(boto_session, api_name)
 
     if api is not None:
         api_id = api['id']
@@ -326,7 +329,7 @@ def _update_from_swagger(boto_session, api_name, api_description, stage_name,
         filled_swagger_file = _compile_template(SWAGGER_FILE,
                                                 template_variables)
 
-        response_swagger = client.put_rest_api(
+        response_swagger = client_api.put_rest_api(
             restApiId=api['id'],
             mode='overwrite',
             failOnWarnings=True,
@@ -338,12 +341,12 @@ def _update_from_swagger(boto_session, api_name, api_description, stage_name,
     print(_json2table(response_swagger))
 
 
-def _create_api(api_name, api_description):
-    client = boto3.client('apigateway')
+def _create_api(boto_session, api_name, api_description):
+    client_api = boto_session.client('apigateway')
 
     print('creating API')
 
-    response = client.create_rest_api(
+    response = client_api.create_rest_api(
         name=api_name,
         description=api_description
     )
@@ -351,15 +354,15 @@ def _create_api(api_name, api_description):
     print(_json2table(response))
 
 
-def _wire_api_key(api_name, api_key, stage_name):
-    client = boto3.client('apigateway')
+def _wire_api_key(boto_session, api_name, api_key, stage_name):
+    client_api = boto_session.client('apigateway')
     print('updating api key')
 
-    api = _api_by_name(api_name)
+    api = _api_by_name(boto_session, api_name)
 
     if api is not None:
 
-        response = client.update_api_key(
+        response = client_api.update_api_key(
             apiKey=api_key,
             patchOperations=[
                 {
@@ -379,15 +382,15 @@ def _update_api():
     print('updating api. not supported now')
 
 
-def _create_deployment(api_name, stage_name):
-    client = boto3.client('apigateway')
+def _create_deployment(boto_session, api_name, stage_name):
+    client_api = boto_session.client('apigateway')
     print('create deployment')
 
-    api = _api_by_name(api_name)
+    api = _api_by_name(boto_session, api_name)
 
     if api is not None:
 
-        response = client.create_deployment(
+        response = client_api.create_deployment(
             restApiId=api['id'],
             stageName=stage_name,
             description='TO BE FILLED'
@@ -398,10 +401,10 @@ def _create_deployment(api_name, stage_name):
         print('API name unknown')
 
 
-def _ensure_correct_route_53_record(hosted_zone_id, record_name, record_value,
-                                    record_type='CNAME'):
-    route_53_client = boto3.client('route53')
-    response = route_53_client.change_resource_record_sets(
+def _ensure_correct_route_53_record(boto_session, hosted_zone_id, record_name,
+                                    record_value, record_type='CNAME'):
+    client_route53 = boto_session.client('route53')
+    response = client_route53.change_resource_record_sets(
         HostedZoneId=hosted_zone_id,
         ChangeBatch={
             'Changes': [
@@ -423,10 +426,10 @@ def _ensure_correct_route_53_record(hosted_zone_id, record_name, record_value,
     )
 
 
-def _ensure_correct_base_path_mapping(domain_name, base_path, api_id,
+def _ensure_correct_base_path_mapping(boto_session, domain_name, base_path, api_id,
                                       target_stage):
-    client = boto3.client('apigateway')
-    mapping = client.get_base_path_mapping(domainName=domain_name,
+    client_api = boto_session.client('apigateway')
+    mapping = client_api.get_base_path_mapping(domainName=domain_name,
                                            basePath=base_path)
     operations = []
     if not mapping['stage'] == target_stage:
@@ -442,15 +445,15 @@ def _ensure_correct_base_path_mapping(domain_name, base_path, api_id,
             'value': api_id
         })
     if operations:
-        response = client.update_base_path_mapping(
+        response = client_api.update_base_path_mapping(
             domainName=domain_name,
             basePath='(none)',
             patchOperations=operations)
 
 
-def _base_path_mapping_exists(domain_name, base_path):
-    client = boto3.client('apigateway')
-    base_path_mappings = client.get_base_path_mappings(domainName=domain_name)
+def _base_path_mapping_exists(boto_session, domain_name, base_path):
+    client_api = boto_session.client('apigateway')
+    base_path_mappings = client_api.get_base_path_mappings(domainName=domain_name)
     mapping_exists = False
     if base_path_mappings.get('items'):
         for item in base_path_mappings['items']:
@@ -459,9 +462,9 @@ def _base_path_mapping_exists(domain_name, base_path):
     return mapping_exists
 
 
-def _create_base_path_mapping(domain_name, base_path, stage, api_id):
-    client = boto3.client('apigateway')
-    base_path_respone = client.create_base_path_mapping(
+def _create_base_path_mapping(boto_session, domain_name, base_path, stage, api_id):
+    client_api = boto_session.client('apigateway')
+    base_path_respone = client_api.create_base_path_mapping(
         domainName=domain_name,
         basePath=base_path,
         restApiId=api_id,
@@ -469,10 +472,10 @@ def _create_base_path_mapping(domain_name, base_path, stage, api_id):
     )
 
 
-def _record_exists_and_correct(hosted_zone_id, target_route_53_record_name,
+def _record_exists_and_correct(boto_session, hosted_zone_id, target_route_53_record_name,
                                cloudfront_distribution):
-    route_53_client = boto3.client('route53')
-    response = route_53_client.list_resource_record_sets(
+    client_route53 = boto_session.client('route53')
+    response = client_route53.list_resource_record_sets(
         HostedZoneId=hosted_zone_id
     )
     resource_records = response['ResourceRecordSets']
@@ -487,9 +490,9 @@ def _record_exists_and_correct(hosted_zone_id, target_route_53_record_name,
     return record_exists, record_correct
 
 
-def _create_new_custom_domain(domain_name, ssl_cert):
-    client = boto3.client('apigateway')
-    response = client.create_domain_name(
+def _create_new_custom_domain(boto_session, domain_name, ssl_cert):
+    client_api = boto_session.client('apigateway')
+    response = client_api.create_domain_name(
         domainName=domain_name,
         certificateName=ssl_cert['name'],
         certificateBody=ssl_cert['body'],
@@ -539,13 +542,13 @@ def _template_variables_to_dict(api_name, api_description, api_target_stage,
     return return_dict
 
 
-def _ensure_lambdas_permissions(lambdas, api):
-    client = boto3.client('lambda')
+def _ensure_lambdas_permissions(boto_session, lambdas, api):
+    client_lambda = boto_session.client('lambda')
     for lmbda in lambdas:
-        _ensure_lambda_permissions(lmbda, api, client)
+        _ensure_lambda_permissions(client_lambda, lmbda, api, )
 
 
-def _ensure_lambda_permissions(lmbda, api, client):
+def _ensure_lambda_permissions(client_lambda, lmbda, api):
     if not lmbda.get('arn'):
         lambda_name = lmbda.get('name', '(no name provided)')
         print('Lambda function {} could not be found'.format(lambda_name))
@@ -564,12 +567,12 @@ def _ensure_lambda_permissions(lmbda, api, client):
         apiId=api['id']
     )
 
-    if _invoke_lambda_permission_exists(client, lambda_arn, source_arn):
+    if _invoke_lambda_permission_exists(client_lambda, lambda_arn, source_arn):
         print('API already has permission to invoke lambda {}'.format(lambda_name))
         return
 
     print('Adding lambda permission for API Gateway for lambda {}'.format(lambda_name))
-    response = client.add_permission(
+    response = client_lambda.add_permission(
         FunctionName=lambda_name,
         StatementId=str(uuid.uuid1()),
         Action=INVOKE_FUNCTION_ACTION,
@@ -581,10 +584,10 @@ def _ensure_lambda_permissions(lmbda, api, client):
     print(_json2table(json.loads(response['Statement'])))
 
 
-def _invoke_lambda_permission_exists(client, lambda_arn, source_arn):
+def _invoke_lambda_permission_exists(client_lambda, lambda_arn, source_arn):
     policy_resource_arn = lambda_arn + ':ACTIVE'
     try:
-        response = client.get_policy(FunctionName=policy_resource_arn)
+        response = client_lambda.get_policy(FunctionName=policy_resource_arn)
     except ClientError:
         return False
 
@@ -611,10 +614,10 @@ def _json2table(data):
         return data
 
 
-def _custom_domain_name_exists(domain_name):
-    client = boto3.client('apigateway')
+def _custom_domain_name_exists(boto_session, domain_name):
+    client_api = boto_session.client('apigateway')
     try:
-        domain = client.get_domain_name(domainName=domain_name)
+        domain = client_api.get_domain_name(domainName=domain_name)
     except ClientError as e:
         domain = None
         if e.response['Error']['Code'] == 'NotFoundException':
@@ -624,8 +627,8 @@ def _custom_domain_name_exists(domain_name):
     return domain
 
 
-def _api_exists(api_name):
-    api = _api_by_name(api_name)
+def _api_exists(boto_session, api_name):
+    api = _api_by_name(boto_session, api_name)
 
     if api is None:
         return False
@@ -633,11 +636,11 @@ def _api_exists(api_name):
     return True
 
 
-def _api_by_name(api_name):
-    client = boto3.client('apigateway')
+def _api_by_name(boto_session, api_name):
+    client_api = boto_session.client('apigateway')
     filtered_rest_apis = \
         filter(lambda api: True if api['name'] == api_name else False,
-               client.get_rest_apis()['items'])
+               client_api.get_rest_apis()['items'])
     if len(filtered_rest_apis) > 1:
         raise Exception(
             'more than one API with that name found. Clean up manually first')
