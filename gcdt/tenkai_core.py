@@ -6,12 +6,11 @@ import json
 import time
 import tarfile
 import boto3
-import subprocess
 
 from boto3.s3.transfer import S3Transfer
 from clint.textui import colored
 
-from gcdt import monitoring
+from gcdt import monitoring, utils
 
 def deploy(boto_session, applicationName, deploymentGroupName, deploymentConfigName, bucket,
            slack_token=None, slack_channel='systemmessages',
@@ -28,7 +27,7 @@ def deploy(boto_session, applicationName, deploymentGroupName, deploymentConfigN
     :return: deploymentId from create_deployment
     """
     if pre_bundle_scripts:
-        exit_code = _execute_pre_bundle_scripts(pre_bundle_scripts)
+        exit_code = utils.execute_scripts(pre_bundle_scripts)
         if exit_code != 0:
             print('Pre bundle script exited with error')
             sys.exit(1)
@@ -131,24 +130,6 @@ def _upload_revision_to_s3(bucket, applicationName, file):
                                   Key=_build_bundle_key(applicationName))
 
     return response['ETag'], response['VersionId']
-
-
-def _execute_pre_bundle_scripts(scripts):
-    for script in scripts:
-        exit_code = _execute_script(script)
-        if exit_code != 0:
-            return exit_code
-    return 0
-
-
-def _execute_script(file_name):
-    if os.path.isfile(file_name):
-        print('Executing %s ...' % file_name)
-        exit_code = subprocess.call([file_name, '-e'])
-        return exit_code
-    else:
-        print('No file found matching %s...' % file_name)
-        return 1
 
 
 def _bucket_exists(bucket):

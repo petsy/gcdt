@@ -498,6 +498,7 @@ lambda {
 
 bundling {
   zip = "bundle.zip"
+  preBundle = ["../bin/first_script.sh", "../bin/second_script.sh"]
   folders = [
     { source = "../redshiftcdnloader", target = "./redshiftcdnloader"}
     { source = "psycopg2-linux", target = "psycopg2" }

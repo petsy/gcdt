@@ -3,12 +3,13 @@ import os
 from tempfile import NamedTemporaryFile
 from StringIO import StringIO
 
-from nose.tools import assert_equal
+from nose.tools import assert_equal, assert_is_not_none
 
+from glomex_utils.config_reader import read_config
 from gcdt import utils
 from gcdt.utils import version, __version__, retries, configure, \
-    read_gcdt_user_config, get_context, get_command, read_gcdt_user_config_value
-from .helpers import create_tempfile, cleanup_tempfiles
+    read_gcdt_user_config, get_command, read_gcdt_user_config_value, execute_scripts
+from .helpers import here, create_tempfile, cleanup_tempfiles
 
 
 def test_version():
@@ -165,3 +166,15 @@ def test_command_delete_f():
         'version': False
     }
     assert_equal(get_command(arguments), 'delete')
+
+
+def test_execute_scripts():
+    start_dir = here('.')
+    codedeploy_dir = here('resources/sample_pre_bundle_script_codedeploy')
+    os.chdir(codedeploy_dir)
+    config = read_config('codedeploy')
+    pre_bundle_scripts = config.get('preBundle', None)
+    assert_is_not_none(pre_bundle_scripts)
+    exit_code = execute_scripts(pre_bundle_scripts)
+    assert_equal(exit_code, 0)
+    os.chdir(start_dir)

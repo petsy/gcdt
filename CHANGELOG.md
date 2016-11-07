@@ -2,6 +2,11 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.0.62] - 2016-11-07
+### Added
+- FEATURE ramuda pre-bundle hooks
+- FIX compress bundle.zip in ramuda bundle/deploy
+
 ## [0.0.61] - 2016-11-07
 ### Added
 - FIX moved build system to infra account (#160)
