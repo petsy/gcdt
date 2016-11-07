@@ -33,8 +33,7 @@ git merge develop
 
 ########
 # Install dependencies
-pip install -r requirements_dev.txt
-pip install -r requirements.txt
+pip install -r requirements.txt -r requirements_dev.txt
 
 
 ########
