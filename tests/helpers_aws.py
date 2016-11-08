@@ -61,20 +61,8 @@ def create_lambda_role_helper(boto_session, role_name):
     return role['Arn']
 
 
-def create_lambda_helper(boto_session, lambda_name, role_arn, handler_filename,
-                         lambda_handler='handler.handle'):
-    # caller needs to clean up both lambda!
-    '''
-    role = _create_role(
-        role_name,
-        policies=[
-            'arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole',
-            'arn:aws:iam::aws:policy/AWSLambdaExecute']
-    )
-
-    role_arn = role['Arn']
-    '''
-    # prepare ./vendored folder and settings file
+@pytest.fixture(scope='function')  # 'function' or 'module'
+def settings_requirements():
     settings_file = os.path.join('settings_dev.conf')
     with open(settings_file, 'w') as settings:
         setting_string = textwrap.dedent("""\
@@ -89,6 +77,23 @@ def create_lambda_helper(boto_session, lambda_name, role_arn, handler_filename,
     if not os.path.exists('./vendored'):
         # reuse ./vendored folder to save us some time during pip install...
         os.makedirs('./vendored')
+
+
+def create_lambda_helper(boto_session, lambda_name, role_arn, handler_filename,
+                         lambda_handler='handler.handle'):
+    # caller needs to clean up both lambda!
+    '''
+    role = _create_role(
+        role_name,
+        policies=[
+            'arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole',
+            'arn:aws:iam::aws:policy/AWSLambdaExecute']
+    )
+
+    role_arn = role['Arn']
+    '''
+    # prepare ./vendored folder and settings file
+    settings_requirements()
 
     lambda_description = 'lambda created for unittesting ramuda deployment'
     # lambda_handler = 'handler.handle'
