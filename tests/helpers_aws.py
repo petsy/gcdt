@@ -119,7 +119,7 @@ def create_lambda_helper(boto_session, lambda_name, role_arn, handler_filename,
 def delete_role_helper(boto_session, role_name):
     """Delete the testing role.
 
-    :param session:
+    :param boto_session:
     :param role_name: the temporary role that has been created via _create_role
     """
     # role_name = role['RoleName']
@@ -264,7 +264,7 @@ def recorder(record_dir, function, filename=None):
     """this helper wraps a function and writes results to a file
     default filename is the name of the function.
 
-    :param directory: where to write the file
+    :param record_dir: where to write the file
     :param function: function to wrap
     :return: wrapped function
     """
@@ -286,7 +286,8 @@ def file_reader(record_dir, filename):
     """helper to read a file line by line
     basically same as dfile.next but strips whitespace
 
-    :param datafile:
+    :param record_dir:
+    :param filename:
     :return: function that returns a line when called
     """
     path = os.path.join(record_dir, filename)
