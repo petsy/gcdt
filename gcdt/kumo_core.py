@@ -99,6 +99,19 @@ def print_parameter_diff(boto_session, config, out=sys.stdout):
         print('\n', file=out)
 
 
+def call_pre_hook(boto_session, cloudformation):
+    """Invoke the pre_hook BEFORE the config is read.
+
+    :param boto_session:
+    :param cloudformation:
+    """
+    conf = {}  # we don't have a config before we read the config
+    stackname = ''
+    parameters = []
+    _call_hook(boto_session, conf, stackname, parameters, cloudformation,
+               hook='pre_hook')
+
+
 def _call_hook(boto_session, config, stack_name, parameters, cloudformation,
                hook, message=None, out=sys.stdout):
     if hook not in ['pre_hook', 'pre_create_hook', 'pre_update_hook',
@@ -313,8 +326,8 @@ def deploy_stack(boto_session, conf, cloudformation, slack_token=None,
     """
     stackname = _get_stack_name(conf)
     parameters = _generate_parameters(conf)
-    _call_hook(boto_session, conf, stackname, parameters, cloudformation,
-               hook='pre_hook')
+    #_call_hook(boto_session, conf, stackname, parameters, cloudformation,
+    #           hook='pre_hook')
     if _stack_exists(boto_session, stackname):
         exit_code = _update_stack(boto_session, conf, cloudformation,
                                   parameters, override_stack_policy,

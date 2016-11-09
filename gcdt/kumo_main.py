@@ -18,7 +18,7 @@ from glomex_utils.config_reader import read_config
 from gcdt import utils
 from gcdt.kumo_core import print_parameter_diff, delete_stack, \
     deploy_stack, generate_template_file, list_stacks, create_change_set, \
-    describe_change_set, load_cloudformation_template
+    describe_change_set, load_cloudformation_template, call_pre_hook
 from gcdt.utils import read_gcdt_user_config, get_context, get_command
 from gcdt.monitoring import datadog_notification, datadog_error, \
     datadog_event_detail
@@ -85,6 +85,7 @@ def main():
     if arguments['deploy']:
         slack_token, slack_channel = get_user_config()
         cloudformation = load_template()
+        call_pre_hook(boto_session, cloudformation)
         conf = read_config()
         print_parameter_diff(boto_session, conf)
         are_credentials_still_valid(boto_session)
