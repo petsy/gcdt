@@ -61,7 +61,6 @@ def create_lambda_role_helper(boto_session, role_name):
     return role['Arn']
 
 
-@pytest.fixture(scope='function')  # 'function' or 'module'
 def settings_requirements():
     settings_file = os.path.join('settings_dev.conf')
     with open(settings_file, 'w') as settings:
