@@ -249,20 +249,18 @@ def get_lambdas(boto_session, config, add_arn=False):
     :param add_arn:
     :return: list containing lambda entries
     """
-    client_api = boto_session.client('apigateway')
+    client_lambda = boto_session.client('lambda')
     lambda_entries = config.get('lambda.entries', [])
     lmbdas = []
     for lambda_entry in lambda_entries:
         lmbda = {
-
             'name': lambda_entry.get('name', None),
             'alias': lambda_entry.get('alias', None),
             'swagger_ref': lambda_entry.get('swaggerRef', None)
         }
         if add_arn:
-            response_lambda = client_api.get_function(FunctionName=lmbda['name'])
-            lmbda.update(
-                {'arn': response_lambda['Configuration']['FunctionArn']})
+            response_lambda = client_lambda.get_function(FunctionName=lmbda['name'])
+            lmbda['arn'] = response_lambda['Configuration']['FunctionArn']
         lmbdas.append(lmbda)
     return lmbdas
 

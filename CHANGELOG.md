@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.0.64] - 2016-11-11
+### Added
+- FIX wrong boto client used when getting lambda arn
+
 ## [0.0.63] - 2016-11-08
 ### Added
 - FIX pre-hook fires before config is read (#165)
