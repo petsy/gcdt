@@ -1,7 +1,7 @@
 Glomex Cloud Deployment Tools
 =============================
 
-version number: 0.0.66.dev0
+version number: 0.0.66
 
 author: Glomex DevOps Team
 
@@ -265,7 +265,7 @@ the function in cloudformation.py
 
 multiple ways of using parameters in your hook functions:
 
-* no arguments (as previous to version 0.0.66.dev0.dev0)
+* no arguments (as previous to version 0.0.66.dev0)
 * use kwargs dict and just access the arguments you need e.g. "def pre_hook(**kwargs):"
 * use all positional arguments e.g. "def pre_hook(boto_session, config, parameters, stack_outputs, stack_state):"
 * use all arguments as keyword arguments or mix.
