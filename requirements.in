@@ -4,8 +4,8 @@ boto3>=1.4.2
 slacker==0.9.25
 pybars3==0.9.1
 pycrypto==2.6.1
-glomex-utils==0.0.13
-glomex-credstash==1.11.16
+glomex-utils==0.0.15
+glomex-credstash==1.11.18
 # Other dependencies
 clint==0.5.1
 docopt==0.6.2
