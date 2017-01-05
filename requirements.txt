@@ -4,6 +4,9 @@
 #
 #    pip-compile --output-file requirements.txt requirements.in
 #
+--extra-index-url https://reposerver-prod-eu-west-1.infra.glomex.cloud/pypi/packages
+--trusted-host reposerver-prod-eu-west-1.infra.glomex.cloud
+
 args==0.1.0               # via clint
 awacs==0.6.0
 boto3==1.4.2
