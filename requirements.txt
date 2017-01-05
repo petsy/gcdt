@@ -4,13 +4,10 @@
 #
 #    pip-compile --output-file requirements.txt requirements.in
 #
---extra-index-url https://reposerver-prod-eu-west-1.infra.glomex.cloud/pypi/packages
---trusted-host reposerver-prod-eu-west-1.infra.glomex.cloud
-
 args==0.1.0               # via clint
 awacs==0.6.0
 boto3==1.4.2
-botocore==1.4.85          # via boto3, glomex-credstash, glomex-utils, s3transfer
+botocore==1.4.85
 clint==0.5.1
 datadog==0.13.0
 decorator==4.0.10         # via datadog
@@ -31,10 +28,10 @@ PyMeta3==0.5.1            # via pybars3
 pyparsing==2.1.9          # via glomex-utils, pyhocon
 pyspin==1.0.2
 python-dateutil==2.5.3    # via botocore, glomex-credstash, glomex-utils
-requests==2.12.3          # via datadog, slacker
-s3transfer==0.1.4         # via boto3, glomex-credstash, glomex-utils
+requests==2.12.4          # via datadog, slacker
+s3transfer==0.1.4
 simplejson==3.10.0        # via datadog
 six==1.10.0               # via glomex-credstash, glomex-utils, mock, python-dateutil
 slacker==0.9.25
 tabulate==0.7.5
-troposphere==1.9.0
+troposphere==1.9.1
