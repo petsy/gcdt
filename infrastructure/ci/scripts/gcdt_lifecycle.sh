@@ -61,7 +61,7 @@ export ENV=DEV
 
 ## check if the application works
 sleep 180
-curl --fail http://autotest:tsetotua@supercars-eu-west-1.dev.dp.glomex.cloud/health_check
+curl --fail http://autotest:tsetotua@supercars-eu-west-1.dev.infra.glomex.cloud/health_check
 
 ## cleanup the stacks
 cd ./infrastructure/cloudformation
