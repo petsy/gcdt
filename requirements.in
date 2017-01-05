@@ -1,6 +1,8 @@
 # Dependencies have to be in sync with other packages (gcdt, dphelper, glomex-utils, glomex-credstash)
 pyhocon==0.3.30
-boto3>=1.4.2
+boto3==1.4.2
+botocore==1.4.85
+s3transfer==0.1.4
 slacker==0.9.25
 pybars3==0.9.1
 pycrypto==2.6.1
