@@ -11,7 +11,6 @@ glomex-credstash==1.11.20
 # Other dependencies
 clint==0.5.1
 docopt==0.6.2
-mock==2.0.0
 pathspec==0.3.4
 awacs==0.6.0
 troposphere>=1.9.0
