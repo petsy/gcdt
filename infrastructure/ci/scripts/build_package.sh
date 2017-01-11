@@ -2,10 +2,6 @@
 
 # Build python package and upload to PyPi
 
-
-# install the awscli
-#./venv/bin/pip install awscli --ignore-installed six
-
 # build the package and publish to repo server
 ./venv/bin/python setup.py sdist --dist-dir dist/
 

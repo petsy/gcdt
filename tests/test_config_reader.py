@@ -19,6 +19,7 @@ class TestConfigReader(TestCase):
     @classmethod
     def tearDownClass(cls):
         """Fix environment after test"""
+        # undo sideeffects of config_reader tests to limit neg. impact on others
         if cls.env:
             os.environ['ENV'] = cls.env
 
