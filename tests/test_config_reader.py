@@ -12,8 +12,15 @@ class TestConfigReader(TestCase):
     def setUpClass(cls):
         """Prepare environment
         """
+        cls.env = os.environ.get('ENV', None)
         # Set environment
         os.environ['ENV'] = 'LOCAL'
+
+    @classmethod
+    def tearDownClass(cls):
+        """Fix environment after test"""
+        if cls.env:
+            os.environ['ENV'] = cls.env
 
     def setUp(self):
         print('UNIT-TEST run: {}'.format(self._testMethodName))
