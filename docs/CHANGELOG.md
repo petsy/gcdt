@@ -2,6 +2,17 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.0.74] - 2017-01-16
+### Added
+- FEATURE moved docs from README to sphinx (#194)
+- FEATURE pythonic dependency management (without pip-compile) (#194)
+- FEATURE removed glomex-utils dependency (#194)
+- FEATURE added CHANGELOG to docs
+
+## [0.0.73] - 2017-01-09
+### Added
+- FIX (#194)
+
 ## [0.0.64] - 2016-11-11
 ### Added
 - FIX wrong boto client used when getting lambda arn

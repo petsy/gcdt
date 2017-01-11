@@ -38,19 +38,19 @@ echo "-INPUT END-----------"
 cd $WORKSPACE
 pip install -r requirements_dev.txt
 
-rm -f requirements.txt
-pip-compile requirements.in
+#rm -f requirements.txt
+#pip-compile requirements.in
 pip install -r requirements.txt -r requirements_dev.txt
 
 #Check if we need to commit changes to requirements.txt
-IS_DIRTY=$(git diff-index --quiet HEAD --; echo $?)
-echo $IS_DIRTY
-git diff
+#IS_DIRTY=$(git diff-index --quiet HEAD --; echo $?)
+#echo $IS_DIRTY
+#git diff
 
-if [ $IS_DIRTY -eq 1 ]
-then
-  echo "commiting changes to requirments.txt" && git commit -v -a -m "recompiled requirements" || echo "0"
-fi
+#if [ $IS_DIRTY -eq 1 ]
+#then
+#  echo "commiting changes to requirments.txt" && git commit -v -a -m "recompiled requirements" || echo "0"
+#fi
 
 ########
 # Version
@@ -64,7 +64,7 @@ python setup.py sdist --dist-dir dist/
 ls -la dist/
 
 # install the awscli
-pip install awscli --ignore-installed six
+#pip install awscli --ignore-installed six
 
 # publish to repo server
 aws s3 cp --acl bucket-owner-full-control ./dist/ s3://$BUCKET --recursive --exclude '*' --include '*.tar.gz'

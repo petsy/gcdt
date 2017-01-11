@@ -18,9 +18,10 @@ echo "\n## install gcdt development tools"
 ./venv/bin/pip install -r requirements_dev.txt
 
 ## 
-echo "\n## compile and install requirements"
-rm requirements.txt
-./venv/bin/pip-compile requirements.in
+echo "\n## install requirements"
+#echo "\n## compile and install requirements"
+#rm requirements.txt
+#./venv/bin/pip-compile requirements.in
 ./venv/bin/pip install -r requirements.txt -r requirements_dev.txt
 
 ## 

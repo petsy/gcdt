@@ -5,7 +5,7 @@ import sys
 from docopt import docopt
 import boto3
 
-from glomex_utils.config_reader import read_api_config
+from .config_reader import read_api_config
 from gcdt.yugen_core import list_api_keys, get_lambdas, delete_api, \
     export_to_swagger, create_api_key, list_apis, \
     create_custom_domain, delete_api_key, deploy_api

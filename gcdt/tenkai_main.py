@@ -10,7 +10,7 @@ import sys
 import boto3
 from docopt import docopt
 
-from glomex_utils.config_reader import read_config
+from .config_reader import read_config
 from gcdt import utils
 from gcdt.tenkai_core import prepare_artifacts_bucket, deploy, deployment_status, \
     bundle_revision
