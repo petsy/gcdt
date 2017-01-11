@@ -36,7 +36,7 @@ echo "-INPUT END-----------"
 ########
 # Dependency Compile
 cd $WORKSPACE
-pip install -r requirements_dev.txt
+#pip install -r requirements_dev.txt
 
 #rm -f requirements.txt
 #pip-compile requirements.in

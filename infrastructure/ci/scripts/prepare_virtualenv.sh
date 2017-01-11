@@ -15,7 +15,7 @@ trusted-host = reposerver-prod-eu-west-1.infra.glomex.cloud" >> ./venv/pip.conf
 
 ## 
 echo "\n## install gcdt development tools"
-./venv/bin/pip install -r requirements_dev.txt
+#./venv/bin/pip install -r requirements_dev.txt
 
 ## 
 echo "\n## install requirements"
