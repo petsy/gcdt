@@ -3,27 +3,28 @@
     "data": {
         "Role": {
             "AssumeRolePolicyDocument": "%7B%22Version%22%3A%20%222012-10-17%22%2C%20%22Statement%22%3A%20%5B%7B%22Action%22%3A%20%5B%22sts%3AAssumeRole%22%5D%2C%20%22Effect%22%3A%20%22Allow%22%2C%20%22Principal%22%3A%20%7B%22Service%22%3A%20%5B%22lambda.amazonaws.com%22%5D%7D%7D%5D%7D", 
-            "RoleId": "AROAI2D3SFNQZ5XLK5T56", 
+            "RoleId": "AROAIQUTXX7ZENAKZ6KCS",
             "CreateDate": {
-                "hour": 9, 
+                "hour": 11,
                 "__class__": "datetime", 
-                "month": 10, 
-                "second": 41, 
-                "microsecond": 877000, 
-                "year": 2016, 
-                "day": 26, 
-                "minute": 52
+                "month": 1,
+                "second": 5,
+                "microsecond": 993000,
+                "year": 2017,
+                "day": 12,
+                "minute": 5
             }, 
-            "RoleName": "unittest_enhnut_lambda", 
+            "RoleName": "unittest_qfnfdi_lambda",
             "Path": "/", 
-            "Arn": "arn:aws:iam::644239850139:role/unittest_enhnut_lambda"
+            "Arn": "arn:aws:iam::420189626185:role/unittest_qfnfdi_lambda"
         }, 
         "ResponseMetadata": {
+            "RetryAttempts": 0,
             "HTTPStatusCode": 200, 
-            "RequestId": "efc77cc2-9b61-11e6-9ff3-b75c17ba47e1", 
+            "RequestId": "f94f25d2-d8b6-11e6-b613-05b3b1c605e8",
             "HTTPHeaders": {
-                "x-amzn-requestid": "efc77cc2-9b61-11e6-9ff3-b75c17ba47e1", 
-                "date": "Wed, 26 Oct 2016 09:52:41 GMT", 
+                "x-amzn-requestid": "f94f25d2-d8b6-11e6-b613-05b3b1c605e8",
+                "date": "Thu, 12 Jan 2017 11:05:05 GMT",
                 "content-length": "814", 
                 "content-type": "text/xml"
             }

@@ -3,11 +3,12 @@
     "data": {
         "Datapoints": [], 
         "ResponseMetadata": {
+            "RetryAttempts": 0,
             "HTTPStatusCode": 200, 
-            "RequestId": "b513fd64-979b-11e6-baa8-0de9a9ea3c16", 
+            "RequestId": "8695439a-d8b8-11e6-a593-b37b55771532",
             "HTTPHeaders": {
-                "x-amzn-requestid": "b513fd64-979b-11e6-baa8-0de9a9ea3c16", 
-                "date": "Fri, 21 Oct 2016 14:36:08 GMT", 
+                "x-amzn-requestid": "8695439a-d8b8-11e6-a593-b37b55771532",
+                "date": "Thu, 12 Jan 2017 11:16:12 GMT",
                 "content-length": "332", 
                 "content-type": "text/xml"
             }

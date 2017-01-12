@@ -13,11 +13,12 @@
         ], 
         "IsTruncated": false, 
         "ResponseMetadata": {
+            "RetryAttempts": 0,
             "HTTPStatusCode": 200, 
-            "RequestId": "9228c853-979b-11e6-bffa-71c664d25ecd", 
+            "RequestId": "6aa662c0-d8b8-11e6-ba89-a1320b168256",
             "HTTPHeaders": {
-                "x-amzn-requestid": "9228c853-979b-11e6-bffa-71c664d25ecd", 
-                "date": "Fri, 21 Oct 2016 14:35:10 GMT", 
+                "x-amzn-requestid": "6aa662c0-d8b8-11e6-ba89-a1320b168256",
+                "date": "Thu, 12 Jan 2017 11:15:25 GMT",
                 "content-length": "732", 
                 "content-type": "text/xml"
             }

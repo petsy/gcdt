@@ -2,11 +2,12 @@
     "status_code": 204, 
     "data": {
         "ResponseMetadata": {
+            "RetryAttempts": 0,
             "HTTPStatusCode": 204, 
-            "RequestId": "a7105e98-97a3-11e6-b519-a91b06aab0b1", 
+            "RequestId": "0fa1c295-d8b8-11e6-af49-d5d883c6b8a2",
             "HTTPHeaders": {
-                "date": "Fri, 21 Oct 2016 15:33:02 GMT", 
-                "x-amzn-requestid": "a7105e98-97a3-11e6-b519-a91b06aab0b1", 
+                "date": "Thu, 12 Jan 2017 11:12:52 GMT",
+                "x-amzn-requestid": "0fa1c295-d8b8-11e6-af49-d5d883c6b8a2",
                 "connection": "keep-alive", 
                 "content-type": "application/json"
             }

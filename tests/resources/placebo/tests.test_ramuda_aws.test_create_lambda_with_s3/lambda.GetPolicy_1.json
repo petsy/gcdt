@@ -2,13 +2,14 @@
     "status_code": 404, 
     "data": {
         "ResponseMetadata": {
+            "RetryAttempts": 0,
             "HTTPStatusCode": 404, 
-            "RequestId": "8f57608c-9b61-11e6-a0fc-ed9c40cc01b3", 
+            "RequestId": "2685b383-d8b7-11e6-88a5-23388eaae941",
             "HTTPHeaders": {
-                "x-amzn-requestid": "8f57608c-9b61-11e6-a0fc-ed9c40cc01b3", 
+                "x-amzn-requestid": "2685b383-d8b7-11e6-88a5-23388eaae941",
                 "content-length": "70", 
                 "connection": "keep-alive", 
-                "date": "Wed, 26 Oct 2016 09:49:59 GMT", 
+                "date": "Thu, 12 Jan 2017 11:06:21 GMT",
                 "content-type": "application/json", 
                 "x-amzn-errortype": "ResourceNotFoundException"
             }

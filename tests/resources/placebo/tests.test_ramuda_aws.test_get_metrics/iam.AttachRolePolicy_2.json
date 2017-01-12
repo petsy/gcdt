@@ -2,11 +2,12 @@
     "status_code": 200, 
     "data": {
         "ResponseMetadata": {
+            "RetryAttempts": 0,
             "HTTPStatusCode": 200, 
-            "RequestId": "994af410-979b-11e6-bffa-71c664d25ecd", 
+            "RequestId": "6b94bb2a-d8b8-11e6-a844-813d524876d2",
             "HTTPHeaders": {
-                "x-amzn-requestid": "994af410-979b-11e6-bffa-71c664d25ecd", 
-                "date": "Fri, 21 Oct 2016 14:35:22 GMT", 
+                "x-amzn-requestid": "6b94bb2a-d8b8-11e6-a844-813d524876d2",
+                "date": "Thu, 12 Jan 2017 11:15:26 GMT",
                 "content-length": "212", 
                 "content-type": "text/xml"
             }

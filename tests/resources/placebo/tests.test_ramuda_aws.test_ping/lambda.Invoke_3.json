@@ -7,14 +7,15 @@
             "__class__": "StreamingBody"
         }, 
         "ResponseMetadata": {
+            "RetryAttempts": 0,
             "HTTPStatusCode": 200, 
-            "RequestId": "d9d9ff6f-97a1-11e6-8257-ff3186c8d426", 
+            "RequestId": "cbc6e3aa-d8b8-11e6-a7ec-0b7a78181f60",
             "HTTPHeaders": {
-                "x-amzn-requestid": "d9d9ff6f-97a1-11e6-8257-ff3186c8d426", 
+                "x-amzn-requestid": "cbc6e3aa-d8b8-11e6-a7ec-0b7a78181f60",
                 "content-length": "25", 
                 "x-amzn-remapped-content-length": "0", 
                 "connection": "keep-alive", 
-                "date": "Fri, 21 Oct 2016 15:20:08 GMT", 
+                "date": "Thu, 12 Jan 2017 11:18:08 GMT",
                 "content-type": "application/json"
             }
         }, 

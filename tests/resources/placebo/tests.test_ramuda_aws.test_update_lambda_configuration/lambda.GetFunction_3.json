@@ -3,29 +3,30 @@
     "data": {
         "Code": {
             "RepositoryType": "S3", 
-            "Location": "https://awslambda-eu-west-1-tasks.s3-eu-west-1.amazonaws.com/snapshots/644239850139/jenkins_test_bdupkw-49f3880a-eb5f-4c33-bfe8-91bfae27d30d?X-Amz-Security-Token=FQoDYXdzEF8aDLmdB65GB9C9H%2BYRIyK3A1z6Udb5cITRoQbRGHbmFcHilC3S3DzkQrBnBdnzs8oNM4rBlJGiuHunSunLUrw7VeTTPciueOwUe3HZMANZI2ARejSiklPAwvedUShS%2BmQaSobJ5dzmZFKc0Yh5YqYXA0miNop3VtVqYSluQ7hpZyt7wjQWzMz%2BwF3GODzcQCUrNsXKlncFyCbe0%2F6iMbferojmHg0LJ6XBcCD1ZXxKFRyxpEpM%2Fgkv4mWH%2B9uBcp4AVsC9x0pzghKFo946lqpVq0XDwqhqemfxKV9iQFk%2BgVjTIaUO3yMXJtKVepULUDE0pBLC5vh0TtaTm20OKmRIxKaKZsC9hUFlEOuX%2BunVFUknGbPKA86zak%2B3KgBFqNLJymdSRJP9RMNoHwwbj1Gzwa1yvFq2w35GJHBjohQaINNt8rFpCuAQiZBexasWRMfKpbmWpJCvCMdsTk2TNr4M9u6vNvOnL6wrTXaHdiK2R5n2eLYXgo%2B4RcKCQNjfGapeEaC6oC8uZ9P21HNvhw1EMKDBMYvOT%2BVrNIezsM6yzTurb97yFK88oDSgkkb8%2BG8tB5GfLVeCf7f5so%2BLlR6oeUn%2BmUW%2FMnQohbSowAU%3D&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Date=20161021T143508Z&X-Amz-SignedHeaders=host&X-Amz-Expires=600&X-Amz-Credential=ASIAJIWBU75WFZAZNFTA%2F20161021%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Signature=b2decca6ae6b00f217beadebd58cc25f44456d32ba8697cac839cc99c1244137"
+            "Location": "https://awslambda-eu-west-1-tasks.s3-eu-west-1.amazonaws.com/snapshots/420189626185/jenkins_test_tixuve-6067fbf9-f4d2-4155-8525-190de39a9368?X-Amz-Security-Token=FQoDYXdzEKT%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEaDEnyk1se8zmfKOqSUSK3Awu1Kc1WuW63kfPhfukBX5Wt%2FENYpcu0JsD16c%2BQDZ0z5EkVXr5KNe%2FYiM7dtKJcgvu0ChfnLp370XMNXm4o%2Fe3KPod16YNpcWgEhXf9LgtQI6HVfl10pC46Qw%2BgLQOC9vu5k52KcBiEF%2BryHp4KGrpYXe270hqWgMkJpLzFDYOKKwxnnBypi8B1Di1QTyPJGbS01Qv3inqLPVPTEdtFxhEKxCbg59RvK9ZnxXjq1SLc0OkbK5StGJiBnQpYHKX0rZtIUBpcH%2FtQB%2FBUOBU6B7IdWp9i87UBHBv1AOrPI6QWKmEREHXQZl1j5kOibZfaluVZUHad%2FO5ELMqquYXuqvlnpppHtSjmcw1py1NH7Le%2FmPk9%2BoT1Iuc4lKwsosXY1JzUkMO59JyLOy3eCUqKsddaRDky2LBMvP6ZscBj%2FjftTXsM13GO9dX6BR0p9x0fL4e2p%2BHbmtK4KFUGOSZ4aNF42Tsfquw0HfF5Rb6NgcLzdQjr7uXQfH3yxYoWacw9RfjG4tPS%2BBP1KcPthlZ7PrDrdaQG1YjzXZN5s2zXCW8i0RN2ZUf9iJkr2AAqvJYO2ACNsr3LRlcox8ndwwU%3D&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Date=20170112T111524Z&X-Amz-SignedHeaders=host&X-Amz-Expires=600&X-Amz-Credential=ASIAJVVYWJJCEPHMVMQA%2F20170112%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Signature=79f839dc8e754c4355fa1cca85cf6be857a9499a45d8d679a62a044f711d6f1b"
         }, 
         "Configuration": {
             "Version": "$LATEST", 
-            "CodeSha256": "8/Hv7Ys8Us6VeO8a9to4sjn66T+jO0B6JNsPD+/Ct4c=", 
-            "FunctionName": "jenkins_test_bdupkw", 
+            "CodeSha256": "DrPD4lkCrJJMfB1Ltymxo03sA7zEYEN87wSjVwa/4w0=",
+            "FunctionName": "jenkins_test_tixuve",
             "MemorySize": 256, 
-            "CodeSize": 332357, 
-            "FunctionArn": "arn:aws:lambda:eu-west-1:644239850139:function:jenkins_test_bdupkw", 
+            "CodeSize": 124693,
+            "FunctionArn": "arn:aws:lambda:eu-west-1:420189626185:function:jenkins_test_tixuve",
             "Handler": "./resources/sample_lambda/handler_counter.py", 
-            "Role": "arn:aws:iam::644239850139:role/unittest_bdupkw_lambda", 
+            "Role": "arn:aws:iam::420189626185:role/unittest_tixuve_lambda",
             "Timeout": 300, 
-            "LastModified": "2016-10-21T14:35:07.600+0000", 
+            "LastModified": "2017-01-12T11:15:23.691+0000",
             "Runtime": "python2.7", 
             "Description": "lambda created for unittesting ramuda deployment"
         }, 
         "ResponseMetadata": {
+            "RetryAttempts": 0,
             "HTTPStatusCode": 200, 
-            "RequestId": "909d94ea-979b-11e6-a37b-69517825526d", 
+            "RequestId": "69dde29a-d8b8-11e6-a97a-757ffcdeb684",
             "HTTPHeaders": {
-                "date": "Fri, 21 Oct 2016 14:35:07 GMT", 
-                "x-amzn-requestid": "909d94ea-979b-11e6-a37b-69517825526d", 
-                "content-length": "1728", 
+                "date": "Thu, 12 Jan 2017 11:15:23 GMT",
+                "x-amzn-requestid": "69dde29a-d8b8-11e6-a97a-757ffcdeb684",
+                "content-length": "1761",
                 "content-type": "application/json", 
                 "connection": "keep-alive"
             }

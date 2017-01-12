@@ -1,13 +1,14 @@
 {
     "status_code": 200, 
     "data": {
-        "Policy": "{\"Version\":\"2012-10-17\",\"Id\":\"default\",\"Statement\":[{\"Sid\":\"2ff81b90-97a2-11e6-9d40-c4850848610b\",\"Effect\":\"Allow\",\"Principal\":{\"Service\":\"events.amazonaws.com\"},\"Action\":\"lambda:InvokeFunction\",\"Resource\":\"arn:aws:lambda:eu-west-1:644239850139:function:jenkins_test_gimsaw:ACTIVE\",\"Condition\":{\"ArnLike\":{\"AWS:SourceArn\":\"arn:aws:events:eu-west-1:644239850139:rule/unittest-dev-lambda-schedule\"}}}]}", 
+        "Policy": "{\"Version\":\"2012-10-17\",\"Id\":\"default\",\"Statement\":[{\"Sid\":\"67cdea1c-d8b7-11e6-b409-9801a7a1861b\",\"Effect\":\"Allow\",\"Principal\":{\"Service\":\"events.amazonaws.com\"},\"Action\":\"lambda:InvokeFunction\",\"Resource\":\"arn:aws:lambda:eu-west-1:420189626185:function:jenkins_test_qupmvg:ACTIVE\",\"Condition\":{\"ArnLike\":{\"AWS:SourceArn\":\"arn:aws:events:eu-west-1:420189626185:rule/unittest-dev-lambda-schedule\"}}}]}",
         "ResponseMetadata": {
+            "RetryAttempts": 0,
             "HTTPStatusCode": 200, 
-            "RequestId": "9dac00bb-97a2-11e6-beb8-e12da90ef941", 
+            "RequestId": "d4d67cbc-d8b7-11e6-ad60-2f47e2044f78",
             "HTTPHeaders": {
-                "date": "Fri, 21 Oct 2016 15:25:36 GMT", 
-                "x-amzn-requestid": "9dac00bb-97a2-11e6-beb8-e12da90ef941", 
+                "date": "Thu, 12 Jan 2017 11:11:13 GMT",
+                "x-amzn-requestid": "d4d67cbc-d8b7-11e6-ad60-2f47e2044f78",
                 "content-length": "453", 
                 "content-type": "application/json", 
                 "connection": "keep-alive"

@@ -3,11 +3,12 @@
     "data": {
         "FailedEntries": [], 
         "ResponseMetadata": {
+            "RetryAttempts": 0,
             "HTTPStatusCode": 200, 
-            "RequestId": "2fec4c86-97a2-11e6-95b0-551db6adbf18", 
+            "RequestId": "67bf64b3-d8b7-11e6-8ed6-fb962676d8e8",
             "HTTPHeaders": {
-                "x-amzn-requestid": "2fec4c86-97a2-11e6-95b0-551db6adbf18", 
-                "date": "Fri, 21 Oct 2016 15:22:32 GMT", 
+                "x-amzn-requestid": "67bf64b3-d8b7-11e6-8ed6-fb962676d8e8",
+                "date": "Thu, 12 Jan 2017 11:08:10 GMT",
                 "content-length": "41", 
                 "content-type": "application/x-amz-json-1.1"
             }

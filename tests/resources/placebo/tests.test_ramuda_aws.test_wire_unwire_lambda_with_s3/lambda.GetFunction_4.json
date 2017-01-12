@@ -3,29 +3,30 @@
     "data": {
         "Code": {
             "RepositoryType": "S3", 
-            "Location": "https://awslambda-eu-west-1-tasks.s3-eu-west-1.amazonaws.com/snapshots/644239850139/jenkins_test_matsoi-3931aa0d-8ccd-44ce-80b4-71b7c71a9e3c?X-Amz-Security-Token=FQoDYXdzEGAaDMppMV3X0monmYDV9yK3A4XYyou32oNYA1tVMvADCIwMA3K88NOTtFL2JAMRv%2BWS79DC%2Fv3ah8U2dTZsGTgwhsmCm1ejXhVUXCIsflPM6VMKmcl3KxzLnSI15EWkX1yos4o1KIKdIeYwqVImnXoCZqIDPz21KjDzeK2Gz9yG%2FH9h49saKN3hWLsSkx%2Bahz4AtaI2MpW4VjhevjS3u60cCvvmmZhhbMHEpL8wsVodbLKz2U4GWhLtMx9IK%2B9m6cfU%2BDtetfXsHzXDv3hO4cSPo6ZsMJZlD%2BIr3nOh%2BZrFYCCDHFjUXYVSpb8DebD7%2FDCHYiAKPFi5E8WgA1VtbSQqtMYHA1rrwIYjKEpLKK2BITJUF28q2mm93HxMk74NB0MBIDzw4x1%2F8mw8ArN8BQv7G%2FYLfa3iMW81Fzgc1rA1KrN1OkAvxphEpJm6IiOGbS1YBvQ1GBKsI8vWD7ZCSHKNZ3iICW3MmUrwr2vm4jOZdiGZ%2FglNBpPA5jljZfk49qMCGJ3E2E9pMZvFKyLu%2BFqdL9zHVaXMHpUFF%2FcgtKHEKHDFAXqTIhU8b%2BHP0AY7mODIrNygWsmxlm6IiDiql0OK1XETCn9VrokorOGowAU%3D&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Date=20161021T153236Z&X-Amz-SignedHeaders=host&X-Amz-Expires=600&X-Amz-Credential=ASIAJRVLSQRY3ARWOB3A%2F20161021%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Signature=c999460597bd46a50971a0cad37c93380861c13f459402c18456e677c4dfaf9a"
+            "Location": "https://awslambda-eu-west-1-tasks.s3-eu-west-1.amazonaws.com/snapshots/420189626185/jenkins_test_rndiyc-2e052076-4332-4ac4-a8ee-78603c648a84?X-Amz-Security-Token=FQoDYXdzEKP%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEaDDEmrXfJZuf9whPXqyK3A56bzqIvPeeBUGGXVJj63oVqpxISsmmVs1AOgALlzkWLCz9vnfyWdaveiC4%2F8x2TqE093si%2BCmQSOk8A28GNDVbnZ9aDof2IuhVIxF2etleGFY3YWPg%2FaYxjHV%2FnFTi8eYsHlUtl2lAvcSrZxseB7TJo11gvAolRbKgLTGqY0qlF315uXULxbbz0xfKemCtwSiVGA213S3UxoOnaB2JItiGwanV82Byup0MSH8UFBgsRxhjdQCxpPeIGLMauTqbichwvsWoAkqjD6eF2RC2LZOfE%2F2NBcRua%2Bxt7KlypX4tzzYtJntvT5r8EKGpDky1vkRYlAp9E45Rt6ys%2F%2Be8qAPI8%2FffFgC%2F5CnT2oH414vdSNugzYUFlCrDceXQkoWPK9QJqkaympdCc38o9JwIo%2BcjYHY%2FEj2X4Q8fAvtuKBeat14QYWeaRlbnThm02taK5%2B3DzVkCGCZZtONDR21JMp%2BSuzK%2FJo5TtR%2BYe9wYlxc3iZ5qM2Xd1YG4GyNILFQ8buOhGsx7jaMyJz7fJ%2BIlm6vBHHn%2FHuD5be2o%2FcFCjw8QxJbKyhw2OMAQ42HlVqALqSt63KKptX1cohqTdwwU%3D&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Date=20170112T111230Z&X-Amz-SignedHeaders=host&X-Amz-Expires=600&X-Amz-Credential=ASIAJELH4ETNK7WYIUEA%2F20170112%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Signature=fca8ecfec1e2cf6b0a0107b7be7ee49ced4a2c463ea5d34f05dcdc0aac0767c9"
         }, 
         "Configuration": {
             "Version": "$LATEST", 
-            "CodeSha256": "9IIbLvhBIFEUApdR9RlhTeaCfb4j6pgYIDogfa4efZc=", 
-            "FunctionName": "jenkins_test_matsoi", 
+            "CodeSha256": "a/C3eozZC+VmOsb7h9QjKXMb5Mst6GGLp1Vc/5EKwas=",
+            "FunctionName": "jenkins_test_rndiyc",
             "MemorySize": 128, 
-            "CodeSize": 332472, 
-            "FunctionArn": "arn:aws:lambda:eu-west-1:644239850139:function:jenkins_test_matsoi", 
+            "CodeSize": 124737,
+            "FunctionArn": "arn:aws:lambda:eu-west-1:420189626185:function:jenkins_test_rndiyc",
             "Handler": "handler_counter.handle", 
-            "Role": "arn:aws:iam::644239850139:role/unittest_matsoi_lambda", 
+            "Role": "arn:aws:iam::420189626185:role/unittest_rndiyc_lambda",
             "Timeout": 300, 
-            "LastModified": "2016-10-21T15:31:57.149+0000", 
+            "LastModified": "2017-01-12T11:11:51.474+0000",
             "Runtime": "python2.7", 
             "Description": "lambda created for unittesting ramuda deployment"
         }, 
         "ResponseMetadata": {
+            "RetryAttempts": 0,
             "HTTPStatusCode": 200, 
-            "RequestId": "97fc3317-97a3-11e6-940c-91ca359add26", 
+            "RequestId": "02586ba1-d8b8-11e6-9c58-bbb8971d0d36",
             "HTTPHeaders": {
-                "date": "Fri, 21 Oct 2016 15:32:36 GMT", 
-                "x-amzn-requestid": "97fc3317-97a3-11e6-940c-91ca359add26", 
-                "content-length": "1706", 
+                "date": "Thu, 12 Jan 2017 11:12:30 GMT",
+                "x-amzn-requestid": "02586ba1-d8b8-11e6-9c58-bbb8971d0d36",
+                "content-length": "1749",
                 "content-type": "application/json", 
                 "connection": "keep-alive"
             }
