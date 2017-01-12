@@ -5,14 +5,12 @@ import json
 import os
 import uuid
 
-import boto3
 from botocore.exceptions import ClientError
 from clint.textui import colored
 from pybars import Compiler
 from tabulate import tabulate
 
 from gcdt import monitoring
-
 
 SWAGGER_FILE = 'swagger.yaml'
 INVOKE_FUNCTION_ACTION = 'lambda:InvokeFunction'
@@ -38,13 +36,15 @@ def export_to_swagger(boto_session, api_name, stage_name, api_description,
 
         print(_json2table(api))
         api_id = api['id']
-        template_variables = _template_variables_to_dict(api_name,
-                                                         api_description,
-                                                         stage_name,
-                                                         api_id,
-                                                         lambdas,
-                                                         custom_hostname,
-                                                         custom_base_path)
+        template_variables = _template_variables_to_dict(
+            boto_session,
+            api_name,
+            api_description,
+            stage_name,
+            api_id,
+            lambdas,
+            custom_hostname,
+            custom_base_path)
         content = _compile_template(SWAGGER_FILE, template_variables)
         swagger_file = open('swagger_export.yaml', 'w')
 
@@ -113,7 +113,8 @@ def deploy_api(boto_session, api_name, api_description, stage_name, api_key,
             print('API name unknown')
 
 
-def delete_api(boto_session, api_name, slack_token=None, slack_channel='systemmessages'):
+def delete_api(boto_session, api_name, slack_token=None,
+               slack_channel='systemmessages'):
     """Delete the API.
 
     :param api_name:
@@ -213,7 +214,8 @@ def create_custom_domain(boto_session, api_name, api_target_stage,
     domain = _custom_domain_name_exists(boto_session, domain_name)
 
     if not domain:
-        response = _create_new_custom_domain(boto_session, domain_name, ssl_cert)
+        response = _create_new_custom_domain(boto_session, domain_name,
+                                             ssl_cert)
         cloudfront_distribution = response['distributionDomainName']
     else:
         cloudfront_distribution = domain['distributionDomainName']
@@ -232,13 +234,13 @@ def create_custom_domain(boto_session, api_name, api_target_stage,
                                    cloudfront_distribution)
     if record_correct:
         print('Route53 record correctly set: %s --> %s' % (route_53_record,
-                                                        cloudfront_distribution))
+                                                           cloudfront_distribution))
     else:
         _ensure_correct_route_53_record(boto_session, hosted_zone_id,
                                         record_name=route_53_record,
                                         record_value=cloudfront_distribution)
         print('Route53 record set: %s --> %s' % (route_53_record,
-                                              cloudfront_distribution))
+                                                 cloudfront_distribution))
     return 0
 
 
@@ -259,7 +261,8 @@ def get_lambdas(boto_session, config, add_arn=False):
             'swagger_ref': lambda_entry.get('swaggerRef', None)
         }
         if add_arn:
-            response_lambda = client_lambda.get_function(FunctionName=lmbda['name'])
+            response_lambda = client_lambda.get_function(
+                FunctionName=lmbda['name'])
             lmbda['arn'] = response_lambda['Configuration']['FunctionArn']
         lmbdas.append(lmbda)
     return lmbdas
@@ -293,11 +296,12 @@ def _import_from_swagger(boto_session, api_name, api_description, stage_name,
     if api is None:
         print(_json2table(api))
         api_id = False
-        template_variables = _template_variables_to_dict(api_name,
-                                                         api_description,
-                                                         stage_name,
-                                                         api_id,
-                                                         lambdas)
+        template_variables = _template_variables_to_dict(
+            boto_session, api_name,
+            api_description,
+            stage_name,
+            api_id,
+            lambdas)
         swagger_body = _compile_template(SWAGGER_FILE,
                                          template_variables)
         response_swagger = client_api.import_rest_api(
@@ -424,11 +428,12 @@ def _ensure_correct_route_53_record(boto_session, hosted_zone_id, record_name,
     )
 
 
-def _ensure_correct_base_path_mapping(boto_session, domain_name, base_path, api_id,
+def _ensure_correct_base_path_mapping(boto_session, domain_name, base_path,
+                                      api_id,
                                       target_stage):
     client_api = boto_session.client('apigateway')
     mapping = client_api.get_base_path_mapping(domainName=domain_name,
-                                           basePath=base_path)
+                                               basePath=base_path)
     operations = []
     if not mapping['stage'] == target_stage:
         operations.append({
@@ -451,7 +456,8 @@ def _ensure_correct_base_path_mapping(boto_session, domain_name, base_path, api_
 
 def _base_path_mapping_exists(boto_session, domain_name, base_path):
     client_api = boto_session.client('apigateway')
-    base_path_mappings = client_api.get_base_path_mappings(domainName=domain_name)
+    base_path_mappings = client_api.get_base_path_mappings(
+        domainName=domain_name)
     mapping_exists = False
     if base_path_mappings.get('items'):
         for item in base_path_mappings['items']:
@@ -460,7 +466,8 @@ def _base_path_mapping_exists(boto_session, domain_name, base_path):
     return mapping_exists
 
 
-def _create_base_path_mapping(boto_session, domain_name, base_path, stage, api_id):
+def _create_base_path_mapping(boto_session, domain_name, base_path, stage,
+                              api_id):
     client_api = boto_session.client('apigateway')
     base_path_respone = client_api.create_base_path_mapping(
         domainName=domain_name,
@@ -470,7 +477,8 @@ def _create_base_path_mapping(boto_session, domain_name, base_path, stage, api_i
     )
 
 
-def _record_exists_and_correct(boto_session, hosted_zone_id, target_route_53_record_name,
+def _record_exists_and_correct(boto_session, hosted_zone_id,
+                               target_route_53_record_name,
                                cloudfront_distribution):
     client_route53 = boto_session.client('route53')
     response = client_route53.list_resource_record_sets(
@@ -504,15 +512,14 @@ def _create_new_custom_domain(boto_session, domain_name, ssl_cert):
 # def _template_variables_to_dict(api_name, api_description, api_target_stage,
 #                                api_id=False, lambdas=[], custom_hostname=False,
 #                                custom_base_path=False):
-def _template_variables_to_dict(api_name, api_description, api_target_stage,
-                                api_id=False, lambdas=[], custom_hostname=None,
-                                custom_base_path=None):
+def _template_variables_to_dict(boto_session, api_name, api_description,
+                                api_target_stage, api_id=False, lambdas=[],
+                                custom_hostname=None, custom_base_path=None):
     if lambdas:
         lambda_region, lambda_account_id = \
             _get_region_and_account_from_lambda_arn(lambdas[0].get('arn'))
     else:
-        boto3_session = boto3.session.Session()
-        lambda_region = boto3_session.region_name
+        lambda_region = boto_session.region_name
 
     if custom_hostname:
         api_hostname = custom_hostname
@@ -566,10 +573,12 @@ def _ensure_lambda_permissions(client_lambda, lmbda, api):
     )
 
     if _invoke_lambda_permission_exists(client_lambda, lambda_arn, source_arn):
-        print('API already has permission to invoke lambda {}'.format(lambda_name))
+        print('API already has permission to invoke lambda {}'.format(
+            lambda_name))
         return
 
-    print('Adding lambda permission for API Gateway for lambda {}'.format(lambda_name))
+    print('Adding lambda permission for API Gateway for lambda {}'.format(
+        lambda_name))
     response = client_lambda.add_permission(
         FunctionName=lambda_name,
         StatementId=str(uuid.uuid1()),
@@ -592,11 +601,12 @@ def _invoke_lambda_permission_exists(client_lambda, lambda_arn, source_arn):
     permissions = json.loads(response['Policy'])['Statement']
     return [
         p for p in permissions
-        if p.get('Condition', {}).get('ArnLike', {}).get('AWS:SourceArn') == source_arn
-            and p.get('Action') == INVOKE_FUNCTION_ACTION
-            and p.get('Effect') == 'Allow'
-            and p.get('Principal', {}).get('Service') == AMAZON_API_PRINCIPAL
-    ]
+        if p.get('Condition', {}).get('ArnLike', {}).get(
+            'AWS:SourceArn') == source_arn
+        and p.get('Action') == INVOKE_FUNCTION_ACTION
+        and p.get('Effect') == 'Allow'
+        and p.get('Principal', {}).get('Service') == AMAZON_API_PRINCIPAL
+        ]
 
 
 # TODO: possible to consolidate this with the one for ramuda?

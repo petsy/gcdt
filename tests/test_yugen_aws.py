@@ -8,7 +8,7 @@ import pytest
 
 from gcdt.logger import setup_logger
 from gcdt.yugen_core import deploy_api, delete_api, delete_api_key, \
-    create_api_key
+    create_api_key, _template_variables_to_dict
 from . import helpers
 from .helpers_aws import check_preconditions, boto_session
 
@@ -59,6 +59,37 @@ def test_create_api(boto_session, cleanup_api_keys, cleanup_apis):
         lambdas=lambdas
     )
     cleanup_apis.append(api_name)
+
+
+@pytest.mark.aws
+@check_preconditions
+def test_template_variables_to_dict_custom_hostname(boto_session):
+    api_name = 'apiName'
+    api_description = 'apiDescription'
+    api_target_stage = 'mock'
+
+    result = _template_variables_to_dict(
+        boto_session, api_name, api_description, api_target_stage,
+        custom_hostname='chn', custom_base_path='cbp')
+    assert_equal(result['apiName'], api_name)
+    assert_equal(result['apiDescription'], api_description)
+    assert_equal(result['apiBasePath'], 'cbp')
+    assert_equal(result['apiHostname'], 'chn')
+
+
+@pytest.mark.aws
+@check_preconditions
+def test_template_variables_to_dict(boto_session):
+    api_name = 'apiName'
+    api_description = 'apiDescription'
+    api_target_stage = 'mock'
+
+    result = _template_variables_to_dict(boto_session, api_name,
+                                         api_description, api_target_stage)
+    assert_equal(result['apiName'], api_name)
+    assert_equal(result['apiDescription'], api_description)
+    assert_equal(result['apiBasePath'], 'mock')
+    assert_not_in('apiHostname', result)
 
 
 # FIXME: tests
