@@ -14,7 +14,7 @@ from docopt import docopt
 from clint.textui import colored
 import boto3
 
-from glomex_utils.config_reader import read_config
+from .config_reader import read_config
 from gcdt import utils
 from gcdt.kumo_core import print_parameter_diff, delete_stack, \
     deploy_stack, generate_template_file, list_stacks, create_change_set, \

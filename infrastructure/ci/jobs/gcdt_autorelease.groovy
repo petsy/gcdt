@@ -12,6 +12,7 @@ def slackChannel = InfraUtilities.getSlackChannel()
 def credentialsToCheckout = "psd-frontend-jenkins_username-password"
 def baseFolder = "infrastructure/ci"
 def artifactBucket = "glomex-infra-reposerver-prod"
+def docuBucket = "glomex-infra-docuserver-prod"
 def releaseScript = baseFolder + "/scripts/release_package.sh"
 
 def packageName = 'gcdt'
@@ -31,6 +32,7 @@ job(jobName) {
         env('PYTHONUNBUFFERED', '1')
         env('AWS_DEFAULT_REGION', 'eu-west-1')
         env('BUCKET', artifactBucket + '/pypi/packages/' + packageName + '/')
+        env('BUCKETDOCS', docuBucket + '/')
         // http://chase-seibert.github.io/blog/2014/01/12/python-unicode-console-output.html
         env('PYTHONIOENCODING', 'UTF-8')
     }

@@ -148,9 +148,11 @@ set_qa
 set_dp
 set_vvs
 set_infra
+set_infra_prod
 howto.txt
 build_pr.sh
 tests/MyStringIO.py
 remove_*.py
 remove_gcdt_version.sh
 viz_sample/*
+_build

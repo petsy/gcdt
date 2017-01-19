@@ -16,7 +16,7 @@ from pyspin.spin import Default, Spinner
 from tabulate import tabulate
 
 from gcdt import monitoring
-from glomex_utils.config_reader import get_env
+from .config_reader import get_env
 
 
 def load_cloudformation_template(path=None):

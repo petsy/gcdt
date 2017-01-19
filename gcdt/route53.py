@@ -11,8 +11,8 @@ import troposphere
 from troposphere.ec2 import Instance
 from troposphere.route53 import RecordSetType
 
-from glomex_utils.config_reader import get_env
-from glomex_utils.servicediscovery import get_outputs_for_stack
+from .config_reader import get_env
+from .servicediscovery import get_outputs_for_stack
 
 TTL_DEFAULT = 300
 HOST_ZONE_NAME__STACK_OUTPUT_NAME = "internalDomainName"

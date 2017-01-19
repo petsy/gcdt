@@ -5,7 +5,7 @@ from StringIO import StringIO
 
 from nose.tools import assert_equal, assert_is_not_none
 
-from glomex_utils.config_reader import read_config
+from gcdt.config_reader import read_config
 from gcdt import utils
 from gcdt.utils import version, __version__, retries, configure, \
     read_gcdt_user_config, get_command, read_gcdt_user_config_value, execute_scripts
