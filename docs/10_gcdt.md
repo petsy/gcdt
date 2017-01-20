@@ -6,7 +6,7 @@
 To see available commands, call gcdt without any arguments:
 
 ```bash
-$ kumo
+$ gcdt
 Usage:
         gcdt configure
         gcdt version
