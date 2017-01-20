@@ -9,9 +9,11 @@ from .config_reader import read_api_config
 from gcdt.yugen_core import list_api_keys, get_lambdas, delete_api, \
     export_to_swagger, create_api_key, list_apis, \
     create_custom_domain, delete_api_key, deploy_api
-from gcdt.utils import version, read_gcdt_user_config, get_context, get_command
+from gcdt.utils import version, read_gcdt_user_config, get_context, get_command, \
+    check_gcdt_update
 from gcdt.monitoring import datadog_notification, datadog_error, \
     datadog_event_detail
+
 
 # creating docopt parameters and usage help
 DOC = '''Usage:
@@ -54,6 +56,7 @@ def main():
     exit_code = 0
     boto_session = boto3.session.Session()
     arguments = docopt(DOC)
+    check_gcdt_update()
     if arguments['version']:
         version()
         sys.exit(0)

@@ -9,7 +9,7 @@ import sys
 
 from docopt import docopt
 
-from gcdt.utils import configure, version, get_command
+from gcdt.utils import configure, version, get_command, check_gcdt_update
 
 
 # creating docopt parameters and usage help
@@ -23,6 +23,7 @@ DOC = ''''Usage:
 
 def main():
     arguments = docopt(DOC)
+    check_gcdt_update()
 
     # Run command
     if arguments['configure']:
