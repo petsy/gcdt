@@ -2,11 +2,13 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## [0.0.74] - 2017-01-16
+## [0.0.75] - 2017-01-24
 ### Added
-- FEATURE moved docs from README to sphinx (#194)
-- FEATURE pythonic dependency management (without pip-compile) (#194)
-- FEATURE removed glomex-utils dependency (#194)
+- FEATURE added gcdt installer (#201)
+- FEATURE gcdt outdated version warning (#155)
+- FEATURE moved docs from README to sphinx / readthedocs (PR194)
+- FEATURE pythonic dependency management (without pip-compile) (#178)
+- FEATURE removed glomex-utils dependency (#178)
 - FEATURE added CHANGELOG to docs
 
 ## [0.0.73] - 2017-01-09

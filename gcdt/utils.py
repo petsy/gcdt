@@ -11,6 +11,7 @@ from pyhocon import ConfigFactory
 import credstash
 
 from gcdt import __version__
+from gcdt.package_utils import get_package_versions
 
 
 def version(out=sys.stdout):
@@ -236,3 +237,13 @@ def _execute_script(file_name):
     else:
         print('No file found matching %s...' % file_name)
         return 1
+
+
+def check_gcdt_update():
+    """Check whether a newer gcdt is available and output a warning.
+
+    """
+    inst_version, latest_version = get_package_versions('gcdt')
+    if inst_version < latest_version:
+        print(colored.yellow('Please consider an update to gcdt version: %s' %
+                             latest_version))

@@ -1,10 +1,10 @@
 ## Description/Comments
-A few sentences describing the overall goals of the pull request's commits.
+A few sentences describing the overall goals of the pull request's commits / links to relevant github issues.
 
 To consider:
-* Is this feature suitable for a general cloud deployment tool or is more suitable in a helper?
-* Does this feature have test coverage? (see README for info about tests)
-* Backwards compability
+* Is this feature suitable for glomex-cloud-deployment-tool or is more suitable in a plugin/helper?
+* Does this feature have test coverage? (see docs for info about tests)
+* Backwards compatibility
 
 Link example:
 [Jira-ticket](https://path/to/ticket)
@@ -15,7 +15,8 @@ Are there any other PR's on which this depends?
 External PR | [title](https://github.com/glomex/cloud-deployment-tools/)
 
 ## Checklist before opening PR 
-- [ ] Description provided
+- [ ] PR description provided
 - [ ] This feature has test coverage
-- [ ] The changelog has been updated
+- [ ] This feature has documentation (docs)
+- [ ] The changelog has been updated (docs/CHANGELOG.md)
 - [ ] The readme has been updated if necessary

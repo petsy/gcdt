@@ -19,7 +19,8 @@ from gcdt import utils
 from gcdt.kumo_core import print_parameter_diff, delete_stack, \
     deploy_stack, generate_template_file, list_stacks, create_change_set, \
     describe_change_set, load_cloudformation_template, call_pre_hook
-from gcdt.utils import read_gcdt_user_config, get_context, get_command
+from gcdt.utils import read_gcdt_user_config, get_context, get_command, \
+    check_gcdt_update
 from gcdt.monitoring import datadog_notification, datadog_error, \
     datadog_event_detail
 from gcdt.kumo_viz import cfn_viz
@@ -69,6 +70,7 @@ def main():
     exit_code = 0
     boto_session = boto3.session.Session()
     arguments = docopt(DOC)
+    check_gcdt_update()
     if arguments['version']:
         utils.version()
         sys.exit(0)

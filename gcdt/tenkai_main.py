@@ -14,7 +14,8 @@ from .config_reader import read_config
 from gcdt import utils
 from gcdt.tenkai_core import prepare_artifacts_bucket, deploy, deployment_status, \
     bundle_revision
-from gcdt.utils import get_context, get_command, read_gcdt_user_config
+from gcdt.utils import get_context, get_command, read_gcdt_user_config, \
+    check_gcdt_update
 from gcdt.monitoring import datadog_notification, datadog_error, datadog_event_detail
 
 
@@ -37,6 +38,7 @@ def get_user_config():
 
 def main():
     arguments = docopt(DOC)
+    check_gcdt_update()
     if arguments['version']:
         utils.version()
         sys.exit(0)
