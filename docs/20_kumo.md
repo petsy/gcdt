@@ -6,7 +6,7 @@
 To see available commands, call kumo without any arguments:
 
 ```bash
-$kumo
+$ kumo
 Usage:
         kumo deploy [--override-stack-policy]
         kumo list
@@ -60,7 +60,7 @@ settings_prod.conf -> settings for prod in [hocon](https://github.com/typesafehu
 
 #### Config file example
 
-```json
+```text
 cloudformation {
   StackName = "sample-stack"
 }
@@ -104,36 +104,36 @@ kumo does offer support for stack policies. It has a default stack policy that w
 
 ```json
 {
-          "Statement" : [
-            {
-              "Effect" : "Allow",
-              "Action" : "Update:Modify",
-              "Principal": "*",
-              "Resource" : "*"
-            },
-            {
-              "Effect" : "Deny",
-              "Action" : ["Update:Replace", "Update:Delete"],
-              "Principal": "*",
-              "Resource" : "*"
-            }
-          ]
-        }        
+  "Statement" : [
+    {
+      "Effect" : "Allow",
+      "Action" : "Update:Modify",
+      "Principal": "*",
+      "Resource" : "*"
+    },
+    {
+      "Effect" : "Deny",
+      "Action" : ["Update:Replace", "Update:Delete"],
+      "Principal": "*",
+      "Resource" : "*"
+    }
+  ]
+}        
 ```
 This allows an update operation to modify each resource but disables replacement or deletion. If you supply "--override-stack-policy" to kumo then it will use another default policy that gets applied during updates and allows every operation on every resource:
 
 
 ```json
 {
-          "Statement" : [
-            {
-              "Effect" : "Deny",
-              "Action" : "Update:*",
-              "Principal": "*",
-              "Resource" : "*"
-            }
-          ]
-        }
+  "Statement" : [
+    {
+      "Effect" : "Deny",
+      "Action" : "Update:*",
+      "Principal": "*",
+      "Resource" : "*"
+    }
+  ]
+}
 ```
 
 If you want to lock down your stack even more you can implement two functions in your cloudformation.py file:

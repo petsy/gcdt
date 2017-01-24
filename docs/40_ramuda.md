@@ -6,8 +6,8 @@
 To see available commands, call this:
 
 ```bash
-	$ramuda
-  Usage:
+$ ramuda
+Usage:
         ramuda clean
         ramuda bundle
         ramuda deploy
@@ -70,7 +70,7 @@ will print the version of gcdt you are using
 
 lambda_ENV.conf -> settings for Lambda function
 
-```json
+```text
 lambda {
   name = "dp-dev-store-redshift-load"
   description = "Lambda function which loads normalized files into redshift"
@@ -129,7 +129,7 @@ deployment {
 The .gcdt config file resides in your home folder and is created with "$ gcdt configure" as described above.
 We use .gcdt config file also for user specific configuration:
 
-```hocon
+```text
 ramuda {
   failDeploymentOnUnsuccessfulPing = true
 }
@@ -155,36 +155,60 @@ region = "eu-west-1",
 You can get the name of the bucket from Ops and it should be part of the stack outputs of the base stack in your account (s3DeploymentBucket).
 
 
-## AWS CodeDeploy Tool
-### tenkai (展開 from Japanese: deployment)
-### Usage
+### NodeJs runtime
 
-To see available commands, call this:
+With `gcdt version 0.0.75` ramuda supports the `nodejs4.3` runtime.
 
-```bash
-	$tenkai
-  Usage:
-        tenkai deploy
-        tenkai version
-```
+At this point the following features are implemented:
 
-#### deploy
-bundles your code then uploads it to S3 as a new revision and triggers a new deployment
-
-#### version
-will print the version of gcdt you are using
+* install dependencies before bundling (dependencies are defined in package.json)
+* bundling (bundle the lambda function code and dependencies)
+* deployment (the nodejs4.3 lambda function is setup with the nodejs4.3 runtime)
+* configuration (bundles `settings_<env>.conf` file for your environments)
+* nodejs support is tested by our automated gcdt testsuite
 
 
-### Folder Layout
+#### Defining dependencies for your NodeJs lambda function
 
-codedeploy -> folder containing your deployment bundle
+A sample `package.json` file to that defines a dependency to the `1337` npm module:
 
-codedeploy_env.conf -> settings for your code
 ```json
-codedeploy {
-applicationName = "mep-dev-cms-stack2-mediaExchangeCms-F5PZ6BM2TI8",
-deploymentGroupName = "mep-dev-cms-stack2-mediaExchangeCmsDg-1S2MHZ0NEB5MN",
-deploymentConfigName = "CodeDeployDefaultemplate.AllAtOnce01"
-artifactsBucket = "7finity-portal-dev-deployment"
+{
+  "name": "my-sample-lambda",
+  "version": "0.0.1",
+  "description": "A very simple lambda function",
+  "main": "index.js",
+  "dependencies": {
+    "1337": "^1.0.0"
+  }
 }
 ```
+
+
+#### Sample NodeJs lambda function
+
+From using lambda extensively we find it a good practise to implement the `ping` feature. With the ping `ramdua` automatically checks if your code is running fine on AWS.
+ 
+ Please consider to implement a `ping` in your own lambda functions:
+ 
+ ```javascript
+var l33t = require('1337')
+
+
+exports.handler = function(event, context, callback) {
+    console.log( "event", event );
+
+    if (typeof(event.ramuda_action) !== "undefined" && event.ramuda_action == "ping") {
+        console.log("respond to ping event");
+        callback(null, "alive");
+    } else {
+        console.log(l33t('glomex rocks!'));  // 910m3x r0ck5!
+        callback();  // success
+    }
+};
+```
+
+
+#### Environment specific configuration for your lambda function
+
+Please put the environment specific configuration for your lambda function into a `settings_<env>.conf` file.

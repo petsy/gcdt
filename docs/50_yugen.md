@@ -5,8 +5,8 @@
 
 To see available commands, call this:
 ```bash
-	$yugen
-  Usage:
+$ yugen
+Usage:
         yugen deploy
         yugen delete -f
         yugen export
