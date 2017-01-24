@@ -2,7 +2,7 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## [0.0.75] - 2017-01-20
+## [0.0.75] - 2017-01-24
 ### Added
 - FEATURE added gcdt installer (#201)
 - FEATURE gcdt outdated version warning (#155)
