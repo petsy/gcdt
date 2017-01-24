@@ -1,15 +1,16 @@
 {
     "status_code": 201, 
     "data": {
-        "AliasArn": "arn:aws:lambda:eu-west-1:644239850139:function:jenkins_test_svzbia:ACTIVE", 
+        "AliasArn": "arn:aws:lambda:eu-west-1:420189626185:function:jenkins_test_qkkabd:ACTIVE",
         "FunctionVersion": "1", 
         "Name": "ACTIVE", 
         "ResponseMetadata": {
+            "RetryAttempts": 0,
             "HTTPStatusCode": 201, 
-            "RequestId": "5be5ca89-979b-11e6-b119-bfe2af9f2d91", 
+            "RequestId": "3c062831-d8b7-11e6-a4fe-3f8c1879c59b",
             "HTTPHeaders": {
-                "date": "Fri, 21 Oct 2016 14:33:39 GMT", 
-                "x-amzn-requestid": "5be5ca89-979b-11e6-b119-bfe2af9f2d91", 
+                "date": "Thu, 12 Jan 2017 11:06:57 GMT",
+                "x-amzn-requestid": "3c062831-d8b7-11e6-a4fe-3f8c1879c59b",
                 "content-length": "143", 
                 "content-type": "application/json", 
                 "connection": "keep-alive"

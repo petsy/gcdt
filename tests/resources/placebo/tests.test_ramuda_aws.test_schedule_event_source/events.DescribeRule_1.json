@@ -4,17 +4,18 @@
         "ScheduleExpression": "rate(1 minute)", 
         "Name": "unittest-dev-lambda-schedule", 
         "ResponseMetadata": {
+            "RetryAttempts": 0,
             "HTTPStatusCode": 200, 
-            "RequestId": "2fe17713-97a2-11e6-95b0-551db6adbf18", 
+            "RequestId": "67b4b740-d8b7-11e6-8ed6-fb962676d8e8",
             "HTTPHeaders": {
-                "x-amzn-requestid": "2fe17713-97a2-11e6-95b0-551db6adbf18", 
-                "date": "Fri, 21 Oct 2016 15:22:32 GMT", 
+                "x-amzn-requestid": "67b4b740-d8b7-11e6-8ed6-fb962676d8e8",
+                "date": "Thu, 12 Jan 2017 11:08:10 GMT",
                 "content-length": "210", 
                 "content-type": "application/x-amz-json-1.1"
             }
         }, 
         "State": "ENABLED", 
-        "Arn": "arn:aws:events:eu-west-1:644239850139:rule/unittest-dev-lambda-schedule", 
+        "Arn": "arn:aws:events:eu-west-1:420189626185:rule/unittest-dev-lambda-schedule",
         "Description": "run every 1 minute"
     }
 }

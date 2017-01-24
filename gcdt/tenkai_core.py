@@ -5,12 +5,12 @@ import sys
 import json
 import time
 import tarfile
-import boto3
 
 from boto3.s3.transfer import S3Transfer
 from clint.textui import colored
 
 from gcdt import monitoring, utils
+
 
 def deploy(boto_session, applicationName, deploymentGroupName, deploymentConfigName, bucket,
            slack_token=None, slack_channel='systemmessages',
@@ -32,7 +32,8 @@ def deploy(boto_session, applicationName, deploymentGroupName, deploymentConfigN
             print('Pre bundle script exited with error')
             sys.exit(1)
     bundlefile = bundle_revision()
-    etag, version = _upload_revision_to_s3(bucket, applicationName, bundlefile)
+    etag, version = _upload_revision_to_s3(boto_session, bucket,
+                                           applicationName, bundlefile)
 
     client_codedeploy = boto_session.client('codedeploy')
     response = client_codedeploy.create_deployment(
@@ -112,17 +113,17 @@ def bundle_revision(outputpath='/tmp'):
     return tarfile_name
 
 
-def prepare_artifacts_bucket(bucket):
+def prepare_artifacts_bucket(boto_session, bucket):
     """Prepare the bucket if it does not exist.
 
     :param bucket:
     """
-    if not _bucket_exists(bucket):
-        _create_bucket(bucket)
+    if not _bucket_exists(boto_session, bucket):
+        _create_bucket(boto_session, bucket)
 
 
-def _upload_revision_to_s3(bucket, applicationName, file):
-    client_s3 = boto3.client('s3')
+def _upload_revision_to_s3(boto_session, bucket, applicationName, file):
+    client_s3 = boto_session.client('s3')
     transfer = S3Transfer(client_s3)
     # Upload /tmp/myfile to s3://bucket/key and print upload progress.
     transfer.upload_file(file, bucket, _build_bundle_key(applicationName))
@@ -132,13 +133,13 @@ def _upload_revision_to_s3(bucket, applicationName, file):
     return response['ETag'], response['VersionId']
 
 
-def _bucket_exists(bucket):
-    client_s3 = boto3.resource('s3')
+def _bucket_exists(boto_session, bucket):
+    client_s3 = boto_session.resource('s3')
     return client_s3.Bucket(bucket) in client_s3.buckets.all()
 
 
-def _create_bucket(bucket):
-    client_s3 = boto3.client('s3')
+def _create_bucket(boto_session, bucket):
+    client_s3 = boto_session.client('s3')
     client_s3.create_bucket(
         Bucket=bucket
     )

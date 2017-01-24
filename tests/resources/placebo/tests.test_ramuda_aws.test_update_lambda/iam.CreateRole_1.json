@@ -3,27 +3,28 @@
     "data": {
         "Role": {
             "AssumeRolePolicyDocument": "%7B%22Version%22%3A%20%222012-10-17%22%2C%20%22Statement%22%3A%20%5B%7B%22Action%22%3A%20%5B%22sts%3AAssumeRole%22%5D%2C%20%22Effect%22%3A%20%22Allow%22%2C%20%22Principal%22%3A%20%7B%22Service%22%3A%20%5B%22lambda.amazonaws.com%22%5D%7D%7D%5D%7D", 
-            "RoleId": "AROAJWINVV3MV32UZGFM4", 
+            "RoleId": "AROAJIJ7B7P4SCWGT43KC",
             "CreateDate": {
-                "hour": 14, 
+                "hour": 11,
                 "__class__": "datetime", 
-                "month": 10, 
-                "second": 3, 
-                "microsecond": 370000, 
-                "year": 2016, 
-                "day": 21, 
-                "minute": 33
+                "month": 1,
+                "second": 23,
+                "microsecond": 366000,
+                "year": 2017,
+                "day": 12,
+                "minute": 6
             }, 
-            "RoleName": "unittest_svzbia_lambda", 
+            "RoleName": "unittest_qkkabd_lambda",
             "Path": "/", 
-            "Arn": "arn:aws:iam::644239850139:role/unittest_svzbia_lambda"
+            "Arn": "arn:aws:iam::420189626185:role/unittest_qkkabd_lambda"
         }, 
         "ResponseMetadata": {
+            "RetryAttempts": 0,
             "HTTPStatusCode": 200, 
-            "RequestId": "461bc9f4-979b-11e6-9002-172eb1b2f46a", 
+            "RequestId": "276c9128-d8b7-11e6-a1f6-6b91867284cc",
             "HTTPHeaders": {
-                "x-amzn-requestid": "461bc9f4-979b-11e6-9002-172eb1b2f46a", 
-                "date": "Fri, 21 Oct 2016 14:33:03 GMT", 
+                "x-amzn-requestid": "276c9128-d8b7-11e6-a1f6-6b91867284cc",
+                "date": "Thu, 12 Jan 2017 11:06:22 GMT",
                 "content-length": "814", 
                 "content-type": "text/xml"
             }

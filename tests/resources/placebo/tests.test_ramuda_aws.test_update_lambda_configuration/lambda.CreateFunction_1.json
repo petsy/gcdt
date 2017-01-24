@@ -1,26 +1,27 @@
 {
     "status_code": 201, 
     "data": {
-        "CodeSha256": "8/Hv7Ys8Us6VeO8a9to4sjn66T+jO0B6JNsPD+/Ct4c=", 
-        "FunctionName": "jenkins_test_bdupkw", 
+        "CodeSha256": "DrPD4lkCrJJMfB1Ltymxo03sA7zEYEN87wSjVwa/4w0=",
+        "FunctionName": "jenkins_test_tixuve",
         "ResponseMetadata": {
+            "RetryAttempts": 0,
             "HTTPStatusCode": 201, 
-            "RequestId": "7f799bce-979b-11e6-a0ec-49980d41ba63", 
+            "RequestId": "5988d323-d8b8-11e6-9219-ab5bcd5ffd97",
             "HTTPHeaders": {
-                "date": "Fri, 21 Oct 2016 14:34:40 GMT", 
-                "x-amzn-requestid": "7f799bce-979b-11e6-a0ec-49980d41ba63", 
-                "content-length": "541", 
+                "date": "Thu, 12 Jan 2017 11:14:56 GMT",
+                "x-amzn-requestid": "5988d323-d8b8-11e6-9219-ab5bcd5ffd97",
+                "content-length": "544",
                 "content-type": "application/json", 
                 "connection": "keep-alive"
             }
         }, 
-        "CodeSize": 332357, 
+        "CodeSize": 124693,
         "MemorySize": 128, 
-        "FunctionArn": "arn:aws:lambda:eu-west-1:644239850139:function:jenkins_test_bdupkw", 
+        "FunctionArn": "arn:aws:lambda:eu-west-1:420189626185:function:jenkins_test_tixuve",
         "Version": "1", 
-        "Role": "arn:aws:iam::644239850139:role/unittest_bdupkw_lambda", 
+        "Role": "arn:aws:iam::420189626185:role/unittest_tixuve_lambda",
         "Timeout": 300, 
-        "LastModified": "2016-10-21T14:34:40.399+0000", 
+        "LastModified": "2017-01-12T11:14:57.189+0000",
         "Handler": "handler.handle", 
         "Runtime": "python2.7", 
         "Description": "lambda created for unittesting ramuda deployment"

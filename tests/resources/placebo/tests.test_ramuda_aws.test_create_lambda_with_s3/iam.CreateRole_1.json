@@ -3,27 +3,28 @@
     "data": {
         "Role": {
             "AssumeRolePolicyDocument": "%7B%22Version%22%3A%20%222012-10-17%22%2C%20%22Statement%22%3A%20%5B%7B%22Action%22%3A%20%5B%22sts%3AAssumeRole%22%5D%2C%20%22Effect%22%3A%20%22Allow%22%2C%20%22Principal%22%3A%20%7B%22Service%22%3A%20%5B%22lambda.amazonaws.com%22%5D%7D%7D%5D%7D", 
-            "RoleId": "AROAJUPZNPSMXWS7UYXVO", 
+            "RoleId": "AROAJWHCXI4ACAWEC5YWA",
             "CreateDate": {
-                "hour": 9, 
+                "hour": 11,
                 "__class__": "datetime", 
-                "month": 10, 
-                "second": 20, 
-                "microsecond": 723000, 
-                "year": 2016, 
-                "day": 26, 
-                "minute": 49
+                "month": 1,
+                "second": 43,
+                "microsecond": 502000,
+                "year": 2017,
+                "day": 12,
+                "minute": 5
             }, 
-            "RoleName": "unittest_avaxcr_lambda", 
+            "RoleName": "unittest_eanjwg_lambda",
             "Path": "/", 
-            "Arn": "arn:aws:iam::644239850139:role/unittest_avaxcr_lambda"
+            "Arn": "arn:aws:iam::420189626185:role/unittest_eanjwg_lambda"
         }, 
         "ResponseMetadata": {
+            "RetryAttempts": 0,
             "HTTPStatusCode": 200, 
-            "RequestId": "77e1f9c3-9b61-11e6-80dd-8b0e8971750d", 
+            "RequestId": "0fa9f56d-d8b7-11e6-9eef-e597f218ff05",
             "HTTPHeaders": {
-                "x-amzn-requestid": "77e1f9c3-9b61-11e6-80dd-8b0e8971750d", 
-                "date": "Wed, 26 Oct 2016 09:49:19 GMT", 
+                "x-amzn-requestid": "0fa9f56d-d8b7-11e6-9eef-e597f218ff05",
+                "date": "Thu, 12 Jan 2017 11:05:42 GMT",
                 "content-length": "814", 
                 "content-type": "text/xml"
             }

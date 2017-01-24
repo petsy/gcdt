@@ -2,19 +2,20 @@
     "status_code": 404, 
     "data": {
         "ResponseMetadata": {
+            "RetryAttempts": 0,
             "HTTPStatusCode": 404, 
-            "RequestId": "4fac5dc1-979b-11e6-be08-5702d982a3fa", 
+            "RequestId": "30cdd826-d8b7-11e6-8e6f-ffe29eb41860",
             "HTTPHeaders": {
-                "x-amzn-requestid": "4fac5dc1-979b-11e6-be08-5702d982a3fa", 
+                "x-amzn-requestid": "30cdd826-d8b7-11e6-8e6f-ffe29eb41860",
                 "content-length": "114", 
                 "connection": "keep-alive", 
-                "date": "Fri, 21 Oct 2016 14:33:18 GMT", 
+                "date": "Thu, 12 Jan 2017 11:06:38 GMT",
                 "content-type": "application/json", 
                 "x-amzn-errortype": "ResourceNotFoundException"
             }
         }, 
         "Error": {
-            "Message": "Function not found: arn:aws:lambda:eu-west-1:644239850139:function:jenkins_test_svzbia", 
+            "Message": "Function not found: arn:aws:lambda:eu-west-1:420189626185:function:jenkins_test_qkkabd",
             "Code": "ResourceNotFoundException"
         }
     }

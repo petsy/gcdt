@@ -13,8 +13,8 @@
                         ]
                     }
                 }, 
-                "LambdaFunctionArn": "arn:aws:lambda:eu-west-1:644239850139:function:jenkins_test_matsoi:ACTIVE", 
-                "Id": "882d5d07-97a3-11e6-9d40-c4850848610b", 
+                "LambdaFunctionArn": "arn:aws:lambda:eu-west-1:420189626185:function:jenkins_test_rndiyc:ACTIVE",
+                "Id": "f3564d8f-d8b7-11e6-bf4b-9801a7a1861b",
                 "Events": [
                     "s3:ObjectCreated:*"
                 ]
@@ -22,13 +22,14 @@
         ], 
         "ResponseMetadata": {
             "HTTPStatusCode": 200, 
-            "HostId": "Zu7BVEV8OLDU2D+75ziglCbRrm6IOg3WLta95GoF6IE7GhN2wNoV1IpODeIWe2h54FH0EfwP5aA=", 
-            "RequestId": "8FBA8934C59EA754", 
+            "RetryAttempts": 0,
+            "HostId": "IthtyTRw42DjkWQzz4wLOWFLqQyV3F6gincMUCmb5RJrMelGIH9O9hxdM3Zfb6bKwMJtSCYnlrA=",
+            "RequestId": "C3D6866151BF5FB0",
             "HTTPHeaders": {
-                "x-amz-id-2": "Zu7BVEV8OLDU2D+75ziglCbRrm6IOg3WLta95GoF6IE7GhN2wNoV1IpODeIWe2h54FH0EfwP5aA=", 
-                "date": "Fri, 21 Oct 2016 15:32:15 GMT", 
+                "x-amz-id-2": "IthtyTRw42DjkWQzz4wLOWFLqQyV3F6gincMUCmb5RJrMelGIH9O9hxdM3Zfb6bKwMJtSCYnlrA=",
+                "date": "Thu, 12 Jan 2017 11:12:09 GMT",
                 "transfer-encoding": "chunked", 
-                "x-amz-request-id": "8FBA8934C59EA754", 
+                "x-amz-request-id": "C3D6866151BF5FB0",
                 "server": "AmazonS3"
             }
         }

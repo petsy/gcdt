@@ -1,40 +1,43 @@
 {
     "status_code": 201, 
     "data": {
-        "description": "Created for unittest-gcdt-sample-api-llenlo", 
+        "description": "Created for unittest-gcdt-sample-api-xiyvlu",
         "ResponseMetadata": {
+            "RetryAttempts": 0,
             "HTTPStatusCode": 201, 
-            "RequestId": "b270ecc3-9758-11e6-9caa-3941140c78b4", 
+            "RequestId": "2dbc1304-d8b1-11e6-ba35-e5c20588dca2",
             "HTTPHeaders": {
-                "x-amzn-requestid": "b270ecc3-9758-11e6-9caa-3941140c78b4", 
-                "date": "Fri, 21 Oct 2016 06:36:28 GMT", 
-                "content-length": "290", 
-                "content-type": "application/json"
+                "date": "Thu, 12 Jan 2017 10:23:37 GMT",
+                "x-amzn-requestid": "2dbc1304-d8b1-11e6-ba35-e5c20588dca2",
+                "content-length": "260",
+                "content-type": "application/json",
+                "connection": "keep-alive"
             }
         }, 
         "enabled": true, 
+        "value": "VcJdFhDz0T5GdWPkJaxcw79nLCoi9jHh68hcQuf0",
         "stageKeys": [], 
         "lastUpdatedDate": {
-            "hour": 8, 
+            "hour": 11,
             "__class__": "datetime", 
-            "month": 10, 
-            "second": 28, 
+            "month": 1,
+            "second": 36,
             "microsecond": 0, 
-            "year": 2016, 
-            "day": 21, 
-            "minute": 36
+            "year": 2017,
+            "day": 12,
+            "minute": 23
         }, 
         "createdDate": {
-            "hour": 8, 
+            "hour": 11,
             "__class__": "datetime", 
-            "month": 10, 
-            "second": 28, 
+            "month": 1,
+            "second": 36,
             "microsecond": 0, 
-            "year": 2016, 
-            "day": 21, 
-            "minute": 36
+            "year": 2017,
+            "day": 12,
+            "minute": 23
         }, 
-        "id": "ANC1kFNgZ28lqOvO2iNzU2bkY0h0HfEf9YiHadku", 
-        "name": "unittest-gcdt-sample-api-key-llenlo"
+        "id": "lcnktsyfe3",
+        "name": "unittest-gcdt-sample-api-key-xiyvlu"
     }
 }

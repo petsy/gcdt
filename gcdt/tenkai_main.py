@@ -50,7 +50,8 @@ def main():
         conf = read_config(config_base_name='codedeploy')
 
         # are_credentials_still_valid()
-        prepare_artifacts_bucket(conf.get('codedeploy.artifactsBucket'))
+        prepare_artifacts_bucket(boto_session,
+                                 conf.get('codedeploy.artifactsBucket'))
         deployment = deploy(
             boto_session=boto_session,
             applicationName=conf.get('codedeploy.applicationName'),

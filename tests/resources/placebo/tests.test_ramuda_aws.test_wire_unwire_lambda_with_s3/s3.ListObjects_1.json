@@ -1,18 +1,19 @@
 {
     "status_code": 200, 
     "data": {
-        "Name": "unittest-lambda-s3-event-source-ndmbkl", 
+        "Name": "unittest-lambda-s3-event-source-qirisp",
         "ResponseMetadata": {
             "HTTPStatusCode": 200, 
-            "HostId": "PW/9tcP3u8vMxYOVkdd3mY36yn52X3G+CmbH2z5SInAHyTCkWPoyq3K17RSfZWRUbqfQaBspDck=", 
-            "RequestId": "EDD92F875E8634C9", 
+            "RetryAttempts": 0,
+            "HostId": "rrRUZNzDg0Q4Trnpx9ja8Hh1Q1u7pJ2vsxtkzIts/5vTiGekP2mQtziC7Qf9UxxX7Wpg+rNlbro=",
+            "RequestId": "D583784CD57A9048",
             "HTTPHeaders": {
                 "x-amz-bucket-region": "eu-west-1", 
-                "x-amz-id-2": "PW/9tcP3u8vMxYOVkdd3mY36yn52X3G+CmbH2z5SInAHyTCkWPoyq3K17RSfZWRUbqfQaBspDck=", 
+                "x-amz-id-2": "rrRUZNzDg0Q4Trnpx9ja8Hh1Q1u7pJ2vsxtkzIts/5vTiGekP2mQtziC7Qf9UxxX7Wpg+rNlbro=",
                 "server": "AmazonS3", 
                 "transfer-encoding": "chunked", 
-                "x-amz-request-id": "EDD92F875E8634C9", 
-                "date": "Fri, 21 Oct 2016 15:32:56 GMT", 
+                "x-amz-request-id": "D583784CD57A9048",
+                "date": "Thu, 12 Jan 2017 11:12:50 GMT",
                 "content-type": "application/xml"
             }
         }, 
@@ -24,41 +25,41 @@
         "Contents": [
             {
                 "LastModified": {
-                    "hour": 15, 
+                    "hour": 11,
                     "__class__": "datetime", 
-                    "month": 10, 
-                    "second": 16, 
+                    "month": 1,
+                    "second": 10,
                     "microsecond": 0, 
-                    "year": 2016, 
-                    "day": 21, 
-                    "minute": 32
+                    "year": 2017,
+                    "day": 12,
+                    "minute": 12
                 }, 
                 "ETag": "\"736db904ad222bf88ee6b8d103fceb8e\"", 
                 "StorageClass": "STANDARD", 
                 "Key": "test_file.gz", 
                 "Owner": {
-                    "DisplayName": "aws-dp-dev", 
-                    "ID": "003a87b825e17149b14db54e5177e832c9cedda326bfc0f038722dd68b90a310"
+                    "DisplayName": "aws-infra-dev",
+                    "ID": "09732c64a4536d16174cea9300c2eeceedc6c17f9f11cb7ba80c4d3eed392143"
                 }, 
                 "Size": 20
             }, 
             {
                 "LastModified": {
-                    "hour": 15, 
+                    "hour": 11,
                     "__class__": "datetime", 
-                    "month": 10, 
-                    "second": 45, 
+                    "month": 1,
+                    "second": 38,
                     "microsecond": 0, 
-                    "year": 2016, 
-                    "day": 21, 
-                    "minute": 32
+                    "year": 2017,
+                    "day": 12,
+                    "minute": 12
                 }, 
                 "ETag": "\"736db904ad222bf88ee6b8d103fceb8e\"", 
                 "StorageClass": "STANDARD", 
                 "Key": "test_file_2.gz", 
                 "Owner": {
-                    "DisplayName": "aws-dp-dev", 
-                    "ID": "003a87b825e17149b14db54e5177e832c9cedda326bfc0f038722dd68b90a310"
+                    "DisplayName": "aws-infra-dev",
+                    "ID": "09732c64a4536d16174cea9300c2eeceedc6c17f9f11cb7ba80c4d3eed392143"
                 }, 
                 "Size": 20
             }

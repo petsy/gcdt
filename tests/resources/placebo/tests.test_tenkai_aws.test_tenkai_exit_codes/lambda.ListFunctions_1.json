@@ -50,17 +50,17 @@
             }, 
             {
                 "Version": "$LATEST", 
-                "CodeSha256": "L1E0ZFjwDd0P/iQdYBLDapemDX7TVY9HL+9InPIzcyQ=", 
+                "CodeSha256": "JKQnGskXPTj0w5eoA+rW9ZiCxlgkFAEdFBLvruykG+U=",
                 "FunctionName": "ops-dev-captain-crunch-slack-notifier", 
                 "MemorySize": 128, 
-                "CodeSize": 28831074, 
+                "CodeSize": 2072726,
                 "FunctionArn": "arn:aws:lambda:eu-west-1:420189626185:function:ops-dev-captain-crunch-slack-notifier", 
                 "Handler": "handler.lambda_handler", 
-                "Role": "arn:aws:iam::420189626185:role/lambda/ops-dev-captain-crunch-sl-LambdaCaptainCrunchSlack-132QX0DBUEJ6B", 
+                "Role": "arn:aws:iam::420189626185:role/lambda/ops-dev-captain-crunch-sl-LambdaCaptainCrunchSlack-1GC3X8EWTDWDO",
                 "Timeout": 30, 
-                "LastModified": "2016-11-04T11:59:42.457+0000", 
+                "LastModified": "2017-01-09T09:54:57.486+0000",
                 "Runtime": "python2.7", 
-                "Description": "Deletes tables older than X weeks from Redshift"
+                "Description": "Notifies slack about who is Captain Crunch"
             }, 
             {
                 "Version": "$LATEST", 
@@ -92,6 +92,20 @@
             }, 
             {
                 "Version": "$LATEST", 
+                "CodeSha256": "ryOxMGjr0kbXFAFzz8lKu3B3bz6fOeD69BFtOUPhGJc=",
+                "FunctionName": "captainreport",
+                "MemorySize": 128,
+                "CodeSize": 523,
+                "FunctionArn": "arn:aws:lambda:eu-west-1:420189626185:function:captainreport",
+                "Handler": "index.handler",
+                "Role": "arn:aws:iam::420189626185:role/lambda_captain_report",
+                "Timeout": 3,
+                "LastModified": "2016-11-28T15:05:38.583+0000",
+                "Runtime": "nodejs4.3",
+                "Description": "Captain Report"
+            },
+            {
+                "Version": "$LATEST",
                 "CodeSha256": "RfeDO/2XsLZ3AQhbpYH3eZGDwZucyCGzazy19p1mWck=", 
                 "FunctionName": "infra-dev-lambdaEC2Basics-YP3QMT26FQL5", 
                 "MemorySize": 128, 
@@ -108,11 +122,11 @@
         "ResponseMetadata": {
             "RetryAttempts": 0, 
             "HTTPStatusCode": 200, 
-            "RequestId": "0cf500a1-a4f3-11e6-b9ca-75f262e590d1", 
+            "RequestId": "070ef202-d8bc-11e6-9db0-c3d836c445be",
             "HTTPHeaders": {
-                "date": "Mon, 07 Nov 2016 14:04:07 GMT", 
-                "x-amzn-requestid": "0cf500a1-a4f3-11e6-b9ca-75f262e590d1", 
-                "content-length": "4295", 
+                "date": "Thu, 12 Jan 2017 11:41:16 GMT",
+                "x-amzn-requestid": "070ef202-d8bc-11e6-9db0-c3d836c445be",
+                "content-length": "4808",
                 "content-type": "application/json", 
                 "connection": "keep-alive"
             }

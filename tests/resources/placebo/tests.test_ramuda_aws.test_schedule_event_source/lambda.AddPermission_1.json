@@ -1,13 +1,14 @@
 {
     "status_code": 201, 
     "data": {
-        "Statement": "{\"Sid\":\"2ff81b90-97a2-11e6-9d40-c4850848610b\",\"Resource\":\"arn:aws:lambda:eu-west-1:644239850139:function:jenkins_test_gimsaw:ACTIVE\",\"Effect\":\"Allow\",\"Principal\":{\"Service\":\"events.amazonaws.com\"},\"Action\":[\"lambda:InvokeFunction\"],\"Condition\":{\"ArnLike\":{\"AWS:SourceArn\":\"arn:aws:events:eu-west-1:644239850139:rule/unittest-dev-lambda-schedule\"}}}", 
+        "Statement": "{\"Sid\":\"67cdea1c-d8b7-11e6-b409-9801a7a1861b\",\"Resource\":\"arn:aws:lambda:eu-west-1:420189626185:function:jenkins_test_qupmvg:ACTIVE\",\"Effect\":\"Allow\",\"Principal\":{\"Service\":\"events.amazonaws.com\"},\"Action\":[\"lambda:InvokeFunction\"],\"Condition\":{\"ArnLike\":{\"AWS:SourceArn\":\"arn:aws:events:eu-west-1:420189626185:rule/unittest-dev-lambda-schedule\"}}}",
         "ResponseMetadata": {
+            "RetryAttempts": 0,
             "HTTPStatusCode": 201, 
-            "RequestId": "301a3a72-97a2-11e6-93dc-81482cb727bf", 
+            "RequestId": "67ea1eb4-d8b7-11e6-8ebf-45f5ddde879f",
             "HTTPHeaders": {
-                "date": "Fri, 21 Oct 2016 15:22:32 GMT", 
-                "x-amzn-requestid": "301a3a72-97a2-11e6-93dc-81482cb727bf", 
+                "date": "Thu, 12 Jan 2017 11:08:11 GMT",
+                "x-amzn-requestid": "67ea1eb4-d8b7-11e6-8ebf-45f5ddde879f",
                 "content-length": "394", 
                 "content-type": "application/json", 
                 "connection": "keep-alive"
