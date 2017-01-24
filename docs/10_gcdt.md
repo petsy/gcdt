@@ -1,6 +1,4 @@
 ## glomex-cloud-deployment-tools (gcdt)
-
-
 ### Usage
 
 To see available commands, call gcdt without any arguments:
