@@ -1,0 +1,29 @@
+{
+    "status_code": 201,
+    "data": {
+        "CodeSha256": "g7o3LIuuI9Lc3bE194Tp081xWziZJsjdOsO36K8ZKYI=",
+        "FunctionName": "jenkins_test_wfwvad",
+        "ResponseMetadata": {
+            "RetryAttempts": 0,
+            "HTTPStatusCode": 201,
+            "RequestId": "0cfba2d9-dc9e-11e6-8987-8b0e7dca5001",
+            "HTTPHeaders": {
+                "date": "Tue, 17 Jan 2017 10:16:46 GMT",
+                "x-amzn-requestid": "0cfba2d9-dc9e-11e6-8987-8b0e7dca5001",
+                "content-length": "515",
+                "content-type": "application/json",
+                "connection": "keep-alive"
+            }
+        },
+        "CodeSize": 3088,
+        "MemorySize": 256,
+        "FunctionArn": "arn:aws:lambda:eu-west-1:420189626185:function:jenkins_test_wfwvad",
+        "Version": "1",
+        "Role": "arn:aws:iam::420189626185:role/unittest_wfwvad_lambda",
+        "Timeout": 300,
+        "LastModified": "2017-01-17T10:16:46.228+0000",
+        "Handler": "index.handler",
+        "Runtime": "nodejs4.3",
+        "Description": "lambda test for ramuda"
+    }
+}

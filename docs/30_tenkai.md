@@ -5,8 +5,8 @@
 To see available commands, call this:
 
 ```bash
-	$tenkai
-  Usage:
+$ tenkai
+Usage:
         tenkai deploy
         tenkai version
 ```
@@ -23,11 +23,12 @@ will print the version of gcdt you are using
 codedeploy -> folder containing your deployment bundle
 
 codedeploy_env.conf -> settings for your code
-```json
+
+```text
 codedeploy {
-applicationName = "mep-dev-cms-stack2-mediaExchangeCms-F5PZ6BM2TI8",
-deploymentGroupName = "mep-dev-cms-stack2-mediaExchangeCmsDg-1S2MHZ0NEB5MN",
-deploymentConfigName = "CodeDeployDefaultemplate.AllAtOnce01"
-artifactsBucket = "7finity-portal-dev-deployment"
+    applicationName = "mep-dev-cms-stack2-mediaExchangeCms-F5PZ6BM2TI8",
+    deploymentGroupName = "mep-dev-cms-stack2-mediaExchangeCmsDg-1S2MHZ0NEB5MN",
+    deploymentConfigName = "CodeDeployDefaultemplate.AllAtOnce01"
+    artifactsBucket = "7finity-portal-dev-deployment"
 }
 ```
