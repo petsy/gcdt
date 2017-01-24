@@ -1,15 +1,15 @@
 # -*- coding: utf-8 -*-
 from __future__ import print_function
-import json
 import os
-import textwrap
 import time
 import datetime
 from io import BytesIO
-from requests.structures import CaseInsensitiveDict
+import json
+import textwrap
 
 import boto3
 from botocore.response import StreamingBody
+from requests.structures import CaseInsensitiveDict
 import pytest
 import placebo
 
@@ -205,7 +205,7 @@ def _precond_check():
 # skipif helper check_preconditions
 check_preconditions = pytest.mark.skipif(
     _precond_check(),
-    reason="Set environment variables to run tests on AWS (see README.md)."
+    reason="Set environment variables to run tests on AWS (see gcdt docs)."
 )
 
 

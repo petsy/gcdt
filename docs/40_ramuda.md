@@ -167,6 +167,8 @@ At this point the following features are implemented:
 * configuration (bundles `settings_<env>.conf` file for your environments)
 * nodejs support is tested by our automated gcdt testsuite
 
+Note: for this to work you need to **have npm installed** on the machine you want to run the ramuda bundling!
+
 
 #### Defining dependencies for your NodeJs lambda function
 

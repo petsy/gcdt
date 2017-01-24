@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
 from __future__ import print_function
 import os
+import subprocess
 import random
 import shutil
 import string
 from tempfile import NamedTemporaryFile, mkdtemp
+
 import pytest
 
 
@@ -92,5 +94,27 @@ def temp_folder():
     shutil.rmtree(folder)
 
 
+#FIXME this is not supposed to be here!
 def here(p):
     return os.path.join(os.path.dirname(__file__), p)
+
+
+def _npm_check():
+    # Make sure the npm tool is installed.
+    # returns false if missing
+    try:
+        subprocess.call(["npm", "--version"])
+    except OSError as e:
+        if e.errno == os.errno.ENOENT:
+            return True
+        else:
+            # Something else went wrong while trying to run `npm`
+            raise
+    return False
+
+
+# skipif helper check_npm
+check_npm = pytest.mark.skipif(
+    _npm_check(),
+    reason="You need to install npm (see gcdt docs)."
+)
