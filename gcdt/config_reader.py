@@ -13,7 +13,7 @@ from collections import OrderedDict
 from .servicediscovery import get_ssl_certificate, get_outputs_for_stack, \
     get_base_ami
 try:
-    from credstash import getSecret
+    from credstash import get_secret
 except ImportError:
     pass
 
@@ -30,7 +30,7 @@ DEFAULT_LOOKUPS = ["secret", "ssl", "stack"]
 VALID_OUTPUT_FORMATS = ["configtree", "hocon", "json", "properties", "yaml"]
 
 
-def read_config(config_base_name="settings", location="",
+def read_config(boto_session, config_base_name="settings", location="",
                 lookups=DEFAULT_LOOKUPS, output_format='configtree',
                 add_env=True):
     """
@@ -41,11 +41,11 @@ def read_config(config_base_name="settings", location="",
     :param add_env:
     :return:
     """
-    return __read_config(config_base_name, location, lookups, output_format,
-                         add_env, fail_if_not_exists=True)
+    return __read_config(boto_session, config_base_name, location, lookups,
+                         output_format, add_env, fail_if_not_exists=True)
 
 
-def read_config_if_exists(config_base_name="settings", location="",
+def read_config_if_exists(boto_session, config_base_name="settings", location="",
                           lookups=DEFAULT_LOOKUPS, output_format='configtree',
                           add_env=True):
     """
@@ -56,11 +56,11 @@ def read_config_if_exists(config_base_name="settings", location="",
     :param add_env:
     :return:
     """
-    return __read_config(config_base_name, location, lookups, output_format,
-                         add_env, fail_if_not_exists=False)
+    return __read_config(boto_session, config_base_name, location, lookups,
+                         output_format, add_env, fail_if_not_exists=False)
 
 
-def __read_config(config_base_name, location, lookups, output_format, add_env,
+def __read_config(boto_session, config_base_name, location, lookups, output_format, add_env,
                   fail_if_not_exists):
     lookups = __parse_lookups(lookups)
     try:
@@ -70,7 +70,7 @@ def __read_config(config_base_name, location, lookups, output_format, add_env,
         if lookups:
             try:
                 config = ConfigFactory.from_dict(
-                    __resolve_lookups(config, lookups))
+                    __resolve_lookups(boto_session, config, lookups))
             except AttributeError:
                 return config
         return format_conversion(config, output_format)
@@ -92,12 +92,12 @@ def format_conversion(config, output_format):
         return HOCONConverter.convert(config, output_format)
 
 
-def read_lambda_config(config_base_name="lambda", lookups=DEFAULT_LOOKUPS):
-    return read_config(config_base_name, lookups=lookups)
+def read_lambda_config(boto_session, config_base_name="lambda", lookups=DEFAULT_LOOKUPS):
+    return read_config(boto_session, config_base_name, lookups=lookups)
 
 
-def read_api_config(config_base_name="api", lookups=DEFAULT_LOOKUPS):
-    return read_config(config_base_name, lookups=lookups)
+def read_api_config(boto_session, config_base_name="api", lookups=DEFAULT_LOOKUPS):
+    return read_config(boto_session, config_base_name, lookups=lookups)
 
 
 def get_env():
@@ -167,7 +167,7 @@ def __resolve_dir(location):
         return location + "/"
 
 
-def __resolve_lookups(config, lookups):
+def __resolve_lookups(boto_session, config, lookups):
     """
     Resolve all lookups in the config and return it transformed
     :param resolve_stack_only: bool if only lookup:stack entries are to be resolved
@@ -181,7 +181,7 @@ def __resolve_lookups(config, lookups):
             stackdata.update({stack: {"sslcert": get_ssl_certificate(stack)}})
         elif "stack" in lookups:
             stackdata.update({stack: get_outputs_for_stack(stack)})
-    dict_resolved = __resolve_lookups_recurse(dic, stackdata, lookups)
+    dict_resolved = __resolve_lookups_recurse(boto_session, dic, stackdata, lookups)
     return dict_resolved
 
 
@@ -216,26 +216,29 @@ def __identify_single_value(value, stacklist, lookups):
                 stacklist.append(splits[2])
 
 
-def __resolve_lookups_recurse(dic, stacks, lookups):
+def __resolve_lookups_recurse(boto_session, dic, stacks, lookups):
     subdict = OrderedDict()
     if isinstance(dic, OrderedDict):
         for key, value in dic.items():
             if isinstance(value, OrderedDict):
-                subdict[key] = __resolve_lookups_recurse(value, stacks,lookups)
+                subdict[key] = __resolve_lookups_recurse(boto_session, value,
+                                                         stacks,lookups)
             elif isinstance(value, list):
                 sublist = []
                 for listelem in value:
                     sublist.append(
-                        __resolve_lookups_recurse(listelem, stacks, lookups))
+                        __resolve_lookups_recurse(boto_session, listelem,
+                                                  stacks, lookups))
                 subdict[key] = sublist
             else:
-                subdict[key] = __resolve_single_value(value, stacks, lookups)
+                subdict[key] = __resolve_single_value(boto_session, value,
+                                                      stacks, lookups)
     else:
-        return __resolve_single_value(dic, stacks, lookups)
+        return __resolve_single_value(boto_session, dic, stacks, lookups)
     return subdict
 
 
-def __resolve_single_value(value, stacks, lookups):
+def __resolve_single_value(boto_session, value, stacks, lookups):
     if isinstance(value, basestring):
         if value.startswith("lookup"):
             splits = value.split(":")
@@ -244,7 +247,7 @@ def __resolve_single_value(value, stacks, lookups):
             if splits[1] == "ssl" and  "ssl" in lookups:
                 return stacks[splits[2]].values()[0]
             if splits[1] == "secret" and "secret" in lookups:
-                return getSecret(splits[2])
+                return get_secret(boto_session, splits[2])
             if splits[1] == "baseami":
                 return get_base_ami()
     return value

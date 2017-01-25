@@ -233,7 +233,7 @@ def test_kumo_utils_ensure_autoscaling_ebs_tags(cleanup_stack_autoscaling,
     for r in response['Reservations']:
         for i in r['Instances']:
             instance_id = i['InstanceId']
-            instance  = ec2_resource.Instance(instance_id)
+            instance = ec2_resource.Instance(instance_id)
             for vol in instance.volumes.all():
                 for tag in tags_v2:
                     assert_true(check_volume_tagged(vol, tag))

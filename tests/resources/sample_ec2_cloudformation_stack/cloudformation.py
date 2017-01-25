@@ -24,11 +24,11 @@ ec2_instance = template.add_resource(ec2.Instance(
     ImageId='ami-25681456',
     InstanceType='t2.micro',
     KeyName='dev-ec2',
-    SecurityGroupIds=["sg-c8bce3ac"], # hard coded to glomex default sg
-    SubnetId='subnet-feb7ac9b', # hard coded to glomex subnet eu-west-1a
+    SecurityGroupIds=["sg-8eec36e8"],  # hard coded to glomex default sg
+    SubnetId='subnet-b6eaa5d2',  # hard coded to glomex subnet eu-west-1a
     UserData=Base64("80"),
     Tags=[
-        ec2.Tag('Name','gcdt-test-ec2-ebs-tagging')
+        ec2.Tag('Name', 'gcdt-test-ec2-ebs-tagging')
     ]
     ))
 
@@ -39,6 +39,7 @@ template.add_output([
         Value=Ref(ec2_instance),
     ),
 ])
+
 
 def generate_template():
     return template.to_json()

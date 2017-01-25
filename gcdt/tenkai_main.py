@@ -44,12 +44,12 @@ def main():
         sys.exit(0)
 
     boto_session = boto3.session.Session()
-    context = get_context('tenkai', get_command(arguments))
+    context = get_context(boto_session, 'tenkai', get_command(arguments))
     datadog_notification(context)
 
     if arguments['deploy']:
         slack_token, slack_channel = get_user_config()
-        conf = read_config(config_base_name='codedeploy')
+        conf = read_config(boto_session, config_base_name='codedeploy')
 
         # are_credentials_still_valid()
         prepare_artifacts_bucket(boto_session,

@@ -61,7 +61,7 @@ def main():
         version()
         sys.exit(0)
 
-    context = get_context('yugen', get_command(arguments))
+    context = get_context(boto_session, 'yugen', get_command(arguments))
     datadog_notification(context)
 
     if arguments['list']:
@@ -70,7 +70,7 @@ def main():
     elif arguments['deploy']:
         slack_token, slack_channel = get_user_config()
         are_credentials_still_valid(boto_session)
-        conf = read_api_config()
+        conf = read_api_config(boto_session)
         api_name = conf.get('api.name')
         api_description = conf.get('api.description')
         target_stage = conf.get('api.targetStage')
@@ -112,7 +112,7 @@ def main():
     elif arguments['delete']:
         slack_token, slack_channel = get_user_config()
         are_credentials_still_valid(boto_session)
-        conf = read_api_config()
+        conf = read_api_config(boto_session)
         api_name = conf.get('api.name')
         delete_api(
             boto_session=boto_session,
@@ -124,7 +124,7 @@ def main():
         datadog_event_detail(context, event)
     elif arguments['export']:
         are_credentials_still_valid(boto_session)
-        conf = read_api_config()
+        conf = read_api_config(boto_session)
         api_name = conf.get('api.name')
         target_stage = conf.get('api.targetStage')
         api_description = conf.get('api.description')
@@ -143,12 +143,12 @@ def main():
         )
     elif arguments['apikey-create']:
         are_credentials_still_valid(boto_session)
-        conf = read_api_config()
+        conf = read_api_config(boto_session)
         api_name = conf.get('api.name')
         create_api_key(boto_session, api_name, arguments['<keyname>'])
     elif arguments['apikey-delete']:
         are_credentials_still_valid(boto_session)
-        conf = read_api_config()
+        conf = read_api_config(boto_session)
         api_key = conf.get('api.apiKey')
         delete_api_key(boto_session, api_key)
     elif arguments['apikey-list']:
@@ -156,7 +156,7 @@ def main():
         list_api_keys(boto_session)
     elif arguments['custom-domain-create']:
         are_credentials_still_valid(boto_session)
-        conf = read_api_config()
+        conf = read_api_config(boto_session)
         api_name = conf.get('api.name')
         api_target_stage = conf.get('api.targetStage')
 

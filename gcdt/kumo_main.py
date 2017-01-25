@@ -76,11 +76,11 @@ def main():
         sys.exit(0)
     elif arguments['dot']:
         cloudformation = load_template()
-        conf = read_config()
+        conf = read_config(boto_session)
         cfn_viz(json.loads(cloudformation.generate_template()), parameters=conf)
         sys.exit(0)
 
-    context = get_context('kumo', get_command(arguments))
+    context = get_context(boto_session, 'kumo', get_command(arguments))
     datadog_notification(context)
 
     # Run command
@@ -88,7 +88,7 @@ def main():
         slack_token, slack_channel = get_user_config()
         cloudformation = load_template()
         call_pre_hook(boto_session, cloudformation)
-        conf = read_config()
+        conf = read_config(boto_session)
         print_parameter_diff(boto_session, conf)
         are_credentials_still_valid(boto_session)
         exit_code = deploy_stack(boto_session, conf, cloudformation, slack_token, \
@@ -97,21 +97,21 @@ def main():
         datadog_event_detail(context, event)
     elif arguments['delete']:
         slack_token, slack_channel = get_user_config()
-        conf = read_config()
+        conf = read_config(boto_session)
         are_credentials_still_valid(boto_session)
         exit_code = delete_stack(boto_session, conf, slack_token, slack_channel)
         event = 'kumo bot: deleted stack %s ' % conf.get('cloudformation.StackName')
         datadog_event_detail(context, event)
     elif arguments['generate']:
         cloudformation = load_template()
-        conf = read_config()
+        conf = read_config(boto_session)
         generate_template_file(conf, cloudformation)
     elif arguments['list']:
         are_credentials_still_valid(boto_session)
         list_stacks(boto_session)
     elif arguments['preview']:
         cloudformation = load_template()
-        conf = read_config()
+        conf = read_config(boto_session)
         print_parameter_diff(boto_session, conf)
         are_credentials_still_valid(boto_session)
         change_set, stack_name = create_change_set(boto_session, conf,

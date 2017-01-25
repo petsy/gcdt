@@ -44,7 +44,7 @@ LaunchConfiguration = t.add_resource(LaunchConfiguration(
     ImageId='ami-25681456',
     InstanceType='t2.micro',
     KeyName='dev-ec2',
-    SecurityGroups=["sg-c8bce3ac"]  # hard coded to glomex default sg
+    SecurityGroups=["sg-8eec36e8"]  # hard coded to glomex default sg
 ))
 
 as_group = t.add_resource(AutoScalingGroup(
@@ -56,7 +56,7 @@ as_group = t.add_resource(AutoScalingGroup(
     LaunchConfigurationName=Ref(LaunchConfiguration),
     MinSize='1',
     MaxSize='1',
-    VPCZoneIdentifier=['subnet-feb7ac9b'],
+    VPCZoneIdentifier=['subnet-b6eaa5d2'],
     AvailabilityZones=['eu-west-1a'],
     HealthCheckType='EC2'
 ))

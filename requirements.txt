@@ -4,7 +4,7 @@ boto3>=1.4.2
 slacker==0.9.25
 pybars3==0.9.1
 pycrypto==2.6.1
-glomex-credstash==1.11.20
+glomex-credstash==1.11.21
 
 # Other dependencies
 clint==0.5.1

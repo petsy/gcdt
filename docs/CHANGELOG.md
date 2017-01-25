@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.0.76] - 2017-01-30
+### Added
+- FEATURE made boto_session a parameter in credstash (#146)
+
 ## [0.0.75] - 2017-01-24
 ### Added
 - FEATURE added gcdt installer (#201)
