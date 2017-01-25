@@ -1,6 +1,6 @@
 # glomex-cloud-deployment-tools (gcdt)
 
-version number: 0.0.76.dev1
+version number: 0.0.76.dev2
 
 author: glomex OPS Team
 
