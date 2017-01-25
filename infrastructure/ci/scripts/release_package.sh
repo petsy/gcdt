@@ -33,9 +33,19 @@ echo "-INPUT END-----------"
 
 
 ########
-## merge develop branch into master
+## check if we have something to release
 cd $WORKSPACE
 git checkout develop
+LAST_COMMIT=$(git log -1 --pretty=%B)
+if  [[ $LAST_COMMIT == Bump\ version*dev0 ]] ;
+then
+    echo "no changes to release - bailing out!"
+    exit 0
+fi
+
+
+########
+## merge develop branch into master
 git checkout master
 git merge develop
 
@@ -54,9 +64,6 @@ git merge master
 
 python setup.py sdist --dist-dir dist/
 ls -la dist/
-
-## install the awscli
-#pip install awscli --ignore-installed six
 
 ## publish to PyPi server
 aws s3 cp --acl bucket-owner-full-control ./dist/ s3://$BUCKET --recursive --exclude '*' --include '*.tar.gz'
