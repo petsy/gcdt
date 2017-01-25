@@ -3,42 +3,43 @@
     "data": {
         "Stacks": [
             {
-                "StackId": "arn:aws:cloudformation:eu-west-1:644239850139:stack/dp-dev-gcdt-test-ensure-ebs-for-autoscaling/be275be0-97a4-11e6-890d-50faeb539036", 
+                "StackId": "arn:aws:cloudformation:eu-west-1:420189626185:stack/infra-dev-gcdt-test-ensure-ebs-for-autoscaling/b7eddca0-e31b-11e6-8651-50faeb56c436", 
                 "Description": "Configures autoscaling group for api app", 
                 "Tags": [], 
                 "Outputs": [
                     {
                         "Description": "Name of the autoscaling group", 
                         "OutputKey": "AutoScalingGroupName", 
-                        "OutputValue": "dp-dev-gcdt-test-ensure-ebs-for-autoscaling-AutoscalingGroup-1X18QNUZE831X"
+                        "OutputValue": "infra-dev-gcdt-test-ensure-ebs-for-autoscaling-AutoscalingGroup-RYFCECECZZDC"
                     }
                 ], 
                 "CreationTime": {
-                    "hour": 15, 
+                    "hour": 16, 
                     "__class__": "datetime", 
-                    "month": 10, 
-                    "second": 50, 
-                    "microsecond": 214000, 
-                    "year": 2016, 
-                    "day": 21, 
-                    "minute": 40
+                    "month": 1, 
+                    "second": 27, 
+                    "microsecond": 94000, 
+                    "year": 2017, 
+                    "day": 25, 
+                    "minute": 31
                 }, 
                 "Capabilities": [
                     "CAPABILITY_IAM"
                 ], 
-                "StackName": "dp-dev-gcdt-test-ensure-ebs-for-autoscaling", 
+                "StackName": "infra-dev-gcdt-test-ensure-ebs-for-autoscaling", 
                 "NotificationARNs": [], 
                 "StackStatus": "CREATE_COMPLETE", 
                 "DisableRollback": false
             }
         ], 
         "ResponseMetadata": {
+            "RetryAttempts": 0, 
             "HTTPStatusCode": 200, 
-            "RequestId": "f959ee74-97a4-11e6-a568-15257d0ef38d", 
+            "RequestId": "e37fbbed-e31b-11e6-bcca-edd27ae073be", 
             "HTTPHeaders": {
-                "x-amzn-requestid": "f959ee74-97a4-11e6-a568-15257d0ef38d", 
-                "date": "Fri, 21 Oct 2016 15:42:29 GMT", 
-                "content-length": "1248", 
+                "x-amzn-requestid": "e37fbbed-e31b-11e6-bcca-edd27ae073be", 
+                "date": "Wed, 25 Jan 2017 16:32:40 GMT", 
+                "content-length": "1256", 
                 "content-type": "text/xml"
             }
         }

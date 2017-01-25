@@ -3,41 +3,42 @@
     "data": {
         "Stacks": [
             {
-                "StackId": "arn:aws:cloudformation:eu-west-1:644239850139:stack/dp-dev-gcdt-test-ensure-ebs/49ae8170-97a5-11e6-90ac-500c423358d2", 
+                "StackId": "arn:aws:cloudformation:eu-west-1:420189626185:stack/infra-dev-gcdt-test-ensure-ebs/383bee60-e31c-11e6-9d8d-50faeb52a4d2", 
                 "Tags": [], 
                 "Outputs": [
                     {
                         "Description": "InstanceId of the newly created EC2 instance", 
                         "OutputKey": "InstanceId", 
-                        "OutputValue": "i-1b850290"
+                        "OutputValue": "i-053dd1fb627c720ef"
                     }
                 ], 
                 "CreationTime": {
-                    "hour": 15, 
+                    "hour": 16, 
                     "__class__": "datetime", 
-                    "month": 10, 
-                    "second": 44, 
-                    "microsecond": 303000, 
-                    "year": 2016, 
-                    "day": 21, 
-                    "minute": 44
+                    "month": 1, 
+                    "second": 2, 
+                    "microsecond": 350000, 
+                    "year": 2017, 
+                    "day": 25, 
+                    "minute": 35
                 }, 
                 "Capabilities": [
                     "CAPABILITY_IAM"
                 ], 
-                "StackName": "dp-dev-gcdt-test-ensure-ebs", 
+                "StackName": "infra-dev-gcdt-test-ensure-ebs", 
                 "NotificationARNs": [], 
                 "StackStatus": "CREATE_COMPLETE", 
                 "DisableRollback": false
             }
         ], 
         "ResponseMetadata": {
+            "RetryAttempts": 0, 
             "HTTPStatusCode": 200, 
-            "RequestId": "6f1e8da3-97a5-11e6-8569-6f4935944654", 
+            "RequestId": "63aa3fc7-e31c-11e6-a288-1b9f42342d39", 
             "HTTPHeaders": {
-                "x-amzn-requestid": "6f1e8da3-97a5-11e6-8569-6f4935944654", 
-                "date": "Fri, 21 Oct 2016 15:45:46 GMT", 
-                "content-length": "1081", 
+                "x-amzn-requestid": "63aa3fc7-e31c-11e6-a288-1b9f42342d39", 
+                "date": "Wed, 25 Jan 2017 16:36:15 GMT", 
+                "content-length": "1096", 
                 "content-type": "text/xml"
             }
         }
