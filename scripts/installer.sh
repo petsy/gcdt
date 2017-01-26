@@ -103,7 +103,7 @@ yugen() {
 EOF
 
 #### add source statement to .bash_profile
-grep -q '^source .gcdtrc' ~/.bash_profile || echo 'source .gcdtrc' >> ~/.bash_profile
+grep -q '^source ~/.gcdtrc' ~/.bash_profile || echo 'source ~/.gcdtrc' >> ~/.bash_profile
 
 
 #### run gcdt version

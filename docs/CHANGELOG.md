@@ -4,7 +4,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [0.0.76] - 2017-01-30
 ### Added
-- FEATURE made boto_session a parameter in credstash (#146)
+- FEATURE requirements.txt and settings_<env>.conf optional for ramuda (#114)
+- FEATURE made boto_session a parameter in credstash (#177)
 
 ## [0.0.75] - 2017-01-24
 ### Added
