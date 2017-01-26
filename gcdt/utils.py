@@ -19,13 +19,6 @@ def version(out=sys.stdout):
     print("gcdt version %s" % __version__, file=out)
 
 
-def get_git_revision_short_hash():
-    # TODO: is this a good idea? (how to make sure that git is installed)?
-    from string import strip
-    import subprocess
-    return strip(subprocess.check_output(['git', 'rev-parse', '--short', 'HEAD']))
-
-
 def retries(max_tries, delay=1, backoff=2, exceptions=(Exception,), hook=None):
     """Function decorator implementing retrying logic.
 
