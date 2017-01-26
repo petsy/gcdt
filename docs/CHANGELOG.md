@@ -4,6 +4,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [0.0.76] - 2017-01-30
 ### Added
+- FEATURE ramuda replaced git short hash in target filename with sha256 (#169)
 - FEATURE requirements.txt and settings_<env>.conf optional for ramuda (#114)
 - FEATURE made boto_session a parameter in credstash (#177)
 
