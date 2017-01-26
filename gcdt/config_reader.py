@@ -60,8 +60,8 @@ def read_config_if_exists(boto_session, config_base_name="settings", location=""
                          output_format, add_env, fail_if_not_exists=False)
 
 
-def __read_config(boto_session, config_base_name, location, lookups, output_format, add_env,
-                  fail_if_not_exists):
+def __read_config(boto_session, config_base_name, location, lookups,
+                  output_format, add_env, fail_if_not_exists):
     lookups = __parse_lookups(lookups)
     try:
         config_file_name = __resolve_dir(location) + \
@@ -135,12 +135,6 @@ def get_config_name(config_base_name, add_env=True):
     env = "_" + env if env else ""
 
     return config_base_name + env + ".conf"
-
-
-# TODO remove method. I think we should not make methods public only for
-# testing - ludwigm
-#def resolve_lookups(config, lookups):
-#    return __resolve_lookups(config, lookups=lookups)
 
 
 def __parse_lookups(lookups):
