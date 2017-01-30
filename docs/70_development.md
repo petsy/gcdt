@@ -58,15 +58,6 @@ $ pip install -r requirements_dev.txt
 ```
 
 
-### gcdt design principles
-
-* write testable code
-* tests need to run on all accounts (not just dp account)
-* make sure additions and changes have powerful tests
-* use pylint to increase your coding style
-* we adhere to [Semantic Versioning](http://semver.org/).
-
-
 ### Running Unit-Tests
 
 Use the pytest test-runner to run the gcdt unit tests. A few tests (with '_aws' in the file name) need AWS. Please turn on your VPN and set the AWS_DEFAULT_PROFILE, ENV, and ACCOUNT environment variables. Details here: https://confluence.glomex.com/display/OPSSHARED/Deployment+on+AWS.
@@ -175,3 +166,109 @@ We used the sphinx-apidoc tool to create the skeleton (80_gcdt_api.rst) for gcdt
 ```bash
 $ sphinx-apidoc -F -o apidocs gcdt
 ```
+
+
+### gcdt design
+
+#### Design Goals
+
+* support development teams with tools and templates
+* ease, simplify, and master infrastructure-as-code
+
+
+#### Design Principles
+
+* write testable code
+* tests need to run on all accounts (not just dp account)
+* make sure additions and changes have powerful tests
+* use pylint to increase your coding style
+* we adhere to [Semantic Versioning](http://semver.org/).
+
+
+#### Design Decisions
+
+In this section we document important design decisions we made over time while maintaining gcdt.
+
+
+##### Use botocore over boto3
+
+With botocore and boto3 AWS provides two different programmatic interfaces to automate interaction with AWS services.
+
+One of the most noticeable differences between botocore and boto3
+is that the client objects:
+
+1) require parameters to be provided as ``**kwargs`` and
+2) require the arguments typically be provided as ``CamelCased`` values.
+
+For example::
+
+    ddb = session.create_client('dynamodb')
+    ddb.describe_table(TableName='mytable')
+
+In boto3, the equivalent code would be::
+
+    layer1.describe_table(table_name='mytable')
+
+There are several reasons why this was changed in botocore.
+
+The first reason was because we wanted to have the same casing for
+inputs as well as outputs.  In both boto3 and botocore, the response
+for the ``describe_table`` calls is::
+
+    {'Table': {'CreationDateTime': 1393007077.387,
+                'ItemCount': 0,
+                'KeySchema': {'HashKeyElement': {'AttributeName': 'foo',
+                                                 'AttributeType': 'S'}},
+                'ProvisionedThroughput': {'ReadCapacityUnits': 5,
+                                          'WriteCapacityUnits': 5},
+                'TableName': 'testtable',
+                'TableStatus': 'ACTIVE'}}
+
+Notice that the response is ``CamelCased``.  This makes it more difficult
+to round trip results.  In many cases you want to get the result of
+a ``describe*`` call and use that value as input through a corresponding
+``update*`` call.  If the input arguments require ``snake_casing`` but
+the response data is ``CamelCased`` then you will need to manually convert
+all the response elements back to ``snake_case`` in order to properly
+round trip.
+
+This makes the case for having consistent casing for both input and
+output.  Why not use ``snake_casing`` for input as well as output?
+
+We choose to use ``CamelCasing`` because this is the casing used by
+AWS services.  As a result, we don't have to do any translation from
+``CamelCasing`` to ``snake_casing``.  We can use the response values
+exactly as they are returned from AWS services.
+
+This also means that if you are reading the AWS API documentation
+for services, the names and casing referenced there will match
+what you would provide to botocore.  For example, here's the
+corresponding API documentation for
+`dynamodb.describe_table
+<http://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_DescribeTable.html>`__.
+
+
+#### Use pytest over nose
+
+For many years py.test and nose coexisted as Python unit test frameworks in addition to std. Python unittest. Nose was developed by Mozilla and was popular for quite some time. In 2015 Mozilla switched from nose to pytest.
+
+http://mathieu.agopian.info/presentations/2015_06_djangocon_europe/
+
+There are many arguments in favour of pytest. For us the most important is pytest fixtures which provides us with a reliable and reusable mechanism to prepare and cleanup resources used during testing.
+
+
+#### Use Sphinx, Readthedocs, and Markdown for documentation
+
+Many, many documentation tools populate this space since it is so easy to come up with something. However for Open Source projects Readthedocs is the dominant platform to host the documentation.
+
+The Sphinx is the Python std. docu tool. In combination with markdown tools set is a very convenient way to create Readthedocs conform documentation.
+
+
+#### Use docopt to build the command line interface
+
+There is a never-ending discussion going about pros and cons of CLI tools for Python. Some of these tools are contained in the Python std. library, some are independent open source library additions. At the moment the most popular tools are Optparse, Argparse, Click, and Docopt
+
+
+https://www.youtube.com/watch?v=pXhcPJK5cMc
+
+We decided to use docopt for out command line interface because it is simple and very flexible. In addition we developed a `dispatch mechanism` to ease the docopt usage and to make the gcdt CLI commands testable.
