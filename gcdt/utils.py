@@ -240,3 +240,21 @@ def check_gcdt_update():
     if inst_version < latest_version:
         print(colored.yellow('Please consider an update to gcdt version: %s' %
                              latest_version))
+
+
+# adapted from:
+# http://stackoverflow.com/questions/7204805/dictionaries-of-dictionaries-merge/7205107#7205107
+def dict_merge(a, b, path=None):
+    """merges b into a"""
+    if path is None:
+        path = []
+    for key in b:
+        if key in a:
+            if isinstance(a[key], dict) and isinstance(b[key], dict):
+                dict_merge(a[key], b[key], path + [str(key)])
+            elif a[key] != b[key]:
+                # update the value
+                a[key] = b[key]
+        else:
+            a[key] = b[key]
+    return a

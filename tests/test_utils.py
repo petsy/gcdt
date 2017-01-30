@@ -8,7 +8,7 @@ from nose.tools import assert_equal, assert_is_not_none
 from gcdt import utils
 from gcdt.utils import version, __version__, retries, configure, \
     read_gcdt_user_config, get_command, read_gcdt_user_config_value, \
-    execute_scripts
+    execute_scripts, dict_merge
 from .helpers import here, create_tempfile, cleanup_tempfiles
 from .helpers_aws import boto_session
 
@@ -167,3 +167,25 @@ def test_command_delete_f():
         'version': False
     }
     assert_equal(get_command(arguments), 'delete')
+
+
+def test_dict_merge():
+    a = {'1': 1, '2': [2], '3': {'3': 3}}
+    dict_merge(a, {'3': 3})
+    assert a == {'1': 1, '2': [2], '3': 3}
+
+    dict_merge(a, {'4': 4})
+    assert a == {'1': 1, '2': [2], '3': 3, '4': 4}
+
+    dict_merge(a, {'4': {'4': 4}})
+    assert a == {'1': 1, '2': [2], '3': 3, '4': {'4': 4}}
+
+    dict_merge(a, {'4': {'5': 5}})
+    assert a == {'1': 1, '2': [2], '3': 3, '4': {'4': 4, '5': 5}}
+
+    dict_merge(a, {'2': [2, 2], '4': [4]})
+    assert a == {'1': 1, '2': [2, 2], '3': 3, '4': [4]}
+
+
+# TODO get_outputs_for_stack
+# TODO test_make_command
