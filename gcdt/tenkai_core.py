@@ -12,7 +12,7 @@ from clint.textui import colored
 from gcdt import monitoring, utils
 
 
-def deploy(boto_session, applicationName, deploymentGroupName, deploymentConfigName, bucket,
+def deploy(awsclient, applicationName, deploymentGroupName, deploymentConfigName, bucket,
            slack_token=None, slack_channel='systemmessages',
            pre_bundle_scripts=None):
     """Upload bundle and deploy to deployment group.
@@ -32,10 +32,10 @@ def deploy(boto_session, applicationName, deploymentGroupName, deploymentConfigN
             print('Pre bundle script exited with error')
             sys.exit(1)
     bundlefile = bundle_revision()
-    etag, version = _upload_revision_to_s3(boto_session, bucket,
+    etag, version = _upload_revision_to_s3(awsclient, bucket,
                                            applicationName, bundlefile)
 
-    client_codedeploy = boto_session.client('codedeploy')
+    client_codedeploy = awsclient.get_client('codedeploy')
     response = client_codedeploy.create_deployment(
         applicationName=applicationName,
         deploymentGroupName=deploymentGroupName,
@@ -56,18 +56,19 @@ def deploy(boto_session, applicationName, deploymentGroupName, deploymentConfigN
 
     print("Deployment: {} -> URL: https://{}.console.aws.amazon.com/codedeploy/home?region={}#/deployments/{}".format(
         response['deploymentId'],
-        boto_session.region_name,
-        boto_session.region_name,
+        client_codedeploy.meta.region_name,
+        client_codedeploy.meta.region_name,
         response['deploymentId'],
     ))
 
     message = 'tenkai bot: deployed deployment group %s ' % deploymentGroupName
+    # TODO move slack_notification to lifecycle
     monitoring.slack_notification(slack_channel, message, slack_token)
 
     return response['deploymentId']
 
 
-def deployment_status(boto_session, deploymentId, iterations=100):
+def deployment_status(awsclient, deploymentId, iterations=100):
     """Wait until an deployment is in an steady state and output information.
 
     :param deploymentId:
@@ -76,7 +77,7 @@ def deployment_status(boto_session, deploymentId, iterations=100):
     """
     counter = 0
     steady_states = ['Succeeded', 'Failed', 'Stopped']
-    client_codedeploy = boto_session.client('codedeploy')
+    client_codedeploy = awsclient.get_client('codedeploy')
 
     while counter <= iterations:
         response = client_codedeploy.get_deployment(deploymentId=deploymentId)
@@ -113,17 +114,17 @@ def bundle_revision(outputpath='/tmp'):
     return tarfile_name
 
 
-def prepare_artifacts_bucket(boto_session, bucket):
+def prepare_artifacts_bucket(awsclient, bucket):
     """Prepare the bucket if it does not exist.
 
     :param bucket:
     """
-    if not _bucket_exists(boto_session, bucket):
-        _create_bucket(boto_session, bucket)
+    if not _bucket_exists(awsclient, bucket):
+        _create_bucket(awsclient, bucket)
 
 
-def _upload_revision_to_s3(boto_session, bucket, applicationName, file):
-    client_s3 = boto_session.client('s3')
+def _upload_revision_to_s3(awsclient, bucket, applicationName, file):
+    client_s3 = awsclient.get_client('s3')
     transfer = S3Transfer(client_s3)
     # Upload /tmp/myfile to s3://bucket/key and print upload progress.
     transfer.upload_file(file, bucket, _build_bundle_key(applicationName))
@@ -133,13 +134,16 @@ def _upload_revision_to_s3(boto_session, bucket, applicationName, file):
     return response['ETag'], response['VersionId']
 
 
-def _bucket_exists(boto_session, bucket):
-    client_s3 = boto_session.resource('s3')
-    return client_s3.Bucket(bucket) in client_s3.buckets.all()
+def _bucket_exists(awsclient, bucket):
+    #client_s3 = awsclient.resource('s3')
+    client_s3 = awsclient.get_client('s3')
+    # TODO make sure this really works !!!!!
+    #return client_s3.Bucket(bucket) in client_s3.buckets.all()
+    return client_s3.head_bucket(Bucket=bucket)
 
 
-def _create_bucket(boto_session, bucket):
-    client_s3 = boto_session.client('s3')
+def _create_bucket(awsclient, bucket):
+    client_s3 = awsclient.get_client('s3')
     client_s3.create_bucket(
         Bucket=bucket
     )

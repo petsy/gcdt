@@ -7,8 +7,6 @@ used by gcdt.
 The interface provided can range from a direct 1-1 mapping
 of a method to a method on a botocore client all the way up
 to combining API calls across multiple AWS services.
-
-
 """
 import os
 import time
@@ -359,5 +357,4 @@ class AWSClient(object):
         self.put_role_policy(role_name=name, policy_name=name,
                              policy_document=policy)
         return role_arn
-
 '''

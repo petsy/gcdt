@@ -83,3 +83,10 @@ def test_tenkai_exit_codes(cleanup_stack_tenkai, boto_session):
     exit_code = deployment_status(boto_session, deploy_id_2)
     assert_equal(exit_code, 0)
     os.chdir(cwd)
+
+
+@pytest.mark.aws
+@check_preconditions
+def test_bucket_exists(boto_session):
+    # TODO make sure this works
+    assert False

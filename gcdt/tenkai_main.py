@@ -6,7 +6,7 @@
 from __future__ import print_function
 import sys
 
-import boto3
+import botocore
 from docopt import docopt
 
 from . import utils
@@ -16,6 +16,7 @@ from .utils import check_gcdt_update
 from .monitoring import datadog_error, datadog_event_detail
 from .gcdt_cmd_dispatcher import cmd, get_command
 from .gcdt_lifecycle import lifecycle
+from .gcdt_awsclient import AWSClient
 
 DOC = '''Usage:
         tenkai bundle
@@ -37,13 +38,13 @@ def version_cmd():
 def deploy_cmd(**tooldata):
     context = tooldata.get('context')
     conf = tooldata.get('config')
-    boto_session = context.get('boto_session')
+    awsclient = context.get('awsclient')
 
     # are_credentials_still_valid()
-    prepare_artifacts_bucket(boto_session,
+    prepare_artifacts_bucket(awsclient,
                              conf.get('codedeploy.artifactsBucket'))
     deployment = deploy(
-        boto_session=boto_session,
+        awsclient=awsclient,
         applicationName=conf.get('codedeploy.applicationName'),
         deploymentGroupName=conf.get('codedeploy.deploymentGroupName'),
         deploymentConfigName=conf.get('codedeploy.deploymentConfigName'),
@@ -52,7 +53,7 @@ def deploy_cmd(**tooldata):
         slack_token=context.get('slack_token'),
         slack_channel=context.get('slack_channel')
     )
-    exit_code = deployment_status(boto_session, deployment)
+    exit_code = deployment_status(awsclient, deployment)
     if exit_code:
         datadog_error(context)
         sys.exit(1)
@@ -73,8 +74,8 @@ def main():
         # handle commands that do not need a lifecycle
         cmd.dispatch(arguments)
     else:
-        boto_session = boto3.session.Session()
-        lifecycle(boto_session, 'tenkai', command, arguments)
+        awsclient = AWSClient(botocore.session.get_session())
+        lifecycle(awsclient, 'tenkai', command, arguments)
 
 
 if __name__ == '__main__':
