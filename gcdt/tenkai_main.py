@@ -51,16 +51,16 @@ def get_user_config():
 
 
 @cmd(spec=['version'])
-def version():
+def version_cmd():
     check_gcdt_update()
     utils.version()
     sys.exit(0)
 
 
 @cmd(spec=['deploy'])
-def deploy(**tooldata):
+def deploy_cmd(**tooldata):
     context = tooldata.get('context')
-    conf = tooldata.get('conf')
+    conf = tooldata.get('config')
     # TODO
     boto_session = context.get('boto_session')
     slack_token = tooldata.get('slack_token')

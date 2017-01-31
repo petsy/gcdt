@@ -20,6 +20,7 @@ def lifecycle(boto_session, arguments):
     """Tool lifecycle which provides hooks into the different stages of the
     command execution. See signals for hook details.
     """
+    # TODO check gcdt update!
     load_plugins()
     # TODO find out tool and command!!!
     tool = 'tenkai'
@@ -33,13 +34,9 @@ def lifecycle(boto_session, arguments):
     # TODO not sure if bote_session needs to go into context!!
     context['boto_session'] = boto_session
 
-    # TODO check gcdt update!
-    # TODO datadog and slack notification
-
     gcdt_signals.initialized.send(context)
 
     gcdt_signals.config_read_init.send(context)
-    # TODO read config but what do do in version case?
     #config = read_config(boto_session, config_base_name=DEFAULT_CONFIG[tool].get(
     #    'config_base_name', tool))
     config = {}
@@ -60,13 +57,20 @@ def lifecycle(boto_session, arguments):
     # TODO lookups (in case this would be useful)
 
     # every tool needs the datadog notifications
+    # TODO move the datadog notification to plugin!
     datadog_notification(context)
 
     # run the command and provide context and config (= tooldata)
     gcdt_signals.command_init.send((context, config))
-    #yield context, config
-    # TODO execute the dispatch
-    cmd.dispatch(arguments, tooldata=context)
+    try:
+        cmd.dispatch(arguments, context=context, config=config)
+    except Exception as e:
+        print('bam')
+        print(str(e))
+        context['error'] = str(e)
+        gcdt_signals.error.send((context, config))
+        return
+
     gcdt_signals.command_finalized.send((context, config))
 
     # TODO reporting (in case you want to get a summary / output to the user)
