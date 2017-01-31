@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import pytest
 
-from gcdt.cmd_dispatcher import cmd
+from gcdt.gcdt_cmd_dispatcher import cmd
 
 
 '''This is the sample scenario:

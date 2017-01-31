@@ -272,3 +272,10 @@ There is a never-ending discussion going about pros and cons of CLI tools for Py
 https://www.youtube.com/watch?v=pXhcPJK5cMc
 
 We decided to use docopt for out command line interface because it is simple and very flexible. In addition we developed a `dispatch mechanism` to ease the docopt usage and to make the gcdt CLI commands testable.
+
+
+#### Plugin mechanism
+
+gcdt uses entry points similar to [pluggy](https://github.com/pytest-dev/pluggy) to find installed plugins
+
+For communication with the plugin we use [Blinker signals](https://pythonhosted.org/blinker/). This helps us to decouple the gcdt code base from plugin code and vice-versa. Blinker is of cause only one way to do that. Blinker is fast, simple, well documented, etc. so there are some popular frameworks using it (Flask, Pelican, ...).
