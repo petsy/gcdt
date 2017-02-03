@@ -15,6 +15,7 @@ import pytest
 
 from gcdt.logger import setup_logger
 from gcdt.ramuda_core import deploy_lambda
+from gcdt.s3 import create_bucket, delete_bucket
 from gcdt.gcdt_awsclient import AWSClient
 from . import helpers
 from . import placebo
@@ -26,30 +27,24 @@ log = setup_logger(__name__)
 def here(p): return os.path.join(os.path.dirname(__file__), p)
 
 
-# bucket helpers (parts borrowed from tenkai)
-def create_bucket(session, bucket):
-    client = session.client('s3')
-    client.create_bucket(
-        Bucket=bucket,
-        CreateBucketConfiguration={
-            'LocationConstraint': 'eu-west-1'
-        }
-    )
+@pytest.fixture(scope='function')  # 'function' or 'module'
+def temp_bucket(awsclient):
+    # create a bucket
+    temp_string = helpers.random_string()
+    bucket_name = 'unittest-lambda-s3-event-source-%s' % temp_string
+    create_bucket(awsclient, bucket_name)
+    yield bucket_name
+    # cleanup
+    delete_bucket(awsclient, bucket_name)
 
 
-def delete_bucket(session, bucket):
-    log.debug('deleting bucket %s' % bucket)
-    if bucket.startswith('unittest-'):
-        s3 = session.resource('s3')
-        # delete all objects first
-        bu = s3.Bucket(bucket)
-        log.debug('deleting keys')
-        for key in bu.objects.all():
-            log.debug('deleting key: %s' % key)
-            key.delete()
-        log.debug('deleting bucket')
-        # now we can delete the bucket
-        bu.delete()
+@pytest.fixture(scope='function')  # 'function' or 'module'
+def cleanup_buckets(awsclient):
+    items = []
+    yield items
+    # cleanup
+    for i in items:
+        delete_bucket(awsclient, i)
 
 
 # lambda helpers
@@ -210,26 +205,6 @@ check_preconditions = pytest.mark.skipif(
     _precond_check(),
     reason="Set environment variables to run tests on AWS (see gcdt docs)."
 )
-
-
-@pytest.fixture(scope='function')  # 'function' or 'module'
-def cleanup_buckets(boto_session):
-    items = []
-    yield items
-    # cleanup
-    for i in items:
-        delete_bucket(boto_session, i)
-
-
-@pytest.fixture(scope='function')  # 'function' or 'module'
-def temp_bucket(boto_session):
-    # create a bucket
-    temp_string = helpers.random_string()
-    bucket_name = 'unittest-lambda-s3-event-source-%s' % temp_string
-    create_bucket(boto_session, bucket_name)
-    yield bucket_name
-    # cleanup
-    delete_bucket(boto_session, bucket_name)
 
 
 @pytest.fixture(scope='function')  # 'function' or 'module'

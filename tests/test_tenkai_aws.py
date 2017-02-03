@@ -6,7 +6,8 @@ import pytest
 
 from gcdt.logger import setup_logger
 from gcdt.kumo_core import deploy_stack, are_credentials_still_valid, \
-    load_cloudformation_template, delete_stack, _get_stack_name
+    load_cloudformation_template, delete_stack, _get_stack_name, \
+    get_outputs_for_stack
 from gcdt.tenkai_core import deploy as tenkai_deploy, deployment_status
 from gcdt.utils import get_outputs_for_stack
 from .helpers_aws import check_preconditions, cleanup_buckets, awsclient

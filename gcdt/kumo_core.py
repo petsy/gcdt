@@ -1,21 +1,22 @@
 # -*- coding: utf-8 -*-
 from __future__ import print_function
+import os
+import six
 import imp
 import json
-import os
 import random
-import six
 import string
 import sys
 import time
 
-from clint.textui import colored, prompt
 import pyhocon.exceptions
 from pyhocon.exceptions import ConfigMissingException
 from pyspin.spin import Default, Spinner
+from clint.textui import colored, prompt
 from tabulate import tabulate
 
-from gcdt import monitoring
+from .s3 import upload_file_to_s3
+from . import monitoring
 from .config_reader import get_env
 
 
@@ -31,7 +32,6 @@ def load_cloudformation_template(path=None):
         path = os.path.abspath(path)
     if isinstance(path, six.string_types):
         try:
-            # TODO: provide version for Python 3.5 (importlib.util)
             sp = sys.path
             # temporarily add folder to allow relative path
             sys.path.append(os.path.abspath(os.path.dirname(path)))
@@ -47,10 +47,10 @@ def load_cloudformation_template(path=None):
     return None, False
 
 
-def print_parameter_diff(boto_session, config, out=sys.stdout):
+def print_parameter_diff(awsclient, config, out=sys.stdout):
     """print differences between local config and currently active config
     """
-    cf = boto_session.resource('cloudformation')
+    cf = awsclient.get_client('cloudformation')
     try:
         stackname = config['cloudformation.StackName']
         stack = cf.Stack(stackname)
@@ -99,20 +99,20 @@ def print_parameter_diff(boto_session, config, out=sys.stdout):
         print('\n', file=out)
 
 
-def call_pre_hook(boto_session, cloudformation):
+def call_pre_hook(awsclient, cloudformation):
     """Invoke the pre_hook BEFORE the config is read.
 
-    :param boto_session:
+    :param awsclient:
     :param cloudformation:
     """
     conf = {}  # we don't have a config before we read the config
     stackname = ''
     parameters = []
-    _call_hook(boto_session, conf, stackname, parameters, cloudformation,
+    _call_hook(awsclient, conf, stackname, parameters, cloudformation,
                hook='pre_hook')
 
 
-def _call_hook(boto_session, config, stack_name, parameters, cloudformation,
+def _call_hook(awsclient, config, stack_name, parameters, cloudformation,
                hook, message=None, out=sys.stdout):
     if hook not in ['pre_hook', 'pre_create_hook', 'pre_update_hook',
                     'post_create_hook', 'post_update_hook', 'post_hook']:
@@ -129,10 +129,10 @@ def _call_hook(boto_session, config, stack_name, parameters, cloudformation,
         hook_func()  # for compatibility with existing templates
     else:
         # new call for templates with parametrized hooks
-        cfn_client = boto_session.client('cloudformation')
+        cfn_client = awsclient.get_client('cloudformation')
         stack_outputs = _get_stack_outputs(cfn_client, stack_name)
         stack_state = _get_stack_state(cfn_client, stack_name)
-        hook_func(boto_session=boto_session, config=config,
+        hook_func(awsclient=awsclient, config=config,
                   parameters=parameters, stack_outputs=stack_outputs,
                   stack_state=stack_state)
 
@@ -163,13 +163,13 @@ def _json2table(data):
         return data
 
 
-def are_credentials_still_valid(boto_session):
+def are_credentials_still_valid(awsclient):
     """Check whether the credentials have expired.
 
-    :param boto_session:
+    :param awsclient:
     :return: exit_code
     """
-    client = boto_session.client('lambda')
+    client = awsclient.get_client('lambda')
     try:
         client.list_functions()
     except Exception as e:
@@ -184,22 +184,22 @@ def _get_input():
     return name
 
 
-def _get_stack_id(boto_session, stackname):
-    client = boto_session.client('cloudformation')
+def _get_stack_id(awsclient, stackname):
+    client = awsclient.get_client('cloudformation')
     response = client.describe_stacks(StackName=stackname)
     stack_id = response['Stacks'][0]['StackId']
     return stack_id
 
 
-def _get_stack_events_last_timestamp(boto_session, stackname):
+def _get_stack_events_last_timestamp(awsclient, stackname):
     # we need to get the last event since updatedTime is when the update stated
-    client = boto_session.client('cloudformation')
-    stack_id = _get_stack_id(boto_session, stackname)
+    client = awsclient.get_client('cloudformation')
+    stack_id = _get_stack_id(awsclient, stackname)
     response = client.describe_stack_events(StackName=stack_id)
     return response['StackEvents'][-1]['Timestamp']
 
 
-def _poll_stack_events(boto_session, stackname, last_event=None):
+def _poll_stack_events(awsclient, stackname, last_event=None):
     # http://stackoverflow.com/questions/796008/cant-subtract-offset-naive-and-offset-aware-datetimes/25662061#25662061
     finished_statuses = ['CREATE_COMPLETE',
                          'CREATE_FAILED',
@@ -228,10 +228,10 @@ def _poll_stack_events(boto_session, stackname, last_event=None):
 
     seen_events = []
     # print len(seen_events)
-    client = boto_session.client('cloudformation')
+    client = awsclient.get_client('cloudformation')
     status = ''
     # for the delete command we need the stack_id
-    stack_id = _get_stack_id(boto_session, stackname)
+    stack_id = _get_stack_id(awsclient, stackname)
     print('%-50s %-25s %-50s %-25s\n' % ('Resource Status', 'Resource ID',
                                          'Reason', 'Timestamp'))
     while status not in finished_statuses:
@@ -302,8 +302,8 @@ def _generate_parameters(conf):
     return parameter_list
 
 
-def _stack_exists(boto_session, stackName):
-    client = boto_session.client('cloudformation')
+def _stack_exists(awsclient, stackName):
+    client = awsclient.get_client('cloudformation')
     try:
         response = client.describe_stacks(
             StackName=stackName
@@ -314,7 +314,7 @@ def _stack_exists(boto_session, stackName):
         return True
 
 
-def deploy_stack(boto_session, conf, cloudformation, slack_token=None,
+def deploy_stack(awsclient, conf, cloudformation, slack_token=None,
                  slack_channel='systemmessages', override_stack_policy=False):
     """Deploy the stack to AWS cloud. Does either create or update the stack.
 
@@ -326,36 +326,19 @@ def deploy_stack(boto_session, conf, cloudformation, slack_token=None,
     """
     stackname = _get_stack_name(conf)
     parameters = _generate_parameters(conf)
-    #_call_hook(boto_session, conf, stackname, parameters, cloudformation,
+    #_call_hook(awsclient, conf, stackname, parameters, cloudformation,
     #           hook='pre_hook')
-    if _stack_exists(boto_session, stackname):
-        exit_code = _update_stack(boto_session, conf, cloudformation,
+    if _stack_exists(awsclient, stackname):
+        exit_code = _update_stack(awsclient, conf, cloudformation,
                                   parameters, override_stack_policy,
                                   slack_token, slack_channel)
     else:
-        exit_code = _create_stack(boto_session, conf, cloudformation,
+        exit_code = _create_stack(awsclient, conf, cloudformation,
                                   parameters, slack_token, slack_channel)
-    _call_hook(boto_session, conf, stackname, parameters, cloudformation,
+    _call_hook(awsclient, conf, stackname, parameters, cloudformation,
                hook='post_hook',
                message='CloudFormation is done, now executing post hook...')
     return exit_code
-
-
-def _s3_upload(boto_session, conf, cloudformation):
-    region = boto_session.region_name
-    resource_s3 = boto_session.resource('s3')
-    bucket = _get_artifact_bucket(conf)
-    dest_key = 'kumo/%s/%s-cloudformation.json' % (region, _get_stack_name(conf))
-
-    source_file = generate_template_file(conf, cloudformation)
-
-    s3obj = resource_s3.Object(bucket, dest_key)
-    s3obj.upload_file(source_file)
-    s3obj.wait_until_exists()
-
-    s3url = 'https://s3-%s.amazonaws.com/%s/%s' % (region, bucket, dest_key)
-
-    return s3url
 
 
 def _get_stack_policy(cloudformation):
@@ -428,18 +411,18 @@ def _get_stack_policy_during_update(cloudformation, override_stack_policy):
     return stack_policy_during_update
 
 
-def _create_stack(boto_session, conf, cloudformation, parameters,
+def _create_stack(awsclient, conf, cloudformation, parameters,
                   slack_token=None, slack_channel='systemmessages'):
     # create stack with all the information we have
-    client_cf = boto_session.client('cloudformation')
+    client_cf = awsclient.get_client('cloudformation')
     stackname = _get_stack_name(conf)
-    _call_hook(boto_session, conf, stackname, parameters, cloudformation,
+    _call_hook(awsclient, conf, stackname, parameters, cloudformation,
                hook='pre_create_hook')
     try:
         _get_artifact_bucket(conf)
         response = client_cf.create_stack(
             StackName=_get_stack_name(conf),
-            TemplateURL=_s3_upload(boto_session, conf, cloudformation),
+            TemplateURL=_s3_upload(awsclient, conf, cloudformation),
             Parameters=parameters,
             Capabilities=[
                 'CAPABILITY_IAM',
@@ -461,30 +444,40 @@ def _create_stack(boto_session, conf, cloudformation, parameters,
     message = 'kumo bot: created stack %s ' % _get_stack_name(conf)
     monitoring.slack_notification(slack_channel, message, slack_token)
     # create means no last_event!
-    exit_code = _poll_stack_events(boto_session, stackname)
-    _call_hook(boto_session, conf, stackname, parameters, cloudformation,
+    exit_code = _poll_stack_events(awsclient, stackname)
+    _call_hook(awsclient, conf, stackname, parameters, cloudformation,
                hook='post_create_hook',
                message='CloudFormation is done, now executing post create hook...')
     return exit_code
 
 
-def _update_stack(boto_session, conf, cloudformation, parameters,
+def _s3_upload(awsclient, conf, cloudformation):
+    region = awsclient.get_client('s3').meta.region_name
+    bucket = _get_artifact_bucket(conf)
+    dest_key = 'kumo/%s/%s-cloudformation.json' % (region, _get_stack_name(conf))
+    source_file = generate_template_file(conf, cloudformation)
+    upload_file_to_s3(awsclient, bucket, dest_key, source_file)
+    s3url = 'https://s3-%s.amazonaws.com/%s/%s' % (region, bucket, dest_key)
+    return s3url
+
+
+def _update_stack(awsclient, conf, cloudformation, parameters,
                   override_stack_policy, slack_token=None,
                   slack_channel='systemmessages'):
     # update stack with all the information we have
     exit_code = 0
-    client_cf = boto_session.client('cloudformation')
+    client_cf = awsclient.get_client('cloudformation')
     stackname = _get_stack_name(conf)
-    last_event = _get_stack_events_last_timestamp(boto_session, stackname)
+    last_event = _get_stack_events_last_timestamp(awsclient, stackname)
     try:
         stackname = _get_stack_name(conf)
-        _call_hook(boto_session, conf, stackname, parameters, cloudformation,
+        _call_hook(awsclient, conf, stackname, parameters, cloudformation,
                    hook='pre_update_hook')
         try:
             _get_artifact_bucket(conf)
             response = client_cf.update_stack(
                 StackName=_get_stack_name(conf),
-                TemplateURL=_s3_upload(boto_session, conf, cloudformation),
+                TemplateURL=_s3_upload(awsclient, conf, cloudformation),
                 Parameters=parameters,
                 Capabilities=[
                     'CAPABILITY_IAM',
@@ -511,8 +504,8 @@ def _update_stack(boto_session, conf, cloudformation, parameters,
 
         message = 'kumo bot: updated stack %s ' % _get_stack_name(conf)
         monitoring.slack_notification(slack_channel, message, slack_token)
-        exit_code = _poll_stack_events(boto_session, stackname, last_event)
-        _call_hook(boto_session, conf, stackname, parameters, cloudformation,
+        exit_code = _poll_stack_events(awsclient, stackname, last_event)
+        _call_hook(awsclient, conf, stackname, parameters, cloudformation,
                    hook='post_update_hook',
                    message='CloudFormation is done, now executing post update hook...')
     except Exception as e:
@@ -525,33 +518,33 @@ def _update_stack(boto_session, conf, cloudformation, parameters,
     return exit_code
 
 
-def delete_stack(boto_session, conf, slack_token=None,
+def delete_stack(awsclient, conf, slack_token=None,
                  slack_channel='systemmessages'):
     """Delete the stack from AWS cloud.
 
-    :param boto_session:
+    :param awsclient:
     :param conf:
     :param slack_token:
     :param slack_channel:
     """
-    client_cf = boto_session.client('cloudformation')
+    client_cf = awsclient.get_client('cloudformation')
     stackname = _get_stack_name(conf)
-    last_event = _get_stack_events_last_timestamp(boto_session, stackname)
+    last_event = _get_stack_events_last_timestamp(awsclient, stackname)
     response = client_cf.delete_stack(
         StackName=_get_stack_name(conf),
     )
     message = 'kumo bot: deleted stack %s ' % _get_stack_name(conf)
     monitoring.slack_notification(slack_channel, message, slack_token)
-    return _poll_stack_events(boto_session, stackname, last_event)
+    return _poll_stack_events(awsclient, stackname, last_event)
 
 
-def list_stacks(boto_session, out=sys.stdout):
+def list_stacks(awsclient, out=sys.stdout):
     """Print out the list of stacks deployed at AWS cloud.
 
-    :param boto_session:
+    :param awsclient:
     :return:
     """
-    client_cf = boto_session.client('cloudformation')
+    client_cf = awsclient.get_client('cloudformation')
     response = client_cf.list_stacks(
         StackStatusFilter=[
             'CREATE_IN_PROGRESS', 'CREATE_COMPLETE', 'ROLLBACK_IN_PROGRESS',
@@ -573,8 +566,8 @@ def list_stacks(boto_session, out=sys.stdout):
     print('listed %s stacks' % str(stack_sum), file=out)
 
 
-def create_change_set(boto_session, conf, cloudformation):
-    client = boto_session.client('cloudformation')
+def create_change_set(awsclient, conf, cloudformation):
+    client = awsclient.get_client('cloudformation')
     change_set_name = ''.join(random.SystemRandom().choice(
         string.ascii_uppercase) for _ in range(8))
     response = client.create_change_set(
@@ -590,15 +583,15 @@ def create_change_set(boto_session, conf, cloudformation):
     return change_set_name, _get_stack_name(conf)
 
 
-def describe_change_set(boto_session, change_set_name, stack_name):
+def describe_change_set(awsclient, change_set_name, stack_name):
     """Print out the change_set to console.
     This needs to run create_change_set first.
 
-    :param boto_session:
+    :param awsclient:
     :param change_set_name:
     :param stack_name:
     """
-    client = boto_session.client('cloudformation')
+    client = awsclient.get_client('cloudformation')
 
     status = None
     while status not in ['CREATE_COMPLETE', 'FAILED']:
@@ -629,3 +622,13 @@ def generate_template_file(conf, cloudformation):
         opened_file.write(template_body)
     print('wrote cf-template for %s to disk: %s' % (get_env(), template_file_name))
     return template_file_name
+
+
+# gets Outputs for a given StackName (from glomex-utils/servicediscovery.py)
+def get_outputs_for_stack(awsclient, stack_name):
+    client_cf = awsclient.get_client('cloudformation')
+    response = client_cf.describe_stacks(StackName=stack_name)
+    result = {}
+    for output in response["Stacks"][0]["Outputs"]:
+        result[output["OutputKey"]] = output["OutputValue"]
+    return result

@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
-
 """The kumo_util file contains stuff that is used for example in cloudformation.py
 templates or from other external code.
 """
-
 from __future__ import print_function
 
 import troposphere
@@ -72,9 +70,9 @@ class StackLookup(object):
             )
 
 
-def ensure_ebs_volume_tags_autoscaling_group(boto_session, as_group_name, tags):
+def ensure_ebs_volume_tags_autoscaling_group(awsclient, as_group_name, tags):
     # I think this is only relevant to test code!
-    ec2_client = boto_session.client('ec2')
+    ec2_client = awsclient.get_client('ec2')
 
     autoscale_filter = {
         'Name': 'tag:aws:autoscaling:groupName',
@@ -83,26 +81,33 @@ def ensure_ebs_volume_tags_autoscaling_group(boto_session, as_group_name, tags):
     response = ec2_client.describe_instances(Filters=[autoscale_filter])
     for r in response['Reservations']:
         for i in r['Instances']:
-            ensure_ebs_volume_tags_ec2_instance(boto_session, i['InstanceId'],
+            ensure_ebs_volume_tags_ec2_instance(awsclient, i['InstanceId'],
                                                 tags)
 
 
-def ensure_ebs_volume_tags_ec2_instance(boto_session, instance_id, tags):
+def ensure_ebs_volume_tags_ec2_instance(awsclient, instance_id, tags):
     # I think this is only relevant to test code!
-    ec2_resource = boto_session.resource('ec2')
-    instance  = ec2_resource.Instance(instance_id)
-    for vol in instance.volumes.all():
-        ensure_tags_ebs_volume(vol, tags)
+    client_ec2 = awsclient.get_client('ec2')
+    volumes = client_ec2.describe_volumes(Filters=[
+        {
+            'Name': 'attachment.instance-id',
+            'Values': [instance_id]
+        }
+    ])
+    for v in volumes['Volumes']:
+        ensure_tags_ebs_volume(awsclient, v, tags)
 
 
-def ensure_tags_ebs_volume(volume, tags):
-    # I think this is only relevant to test code!
+def ensure_tags_ebs_volume(awsclient, volume, tags):
+    client_ec2 = awsclient.get_client('ec2')
     tags_to_add = []
-    if volume.tags:
+    if 'Tags' in volume:
         for tag in tags:
-            if not tag in volume.tags:
+            if tag not in volume['Tags']:
                 tags_to_add.append(tag)
         if tags_to_add:
-            volume.create_tags(Tags = tags_to_add)
+            client_ec2.create_tags(Resources=[volume['VolumeId']],
+                                   Tags=tags_to_add)
     else:
-        volume.create_tags(Tags = tags)
+        client_ec2.create_tags(Resources=[volume['VolumeId']],
+                               Tags=tags)

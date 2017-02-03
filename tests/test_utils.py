@@ -9,8 +9,8 @@ from gcdt import utils
 from gcdt.utils import version, __version__, retries, configure, \
     read_gcdt_user_config, get_command, read_gcdt_user_config_value, \
     execute_scripts, dict_merge
-from .helpers import here, create_tempfile, cleanup_tempfiles
-from .helpers_aws import boto_session
+from .helpers import create_tempfile, cleanup_tempfiles
+from . import here
 
 
 def test_version():
