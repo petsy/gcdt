@@ -10,8 +10,9 @@ import botocore
 from docopt import docopt
 
 from . import utils
-from .tenkai_core import prepare_artifacts_bucket, deploy, deployment_status, \
+from .tenkai_core import deploy, deployment_status, \
     bundle_revision
+from gcdt.s3 import prepare_artifacts_bucket
 from .utils import check_gcdt_update
 from .monitoring import datadog_error, datadog_event_detail
 from .gcdt_cmd_dispatcher import cmd, get_command

@@ -1,15 +1,16 @@
 # -*- coding: utf-8 -*-
 from __future__ import print_function
-import os
-import sys
-import json
-import time
-import tarfile
 
-from boto3.s3.transfer import S3Transfer
+import json
+import sys
+import tarfile
+import time
+
+import os
 from clint.textui import colored
 
 from gcdt import monitoring, utils
+from .s3 import upload_file_to_s3
 
 
 def deploy(awsclient, applicationName, deploymentGroupName, deploymentConfigName, bucket,
@@ -32,8 +33,10 @@ def deploy(awsclient, applicationName, deploymentGroupName, deploymentConfigName
             print('Pre bundle script exited with error')
             sys.exit(1)
     bundlefile = bundle_revision()
-    etag, version = _upload_revision_to_s3(awsclient, bucket,
-                                           applicationName, bundlefile)
+    # upload revision to s3
+    etag, version = upload_file_to_s3(awsclient, bucket,
+                                      _build_bundle_key(applicationName),
+                                      bundlefile)
 
     client_codedeploy = awsclient.get_client('codedeploy')
     response = client_codedeploy.create_deployment(
@@ -112,47 +115,6 @@ def bundle_revision(outputpath='/tmp'):
     tarfile_name = _make_tar_file(path='./codedeploy',
                                   outputpath=outputpath)
     return tarfile_name
-
-
-def prepare_artifacts_bucket(awsclient, bucket):
-    """Prepare the bucket if it does not exist.
-
-    :param bucket:
-    """
-    if not _bucket_exists(awsclient, bucket):
-        _create_bucket(awsclient, bucket)
-
-
-def _upload_revision_to_s3(awsclient, bucket, applicationName, file):
-    client_s3 = awsclient.get_client('s3')
-    transfer = S3Transfer(client_s3)
-    # Upload /tmp/myfile to s3://bucket/key and print upload progress.
-    transfer.upload_file(file, bucket, _build_bundle_key(applicationName))
-    response = client_s3.head_object(Bucket=bucket,
-                                  Key=_build_bundle_key(applicationName))
-
-    return response['ETag'], response['VersionId']
-
-
-def _bucket_exists(awsclient, bucket):
-    #client_s3 = awsclient.resource('s3')
-    client_s3 = awsclient.get_client('s3')
-    # TODO make sure this really works !!!!!
-    #return client_s3.Bucket(bucket) in client_s3.buckets.all()
-    return client_s3.head_bucket(Bucket=bucket)
-
-
-def _create_bucket(awsclient, bucket):
-    client_s3 = awsclient.get_client('s3')
-    client_s3.create_bucket(
-        Bucket=bucket
-    )
-    client_s3.put_bucket_versioning(
-        Bucket=bucket,
-        VersioningConfiguration={
-            'Status': 'Enabled'
-        }
-    )
 
 
 def _build_bundle_key(application_name):
