@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+from __future__ import print_function
 import os
 
 from pyhocon import ConfigFactory
@@ -9,13 +11,11 @@ from gcdt.kumo_core import deploy_stack, are_credentials_still_valid, \
     load_cloudformation_template, delete_stack, _get_stack_name, \
     get_outputs_for_stack
 from gcdt.tenkai_core import deploy as tenkai_deploy, deployment_status
-from gcdt.utils import get_outputs_for_stack
-from .helpers_aws import check_preconditions, cleanup_buckets, awsclient
+from .helpers_aws import check_preconditions
+from .helpers_aws import cleanup_buckets, awsclient  # fixtures!
+from . import here
 
 log = setup_logger(logger_name='tenkai_test_aws')
-
-
-def here(p): return os.path.join(os.path.dirname(__file__), p)
 
 
 # read template and config

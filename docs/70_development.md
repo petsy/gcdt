@@ -102,7 +102,7 @@ To suppress debug output to more easily find out why (if) the tests break, pleas
 
 For testing gcdt together with botocore and AWS services we use placebo_awsclient (a tool based on the boto maintainers placebo project). The way placebo_awsclient works is that it is attached to the botocore session and used to record and later playback the communication with AWS services.
 
-The recorded json files for gcdt tests are are stored in 'tests/resources/placebo_awsclient'.
+The recorded json files for gcdt tests are stored in 'tests/resources/placebo_awsclient'.
 
 gcdt testing using placebo playback is transparent (if you know how to run gcdt tests nothing changes for you).
 
