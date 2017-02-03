@@ -8,8 +8,9 @@ import pytest
 
 from gcdt.config_reader import read_config
 from gcdt.utils import get_context, execute_scripts
+
 from .helpers_aws import boto_session
-from .helpers import here
+from . import here
 
 
 @pytest.mark.aws

@@ -4,9 +4,10 @@ from __future__ import unicode_literals, print_function
 import pytest
 
 from gcdt.logger import setup_logger
-from gcdt.s3 import _bucket_exists
+from gcdt.s3 import _bucket_exists, upload_file_to_s3, ls
 
-from .helpers_aws import awsclient  # fixture!
+from .helpers_aws import awsclient  # fixtures!
+from .helpers import random_file  # fixtures!
 from . import helpers
 
 log = setup_logger(__name__)
@@ -25,21 +26,20 @@ def create_bucket(awsclient, bucket):
 
 
 def delete_bucket(awsclient, bucket):
+    # this works up to 1000 keys
     log.debug('deleting bucket %s' % bucket)
     if bucket.startswith('unittest-'):
-        s3 = awsclient.get_client('s3')
+        client_s3 = awsclient.get_client('s3')
         # delete all objects first
-        # TODO
-        # bu = s3.Bucket(bucket)
-        # log.debug('deleting keys')
-        # for key in bu.objects.all():
-        #    log.debug('deleting key: %s' % key)
-        #    key.delete()
-        #    s3.delete_object(Bucket=bucket, Key='foo')
+        log.debug('deleting keys')
+        objects = client_s3.list_objects_v2(Bucket=bucket)
+        if objects['KeyCount'] > 0:
+            delete={'Objects': [{'Key': k['Key']} for k in objects['Contents']]}
+            client_s3.delete_objects(Bucket=bucket, Delete=delete)
 
         log.debug('deleting bucket')
         # now we can delete the bucket
-        s3.delete_bucket(Bucket=bucket)
+        client_s3.delete_bucket(Bucket=bucket)
 
 
 @pytest.fixture(scope='function')  # 'function' or 'module'
@@ -61,3 +61,8 @@ def test_bucket_does_not_exist(awsclient):
     temp_string = helpers.random_string()
     bucket_name = 'unittest-lambda-s3-event-source-%s' % temp_string
     assert not _bucket_exists(awsclient, bucket_name)
+
+
+def test_upload_file_to_s3(awsclient, temp_bucket, random_file):
+    upload_file_to_s3(awsclient, temp_bucket, 'content.txt', random_file)
+    assert 'content.txt' in ls(awsclient, temp_bucket)

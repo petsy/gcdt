@@ -94,9 +94,14 @@ def temp_folder():
     shutil.rmtree(folder)
 
 
-#FIXME this is not supposed to be here!
-def here(p):
-    return os.path.join(os.path.dirname(__file__), p)
+@pytest.fixture(scope='function')  # 'function' or 'module'
+def random_file():
+    # provide a named file with some random content
+    # we use random_string so it is reproducible
+    filename = create_tempfile(random_string())
+    yield filename
+    # cleanup
+    os.unlink(filename)
 
 
 def _npm_check():
