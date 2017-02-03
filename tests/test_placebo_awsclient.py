@@ -5,16 +5,20 @@ import os
 import pytest
 import botocore
 
-from . import here
 from .placebo_awsclient import PlaceboAWSClient
+from .helpers import temp_folder
+from . import here
 
 
 @pytest.fixture(scope='function')  # 'function' or 'module'
-def awsclient(request):
+def awsclient(request, temp_folder):
     # note this is a specialized version since the version in helpers_aws is
     # controlled via env variables
     prefix = request.module.__name__ + '.' + request.function.__name__
-    record_dir = os.path.join(here('./resources/placebo_awsclient'), prefix)
+    #record_dir = os.path.join(here('./resources/placebo_awsclient'), prefix)
+    record_dir = os.path.join(temp_folder[0], 'placebo_awsclient', prefix)
+    if not os.path.exists(record_dir):
+        os.makedirs(record_dir)
 
     with PlaceboAWSClient(botocore.session.Session(), data_path=record_dir) as client:
         #client.record()  # switch record mode
@@ -136,3 +140,46 @@ def test_multiple_clients(awsclient):
     iam_client = awsclient.get_client('iam')
     result = ec2_client.describe_addresses()
     assert len(os.listdir(awsclient._data_path)) == 1
+
+
+### from test_canned.py
+def test_describe_addresses(awsclient):
+    awsclient._data_path = here('./resources/placebo_awsclient_canned')
+    awsclient.playback()
+    ec2_client = awsclient.get_client('ec2')
+    result = ec2_client.describe_addresses()
+    assert result['Addresses'][0]['PublicIp'] == '52.53.54.55'
+    result = ec2_client.describe_addresses()
+    assert result['Addresses'][0]['PublicIp'] == '53.54.55.56'
+    result = ec2_client.describe_addresses()
+    assert result['Addresses'][0]['PublicIp'] == '52.53.54.55'
+    result = ec2_client.describe_addresses()
+    assert result['Addresses'][0]['PublicIp'] == '53.54.55.56'
+
+
+def test_describe_key_pairs(awsclient):
+    awsclient._data_path = here('./resources/placebo_awsclient_canned')
+    awsclient.playback()
+    ec2_client = awsclient.get_client('ec2')
+    result = ec2_client.describe_key_pairs()
+    assert len(result['KeyPairs']) == 2
+    assert result['KeyPairs'][0]['KeyName'] == 'FooBar'
+    assert result['KeyPairs'][1]['KeyName'] == 'FieBaz'
+
+
+def test_prefix_new_file_path(awsclient):
+    awsclient._data_path = here('./resources/placebo_awsclient_canned')
+    service = 'foo'
+    operation = 'DescribeAddresses'
+    filename = '{0}.{1}_2.json'.format(service, operation)
+    target = os.path.join(awsclient._data_path, filename)
+    assert awsclient._get_new_file_path(service, operation) == target
+
+
+def test_prefix_next_file_path(awsclient):
+    awsclient._data_path = here('./resources/placebo_awsclient_canned')
+    service = 'foo'
+    operation = 'DescribeAddresses'
+    filename = '{0}.{1}_1.json'.format(service, operation)
+    target = os.path.join(awsclient._data_path, filename)
+    assert awsclient._get_next_file_path(service, operation) == target
