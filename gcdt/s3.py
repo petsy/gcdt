@@ -33,10 +33,7 @@ def prepare_artifacts_bucket(awsclient, bucket):
 
 
 def _bucket_exists(awsclient, bucket):
-    #client_s3 = awsclient.resource('s3')
     client_s3 = awsclient.get_client('s3')
-    # TODO test to make sure this really works !!!!!
-    #return client_s3.Bucket(bucket) in client_s3.buckets.all()
     try:
         client_s3.head_bucket(Bucket=bucket)
         return True

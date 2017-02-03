@@ -100,31 +100,41 @@ To suppress debug output to more easily find out why (if) the tests break, pleas
 
 ### Mock calls to AWS services
 
-For testing gcdt together with boto3 and AWS services we use placebo (a tool by the boto maintainers). The way placebo works is that it is attached to the boto session and used to record and later playback the communication with AWS services (https://github.com/garnaat/placebo).
+For testing gcdt together with botocore and AWS services we use placebo_awsclient (a tool based on the boto maintainers placebo project). The way placebo_awsclient works is that it is attached to the botocore session and used to record and later playback the communication with AWS services.
 
-The recorded placebo json files for gcdt tests are are stored in 'tests/resources/placebo'.
+The recorded json files for gcdt tests are are stored in 'tests/resources/placebo_awsclient'.
 
 gcdt testing using placebo playback is transparent (if you know how to run gcdt tests nothing changes for you).
 
 To record a test using placebo (first remove old recordings if any):
 
 ```bash
-$ rm -rf tests/resources/placebo/tests.test_tenkai_aws.test_tenkai_exit_codes/
+$ rm -rf tests/resources/placebo_awsclient/tests.test_tenkai_aws.test_tenkai_exit_codes/
 $ export PLACEBO_MODE=record
 $ python -m pytest -vv --cov-report term-missing --cov gcdt tests/test_tenkai_aws.py::test_tenkai_exit_codes
 ```
 
-To switch off placebo record mode:
+To switch off placebo record mode and use playback mode:
 
 ```bash
 $ export PLACEBO_MODE=playback
 ```
 
+To run the tests against AWS services (without recording) use `normal` mode:
+
+```bash
+$ export PLACEBO_MODE=normal
+```
+
+
 Please note:
 
-* prerequisite for placebo to work is that all gcdt tools support that the boto session is handed in as parameter (by the test or main). If a module creates its own boto session it breaks gcdt testability.
+* prerequisite for placebo to work is that all gcdt tools support that the awsclient is handed in as parameter (by the test or main). If a module creates its own botocore session it breaks gcdt testability.
 * in order to avoid merging placebo json files please never record all tests (it would take to long anyway). only record aws tests which are impacted by your change.
 * gcdt testing using placebo works well together with aws-mfa.
+* if you record the tests twice the json files probably get messed up.
+  Please do not do this.
+* Please commit the placebo files in a seperate commit. This makes reviewing easier.
 
 
 ### documenting gcdt

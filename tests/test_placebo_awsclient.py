@@ -1,12 +1,14 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals, print_function
 import os
+import datetime
+import json
 
 import pytest
 import botocore
 
-from .placebo_awsclient import PlaceboAWSClient
-from .helpers import temp_folder
+from .placebo_awsclient import PlaceboAWSClient, serialize, deserialize
+from .helpers import temp_folder  # fixture!
 from . import here
 
 
@@ -20,11 +22,8 @@ def awsclient(request, temp_folder):
     if not os.path.exists(record_dir):
         os.makedirs(record_dir)
 
-    with PlaceboAWSClient(botocore.session.Session(), data_path=record_dir) as client:
-        #client.record()  # switch record mode
-        #client.playback()  # switch playback mode
-        #client.add_response('list_objects', response, expected_params)
-        yield client
+    client = PlaceboAWSClient(botocore.session.Session(), data_path=record_dir)
+    yield client
 
 
 ### from test_pill.py
@@ -183,3 +182,24 @@ def test_prefix_next_file_path(awsclient):
     filename = '{0}.{1}_1.json'.format(service, operation)
     target = os.path.join(awsclient._data_path, filename)
     assert awsclient._get_next_file_path(service, operation) == target
+
+
+### from test_serializers.py
+date_sample = {
+    "LoginProfile": {
+        "UserName": "baz",
+        "CreateDate": datetime.datetime(2015, 1, 4, 9, 1, 2, 0),
+    }
+}
+
+date_json = """{"LoginProfile": {"CreateDate": {"__class__": "datetime", "day": 4, "hour": 9, "microsecond": 0, "minute": 1, "month": 1, "second": 2, "year": 2015}, "UserName": "baz"}}"""
+
+
+def test_serialize_datetime_to_json():
+    result = json.dumps(date_sample, default=serialize, sort_keys=True)
+    assert result == date_json
+
+
+def test_deserialize_datetime_from_json():
+    response = json.loads(date_json, object_hook=deserialize)
+    assert response == date_sample

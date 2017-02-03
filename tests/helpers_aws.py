@@ -8,14 +8,17 @@ import json
 import textwrap
 
 import boto3
+import botocore
 from botocore.response import StreamingBody
 from requests.structures import CaseInsensitiveDict
 import pytest
-import placebo
 
 from gcdt.logger import setup_logger
 from gcdt.ramuda_core import deploy_lambda
+from gcdt.gcdt_awsclient import AWSClient
 from . import helpers
+from . import placebo
+from .placebo_awsclient import PlaceboAWSClient
 
 log = setup_logger(__name__)
 
@@ -259,6 +262,46 @@ def boto_session(request):
         pill.playback()
     yield session
     # cleanup
+    # restore original functionality
+    helpers.random_string = random_string_orig
+    time.sleep = sleep_orig
+
+
+@pytest.fixture(scope='function')  # 'function' or 'module'
+def awsclient(request):
+    random_string_orig = helpers.random_string
+    sleep_orig = time.sleep
+    random_string_filename = 'random_string.txt'
+    prefix = request.module.__name__ + '.' + request.function.__name__
+    record_dir = os.path.join(here('./resources/placebo_awsclient'), prefix)
+    if not os.path.exists(record_dir):
+        os.makedirs(record_dir)
+
+    client = PlaceboAWSClient(botocore.session.Session(), data_path=record_dir)
+    if os.getenv('PLACEBO_MODE', '').lower() == 'record':
+        # apply the patch
+        # TODO
+        #placebo.pill.serialize = serialize_patch
+        #placebo.pill.deserialize = deserialize_patch
+
+        client.record()
+        helpers.random_string = recorder(record_dir, random_string_orig,
+                                         filename=random_string_filename)
+    elif os.getenv('PLACEBO_MODE', '').lower() == 'normal':
+        # neither record nor playback, just run the tests against AWS services
+        pass
+    else:
+        def fake_sleep(seconds):
+            pass
+        helpers.random_string = file_reader(record_dir,
+                                            random_string_filename)
+        time.sleep = fake_sleep
+        client.playback()
+
+    yield client
+
+    # cleanup
+    client.stop()
     # restore original functionality
     helpers.random_string = random_string_orig
     time.sleep = sleep_orig
