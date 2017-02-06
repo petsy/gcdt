@@ -2,23 +2,16 @@
 from __future__ import print_function
 import os
 import time
-import datetime
-from io import BytesIO
 import json
 import textwrap
 
-import boto3
 import botocore
-from botocore.response import StreamingBody
-from requests.structures import CaseInsensitiveDict
 import pytest
 
 from gcdt.logger import setup_logger
 from gcdt.ramuda_core import deploy_lambda
 from gcdt.s3 import create_bucket, delete_bucket
-from gcdt.gcdt_awsclient import AWSClient
 from . import helpers
-from . import placebo
 from .placebo_awsclient import PlaceboAWSClient
 
 log = setup_logger(__name__)
@@ -48,10 +41,10 @@ def cleanup_buckets(awsclient):
 
 
 # lambda helpers
-def create_lambda_role_helper(boto_session, role_name):
+def create_lambda_role_helper(awsclient, role_name):
     # caller needs to clean up both role!
     role = create_role_helper(
-        boto_session, role_name,
+        awsclient, role_name,
         policies=[
             'arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole',
             'arn:aws:iam::aws:policy/AWSLambdaExecute']
@@ -121,7 +114,7 @@ def create_lambda_helper(awsclient, lambda_name, role_arn, handler_filename,
 def delete_role_helper(awsclient, role_name):
     """Delete the testing role.
 
-    :param boto_session:
+    :param awsclient:
     :param role_name: the temporary role that has been created via _create_role
     """
     # role_name = role['RoleName']
@@ -208,41 +201,6 @@ check_preconditions = pytest.mark.skipif(
 
 
 @pytest.fixture(scope='function')  # 'function' or 'module'
-def boto_session(request):
-    # details on request: http://programeveryday.com/post/pytest-creating-and-using-fixtures-for-streamlined-testing/
-    # store original functions
-    random_string_orig = helpers.random_string
-    sleep_orig = time.sleep
-    random_string_filename = 'random_string.txt'
-    prefix = request.module.__name__ + '.' + request.function.__name__
-    record_dir = os.path.join(here('./resources/placebo'), prefix)
-    if not os.path.exists(record_dir):
-        os.makedirs(record_dir)
-    session = boto3.session.Session()
-    pill = placebo.attach(session, data_path=record_dir)
-    if os.getenv('PLACEBO_MODE', '').lower() == 'record':
-        # apply the patch
-        placebo.pill.serialize = serialize_patch
-        placebo.pill.deserialize = deserialize_patch
-
-        pill.record()
-        helpers.random_string = recorder(record_dir, random_string_orig,
-                                         filename=random_string_filename)
-    else:
-        def fake_sleep(seconds):
-            pass
-        helpers.random_string = file_reader(record_dir,
-                                            random_string_filename)
-        time.sleep = fake_sleep
-        pill.playback()
-    yield session
-    # cleanup
-    # restore original functionality
-    helpers.random_string = random_string_orig
-    time.sleep = sleep_orig
-
-
-@pytest.fixture(scope='function')  # 'function' or 'module'
 def awsclient(request):
     random_string_orig = helpers.random_string
     sleep_orig = time.sleep
@@ -322,58 +280,3 @@ def file_reader(record_dir, filename):
             return ''
 
     return f
-
-
-# we need to apply a patch:
-# https://github.com/garnaat/placebo/issues/48
-def deserialize_patch(obj):
-    """Convert JSON dicts back into objects."""
-    # Be careful of shallow copy here
-    target = dict(obj)
-    class_name = None
-    if '__class__' in target:
-        class_name = target.pop('__class__')
-    # Use getattr(module, class_name) for custom types if needed
-    if class_name == 'datetime':
-        return datetime.datetime(**target)
-    if class_name == 'StreamingBody':
-        return BytesIO(target['body'])
-    if class_name == 'CaseInsensitiveDict':
-        return CaseInsensitiveDict(target['as_dict'])
-    # Return unrecognized structures as-is
-    return obj
-
-
-def serialize_patch(obj):
-    """Convert objects into JSON structures."""
-    # Record class and module information for deserialization
-
-    result = {'__class__': obj.__class__.__name__}
-    try:
-        result['__module__'] = obj.__module__
-    except AttributeError:
-        pass
-    # Convert objects to dictionary representation based on type
-    if isinstance(obj, datetime.datetime):
-        result['year'] = obj.year
-        result['month'] = obj.month
-        result['day'] = obj.day
-        result['hour'] = obj.hour
-        result['minute'] = obj.minute
-        result['second'] = obj.second
-        result['microsecond'] = obj.microsecond
-        return result
-    if isinstance(obj, StreamingBody):
-        original_text = obj.read()
-
-        # We remove a BOM here if it exists so that it doesn't get reencoded
-        # later on into a UTF-16 string, presumably by the json library
-        result['body'] = original_text.decode('utf-8-sig')
-
-        obj._raw_stream = BytesIO(original_text)
-        obj._amount_read = 0
-        return result
-    if isinstance(obj, CaseInsensitiveDict):
-        result['as_dict'] = dict(obj)
-        return result
-    raise TypeError('Type not serializable')

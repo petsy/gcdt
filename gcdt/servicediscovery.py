@@ -1,8 +1,10 @@
+# -*- coding: utf-8 -*-
+from __future__ import print_function
 from distutils.version import StrictVersion
 from datetime import tzinfo, timedelta, datetime
 import locale
 import re
-import boto3
+#import boto3
 
 
 ZERO = timedelta(0)
@@ -39,18 +41,18 @@ def parse_ts(ts):
 
 
 # gets Outputs for a given StackName
-def get_outputs_for_stack(stack_name):
-    cf = boto3.client("cloudformation")
-    response = cf.describe_stacks(StackName=stack_name)
+def get_outputs_for_stack(awsclient, stack_name):
+    client_cf = awsclient.get_client('cloudformation')
+    response = client_cf.describe_stacks(StackName=stack_name)
     result = {}
     for output in response["Stacks"][0]["Outputs"]:
         result[output["OutputKey"]] = output["OutputValue"]
     return result
 
 
-def get_ssl_certificate(domain):
-    client = boto3.client("iam")
-    response = client.list_server_certificates()
+def get_ssl_certificate(awsclient, domain):
+    client_iam = awsclient.get_client('iam')
+    response = client_iam.list_server_certificates()
     arn = ""
     for cert in response["ServerCertificateMetadataList"]:
         if domain in cert["ServerCertificateName"]:
@@ -62,12 +64,13 @@ def get_ssl_certificate(domain):
     return arn
 
 
-def get_base_ami():
+def get_base_ami(awsclient):
     """
     return the latest version of our base AMI
     we can't use tags for this, so we have only the name as resource
     """
-    ec2 = boto3.resource('ec2')
+    #client_ec2 = awsclient.resource('ec2')
+    client_ec2 = awsclient.get_client('ec2')
     image_filter = [
         {
             'Name': 'state',
@@ -80,7 +83,12 @@ def get_base_ami():
     latest_ts = datetime.fromtimestamp(0)
     latest_version = StrictVersion('0.0.0')
     latest_id = None
-    for i in ec2.images.filter(Owners=['569909643510'], Filters=image_filter):
+    #for i in client_ec2.images.filter(Owners=['569909643510'],
+    # TODO hardcoded account_id, really?
+    for i in client_ec2.describe_images(
+            Owners=['569909643510'],
+            Filters=image_filter
+            ):
         m = re.search(r'(Ops_Base-Image)_(\d+.\d+.\d+)_(\d+)$', i.name)
         if m:
             version = StrictVersion(m.group(2))

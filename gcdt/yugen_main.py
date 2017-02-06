@@ -3,16 +3,17 @@
 import sys
 
 from docopt import docopt
-import boto3
+import botocore
 
 from .config_reader import read_api_config
-from gcdt.yugen_core import list_api_keys, get_lambdas, delete_api, \
+from .yugen_core import list_api_keys, get_lambdas, delete_api, \
     export_to_swagger, create_api_key, list_apis, \
     create_custom_domain, delete_api_key, deploy_api
-from gcdt.utils import version, read_gcdt_user_config, get_context, get_command, \
+from .utils import version, read_gcdt_user_config, get_context, get_command, \
     check_gcdt_update
-from gcdt.monitoring import datadog_notification, datadog_error, \
+from .monitoring import datadog_notification, datadog_error, \
     datadog_event_detail
+from .gcdt_awsclient import AWSClient
 
 
 # creating docopt parameters and usage help
@@ -35,10 +36,10 @@ DOC = '''Usage:
 # TODO investigate base path problem
 
 
-def are_credentials_still_valid(boto_session):
+def are_credentials_still_valid(awsclient):
     """Wrapper to bail out on invalid credentials."""
     from gcdt.yugen_core import are_credentials_still_valid as acsv
-    exit_code = acsv(boto_session)
+    exit_code = acsv(awsclient)
     if exit_code:
         sys.exit(1)
 
@@ -54,30 +55,30 @@ def get_user_config():
 
 def main():
     exit_code = 0
-    boto_session = boto3.session.Session()
+    awsclient = AWSClient(botocore.session.get_session())
     arguments = docopt(DOC)
     check_gcdt_update()
     if arguments['version']:
         version()
         sys.exit(0)
 
-    context = get_context(boto_session, 'yugen', get_command(arguments))
+    context = get_context(awsclient, 'yugen', get_command(arguments))
     datadog_notification(context)
 
     if arguments['list']:
-        are_credentials_still_valid(boto_session)
-        list_apis(boto_session)
+        are_credentials_still_valid(awsclient)
+        list_apis(awsclient)
     elif arguments['deploy']:
         slack_token, slack_channel = get_user_config()
-        are_credentials_still_valid(boto_session)
-        conf = read_api_config(boto_session)
+        are_credentials_still_valid(awsclient)
+        conf = read_api_config(awsclient)
         api_name = conf.get('api.name')
         api_description = conf.get('api.description')
         target_stage = conf.get('api.targetStage')
         api_key = conf.get('api.apiKey')
-        lambdas = get_lambdas(boto_session, conf, add_arn=True)
+        lambdas = get_lambdas(awsclient, conf, add_arn=True)
         deploy_api(
-            boto_session=boto_session,
+            awsclient=awsclient,
             api_name=api_name,
             api_description=api_description,
             stage_name=target_stage,
@@ -98,7 +99,7 @@ def main():
             hosted_zone_id = conf.get('customDomain.hostedDomainZoneId')
             api_base_path = conf.get('customDomain.basePath')
             exit_code = create_custom_domain(
-                boto_session=boto_session,
+                awsclient=awsclient,
                 api_name=api_name,
                 api_target_stage=target_stage,
                 api_base_path=api_base_path,
@@ -111,11 +112,11 @@ def main():
         datadog_event_detail(context, event)
     elif arguments['delete']:
         slack_token, slack_channel = get_user_config()
-        are_credentials_still_valid(boto_session)
-        conf = read_api_config(boto_session)
+        are_credentials_still_valid(awsclient)
+        conf = read_api_config(awsclient)
         api_name = conf.get('api.name')
         delete_api(
-            boto_session=boto_session,
+            awsclient=awsclient,
             api_name=api_name,
             slack_token=slack_token,
             slack_channel=slack_channel
@@ -123,15 +124,15 @@ def main():
         event = 'yugen bot: deleted api *%s*' % api_name
         datadog_event_detail(context, event)
     elif arguments['export']:
-        are_credentials_still_valid(boto_session)
-        conf = read_api_config(boto_session)
+        are_credentials_still_valid(awsclient)
+        conf = read_api_config(awsclient)
         api_name = conf.get('api.name')
         target_stage = conf.get('api.targetStage')
         api_description = conf.get('api.description')
 
-        lambdas = get_lambdas(boto_session, conf, add_arn=True)
+        lambdas = get_lambdas(awsclient, conf, add_arn=True)
         export_to_swagger(
-            boto_session=boto_session,
+            awsclient=awsclient,
             api_name=api_name,
             stage_name=target_stage,
             api_description=api_description,
@@ -142,21 +143,21 @@ def main():
                               if 'customDomain' in conf else False)
         )
     elif arguments['apikey-create']:
-        are_credentials_still_valid(boto_session)
-        conf = read_api_config(boto_session)
+        are_credentials_still_valid(awsclient)
+        conf = read_api_config(awsclient)
         api_name = conf.get('api.name')
-        create_api_key(boto_session, api_name, arguments['<keyname>'])
+        create_api_key(awsclient, api_name, arguments['<keyname>'])
     elif arguments['apikey-delete']:
-        are_credentials_still_valid(boto_session)
-        conf = read_api_config(boto_session)
+        are_credentials_still_valid(awsclient)
+        conf = read_api_config(awsclient)
         api_key = conf.get('api.apiKey')
-        delete_api_key(boto_session, api_key)
+        delete_api_key(awsclient, api_key)
     elif arguments['apikey-list']:
-        are_credentials_still_valid(boto_session)
-        list_api_keys(boto_session)
+        are_credentials_still_valid(awsclient)
+        list_api_keys(awsclient)
     elif arguments['custom-domain-create']:
-        are_credentials_still_valid(boto_session)
-        conf = read_api_config(boto_session)
+        are_credentials_still_valid(awsclient)
+        conf = read_api_config(awsclient)
         api_name = conf.get('api.name')
         api_target_stage = conf.get('api.targetStage')
 
@@ -172,7 +173,7 @@ def main():
         hosted_zone_id = conf.get('customDomain.hostedDomainZoneId')
 
         exit_code = create_custom_domain(
-            boto_session=boto_session,
+            awsclient=awsclient,
             api_name=api_name,
             api_target_stage=api_target_stage,
             api_base_path=api_base_path,

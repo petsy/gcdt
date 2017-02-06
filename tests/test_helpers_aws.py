@@ -2,9 +2,10 @@
 from __future__ import print_function
 import os
 
-from .helpers_aws import recorder, file_reader, boto_session, here
-from .helpers import temp_folder
+from .helpers_aws import recorder, file_reader, awsclient
+from .helpers import temp_folder  # fixture!
 from . import helpers
+from . import here
 
 
 def test_recorder(temp_folder):
@@ -34,14 +35,14 @@ def test_file_reader(temp_folder):
         assert reader() == '222'
 
 
-def test_random_string_recording(boto_session):
+def test_random_string_recording(awsclient):
     # record and playback cases are identical for this test
     lines = []
     for i in range(5):
         lines.append(helpers.random_string())
 
     prefix = 'tests.test_helpers_aws.test_random_string_recording'
-    record_dir = os.path.join(here('./resources/placebo'), prefix)
+    record_dir = os.path.join(here('./resources/placebo_awsclient'), prefix)
     random_string_filename = 'random_string.txt'
     with open(os.path.join(record_dir, random_string_filename), 'r') as rfile:
         rlines = [l.strip() for l in rfile.readlines()]

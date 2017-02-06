@@ -12,18 +12,19 @@ import json
 
 from docopt import docopt
 from clint.textui import colored
-import boto3
+import botocore
 
 from .config_reader import read_config
-from gcdt import utils
-from gcdt.kumo_core import print_parameter_diff, delete_stack, \
+from . import utils
+from .kumo_core import print_parameter_diff, delete_stack, \
     deploy_stack, generate_template_file, list_stacks, create_change_set, \
     describe_change_set, load_cloudformation_template, call_pre_hook
-from gcdt.utils import read_gcdt_user_config, get_context, get_command, \
+from .utils import read_gcdt_user_config, get_context, get_command, \
     check_gcdt_update
-from gcdt.monitoring import datadog_notification, datadog_error, \
+from .monitoring import datadog_notification, datadog_error, \
     datadog_event_detail
-from gcdt.kumo_viz import cfn_viz
+from .kumo_viz import cfn_viz
+from .gcdt_awsclient import AWSClient
 
 
 # creating docopt parameters and usage help
@@ -50,10 +51,10 @@ def load_template():
     return cloudformation
 
 
-def are_credentials_still_valid(boto_session):
+def are_credentials_still_valid(awsclient):
     """Wrapper to bail out on invalid credentials."""
     from kumo_core import are_credentials_still_valid as acsv
-    exit_code = acsv(boto_session)
+    exit_code = acsv(awsclient)
     if exit_code:
         sys.exit(1)
 
@@ -68,7 +69,7 @@ def get_user_config():
 
 def main():
     exit_code = 0
-    boto_session = boto3.session.Session()
+    awsclient = AWSClient(botocore.session.get_session())
     arguments = docopt(DOC)
     check_gcdt_update()
     if arguments['version']:
@@ -76,47 +77,47 @@ def main():
         sys.exit(0)
     elif arguments['dot']:
         cloudformation = load_template()
-        conf = read_config(boto_session)
+        conf = read_config(awsclient)
         cfn_viz(json.loads(cloudformation.generate_template()), parameters=conf)
         sys.exit(0)
 
-    context = get_context(boto_session, 'kumo', get_command(arguments))
+    context = get_context(awsclient, 'kumo', get_command(arguments))
     datadog_notification(context)
 
     # Run command
     if arguments['deploy']:
         slack_token, slack_channel = get_user_config()
         cloudformation = load_template()
-        call_pre_hook(boto_session, cloudformation)
-        conf = read_config(boto_session)
-        print_parameter_diff(boto_session, conf)
-        are_credentials_still_valid(boto_session)
-        exit_code = deploy_stack(boto_session, conf, cloudformation, slack_token, \
+        call_pre_hook(awsclient, cloudformation)
+        conf = read_config(awsclient)
+        print_parameter_diff(awsclient, conf)
+        are_credentials_still_valid(awsclient)
+        exit_code = deploy_stack(awsclient, conf, cloudformation, slack_token, \
             slack_channel, override_stack_policy=arguments['--override-stack-policy'])
         event = 'kumo bot: deployed stack %s ' % conf.get('cloudformation.StackName')
         datadog_event_detail(context, event)
     elif arguments['delete']:
         slack_token, slack_channel = get_user_config()
-        conf = read_config(boto_session)
-        are_credentials_still_valid(boto_session)
-        exit_code = delete_stack(boto_session, conf, slack_token, slack_channel)
+        conf = read_config(awsclient)
+        are_credentials_still_valid(awsclient)
+        exit_code = delete_stack(awsclient, conf, slack_token, slack_channel)
         event = 'kumo bot: deleted stack %s ' % conf.get('cloudformation.StackName')
         datadog_event_detail(context, event)
     elif arguments['generate']:
         cloudformation = load_template()
-        conf = read_config(boto_session)
+        conf = read_config(awsclient)
         generate_template_file(conf, cloudformation)
     elif arguments['list']:
-        are_credentials_still_valid(boto_session)
-        list_stacks(boto_session)
+        are_credentials_still_valid(awsclient)
+        list_stacks(awsclient)
     elif arguments['preview']:
         cloudformation = load_template()
-        conf = read_config(boto_session)
-        print_parameter_diff(boto_session, conf)
-        are_credentials_still_valid(boto_session)
-        change_set, stack_name = create_change_set(boto_session, conf,
+        conf = read_config(awsclient)
+        print_parameter_diff(awsclient, conf)
+        are_credentials_still_valid(awsclient)
+        change_set, stack_name = create_change_set(awsclient, conf,
                                                    cloudformation)
-        describe_change_set(boto_session, change_set, stack_name)
+        describe_change_set(awsclient, change_set, stack_name)
 
     if exit_code:
         datadog_error(context)

@@ -8,16 +8,6 @@ The interface provided can range from a direct 1-1 mapping
 of a method to a method on a botocore client all the way up
 to combining API calls across multiple AWS services.
 """
-import os
-import time
-import tempfile
-import zipfile
-import shutil
-import json
-
-import botocore.session
-import botocore.exceptions
-#from typing import Any, Optional, Dict, Callable  # noqa
 
 
 class AWSClient(object):

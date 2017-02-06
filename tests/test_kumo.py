@@ -234,7 +234,7 @@ def _create_cfn_with_hook():
 
 def test_call_hook_unknown_hook():
     out = StringIO()
-    # def _call_hook(boto_session, config, stack_name, parameters,
+    # def _call_hook(awsclient, config, stack_name, parameters,
     #                cloudformation, hook, message=None, out=sys.stdout):
     _call_hook(None, None, None, None, None, 'unknown_hook', out=out)
     assert_equal(out.getvalue().strip(), 'Unknown hook: unknown_hook')
