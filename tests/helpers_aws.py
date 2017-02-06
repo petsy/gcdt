@@ -76,7 +76,7 @@ def settings_requirements():
         os.makedirs('./vendored')
 
 
-def create_lambda_helper(boto_session, lambda_name, role_arn, handler_filename,
+def create_lambda_helper(awsclient, lambda_name, role_arn, handler_filename,
                          lambda_handler='handler.handle'):
     # caller needs to clean up both lambda!
     '''
@@ -104,7 +104,7 @@ def create_lambda_helper(boto_session, lambda_name, role_arn, handler_filename,
 
     # create the function
     deploy_lambda(
-        boto_session=boto_session,
+        awsclient=awsclient,
         function_name=lambda_name,
         role=role_arn,
         handler_filename=handler_filename,
@@ -118,14 +118,14 @@ def create_lambda_helper(boto_session, lambda_name, role_arn, handler_filename,
 
 
 # role helpers
-def delete_role_helper(boto_session, role_name):
+def delete_role_helper(awsclient, role_name):
     """Delete the testing role.
 
     :param boto_session:
     :param role_name: the temporary role that has been created via _create_role
     """
     # role_name = role['RoleName']
-    iam = boto_session.client('iam')
+    iam = awsclient.get_client('iam')
     roles = [r['RoleName'] for r in iam.list_roles()['Roles']]
     if role_name in roles:
         # detach all policies first
@@ -140,9 +140,9 @@ def delete_role_helper(boto_session, role_name):
         response = iam.delete_role(RoleName=role_name)
 
 
-def create_role_helper(boto_session, name, policies=None):
+def create_role_helper(awsclient, name, policies=None):
     """Create a role with an optional inline policy """
-    iam = boto_session.client('iam')
+    iam = awsclient.get_client('iam')
     policy_doc = {
         'Version': '2012-10-17',
         'Statement': [
@@ -249,16 +249,11 @@ def awsclient(request):
     random_string_filename = 'random_string.txt'
     prefix = request.module.__name__ + '.' + request.function.__name__
     record_dir = os.path.join(here('./resources/placebo_awsclient'), prefix)
-    if not os.path.exists(record_dir):
-        os.makedirs(record_dir)
 
     client = PlaceboAWSClient(botocore.session.Session(), data_path=record_dir)
     if os.getenv('PLACEBO_MODE', '').lower() == 'record':
-        # apply the patch
-        # TODO
-        #placebo.pill.serialize = serialize_patch
-        #placebo.pill.deserialize = deserialize_patch
-
+        if not os.path.exists(record_dir):
+            os.makedirs(record_dir)
         client.record()
         helpers.random_string = recorder(record_dir, random_string_orig,
                                          filename=random_string_filename)

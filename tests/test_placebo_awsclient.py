@@ -7,7 +7,7 @@ import json
 import pytest
 import botocore
 
-from .placebo_awsclient import PlaceboAWSClient, serialize, deserialize
+from .placebo_awsclient import PlaceboAWSClient, serialize_patch, deserialize
 from .helpers import temp_folder  # fixture!
 from . import here
 
@@ -196,7 +196,7 @@ date_json = """{"LoginProfile": {"CreateDate": {"__class__": "datetime", "day": 
 
 
 def test_serialize_datetime_to_json():
-    result = json.dumps(date_sample, default=serialize, sort_keys=True)
+    result = json.dumps(date_sample, default=serialize_patch, sort_keys=True)
     assert result == date_json
 
 
