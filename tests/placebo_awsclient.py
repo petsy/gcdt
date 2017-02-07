@@ -9,10 +9,12 @@ import glob
 import re
 from io import BytesIO
 from requests.structures import CaseInsensitiveDict
+from datetime import tzinfo, timedelta
 
 from botocore.response import StreamingBody
 
 from gcdt.gcdt_awsclient import AWSClient
+from gcdt.servicediscovery import UTC
 
 
 LOG_ALL_TRAFFIC = True  # False means do not log successful requests
@@ -201,6 +203,7 @@ def deserialize(obj):
         module_name = obj.pop('__module__')
     # Use getattr(module, class_name) for custom types if needed
     if class_name == 'datetime':
+        target['tzinfo'] = UTC()
         return datetime.datetime(**target)
     if class_name == 'StreamingBody':
         return StringIO(target['body'])

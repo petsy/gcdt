@@ -3,7 +3,7 @@
 """Helper to create Route53 entries
 """
 
-# TODO: add tests!
+# FIXME: it looks like this is not used at all!!
 
 import sys
 
@@ -19,7 +19,7 @@ HOST_ZONE_NAME__STACK_OUTPUT_NAME = "internalDomainName"
 _host_zone_name = None
 
 
-def create_record(name_prefix, instance_reference, type="A", host_zone_name=None):
+def create_record(awsclient, name_prefix, instance_reference, type="A", host_zone_name=None):
     """
     Builds route53 record entries enabling DNS names for services
 
@@ -32,7 +32,7 @@ def create_record(name_prefix, instance_reference, type="A", host_zone_name=None
 
     # Only fetch the host zone from the COPS stack if nessary
     if host_zone_name is None:
-        host_zone_name = _retrieve_stack_host_zone_name()
+        host_zone_name = _retrieve_stack_host_zone_name(awsclient)
 
     if not (type == "A" or type == "CNAME"):
         raise Exception("Record set type is not supported!")
@@ -66,7 +66,7 @@ def create_record(name_prefix, instance_reference, type="A", host_zone_name=None
     )
 
 
-def _retrieve_stack_host_zone_name():
+def _retrieve_stack_host_zone_name(awsclient, default_stack_name=None):
     """
     Use service discovery to get the host zone name from the default stack
 
@@ -83,8 +83,10 @@ def _retrieve_stack_host_zone_name():
         print("Please set environment...")
         sys.exit()
 
-    default_stack_name = "dp-" + env
-    default_stack_output = get_outputs_for_stack(default_stack_name)
+    if default_stack_name is None:
+        # TODO why 'dp-<env>'? - this should not be hardcoded!
+        default_stack_name = 'dp-%s' % env
+    default_stack_output = get_outputs_for_stack(awsclient, default_stack_name)
 
     if HOST_ZONE_NAME__STACK_OUTPUT_NAME not in default_stack_output:
         print("Please debug why default stack '{}' does not contain '{}'...".format(

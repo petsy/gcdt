@@ -43,10 +43,11 @@ def parse_ts(ts):
 def get_outputs_for_stack(awsclient, stack_name):
     client_cf = awsclient.get_client('cloudformation')
     response = client_cf.describe_stacks(StackName=stack_name)
-    result = {}
-    for output in response["Stacks"][0]["Outputs"]:
-        result[output["OutputKey"]] = output["OutputValue"]
-    return result
+    if response['Stacks'] and 'Outputs' in response['Stacks'][0]:
+        result = {}
+        for output in response['Stacks'][0]['Outputs']:
+            result[output['OutputKey']] = output['OutputValue']
+        return result
 
 
 def get_ssl_certificate(awsclient, domain):
@@ -55,6 +56,8 @@ def get_ssl_certificate(awsclient, domain):
     arn = ""
     for cert in response["ServerCertificateMetadataList"]:
         if domain in cert["ServerCertificateName"]:
+            print(cert['Expiration'])
+            print(datetime.now(UTC()))
             if datetime.now(UTC()) > cert['Expiration']:
                 print("certificate has expired")
             else:
@@ -63,12 +66,13 @@ def get_ssl_certificate(awsclient, domain):
     return arn
 
 
-def get_base_ami(awsclient):
+def get_base_ami(awsclient, owners=None):
     """
     return the latest version of our base AMI
     we can't use tags for this, so we have only the name as resource
     """
-    #client_ec2 = awsclient.resource('ec2')
+    if owners is None:
+        owners = ['569909643510']
     client_ec2 = awsclient.get_client('ec2')
     image_filter = [
         {
@@ -82,20 +86,20 @@ def get_base_ami(awsclient):
     latest_ts = datetime.fromtimestamp(0)
     latest_version = StrictVersion('0.0.0')
     latest_id = None
-    #for i in client_ec2.images.filter(Owners=['569909643510'],
-    # TODO hardcoded account_id, really?
     for i in client_ec2.describe_images(
-            Owners=['569909643510'],
+            Owners=owners,
             Filters=image_filter
-            ):
-        m = re.search(r'(Ops_Base-Image)_(\d+.\d+.\d+)_(\d+)$', i.name)
+            )['Images']:
+        print(i)
+        m = re.search(r'(Ops_Base-Image)_(\d+.\d+.\d+)_(\d+)$', i['Name'])
         if m:
             version = StrictVersion(m.group(2))
             timestamp = m.group(3)
-            creation_date = parse_ts(i.creation_date)
+            creation_date = parse_ts(i['CreationDate'])
+            print(creation_date)
 
             if creation_date > latest_ts and version >=latest_version:
-                latest_id = i.id
+                latest_id = i['ImageId']
                 latest_ts = creation_date
                 latest_version = version
 

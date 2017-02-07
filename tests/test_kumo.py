@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import os
 import json
 from tempfile import NamedTemporaryFile
 from StringIO import StringIO
@@ -9,16 +8,15 @@ from pyhocon.exceptions import ConfigMissingException
 from nose.tools import assert_dict_equal
 from nose.tools import assert_equal, assert_true, \
     assert_regexp_matches, assert_list_equal, raises
-#import nose
 
 from gcdt.kumo_core import _generate_parameters, \
     load_cloudformation_template, generate_template_file, _get_stack_name, \
     _get_stack_policy, _get_stack_policy_during_update, _get_conf_value, \
     _generate_parameter_entry, _call_hook
+
 from .helpers import cleanup_tempfiles, temp_folder  # fixtures!
-
-
-def here(p): return os.path.join(os.path.dirname(__file__), p)
+from .helpers import Bunch
+from . import here
 
 
 def test_load_cloudformation_template(cleanup_tempfiles):
@@ -65,11 +63,6 @@ def test_simple_cloudformation_stack():
 
 
 def _create_simple_cf():
-    # http://code.activestate.com/recipes/52308-the-simple-but-handy-collector-of-a-bunch-of-named/?in=user-97991
-    class Bunch:
-        def __init__(self, **kwds):
-            self.__dict__.update(kwds)
-
     # use Bunch to create group of variables:
     # cf = Bunch(datum=y, squared=y*y, coord=x)
     cf = Bunch()

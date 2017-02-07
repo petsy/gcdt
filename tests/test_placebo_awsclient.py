@@ -5,9 +5,10 @@ import datetime
 import json
 
 import pytest
-import botocore
+import botocore.session
 
-from .placebo_awsclient import PlaceboAWSClient, serialize_patch, deserialize
+from .placebo_awsclient import PlaceboAWSClient, serialize_patch, deserialize, \
+    UTC
 from .helpers import temp_folder  # fixture!
 from . import here
 
@@ -188,7 +189,7 @@ def test_prefix_next_file_path(awsclient):
 date_sample = {
     "LoginProfile": {
         "UserName": "baz",
-        "CreateDate": datetime.datetime(2015, 1, 4, 9, 1, 2, 0),
+        "CreateDate": datetime.datetime(2015, 1, 4, 9, 1, 2, 0, tzinfo=UTC()),
     }
 }
 

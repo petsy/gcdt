@@ -10,6 +10,12 @@ from tempfile import NamedTemporaryFile, mkdtemp
 import pytest
 
 
+# http://code.activestate.com/recipes/52308-the-simple-but-handy-collector-of-a-bunch-of-named/?in=user-97991
+class Bunch:
+    def __init__(self, **kwds):
+        self.__dict__.update(kwds)
+
+
 def create_tempfile(contents):
     """Helper to create a named temporary file with contents.
     Note: caller has responsibility to clean up the temp file!

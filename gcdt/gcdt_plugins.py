@@ -15,4 +15,4 @@ def load_plugins(group='gcdt10'):
     # TODO: make sure we do not have conflicting generators installed!
     for ep in pkg_resources.iter_entry_points(group, name=None):
         plugin = ep.load()  # load the plugin
-        plugin.register()   # register the plugin so it listens to gcdt_sinals
+        plugin.register()   # register the plugin so it listens to gcdt_signals

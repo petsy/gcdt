@@ -11,9 +11,10 @@ import pytest
 from gcdt.kumo_core import load_cloudformation_template, list_stacks, \
     print_parameter_diff, are_credentials_still_valid, deploy_stack, \
     delete_stack, create_change_set, _get_stack_name, describe_change_set, \
-    _get_artifact_bucket, _s3_upload, get_outputs_for_stack
+    _get_artifact_bucket, _s3_upload
 from gcdt.kumo_util import ensure_ebs_volume_tags_ec2_instance, \
     ensure_ebs_volume_tags_autoscaling_group
+from gcdt.servicediscovery import get_outputs_for_stack
 from gcdt.s3 import prepare_artifacts_bucket
 
 from .helpers_aws import check_preconditions
@@ -33,6 +34,25 @@ config_ec2 = ConfigFactory.parse_file(
 config_autoscaling = ConfigFactory.parse_file(
     here('resources/sample_autoscaling_cloudformation_stack/settings_dev.conf')
 )
+
+
+# TODO use this fixture for all tests which are based on simple_cloudformation_stack
+@pytest.fixture(scope='function')  # 'function' or 'module'
+def simple_cloudformation_stack(cleanup_stack, awsclient):
+    # create a stack we use for the test lifecycle
+    #print_parameter_diff(awsclient, config_simple_stack)
+    are_credentials_still_valid(awsclient)
+    cloudformation_simple_stack, _ = load_cloudformation_template(
+        here('resources/simple_cloudformation_stack/cloudformation.py')
+    )
+    exit_code = deploy_stack(awsclient, config_simple_stack,
+                             cloudformation_simple_stack,
+                             override_stack_policy=False)
+    assert exit_code == 0
+
+    yield 'infra-dev-kumo-sample-stack'
+    # cleanup is done by cleanup_stack
+
 
 @pytest.mark.aws
 @check_preconditions

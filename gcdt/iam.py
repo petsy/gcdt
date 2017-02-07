@@ -11,7 +11,7 @@ from awacs.aws import Allow, Statement, Principal, Policy
 from awacs.sts import AssumeRole
 
 
-# TODO: add tests
+# FIXME: I could not find any usage so far
 
 class IAMRoleAndPolicies(object):
     """

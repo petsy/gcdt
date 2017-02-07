@@ -625,10 +625,10 @@ def generate_template_file(conf, cloudformation):
 
 
 # gets Outputs for a given StackName (from glomex-utils/servicediscovery.py)
-def get_outputs_for_stack(awsclient, stack_name):
-    client_cf = awsclient.get_client('cloudformation')
-    response = client_cf.describe_stacks(StackName=stack_name)
-    result = {}
-    for output in response["Stacks"][0]["Outputs"]:
-        result[output["OutputKey"]] = output["OutputValue"]
-    return result
+#def get_outputs_for_stack(awsclient, stack_name):
+#    client_cf = awsclient.get_client('cloudformation')
+#    response = client_cf.describe_stacks(StackName=stack_name)
+#    result = {}
+#    for output in response["Stacks"][0]["Outputs"]:
+#        result[output["OutputKey"]] = output["OutputValue"]
+#    return result
