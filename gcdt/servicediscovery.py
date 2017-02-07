@@ -4,7 +4,6 @@ from distutils.version import StrictVersion
 from datetime import tzinfo, timedelta, datetime
 import locale
 import re
-#import boto3
 
 
 ZERO = timedelta(0)

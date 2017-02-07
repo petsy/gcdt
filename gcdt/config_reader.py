@@ -327,8 +327,12 @@ def _get_secret(awsclient, name, version="",  # region=None,
     kms = awsclient.get_client('kms')
     # Check the HMAC before we decrypt to verify ciphertext integrity
     try:
+        print('all good here')
+        print(material['key']['S'])
+        print(type(material['key']['S']))
         kms_response = kms.decrypt(CiphertextBlob=b64decode(material['key']['S']),
                                    EncryptionContext=context)
+
     except botocore.exceptions.ClientError as e:
         if e.response["Error"]["Code"] == "InvalidCiphertextException":
             if context is None:

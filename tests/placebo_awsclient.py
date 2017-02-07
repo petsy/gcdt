@@ -25,6 +25,9 @@ log = logging.getLogger(__name__)
 # log.setLevel(logging.DEBUG)
 
 
+# TODO fix recording for kms, i.e. test_config_reader_aws.py tests
+
+
 class FakeHttpResponse(object):
     def __init__(self, status_code):
         self.status_code = status_code
