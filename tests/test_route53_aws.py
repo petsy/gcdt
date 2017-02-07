@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals, print_function
 from nose.tools import assert_equal
 from troposphere.ec2 import Instance
 

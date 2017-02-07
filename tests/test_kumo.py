@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals, print_function
 import json
 from tempfile import NamedTemporaryFile
 from StringIO import StringIO
@@ -211,16 +212,10 @@ def test_generate_parameter_entry():
 
 
 def _create_cfn_with_hook():
-    # http://code.activestate.com/recipes/52308-the-simple-but-handy-collector-of-a-bunch-of-named/?in=user-97991
-    class Bunch:
-        def __init__(self, **kwds):
-            self.__dict__.update(kwds)
-
     def hook():
         pass
 
     # use Bunch to create group of variables:
-    # cf = Bunch(datum=y, squared=y*y, coord=x)
     cfn = Bunch(pre_hook=hook)
     return cfn
 

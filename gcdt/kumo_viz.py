@@ -3,7 +3,7 @@
 
 """Visualize cloudformation template."""
 
-from __future__ import print_function
+from __future__ import unicode_literals, print_function
 import sys
 from numbers import Number
 from compiler.ast import flatten

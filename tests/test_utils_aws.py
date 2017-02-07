@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals, print_function
 import os
 
 from nose.tools import assert_dict_contains_subset,assert_in

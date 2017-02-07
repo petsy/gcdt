@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals, print_function
 import os
 from StringIO import StringIO
 
@@ -11,7 +12,7 @@ import pytest
 from gcdt.kumo_core import load_cloudformation_template, list_stacks, \
     print_parameter_diff, are_credentials_still_valid, deploy_stack, \
     delete_stack, create_change_set, _get_stack_name, describe_change_set, \
-    _get_artifact_bucket, _s3_upload
+    _get_artifact_bucket, _s3_upload, _get_stack_state
 from gcdt.kumo_util import ensure_ebs_volume_tags_ec2_instance, \
     ensure_ebs_volume_tags_autoscaling_group
 from gcdt.servicediscovery import get_outputs_for_stack
@@ -36,9 +37,8 @@ config_autoscaling = ConfigFactory.parse_file(
 )
 
 
-# TODO use this fixture for all tests which are based on simple_cloudformation_stack
 @pytest.fixture(scope='function')  # 'function' or 'module'
-def simple_cloudformation_stack(cleanup_stack, awsclient):
+def simple_cloudformation_stack(awsclient):
     # create a stack we use for the test lifecycle
     #print_parameter_diff(awsclient, config_simple_stack)
     are_credentials_still_valid(awsclient)
@@ -48,10 +48,35 @@ def simple_cloudformation_stack(cleanup_stack, awsclient):
     exit_code = deploy_stack(awsclient, config_simple_stack,
                              cloudformation_simple_stack,
                              override_stack_policy=False)
-    assert exit_code == 0
+    assert not exit_code
 
     yield 'infra-dev-kumo-sample-stack'
-    # cleanup is done by cleanup_stack
+    # cleanup
+    exit_code = delete_stack(awsclient, config_simple_stack)
+    # check whether delete was completed!
+    assert not exit_code, 'delete_stack was not completed please make sure to clean up the stack manually'
+
+
+@pytest.fixture(scope='function')  # 'function' or 'module'
+def sample_cloudformation_stack_with_hooks(awsclient):
+    # create a stack we use for the test lifecycle
+    are_credentials_still_valid(awsclient)
+    cloudformation_stack, _ = load_cloudformation_template(
+        here('resources/sample_cloudformation_stack_with_hooks/cloudformation.py')
+    )
+    config_stack = ConfigFactory.parse_file(
+        here('resources/sample_cloudformation_stack_with_hooks/settings_dev.conf')
+    )
+    exit_code = deploy_stack(awsclient, config_stack,
+                             cloudformation_stack,
+                             override_stack_policy=False)
+    assert not exit_code
+
+    yield 'infra-dev-kumo-sample-stack-with-hooks'
+    # cleanup
+    exit_code = delete_stack(awsclient, config_stack)
+    # check whether delete was completed!
+    assert not exit_code, 'delete_stack was not completed please make sure to clean up the stack manually'
 
 
 @pytest.mark.aws
@@ -64,13 +89,16 @@ def test_list_stacks(awsclient):
 
 @pytest.mark.aws
 @check_preconditions
-def test_print_parameter_diff(awsclient):
+def test_print_parameter_diff(awsclient, simple_cloudformation_stack):
     out = StringIO()
-    empty_conf = ConfigTree([('cloudfoundation', ConfigTree([]))])
+    # use config with large machine
+    large_conf = ConfigFactory.parse_file(
+        here('resources/simple_cloudformation_stack/settings_large_dev.conf')
+    )
 
-    print_parameter_diff(awsclient, empty_conf, out=out)
-    assert_regexp_matches(out.getvalue().strip(),
-        'StackName is not configured, could not create parameter diff')
+    print_parameter_diff(awsclient, large_conf, out=out)
+    # verify diff results
+    assert 'InstanceType │ t2.medium     │ t2.large' in out.getvalue().strip()
 
 
 @pytest.mark.aws
@@ -107,17 +135,17 @@ def test_s3_upload(cleanup_buckets, awsclient):
 # since the stack creation for a simple stack takes some time we decided
 # to test the stack related operations together
 
-@pytest.fixture(scope='function')  # 'function' or 'module'
-def cleanup_stack(awsclient):
-    """Remove the stack to cleanup after test run.
-
-    This is intended to be called during test teardown"""
-    yield
-    # cleanup
-    exit_code = delete_stack(awsclient, config_simple_stack)
-    # check whether delete was completed!
-    assert_false(exit_code, 'delete_stack was not completed\n' +
-                 'please make sure to clean up the stack manually')
+#@pytest.fixture(scope='function')  # 'function' or 'module'
+#def cleanup_stack(awsclient):
+#    """Remove the stack to cleanup after test run.#
+#
+#    This is intended to be called during test teardown"""
+#    yield
+#    # cleanup
+#    exit_code = delete_stack(awsclient, config_simple_stack)
+#    # check whether delete was completed!
+#    assert_false(exit_code, 'delete_stack was not completed\n' +
+#                 'please make sure to clean up the stack manually')
 
 
 @pytest.fixture(scope='function')  # 'function' or 'module'
@@ -148,17 +176,17 @@ def cleanup_stack_ec2(awsclient):
 
 @pytest.mark.aws
 @check_preconditions
-def test_kumo_stack_lifecycle(cleanup_stack, awsclient):
+def test_kumo_stack_lifecycle(awsclient, simple_cloudformation_stack):
     # create a stack we use for the test lifecycle
-    print_parameter_diff(awsclient, config_simple_stack)
-    are_credentials_still_valid(awsclient)
+    #print_parameter_diff(awsclient, config_simple_stack)
+    #are_credentials_still_valid(awsclient)
     cloudformation_simple_stack, _ = load_cloudformation_template(
         here('resources/simple_cloudformation_stack/cloudformation.py')
     )
-    exit_code = deploy_stack(awsclient, config_simple_stack,
-                             cloudformation_simple_stack,
-                             override_stack_policy=False)
-    assert_equal(exit_code, 0)
+    #exit_code = deploy_stack(awsclient, config_simple_stack,
+    #                         cloudformation_simple_stack,
+    #                         override_stack_policy=False)
+    #assert_equal(exit_code, 0)
 
     # preview (with identical stack)
     # TODO: add more asserts!
@@ -269,3 +297,26 @@ def check_volume_tagged(vol, tag):
             return False
     else:
         return False
+
+
+@pytest.mark.aws
+@check_preconditions
+def test_get_stack_state(awsclient, simple_cloudformation_stack):
+    state = _get_stack_state(awsclient.get_client('cloudformation'),
+                             simple_cloudformation_stack)
+    assert state in ['CREATE_IN_PROGRESS', 'CREATE_COMPLETE']
+
+
+@pytest.mark.aws
+@check_preconditions
+def test_call_hook(awsclient, sample_cloudformation_stack_with_hooks):
+    # note: asserts for parameters are located in the hook
+    state = _get_stack_state(awsclient.get_client('cloudformation'),
+                             sample_cloudformation_stack_with_hooks)
+    assert state in ['CREATE_IN_PROGRESS', 'CREATE_COMPLETE']
+
+
+# TODO
+'''
+are_credentials_still_valid
+'''

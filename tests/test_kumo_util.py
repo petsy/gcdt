@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals, print_function
 import troposphere
 from nose.tools import assert_equal
 from gcdt.kumo_util import StackLookup
@@ -14,4 +15,4 @@ def test_StackLookup():
     stack_lookup = StackLookup(t, lambda_lookup_arn)
     # as_reference: Is the parameter a reference (Default) or a string
     vpcid = stack_lookup.get_att('vpcid', as_reference=False)
-    assert_equal(str(vpcid.data), "{'Fn::GetAtt': ['StackOutput', 'vpcid']}")
+    assert vpcid.data == {'Fn::GetAtt': ['StackOutput', 'vpcid']}

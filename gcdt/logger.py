@@ -4,6 +4,7 @@
 Override globals before using setup_logger for customization
 """
 
+from __future__ import unicode_literals, print_function
 import logging
 import json
 from decimal import Decimal

@@ -5,6 +5,7 @@
 
 # FIXME: it looks like this is not used at all!!
 
+from __future__ import unicode_literals, print_function
 import sys
 
 import troposphere

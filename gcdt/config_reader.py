@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
-
 """config_reader reads a config in HOCON format.
 
 If local set ENV variable to LOCAL and it will use settings_local.conf
 Standard is no ENV variable and then it uses a settings.conf
 """
 
-from __future__ import print_function
+from __future__ import unicode_literals, print_function
 from collections import OrderedDict
 import os
 

@@ -8,7 +8,7 @@ from gcdt.servicediscovery import get_outputs_for_stack, get_ssl_certificate, \
 
 from .helpers_aws import check_preconditions
 from .helpers_aws import awsclient  # fixtures!
-from .test_kumo_aws import config_simple_stack, cleanup_stack  # fixtures!
+from .test_kumo_aws import config_simple_stack  # fixtures!
 from .test_kumo_aws import simple_cloudformation_stack  # fixtures!
 
 

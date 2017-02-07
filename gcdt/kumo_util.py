@@ -2,7 +2,7 @@
 """The kumo_util file contains stuff that is used for example in cloudformation.py
 templates or from other external code.
 """
-from __future__ import print_function
+from __future__ import unicode_literals, print_function
 
 import troposphere
 from troposphere.cloudformation import AWSCustomObject

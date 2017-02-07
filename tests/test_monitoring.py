@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals, print_function
 from StringIO import StringIO
 
 from nose.tools import assert_true, assert_regexp_matches, assert_equal, \

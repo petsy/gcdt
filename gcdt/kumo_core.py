@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from __future__ import print_function
+from __future__ import unicode_literals, print_function
 import os
 import six
 import imp
@@ -50,11 +50,15 @@ def load_cloudformation_template(path=None):
 def print_parameter_diff(awsclient, config, out=sys.stdout):
     """print differences between local config and currently active config
     """
-    cf = awsclient.get_client('cloudformation')
+    client_cf = awsclient.get_client('cloudformation')
     try:
         stackname = config['cloudformation.StackName']
-        stack = cf.Stack(stackname)
-        stack.load()  # load to trigger exception if the stack does not exist
+        response = client_cf.describe_stacks(StackName=stackname)
+        if response['Stacks']:
+            stack_id = response['Stacks'][0]['StackId']
+            stack = response['Stacks'][0]
+        else:
+            return None
     except pyhocon.exceptions.ConfigMissingException:
         print('StackName is not configured, could not create parameter diff',
               file=out)
@@ -68,9 +72,8 @@ def print_parameter_diff(awsclient, config, out=sys.stdout):
     table.append(['Parameter', 'Current Value', 'New Value'])
 
     # Check if there are parameters for the stack
-    if stack.parameters is not None:
-
-        for param in stack.parameters:
+    if 'Parameters' in stack:
+        for param in stack['Parameters']:
             try:
                 old = param['ParameterValue']
                 if ',' in old:
@@ -129,27 +132,31 @@ def _call_hook(awsclient, config, stack_name, parameters, cloudformation,
         hook_func()  # for compatibility with existing templates
     else:
         # new call for templates with parametrized hooks
-        cfn_client = awsclient.get_client('cloudformation')
-        stack_outputs = _get_stack_outputs(cfn_client, stack_name)
-        stack_state = _get_stack_state(cfn_client, stack_name)
+        client_cf = awsclient.get_client('cloudformation')
+        stack_outputs = _get_stack_outputs(client_cf, stack_name)
+        stack_state = _get_stack_state(client_cf, stack_name)
         hook_func(awsclient=awsclient, config=config,
                   parameters=parameters, stack_outputs=stack_outputs,
                   stack_state=stack_state)
 
 
 def _get_stack_outputs(cfn_client, stack_name):
-    stacks = cfn_client.describe_stacks(stack_name)
-    if len(stacks) == 1:
-        return stacks[0]
+    response = cfn_client.describe_stacks(StackName=stack_name)
+    if response['Stacks']:
+        stack = response['Stacks'][0]
+        if 'Outputs' in stack:
+            return stack['Outputs']
 
 
-def _get_stack_state(cfn_client, stack_name):
+def _get_stack_state(client_cf, stackname):
     try:
-        stack = cfn_client.Stack(stack_name)
+        response = client_cf.describe_stacks(StackName=stackname)
+        if response['Stacks']:
+            stack = response['Stacks'][0]
+            return stack['StackStatus']
     except:
         print('Failed to get stack state.')
         return
-    return stack.stack_status
 
 
 def _json2table(data):
@@ -622,13 +629,3 @@ def generate_template_file(conf, cloudformation):
         opened_file.write(template_body)
     print('wrote cf-template for %s to disk: %s' % (get_env(), template_file_name))
     return template_file_name
-
-
-# gets Outputs for a given StackName (from glomex-utils/servicediscovery.py)
-#def get_outputs_for_stack(awsclient, stack_name):
-#    client_cf = awsclient.get_client('cloudformation')
-#    response = client_cf.describe_stacks(StackName=stack_name)
-#    result = {}
-#    for output in response["Stacks"][0]["Outputs"]:
-#        result[output["OutputKey"]] = output["OutputValue"]
-#    return result

@@ -3,7 +3,7 @@
 """The 'tenkai' tool is used to work with AWS CodeDeploy.
 """
 
-from __future__ import print_function
+from __future__ import unicode_literals, print_function
 import sys
 
 import botocore

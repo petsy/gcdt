@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals, print_function
 import pytest
 
 from gcdt.gcdt_cmd_dispatcher import cmd
