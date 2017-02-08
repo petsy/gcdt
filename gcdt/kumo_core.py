@@ -606,7 +606,7 @@ def describe_change_set(awsclient, change_set_name, stack_name):
             ChangeSetName=change_set_name,
             StackName=stack_name)
         status = response['Status']
-        print('##### %s' % status)
+        #print('##### %s' % status)
         if status == 'CREATE_COMPLETE':
             for change in response['Changes']:
                 print(_json2table(change['ResourceChange']))

@@ -95,6 +95,28 @@ def test_template_variables_to_dict(awsclient):
 
 # FIXME: tests
 # * important test "yugen deploy" without valid key, I think there is a defect!
-# * get_lambdas
 # * test that reads config from file
-# * current coverage is 28% (that is not good enough!)
+# * current coverage is 35% (that is not good enough!)
+
+# TODO missing tests
+# export_to_swagger
+# list_apis
+# list_api_keys
+# create_custom_domain
+# get_lambdas
+# are_credentials_still_valid
+# _import_from_swagger
+# _update_from_swagger
+# _create_api
+# _wire_api_key
+# _create_deployment
+# _ensure_correct_base_path_mapping
+# _base_path_mapping_exists
+# _record_exists_and_correct
+# _create_new_custom_domain
+# _template_variables_to_dict
+# _ensure_lambda_permissions
+# _invoke_lambda_permission_exists
+# _custom_domain_name_exists
+# _basepath_to_string_if_null
+#

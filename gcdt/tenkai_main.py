@@ -6,18 +6,14 @@
 from __future__ import unicode_literals, print_function
 import sys
 
-import botocore
-from docopt import docopt
-
 from . import utils
 from .tenkai_core import deploy, deployment_status, \
     bundle_revision
 from gcdt.s3 import prepare_artifacts_bucket
 from .utils import check_gcdt_update
 from .monitoring import datadog_error, datadog_event_detail
-from .gcdt_cmd_dispatcher import cmd, get_command
-from .gcdt_lifecycle import lifecycle
-from .gcdt_awsclient import AWSClient
+from .gcdt_cmd_dispatcher import cmd
+from . import gcdt_lifecycle
 
 DOC = '''Usage:
         tenkai bundle
@@ -32,7 +28,7 @@ DOC = '''Usage:
 def version_cmd():
     check_gcdt_update()
     utils.version()
-    sys.exit(0)
+    return 1
 
 
 @cmd(spec=['deploy'])
@@ -57,7 +53,7 @@ def deploy_cmd(**tooldata):
     exit_code = deployment_status(awsclient, deployment)
     if exit_code:
         datadog_error(context)
-        sys.exit(1)
+        return 1
     event = 'tenkai bot: deployed deployment group %s ' % \
             conf.get('codedeploy.deploymentGroupName')
     datadog_event_detail(context, event)
@@ -68,16 +64,5 @@ def bundle(**tooldata):
     print('created bundle at %s' % bundle_revision())
 
 
-def main():
-    arguments = docopt(DOC, sys.argv[1:])
-    command = get_command(arguments)
-    if command == 'version':
-        # handle commands that do not need a lifecycle
-        cmd.dispatch(arguments)
-    else:
-        awsclient = AWSClient(botocore.session.get_session())
-        lifecycle(awsclient, 'tenkai', command, arguments)
-
-
 if __name__ == '__main__':
-    main()
+    sys.exit(gcdt_lifecycle.main(DOC, 'tenkai'))

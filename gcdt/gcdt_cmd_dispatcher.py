@@ -44,7 +44,7 @@ class cmd(object):
 
         :param arguments:
         :param kwargs:
-        :return:
+        :return: exit_code
         """
         # first match wins
         # spec: all '-' elements must match, all others are False;
@@ -92,8 +92,8 @@ class cmd(object):
                 continue  # not all cmds from spec have been provided
             # all options and cmds matched : call the cmd
             # TODO leave out all args to deal with "empty" signature
-            func(*args, **kwargs)
-            return
+            exit_code = func(*args, **kwargs)
+            return exit_code
         # no matching spec found
         raise Exception('No implementation for spec: %s' % arguments)
 

@@ -326,9 +326,6 @@ def _get_secret(awsclient, name, version="",  # region=None,
     kms = awsclient.get_client('kms')
     # Check the HMAC before we decrypt to verify ciphertext integrity
     try:
-        print('all good here')
-        print(material['key']['S'])
-        print(type(material['key']['S']))
         kms_response = kms.decrypt(CiphertextBlob=b64decode(material['key']['S']),
                                    EncryptionContext=context)
 
@@ -360,3 +357,12 @@ def _get_secret(awsclient, name, version="",  # region=None,
     plaintext = decryptor.decrypt(b64decode(material['contents']['S'])).decode(
         "utf-8")
     return plaintext
+
+
+def _get_datadog_api_key(awsclient):
+    api_key = None
+    try:
+        api_key = _get_secret(awsclient, 'datadog.api_key')
+    except Exception:
+        pass
+    return api_key

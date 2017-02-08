@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals, print_function
 import copy
+import sys
+
+from docopt import docopt
+import botocore.session
 
 from . import gcdt_signals
 from .monitoring import datadog_notification
@@ -8,8 +12,9 @@ from .gcdt_defaults import DEFAULT_CONFIG
 from .utils import dict_merge, read_gcdt_user_config, get_context, \
     check_gcdt_update
 from .config_reader import read_config
-from .gcdt_cmd_dispatcher import cmd
+from .gcdt_cmd_dispatcher import cmd, get_command
 from .gcdt_plugins import load_plugins
+from .gcdt_awsclient import AWSClient
 
 
 # lifecycle implementation adapted from
@@ -59,16 +64,33 @@ def lifecycle(awsclient, tool, command, arguments):
     # run the command and provide context and config (= tooldata)
     gcdt_signals.command_init.send((context, config))
     try:
-        cmd.dispatch(arguments, context=context, config=config)
+        exit_code = cmd.dispatch(arguments, context=context, config=config)
     except Exception as e:
-        print('bam')
         print(str(e))
         context['error'] = str(e)
         gcdt_signals.error.send((context, config))
-        return
+        return 1
 
     gcdt_signals.command_finalized.send((context, config))
 
     # TODO reporting (in case you want to get a summary / output to the user)
 
     gcdt_signals.finalized.send(context)
+    return exit_code
+
+
+def main(doc, tool):
+    """gcdt tools parametrized main function.
+
+    :param doc:
+    :param tool:
+    :return: exit code
+    """
+    arguments = docopt(doc, sys.argv[1:])
+    command = get_command(arguments)
+    if command == 'version':
+        # handle commands that do not need a lifecycle
+        return cmd.dispatch(arguments)
+    else:
+        awsclient = AWSClient(botocore.session.get_session())
+        return lifecycle(awsclient, tool, command, arguments)

@@ -6,12 +6,12 @@ import subprocess
 import sys
 from time import sleep
 
-import credstash
 import os
 from clint.textui import prompt, colored
 from pyhocon import ConfigFactory
 
 from gcdt import __version__
+from gcdt.config_reader import _get_datadog_api_key
 from gcdt.package_utils import get_package_versions
 
 
@@ -143,15 +143,6 @@ def configure(config_file=None):
         config.write('gcdt {\n')
         config.write('slack-token=%s' % slack_token)
         config.write('\n}')
-
-
-def _get_datadog_api_key(awsclient):
-    api_key = None
-    try:
-        api_key = credstash.get_secret(awsclient, 'datadog.api_key')
-    except Exception:
-        pass
-    return api_key
 
 
 def _get_user():

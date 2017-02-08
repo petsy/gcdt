@@ -182,3 +182,5 @@ def test_cmd_exception_on_missing_option():
         )
     assert result == {}
     assert einfo.match(r'No implementation for spec: .*')
+
+# TODO: dispatch to get back the return value of the cmd
