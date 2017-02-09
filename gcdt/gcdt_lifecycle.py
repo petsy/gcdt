@@ -7,7 +7,7 @@ from docopt import docopt
 import botocore.session
 
 from . import gcdt_signals
-from .monitoring import datadog_notification
+from .monitoring import datadog_notification, datadog_error
 from .gcdt_defaults import DEFAULT_CONFIG
 from .utils import dict_merge, read_gcdt_user_config, get_context, \
     check_gcdt_update
@@ -69,6 +69,9 @@ def lifecycle(awsclient, tool, command, arguments):
         print(str(e))
         context['error'] = str(e)
         gcdt_signals.error.send((context, config))
+        exit_code = 1
+    if exit_code:
+        datadog_error(context)
         return 1
 
     gcdt_signals.command_finalized.send((context, config))
@@ -76,21 +79,24 @@ def lifecycle(awsclient, tool, command, arguments):
     # TODO reporting (in case you want to get a summary / output to the user)
 
     gcdt_signals.finalized.send(context)
-    return exit_code
+    return 0
 
 
-def main(doc, tool):
+def main(doc, tool, dispatch_only=None):
     """gcdt tools parametrized main function to initiate gcdt lifecycle.
 
     :param doc: docopt string
     :param tool: gcdt tool (gcdt, kumo, tenkai, ramuda, yugen)
     :return: exit code
     """
+    if dispatch_only is None:
+        dispatch_only = ['version']
     assert tool in ['gcdt', 'kumo', 'tenkai', 'ramuda', 'yugen']
     arguments = docopt(doc, sys.argv[1:])
     command = get_command(arguments)
-    if command == 'version':
+    if command in dispatch_only:
         # handle commands that do not need a lifecycle
+        check_gcdt_update()
         return cmd.dispatch(arguments)
     else:
         awsclient = AWSClient(botocore.session.get_session())

@@ -26,7 +26,6 @@ DOC = '''Usage:
 
 @cmd(spec=['version'])
 def version_cmd():
-    check_gcdt_update()
     utils.version()
     return 1
 

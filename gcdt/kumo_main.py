@@ -57,7 +57,6 @@ def get_user_config():
 
 @cmd(spec=['version'])
 def version_cmd():
-    check_gcdt_update()
     utils.version()
 
 

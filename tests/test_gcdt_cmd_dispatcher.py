@@ -161,7 +161,8 @@ def test_cmd_exception_when_not_spec_does_not_match():
             '--help': False,
             'cmd1': False,
             'cmd2': False,
-            'cmd3': True}
+            'cmd3': False,
+            'cmd4': True}
         )
     assert result == {}
     assert einfo.match(r'No implementation for spec: .*')

@@ -71,7 +71,8 @@ class cmd(object):
                     if element in options:
                         args.append(arguments.get(element, False))
                         options.remove(element)
-                elif element.startswith('<') and arguments.get(element):
+                elif element.startswith('<') and \
+                        not arguments.get(element) is False:
                     # element is an argument
                     args.append(arguments.get(element))
                     if element in args_spec:
