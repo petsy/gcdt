@@ -21,7 +21,6 @@ from Crypto.Util import Counter
 
 from pyhocon import ConfigFactory, HOCONConverter
 import botocore.exceptions
-#from credstash import ItemNotFound, IntegrityError, KmsError
 
 from .servicediscovery import get_ssl_certificate, get_outputs_for_stack, \
     get_base_ami
@@ -187,7 +186,7 @@ def __resolve_lookups(awsclient, config, lookups):
                                    }
                               })
         elif "stack" in lookups:
-            stackdata.update({stack: get_outputs_for_stack(stack)})
+            stackdata.update({stack: get_outputs_for_stack(awsclient, stack)})
     dict_resolved = __resolve_lookups_recurse(awsclient, dic, stackdata,
                                               lookups)
     return dict_resolved

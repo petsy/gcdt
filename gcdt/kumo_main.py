@@ -8,6 +8,7 @@ to AWS cloud.
 from __future__ import unicode_literals, print_function
 import sys
 import json
+from tempfile import NamedTemporaryFile
 
 from clint.textui import colored
 
@@ -17,7 +18,7 @@ from .kumo_core import print_parameter_diff, delete_stack, \
     describe_change_set, load_cloudformation_template, call_pre_hook
 from .utils import read_gcdt_user_config, check_gcdt_update
 from .monitoring import datadog_event_detail
-from .kumo_viz import cfn_viz
+from .kumo_viz import cfn_viz, svg_output
 from .gcdt_cmd_dispatcher import cmd
 from . import gcdt_lifecycle
 
@@ -30,7 +31,7 @@ DOC = '''Usage:
         kumo generate
         kumo preview
         kumo version
-        kumo dot | dot -Tsvg -ocloudformation.svg
+        kumo dot
 
 -h --help           show this
 '''
@@ -62,11 +63,15 @@ def version_cmd():
 
 @cmd(spec=['dot'])
 def dot_cmd(**tooldata):
-    # TODO set loglevel info to avoid version warning!!
     #context = tooldata.get('context')
     conf = tooldata.get('config')
     cloudformation = load_template()
-    cfn_viz(json.loads(cloudformation.generate_template()), parameters=conf)
+    with NamedTemporaryFile(delete=False) as temp_dot:
+        cfn_viz(json.loads(cloudformation.generate_template()),
+                parameters=conf,
+                out=temp_dot)
+        temp_dot.close()
+        return svg_output(temp_dot.name)
 
 
 @cmd(spec=['deploy', '--override-stack-policy'])

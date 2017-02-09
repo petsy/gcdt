@@ -80,12 +80,13 @@ def lifecycle(awsclient, tool, command, arguments):
 
 
 def main(doc, tool):
-    """gcdt tools parametrized main function.
+    """gcdt tools parametrized main function to initiate gcdt lifecycle.
 
-    :param doc:
-    :param tool:
+    :param doc: docopt string
+    :param tool: gcdt tool (gcdt, kumo, tenkai, ramuda, yugen)
     :return: exit code
     """
+    assert tool in ['gcdt', 'kumo', 'tenkai', 'ramuda', 'yugen']
     arguments = docopt(doc, sys.argv[1:])
     command = get_command(arguments)
     if command == 'version':
