@@ -115,13 +115,13 @@ def generate_cmd(**tooldata):
 @cmd(spec=['list'])
 def list_cmd(**tooldata):
     context = tooldata.get('context')
-    conf = tooldata.get('config')
+    #conf = tooldata.get('config')
     awsclient = context.get('awsclient')
     list_stacks(awsclient)
 
 
 @cmd(spec=['preview'])
-def list_cmd(**tooldata):
+def preview_cmd(**tooldata):
     context = tooldata.get('context')
     conf = tooldata.get('config')
     awsclient = context.get('awsclient')

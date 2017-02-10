@@ -88,7 +88,7 @@ def deployment_status(awsclient, deploymentId, iterations=100):
 
         if status not in steady_states:
             print('Deployment: %s - State: %s' % (deploymentId, status))
-            sys.stdout.flush()
+            #sys.stdout.flush()
             time.sleep(10)
         elif status == 'Failed':
             print(

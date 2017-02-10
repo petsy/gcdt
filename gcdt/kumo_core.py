@@ -47,7 +47,7 @@ def load_cloudformation_template(path=None):
     return None, False
 
 
-def print_parameter_diff(awsclient, config, out=sys.stdout):
+def print_parameter_diff(awsclient, config):
     """print differences between local config and currently active config
     """
     client_cf = awsclient.get_client('cloudformation')
@@ -60,8 +60,7 @@ def print_parameter_diff(awsclient, config, out=sys.stdout):
         else:
             return None
     except pyhocon.exceptions.ConfigMissingException:
-        print('StackName is not configured, could not create parameter diff',
-              file=out)
+        print('StackName is not configured, could not create parameter diff')
         return None
     except:
         # probably the stack is not existent
@@ -83,23 +82,20 @@ def print_parameter_diff(awsclient, config, out=sys.stdout):
                     table.append([param['ParameterKey'], old, new])
                     changed += 1
             except pyhocon.exceptions.ConfigMissingException:
-                print('Did not find %s in local config file' % param['ParameterKey'],
-                      file=out)
+                print('Did not find %s in local config file' % param['ParameterKey'])
 
     if changed > 0:
-        print(tabulate(table, tablefmt='fancy_grid'), file=out)
-        print(colored.red('Parameters have changed. Waiting 10 seconds. \n'),
-              file=out)
-        print('If parameters are unexpected you might want to exit now: control-c',
-              file=out)
+        print(tabulate(table, tablefmt='fancy_grid'))
+        print(colored.red('Parameters have changed. Waiting 10 seconds. \n'))
+        print('If parameters are unexpected you might want to exit now: control-c')
         # Choose a spin style.
         spin = Spinner(Default)
         # Spin it now.
         for i in range(100):
-            print(u'\r{0}'.format(spin.next()), end='', file=out)
+            print(u'\r{0}'.format(spin.next()), end='')
             sys.stdout.flush()
             time.sleep(0.1)
-        print('\n', file=out)
+        print('\n')
 
 
 def call_pre_hook(awsclient, cloudformation):
@@ -116,17 +112,17 @@ def call_pre_hook(awsclient, cloudformation):
 
 
 def _call_hook(awsclient, config, stack_name, parameters, cloudformation,
-               hook, message=None, out=sys.stdout):
+               hook, message=None):
     if hook not in ['pre_hook', 'pre_create_hook', 'pre_update_hook',
                     'post_create_hook', 'post_update_hook', 'post_hook']:
-        print(colored.green('Unknown hook: %s' % hook), file=out)
+        print(colored.green('Unknown hook: %s' % hook))
         return
     if not hasattr(cloudformation, hook):
         # hook is not present
         return
     if not message:
         message = 'Executing %s...' % hook.replace('_', ' ')
-    print(colored.green(message), file=out)
+    print(colored.green(message))
     hook_func = getattr(cloudformation, hook)
     if not hook_func.func_code.co_argcount:
         hook_func()  # for compatibility with existing templates

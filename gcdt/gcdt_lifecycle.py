@@ -58,7 +58,7 @@ def lifecycle(awsclient, tool, command, arguments):
     gcdt_signals.config_read_init.send(context)
     #conf = read_config(awsclient, config_base_name='codedeploy')
     # TODO use awsclient in read_config?
-    config = read_config(awsclient._session, config_base_name=
+    config = read_config(awsclient, config_base_name=
         DEFAULT_CONFIG[tool].get('config_base_name', tool))
     gcdt_signals.config_read_finalized.send(context)
 

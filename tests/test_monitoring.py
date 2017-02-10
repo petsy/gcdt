@@ -25,16 +25,15 @@ def test_slack_notification():
 '''
 
 
-def test_slack_notification_invalid_token():
+def test_slack_notification_invalid_token(capsys):
     # invalid token
     slack_token = 'xoxp-12345678901-12345678901-12345678901-4e6es20339'
     channel = 'test_do_not_join'
     message = 'testing gcdt...'
-    out = StringIO()
+    slack_notification(channel, message, slack_token)
+    out, err = capsys.readouterr()
 
-    slack_notification(channel, message, slack_token, out)
-
-    assert_regexp_matches(out.getvalue().strip(),
+    assert_regexp_matches(out.strip(),
                           'We can not use your slack token: invalid_auth')
 
 

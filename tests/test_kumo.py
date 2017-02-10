@@ -2,13 +2,13 @@
 from __future__ import unicode_literals, print_function
 import json
 from tempfile import NamedTemporaryFile
-from StringIO import StringIO
 
 from pyhocon import ConfigFactory
 from pyhocon.exceptions import ConfigMissingException
 from nose.tools import assert_dict_equal
 from nose.tools import assert_equal, assert_true, \
     assert_regexp_matches, assert_list_equal, raises
+import pytest
 
 from gcdt.kumo_core import _generate_parameters, \
     load_cloudformation_template, generate_template_file, _get_stack_name, \
@@ -220,23 +220,20 @@ def _create_cfn_with_hook():
     return cfn
 
 
-def test_call_hook_unknown_hook():
-    out = StringIO()
-    # def _call_hook(awsclient, config, stack_name, parameters,
-    #                cloudformation, hook, message=None, out=sys.stdout):
-    _call_hook(None, None, None, None, None, 'unknown_hook', out=out)
-    assert_equal(out.getvalue().strip(), 'Unknown hook: unknown_hook')
+def test_call_hook_unknown_hook(capsys):
+    _call_hook(None, None, None, None, None, 'unknown_hook')
+    out, err = capsys.readouterr()
+    assert out == 'Unknown hook: unknown_hook\n'
 
 
-def test_call_hook_backward_compatible():
-    out = StringIO()
-    _call_hook(None, None, None, None, _create_cfn_with_hook(), 'pre_hook',
-               out=out)
-    assert_equal(out.getvalue().strip(), 'Executing pre hook...')
+def test_call_hook_backward_compatible(capsys):
+    _call_hook(None, None, None, None, _create_cfn_with_hook(), 'pre_hook')
+    out, err = capsys.readouterr()
+    assert out == 'Executing pre hook...\n'
 
 
-def test_call_hook_not_present():
-    out = StringIO()
+def test_call_hook_not_present(capsys):
     _call_hook(None, None, None, None, _create_cfn_with_hook(),
-               'pre_create_hook', out=out)
-    assert_equal(out.getvalue().strip(), '')
+               'pre_create_hook')
+    out, err = capsys.readouterr()
+    assert out == ''

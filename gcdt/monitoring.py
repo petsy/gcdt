@@ -127,14 +127,13 @@ def send_to_slack(channel, cloudwatch_event, slack_token):
 '''
 
 
-def slack_notification(channel, message, slack_token, out=sys.stdout):
+def slack_notification(channel, message, slack_token):
     if channel and slack_token:
         try:
             slack = Slacker(slack_token)
             slack.chat.post_message('#%s' % channel, message)
         except Exception as e:
-            print(colored.red('We can not use your slack token: %s' % str(e)),
-                  file=out)
+            print(colored.red('We can not use your slack token: %s' % str(e)))
 
 
 def datadog_event(api_key, title, tags, text=''):

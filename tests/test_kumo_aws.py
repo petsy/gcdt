@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals, print_function
 import os
-from StringIO import StringIO
 
 from pyhocon import ConfigFactory
 from pyhocon.config_tree import ConfigTree
@@ -58,6 +57,16 @@ def simple_cloudformation_stack(awsclient):
 
 
 @pytest.fixture(scope='function')  # 'function' or 'module'
+def simple_cloudformation_stack_folder():
+    # helper to get into the sample folder so kumo can find cloudformation.py
+    cwd = (os.getcwd())
+    os.chdir(here('./resources/simple_cloudformation_stack/'))
+    yield
+    # cleanup
+    os.chdir(cwd)  # cd back to original folder
+
+
+@pytest.fixture(scope='function')  # 'function' or 'module'
 def sample_cloudformation_stack_with_hooks(awsclient):
     # create a stack we use for the test lifecycle
     are_credentials_still_valid(awsclient)
@@ -77,20 +86,6 @@ def sample_cloudformation_stack_with_hooks(awsclient):
     exit_code = delete_stack(awsclient, config_stack)
     # check whether delete was completed!
     assert not exit_code, 'delete_stack was not completed please make sure to clean up the stack manually'
-
-
-@pytest.mark.aws
-@check_preconditions
-def test_print_parameter_diff(awsclient, simple_cloudformation_stack):
-    out = StringIO()
-    # use config with large machine
-    large_conf = ConfigFactory.parse_file(
-        here('resources/simple_cloudformation_stack/settings_large_dev.conf')
-    )
-
-    print_parameter_diff(awsclient, large_conf, out=out)
-    # verify diff results
-    assert 'InstanceType │ t2.medium     │ t2.large' in out.getvalue().strip()
 
 
 @pytest.mark.aws
