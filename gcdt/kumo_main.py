@@ -16,7 +16,6 @@ from . import utils
 from .kumo_core import print_parameter_diff, delete_stack, \
     deploy_stack, generate_template_file, list_stacks, create_change_set, \
     describe_change_set, load_cloudformation_template, call_pre_hook
-from .utils import read_gcdt_user_config, check_gcdt_update
 from .monitoring import datadog_event_detail
 from .kumo_viz import cfn_viz, svg_output
 from .gcdt_cmd_dispatcher import cmd
@@ -46,13 +45,14 @@ def load_template():
         sys.exit(1)
     return cloudformation
 
-
+'''
 def get_user_config():
     slack_token, slack_channel = read_gcdt_user_config(compatibility_mode='kumo')
     if not slack_token and not isinstance(slack_token, basestring):
         sys.exit(1)
     else:
         return slack_token, slack_channel
+'''
 
 
 @cmd(spec=['version'])
@@ -65,7 +65,7 @@ def dot_cmd(**tooldata):
     #context = tooldata.get('context')
     conf = tooldata.get('config')
     cloudformation = load_template()
-    with NamedTemporaryFile(delete=False) as temp_dot:
+    with NamedTemporaryFile() as temp_dot:
         cfn_viz(json.loads(cloudformation.generate_template()),
                 parameters=conf,
                 out=temp_dot)
@@ -79,12 +79,13 @@ def deploy_cmd(override, **tooldata):
     conf = tooldata.get('config')
     awsclient = context.get('awsclient')
 
-    slack_token, slack_channel = get_user_config()
+    #slack_token, slack_channel = get_user_config()
     cloudformation = load_template()
     call_pre_hook(awsclient, cloudformation)
     print_parameter_diff(awsclient, conf)
-    exit_code = deploy_stack(awsclient, conf, cloudformation, slack_token, \
-                             slack_channel, override_stack_policy=override)
+    exit_code = deploy_stack(awsclient, conf, cloudformation,
+                             context['slack_token'], context['slack_channel'],
+                             override_stack_policy=override)
     event = 'kumo bot: deployed stack %s ' % conf.get('cloudformation.StackName')
     datadog_event_detail(context, event)
     return exit_code
@@ -95,8 +96,9 @@ def delete_cmd(force, **tooldata):
     context = tooldata.get('context')
     conf = tooldata.get('config')
     awsclient = context.get('awsclient')
-    slack_token, slack_channel = get_user_config()
-    exit_code = delete_stack(awsclient, conf, slack_token, slack_channel)
+    #slack_token, slack_channel = get_user_config()
+    exit_code = delete_stack(awsclient, conf, context['slack_token'],
+                             context['slack_channel'])
     event = 'kumo bot: deleted stack %s ' % conf.get('cloudformation.StackName')
     datadog_event_detail(context, event)
     return exit_code

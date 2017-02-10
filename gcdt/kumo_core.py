@@ -545,7 +545,7 @@ def delete_stack(awsclient, conf, slack_token=None,
     return _poll_stack_events(awsclient, stackname, last_event)
 
 
-def list_stacks(awsclient, out=sys.stdout):
+def list_stacks(awsclient):
     """Print out the list of stacks deployed at AWS cloud.
 
     :param awsclient:
@@ -568,9 +568,9 @@ def list_stacks(awsclient, out=sys.stdout):
         result['StackName'] = summary["StackName"]
         result['CreationTime'] = summary['CreationTime']
         result['StackStatus'] = summary['StackStatus']
-        print(_json2table(result), file=out)
+        print(_json2table(result))
         stack_sum += 1
-    print('listed %s stacks' % str(stack_sum), file=out)
+    print('listed %s stacks' % str(stack_sum))
 
 
 def create_change_set(awsclient, conf, cloudformation):

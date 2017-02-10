@@ -5,6 +5,8 @@ import sys
 
 from docopt import docopt
 import botocore.session
+from clint.textui import colored
+from botocore.vendored import requests
 
 from . import gcdt_signals
 from .monitoring import datadog_notification, datadog_error
@@ -15,6 +17,23 @@ from .config_reader import read_config
 from .gcdt_cmd_dispatcher import cmd, get_command
 from .gcdt_plugins import load_plugins
 from .gcdt_awsclient import AWSClient
+
+
+REPO_SERVER = 'https://reposerver-prod-eu-west-1.infra.glomex.cloud/pypi/packages'
+
+
+def check_vpn_connection():
+    """Check whether we can connect to VPN for version check.
+    :return: True / False
+    """
+    try:
+        request = requests.get(REPO_SERVER, timeout=2.0)
+        if request.status_code == 200:
+            return True
+        else:
+            return False
+    except requests.exceptions.ConnectTimeout:
+        return False
 
 
 # lifecycle implementation adapted from
@@ -30,7 +49,7 @@ def lifecycle(awsclient, tool, command, arguments):
     # TODO not sure if awsclient needs to go into context!!
     context['awsclient'] = awsclient
     context['slack_token'], context['slack_channel'] = \
-        read_gcdt_user_config(compatibility_mode='tenkai')
+        read_gcdt_user_config(compatibility_mode=tool)
 
     ## initialized
     gcdt_signals.initialized.send(context)
@@ -87,13 +106,16 @@ def main(doc, tool, dispatch_only=None):
 
     :param doc: docopt string
     :param tool: gcdt tool (gcdt, kumo, tenkai, ramuda, yugen)
-    :return: exit code
+    :return: exit_code
     """
     if dispatch_only is None:
         dispatch_only = ['version']
     assert tool in ['gcdt', 'kumo', 'tenkai', 'ramuda', 'yugen']
     arguments = docopt(doc, sys.argv[1:])
     command = get_command(arguments)
+    if not check_vpn_connection():
+        print(colored.red('Can not connect to VPN please activate your VPN!'))
+        return 1
     if command in dispatch_only:
         # handle commands that do not need a lifecycle
         check_gcdt_update()

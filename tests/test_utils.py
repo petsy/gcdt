@@ -2,9 +2,9 @@
 from __future__ import unicode_literals, print_function
 import os
 from tempfile import NamedTemporaryFile
-from StringIO import StringIO
 
 from nose.tools import assert_equal, assert_is_not_none
+import pytest
 
 from gcdt import utils
 from gcdt.utils import version, __version__, retries, configure, \
@@ -14,10 +14,10 @@ from .helpers import create_tempfile, cleanup_tempfiles
 from . import here
 
 
-def test_version():
-    out = StringIO()
-    version(out=out)
-    assert_equal(out.getvalue().strip(), 'gcdt version %s' % __version__)
+def test_version(capsys):
+    version()
+    out, err = capsys.readouterr()
+    assert out.strip() == 'gcdt version %s' % __version__
 
 
 def test_retries_backoff():

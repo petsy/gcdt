@@ -159,7 +159,7 @@ def create_api_key(awsclient, api_name, api_key_name):
 
     print(_json2table(response))
 
-    print('Add this api key to your api.conf')
+    print('Add this api key \'%s\' to your api.conf' % response['id'])
     return response['id']
 
 
@@ -269,6 +269,7 @@ def get_lambdas(awsclient, config, add_arn=False):
     return lmbdas
 
 
+'''
 def are_credentials_still_valid(awsclient):
     """Check if credentials are still valid.
 
@@ -285,6 +286,7 @@ def are_credentials_still_valid(awsclient):
         # sys.exit(1)
         return 1
     return 0
+'''
 
 
 def _import_from_swagger(awsclient, api_name, api_description, stage_name,
@@ -295,7 +297,7 @@ def _import_from_swagger(awsclient, api_name, api_description, stage_name,
 
     api = _api_by_name(awsclient, api_name)
     if api is None:
-        print(_json2table(api))
+        #print(_json2table(api))
         api_id = False
         template_variables = _template_variables_to_dict(
             client_api,

@@ -15,9 +15,14 @@ from gcdt.config_reader import _get_datadog_api_key
 from gcdt.package_utils import get_package_versions
 
 
-def version(out=sys.stdout):
+#def version(out=sys.stdout):
+#    """Print version of gcdt tools."""
+#    print("gcdt version %s" % __version__, file=out)
+
+
+def version():
     """Print version of gcdt tools."""
-    print("gcdt version %s" % __version__, file=out)
+    print("gcdt version %s" % __version__)
 
 
 def retries(max_tries, delay=1, backoff=2, exceptions=(Exception,), hook=None):

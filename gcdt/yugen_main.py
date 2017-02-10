@@ -3,18 +3,15 @@
 from __future__ import unicode_literals, print_function
 import sys
 
-from docopt import docopt
-import botocore
-
 from .config_reader import read_api_config
 from .yugen_core import list_api_keys, get_lambdas, delete_api, \
     export_to_swagger, create_api_key, list_apis, \
     create_custom_domain, delete_api_key, deploy_api
-from .utils import version, read_gcdt_user_config, get_context, get_command, \
-    check_gcdt_update
-from .monitoring import datadog_notification, datadog_error, \
-    datadog_event_detail
-from .gcdt_awsclient import AWSClient
+from . import utils
+from .utils import read_gcdt_user_config
+from .monitoring import datadog_event_detail
+from .gcdt_cmd_dispatcher import cmd
+from . import gcdt_lifecycle
 
 
 # creating docopt parameters and usage help
@@ -36,15 +33,7 @@ DOC = '''Usage:
 # TODO support changing API keys
 # TODO investigate base path problem
 
-
-def are_credentials_still_valid(awsclient):
-    """Wrapper to bail out on invalid credentials."""
-    from gcdt.yugen_core import are_credentials_still_valid as acsv
-    exit_code = acsv(awsclient)
-    if exit_code:
-        sys.exit(1)
-
-
+'''
 def get_user_config():
     slack_token, slack_channel = read_gcdt_user_config(
         compatibility_mode='kumo')
@@ -52,119 +41,46 @@ def get_user_config():
         sys.exit(1)
     else:
         return slack_token, slack_channel
+'''
 
 
-def main():
-    exit_code = 0
-    awsclient = AWSClient(botocore.session.get_session())
-    arguments = docopt(DOC)
-    check_gcdt_update()
-    if arguments['version']:
-        version()
-        sys.exit(0)
+@cmd(spec=['version'])
+def version_cmd():
+    utils.version()
 
-    context = get_context(awsclient, 'yugen', get_command(arguments))
-    datadog_notification(context)
 
-    if arguments['list']:
-        are_credentials_still_valid(awsclient)
-        list_apis(awsclient)
-    elif arguments['deploy']:
-        slack_token, slack_channel = get_user_config()
-        are_credentials_still_valid(awsclient)
-        conf = read_api_config(awsclient)
-        api_name = conf.get('api.name')
-        api_description = conf.get('api.description')
-        target_stage = conf.get('api.targetStage')
-        api_key = conf.get('api.apiKey')
-        lambdas = get_lambdas(awsclient, conf, add_arn=True)
-        deploy_api(
-            awsclient=awsclient,
-            api_name=api_name,
-            api_description=api_description,
-            stage_name=target_stage,
-            api_key=api_key,
-            lambdas=lambdas,
-            slack_token=slack_token,
-            slack_channel=slack_channel
-        )
-        if 'customDomain' in conf:
-            domain_name = conf.get('customDomain.domainName')
-            route_53_record = conf.get('customDomain.route53Record')
-            ssl_cert = {
-                'name': conf.get('customDomain.certificateName'),
-                'body': conf.get('customDomain.certificateBody'),
-                'private_key': conf.get('customDomain.certificatePrivateKey'),
-                'chain': conf.get('customDomain.certificateChain')
-            }
-            hosted_zone_id = conf.get('customDomain.hostedDomainZoneId')
-            api_base_path = conf.get('customDomain.basePath')
-            exit_code = create_custom_domain(
-                awsclient=awsclient,
-                api_name=api_name,
-                api_target_stage=target_stage,
-                api_base_path=api_base_path,
-                domain_name=domain_name,
-                route_53_record=route_53_record,
-                ssl_cert=ssl_cert,
-                hosted_zone_id=hosted_zone_id
-            )
-        event = 'yugen bot: deployed api *%s*' % api_name
-        datadog_event_detail(context, event)
-    elif arguments['delete']:
-        slack_token, slack_channel = get_user_config()
-        are_credentials_still_valid(awsclient)
-        conf = read_api_config(awsclient)
-        api_name = conf.get('api.name')
-        delete_api(
-            awsclient=awsclient,
-            api_name=api_name,
-            slack_token=slack_token,
-            slack_channel=slack_channel
-        )
-        event = 'yugen bot: deleted api *%s*' % api_name
-        datadog_event_detail(context, event)
-    elif arguments['export']:
-        are_credentials_still_valid(awsclient)
-        conf = read_api_config(awsclient)
-        api_name = conf.get('api.name')
-        target_stage = conf.get('api.targetStage')
-        api_description = conf.get('api.description')
+@cmd(spec=['list'])
+def list_cmd(**tooldata):
+    context = tooldata.get('context')
+    #conf = tooldata.get('config')
+    awsclient = context.get('awsclient')
+    return list_apis(awsclient)
 
-        lambdas = get_lambdas(awsclient, conf, add_arn=True)
-        export_to_swagger(
-            awsclient=awsclient,
-            api_name=api_name,
-            stage_name=target_stage,
-            api_description=api_description,
-            lambdas=lambdas,
-            custom_hostname=(conf.get('customDomain.domainName')
-                             if 'customDomain' in conf else False),
-            custom_base_path=(conf.get('customDomain.basePath')
-                              if 'customDomain' in conf else False)
-        )
-    elif arguments['apikey-create']:
-        are_credentials_still_valid(awsclient)
-        conf = read_api_config(awsclient)
-        api_name = conf.get('api.name')
-        create_api_key(awsclient, api_name, arguments['<keyname>'])
-    elif arguments['apikey-delete']:
-        are_credentials_still_valid(awsclient)
-        conf = read_api_config(awsclient)
-        api_key = conf.get('api.apiKey')
-        delete_api_key(awsclient, api_key)
-    elif arguments['apikey-list']:
-        are_credentials_still_valid(awsclient)
-        list_api_keys(awsclient)
-    elif arguments['custom-domain-create']:
-        are_credentials_still_valid(awsclient)
-        conf = read_api_config(awsclient)
-        api_name = conf.get('api.name')
-        api_target_stage = conf.get('api.targetStage')
 
+@cmd(spec=['deploy'])
+def deploy_cmd(**tooldata):
+    context = tooldata.get('context')
+    conf = tooldata.get('config')
+    awsclient = context.get('awsclient')
+    #slack_token, slack_channel = get_user_config()
+    api_name = conf.get('api.name')
+    api_description = conf.get('api.description')
+    target_stage = conf.get('api.targetStage')
+    api_key = conf.get('api.apiKey')
+    lambdas = get_lambdas(awsclient, conf, add_arn=True)
+    exit_code = deploy_api(
+        awsclient=awsclient,
+        api_name=api_name,
+        api_description=api_description,
+        stage_name=target_stage,
+        api_key=api_key,
+        lambdas=lambdas,
+        slack_token=context['slack_token'],
+        slack_channel=context['slack_channel']
+    )
+    if 'customDomain' in conf:
         domain_name = conf.get('customDomain.domainName')
         route_53_record = conf.get('customDomain.route53Record')
-        api_base_path = conf.get('customDomain.basePath')
         ssl_cert = {
             'name': conf.get('customDomain.certificateName'),
             'body': conf.get('customDomain.certificateBody'),
@@ -172,22 +88,120 @@ def main():
             'chain': conf.get('customDomain.certificateChain')
         }
         hosted_zone_id = conf.get('customDomain.hostedDomainZoneId')
-
-        exit_code = create_custom_domain(
+        api_base_path = conf.get('customDomain.basePath')
+        create_custom_domain(
             awsclient=awsclient,
             api_name=api_name,
-            api_target_stage=api_target_stage,
+            api_target_stage=target_stage,
             api_base_path=api_base_path,
             domain_name=domain_name,
             route_53_record=route_53_record,
             ssl_cert=ssl_cert,
             hosted_zone_id=hosted_zone_id
         )
+    event = 'yugen bot: deployed api *%s*' % api_name
+    datadog_event_detail(context, event)
+    return exit_code
 
-    if exit_code:
-        datadog_error(context)
-    sys.exit(exit_code)
+
+@cmd(spec=['delete', '-f'])
+def delete_cmd(force, **tooldata):
+    context = tooldata.get('context')
+    conf = tooldata.get('config')
+    awsclient = context.get('awsclient')
+    #slack_token, slack_channel = get_user_config()
+    api_name = conf.get('api.name')
+    exit_code = delete_api(
+        awsclient=awsclient,
+        api_name=api_name,
+        slack_token=context['slack_token'],
+        slack_channel=context['slack_channel']
+    )
+    event = 'yugen bot: deleted api *%s*' % api_name
+    datadog_event_detail(context, event)
+    return exit_code
+
+
+@cmd(spec=['export'])
+def export_cmd(**tooldata):
+    context = tooldata.get('context')
+    conf = tooldata.get('config')
+    awsclient = context.get('awsclient')
+    api_name = conf.get('api.name')
+    target_stage = conf.get('api.targetStage')
+    api_description = conf.get('api.description')
+
+    lambdas = get_lambdas(awsclient, conf, add_arn=True)
+    return export_to_swagger(
+        awsclient=awsclient,
+        api_name=api_name,
+        stage_name=target_stage,
+        api_description=api_description,
+        lambdas=lambdas,
+        custom_hostname=(conf.get('customDomain.domainName')
+                         if 'customDomain' in conf else False),
+        custom_base_path=(conf.get('customDomain.basePath')
+                          if 'customDomain' in conf else False)
+    )
+
+
+@cmd(spec=['apikey-create', '<keyname>'])
+def apikey_create_cmd(keyname, **tooldata):
+    context = tooldata.get('context')
+    conf = tooldata.get('config')
+    awsclient = context.get('awsclient')
+    api_name = conf.get('api.name')
+    create_api_key(awsclient, api_name, keyname)
+
+
+@cmd(spec=['apikey-delete'])
+def apikey_delete_cmd(**tooldata):
+    context = tooldata.get('context')
+    conf = tooldata.get('config')
+    awsclient = context.get('awsclient')
+    api_key = conf.get('api.apiKey')
+    delete_api_key(awsclient, api_key)
+
+
+@cmd(spec=['apikey-list'])
+def apikey_list_cmd(**tooldata):
+    context = tooldata.get('context')
+    #conf = tooldata.get('config')
+    awsclient = context.get('awsclient')
+    list_api_keys(awsclient)
+
+
+@cmd(spec=['custom-domain-create'])
+def custom_domain_create_cmd(**tooldata):
+    context = tooldata.get('context')
+    conf = tooldata.get('config')
+    awsclient = context.get('awsclient')
+    api_name = conf.get('api.name')
+    api_target_stage = conf.get('api.targetStage')
+
+    domain_name = conf.get('customDomain.domainName')
+    route_53_record = conf.get('customDomain.route53Record')
+    api_base_path = conf.get('customDomain.basePath')
+    ssl_cert = {
+        'name': conf.get('customDomain.certificateName'),
+        'body': conf.get('customDomain.certificateBody'),
+        'private_key': conf.get('customDomain.certificatePrivateKey'),
+        'chain': conf.get('customDomain.certificateChain')
+    }
+    hosted_zone_id = conf.get('customDomain.hostedDomainZoneId')
+
+    return create_custom_domain(
+        awsclient=awsclient,
+        api_name=api_name,
+        api_target_stage=api_target_stage,
+        api_base_path=api_base_path,
+        domain_name=domain_name,
+        route_53_record=route_53_record,
+        ssl_cert=ssl_cert,
+        hosted_zone_id=hosted_zone_id
+    )
 
 
 if __name__ == '__main__':
-    main()
+    sys.exit(gcdt_lifecycle.main(
+        DOC, 'yugen', dispatch_only=['version', 'clean']))

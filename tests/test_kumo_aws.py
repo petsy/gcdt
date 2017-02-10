@@ -81,14 +81,6 @@ def sample_cloudformation_stack_with_hooks(awsclient):
 
 @pytest.mark.aws
 @check_preconditions
-def test_list_stacks(awsclient):
-    out = StringIO()
-    list_stacks(awsclient, out=out)
-    assert_regexp_matches(out.getvalue().strip(), 'listed \d+ stacks')
-
-
-@pytest.mark.aws
-@check_preconditions
 def test_print_parameter_diff(awsclient, simple_cloudformation_stack):
     out = StringIO()
     # use config with large machine
