@@ -11,8 +11,8 @@ from botocore.vendored import requests
 from . import gcdt_signals
 from .monitoring import datadog_notification, datadog_error
 from .gcdt_defaults import DEFAULT_CONFIG
-from .utils import dict_merge, read_gcdt_user_config, get_context, \
-    check_gcdt_update
+from .utils import dict_merge, get_context, check_gcdt_update
+#from .utils import read_gcdt_user_config
 from .config_reader import read_config
 from .gcdt_cmd_dispatcher import cmd, get_command
 from .gcdt_plugins import load_plugins
@@ -44,20 +44,15 @@ def lifecycle(awsclient, tool, command, arguments):
     """
     # TODO hooks!!
     load_plugins()
-    context = get_context(awsclient, tool, command)
+    context = get_context(awsclient, tool, command, arguments)
     # every tool needs a awsclient so we provide this via the context
-    # TODO not sure if awsclient needs to go into context!!
     context['awsclient'] = awsclient
-    context['slack_token'], context['slack_channel'] = \
-        read_gcdt_user_config(compatibility_mode=tool)
 
     ## initialized
     gcdt_signals.initialized.send(context)
     check_gcdt_update()
 
     gcdt_signals.config_read_init.send(context)
-    #conf = read_config(awsclient, config_base_name='codedeploy')
-    # TODO use awsclient in read_config?
     config = read_config(awsclient, config_base_name=
         DEFAULT_CONFIG[tool].get('config_base_name', tool))
     gcdt_signals.config_read_finalized.send(context)

@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals, print_function
 import sys
-from clint.textui import colored
-from slacker import Slacker
 import datadog
 
 from gcdt.logger import setup_logger
@@ -126,7 +124,7 @@ def send_to_slack(channel, cloudwatch_event, slack_token):
         return wrapper
 '''
 
-
+'''
 def slack_notification(channel, message, slack_token):
     if channel and slack_token:
         try:
@@ -134,6 +132,7 @@ def slack_notification(channel, message, slack_token):
             slack.chat.post_message('#%s' % channel, message)
         except Exception as e:
             print(colored.red('We can not use your slack token: %s' % str(e)))
+'''
 
 
 def datadog_event(api_key, title, tags, text=''):

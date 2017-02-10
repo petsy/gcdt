@@ -45,9 +45,7 @@ def deploy_cmd(**tooldata):
         deploymentGroupName=conf.get('codedeploy.deploymentGroupName'),
         deploymentConfigName=conf.get('codedeploy.deploymentConfigName'),
         bucket=conf.get('codedeploy.artifactsBucket'),
-        pre_bundle_scripts=conf.get('preBundle', None),
-        slack_token=context.get('slack_token'),
-        slack_channel=context.get('slack_channel')
+        pre_bundle_scripts=conf.get('preBundle', None)
     )
     exit_code = deployment_status(awsclient, deployment)
     if exit_code:

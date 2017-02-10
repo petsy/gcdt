@@ -3,7 +3,6 @@ from __future__ import unicode_literals, print_function
 
 import getpass
 import subprocess
-import sys
 from time import sleep
 
 import os
@@ -13,11 +12,6 @@ from pyhocon import ConfigFactory
 from gcdt import __version__
 from gcdt.config_reader import _get_datadog_api_key
 from gcdt.package_utils import get_package_versions
-
-
-#def version(out=sys.stdout):
-#    """Print version of gcdt tools."""
-#    print("gcdt version %s" % __version__, file=out)
 
 
 def version():
@@ -78,7 +72,7 @@ def retries(max_tries, delay=1, backoff=2, exceptions=(Exception,), hook=None):
 
 
 # config
-
+'''
 def read_gcdt_user_config(gcdt_file=None, compatibility_mode=None):
     """Read .gcdt config file from user home.
     supports compatibility for .kumo, .tenkai, .ramuda, etc. files
@@ -112,6 +106,7 @@ def read_gcdt_user_config(gcdt_file=None, compatibility_mode=None):
         print(colored.red('Cannot find config file .gcdt in your home directory'))
         print(colored.red('Please run \'gcdt configure\''))
         return None, None
+'''
 
 
 def read_gcdt_user_config_value(key, default=None, gcdt_file=None):
@@ -131,11 +126,13 @@ def read_gcdt_user_config_value(key, default=None, gcdt_file=None):
     return value
 
 
+'''
 def _get_slack_token_from_user():
     slack_token = prompt.query('Please enter your Slack API token: ')
     return slack_token
+'''
 
-
+'''
 def configure(config_file=None):
     """Create the .gcdt config file in the users home folder.
 
@@ -148,6 +145,7 @@ def configure(config_file=None):
         config.write('gcdt {\n')
         config.write('slack-token=%s' % slack_token)
         config.write('\n}')
+'''
 
 
 def _get_user():
@@ -165,7 +163,7 @@ def _get_env():
     return env
 
 
-def get_context(awsclient, tool, command):
+def get_context(awsclient, tool, command, arguments=None):
     """This assembles the tool context. Private members are preceded by a '_'.
 
     :param tool:
@@ -173,9 +171,12 @@ def get_context(awsclient, tool, command):
     :return: dictionary containing the gcdt tool context
     """
     # TODO: elapsed, artifact(stack, depl-grp, lambda, api)
+    if arguments is None:
+        arguments = {}
     context = {
         'tool': tool,
         'command': command,
+        'arguments': arguments,  # TODO clean up arguments -> args
         'version': __version__,
         'user': _get_user()
     }

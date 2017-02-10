@@ -3,12 +3,10 @@
 from __future__ import unicode_literals, print_function
 import sys
 
-from .config_reader import read_api_config
 from .yugen_core import list_api_keys, get_lambdas, delete_api, \
     export_to_swagger, create_api_key, list_apis, \
     create_custom_domain, delete_api_key, deploy_api
 from . import utils
-from .utils import read_gcdt_user_config
 from .monitoring import datadog_event_detail
 from .gcdt_cmd_dispatcher import cmd
 from . import gcdt_lifecycle
@@ -33,16 +31,6 @@ DOC = '''Usage:
 # TODO support changing API keys
 # TODO investigate base path problem
 
-'''
-def get_user_config():
-    slack_token, slack_channel = read_gcdt_user_config(
-        compatibility_mode='kumo')
-    if not slack_token and not isinstance(slack_token, basestring):
-        sys.exit(1)
-    else:
-        return slack_token, slack_channel
-'''
-
 
 @cmd(spec=['version'])
 def version_cmd():
@@ -62,7 +50,6 @@ def deploy_cmd(**tooldata):
     context = tooldata.get('context')
     conf = tooldata.get('config')
     awsclient = context.get('awsclient')
-    #slack_token, slack_channel = get_user_config()
     api_name = conf.get('api.name')
     api_description = conf.get('api.description')
     target_stage = conf.get('api.targetStage')
@@ -74,9 +61,7 @@ def deploy_cmd(**tooldata):
         api_description=api_description,
         stage_name=target_stage,
         api_key=api_key,
-        lambdas=lambdas,
-        slack_token=context['slack_token'],
-        slack_channel=context['slack_channel']
+        lambdas=lambdas
     )
     if 'customDomain' in conf:
         domain_name = conf.get('customDomain.domainName')
@@ -109,13 +94,10 @@ def delete_cmd(force, **tooldata):
     context = tooldata.get('context')
     conf = tooldata.get('config')
     awsclient = context.get('awsclient')
-    #slack_token, slack_channel = get_user_config()
     api_name = conf.get('api.name')
     exit_code = delete_api(
         awsclient=awsclient,
-        api_name=api_name,
-        slack_token=context['slack_token'],
-        slack_channel=context['slack_channel']
+        api_name=api_name
     )
     event = 'yugen bot: deleted api *%s*' % api_name
     datadog_event_detail(context, event)

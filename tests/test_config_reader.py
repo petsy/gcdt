@@ -116,7 +116,7 @@ class TestConfigReader(TestCase):
                          'arn:aws:iam::11:server-certificate/cloudfront/2016/wildcard.dp.glomex.cloud-2016-03')
 
     @mock.patch('gcdt.config_reader.ConfigFactory.parse_file')
-    @mock.patch('gcdt.config_reader._get_secret')
+    @mock.patch('gcdt.config_reader.get_secret')
     def test_read_config_mock_service_discovery_secret(self, mock_get_secret,
                                                        mock_parse_file):
         # Mock Output (Credstash result)
@@ -133,7 +133,7 @@ class TestConfigReader(TestCase):
 
     @mock.patch('gcdt.config_reader.ConfigFactory.parse_file')
     @mock.patch('gcdt.config_reader.get_ssl_certificate')
-    @mock.patch('gcdt.config_reader._get_secret')
+    @mock.patch('gcdt.config_reader.get_secret')
     @mock.patch('gcdt.config_reader.get_outputs_for_stack')
     def test_read_config_mock_selective_stack_lookup(
             self, mock_get_outputs_for_stack, mock_get_secret, \

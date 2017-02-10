@@ -254,7 +254,7 @@ def __resolve_single_value(awsclient, value, stacks, lookups):
             if splits[1] == "ssl" and "ssl" in lookups:
                 return stacks[splits[2]].values()[0]
             if splits[1] == "secret" and "secret" in lookups:
-                return _get_secret(awsclient, splits[2])
+                return get_secret(awsclient, splits[2])
             if splits[1] == "baseami":
                 # TODO this has a hardcoded account_id!!
                 return get_base_ami(awsclient)
@@ -283,9 +283,9 @@ class ItemNotFound(Exception):
     pass
 
 
-def _get_secret(awsclient, name, version="",  # region=None,
+def get_secret(awsclient, name, version="",  # region=None,
                 table="credential-store", context=None,
-                **kwargs):
+               **kwargs):
     '''
     fetch and decrypt the secret called `name`
     '''
@@ -361,7 +361,7 @@ def _get_secret(awsclient, name, version="",  # region=None,
 def _get_datadog_api_key(awsclient):
     api_key = None
     try:
-        api_key = _get_secret(awsclient, 'datadog.api_key')
+        api_key = get_secret(awsclient, 'datadog.api_key')
     except Exception:
         pass
     return api_key

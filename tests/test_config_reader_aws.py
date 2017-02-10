@@ -2,7 +2,7 @@
 from __future__ import unicode_literals, print_function
 import pytest
 
-from gcdt.config_reader import _get_secret
+from gcdt.config_reader import get_secret
 
 from .helpers_aws import awsclient  # fixture!
 
@@ -11,7 +11,7 @@ from .helpers_aws import awsclient  # fixture!
 @pytest.mark.skip
 @pytest.mark.aws
 def test_get_secret(awsclient):
-    actual = _get_secret(awsclient, 'test-secret')
+    actual = get_secret(awsclient, 'test-secret')
     assert actual == 'geheim'
     assert False
 
@@ -20,5 +20,5 @@ def test_get_secret(awsclient):
 @pytest.mark.aws
 def test_get_secret_with_version(awsclient):
     # not used in gcdt but implemented in get_secret!
-    actual = _get_secret(awsclient, 'test-secret', version='0000000000000000001')
+    actual = get_secret(awsclient, 'test-secret', version='0000000000000000001')
     assert actual == 'geheim'

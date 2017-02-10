@@ -317,13 +317,10 @@ def _stack_exists(awsclient, stackName):
         return True
 
 
-def deploy_stack(awsclient, conf, cloudformation, slack_token=None,
-                 slack_channel='systemmessages', override_stack_policy=False):
+def deploy_stack(awsclient, conf, cloudformation, override_stack_policy=False):
     """Deploy the stack to AWS cloud. Does either create or update the stack.
 
     :param conf:
-    :param slack_token:
-    :param slack_channel:
     :param override_stack_policy:
     :return: exit_code
     """
@@ -333,11 +330,10 @@ def deploy_stack(awsclient, conf, cloudformation, slack_token=None,
     #           hook='pre_hook')
     if _stack_exists(awsclient, stackname):
         exit_code = _update_stack(awsclient, conf, cloudformation,
-                                  parameters, override_stack_policy,
-                                  slack_token, slack_channel)
+                                  parameters, override_stack_policy)
     else:
         exit_code = _create_stack(awsclient, conf, cloudformation,
-                                  parameters, slack_token, slack_channel)
+                                  parameters)
     _call_hook(awsclient, conf, stackname, parameters, cloudformation,
                hook='post_hook',
                message='CloudFormation is done, now executing post hook...')
@@ -414,8 +410,7 @@ def _get_stack_policy_during_update(cloudformation, override_stack_policy):
     return stack_policy_during_update
 
 
-def _create_stack(awsclient, conf, cloudformation, parameters,
-                  slack_token=None, slack_channel='systemmessages'):
+def _create_stack(awsclient, conf, cloudformation, parameters):
     # create stack with all the information we have
     client_cf = awsclient.get_client('cloudformation')
     stackname = _get_stack_name(conf)
@@ -444,8 +439,7 @@ def _create_stack(awsclient, conf, cloudformation, parameters,
             StackPolicyBody=_get_stack_policy(cloudformation),
         )
 
-    message = 'kumo bot: created stack %s ' % _get_stack_name(conf)
-    monitoring.slack_notification(slack_channel, message, slack_token)
+    #message = 'kumo bot: created stack %s ' % _get_stack_name(conf)
     # create means no last_event!
     exit_code = _poll_stack_events(awsclient, stackname)
     _call_hook(awsclient, conf, stackname, parameters, cloudformation,
@@ -465,8 +459,7 @@ def _s3_upload(awsclient, conf, cloudformation):
 
 
 def _update_stack(awsclient, conf, cloudformation, parameters,
-                  override_stack_policy, slack_token=None,
-                  slack_channel='systemmessages'):
+                  override_stack_policy):
     # update stack with all the information we have
     exit_code = 0
     client_cf = awsclient.get_client('cloudformation')
@@ -505,8 +498,8 @@ def _update_stack(awsclient, conf, cloudformation, parameters,
                     override_stack_policy)
             )
 
-        message = 'kumo bot: updated stack %s ' % _get_stack_name(conf)
-        monitoring.slack_notification(slack_channel, message, slack_token)
+        #message = 'kumo bot: updated stack %s ' % _get_stack_name(conf)
+        #monitoring.slack_notification(slack_channel, message, slack_token)
         exit_code = _poll_stack_events(awsclient, stackname, last_event)
         _call_hook(awsclient, conf, stackname, parameters, cloudformation,
                    hook='post_update_hook',
@@ -521,14 +514,11 @@ def _update_stack(awsclient, conf, cloudformation, parameters,
     return exit_code
 
 
-def delete_stack(awsclient, conf, slack_token=None,
-                 slack_channel='systemmessages'):
+def delete_stack(awsclient, conf):
     """Delete the stack from AWS cloud.
 
     :param awsclient:
     :param conf:
-    :param slack_token:
-    :param slack_channel:
     """
     client_cf = awsclient.get_client('cloudformation')
     stackname = _get_stack_name(conf)
@@ -536,8 +526,8 @@ def delete_stack(awsclient, conf, slack_token=None,
     response = client_cf.delete_stack(
         StackName=_get_stack_name(conf),
     )
-    message = 'kumo bot: deleted stack %s ' % _get_stack_name(conf)
-    monitoring.slack_notification(slack_channel, message, slack_token)
+    #message = 'kumo bot: deleted stack %s ' % _get_stack_name(conf)
+    #monitoring.slack_notification(slack_channel, message, slack_token)
     return _poll_stack_events(awsclient, stackname, last_event)
 
 

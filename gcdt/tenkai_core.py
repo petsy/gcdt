@@ -9,13 +9,12 @@ import time
 import os
 from clint.textui import colored
 
-from gcdt import monitoring, utils
+from . import utils
 from .s3 import upload_file_to_s3
 
 
-def deploy(awsclient, applicationName, deploymentGroupName, deploymentConfigName, bucket,
-           slack_token=None, slack_channel='systemmessages',
-           pre_bundle_scripts=None):
+def deploy(awsclient, applicationName, deploymentGroupName,
+           deploymentConfigName, bucket, pre_bundle_scripts=None):
     """Upload bundle and deploy to deployment group.
     This includes the bundle-action.
 
@@ -23,8 +22,6 @@ def deploy(awsclient, applicationName, deploymentGroupName, deploymentConfigName
     :param deploymentGroupName:
     :param deploymentConfigName:
     :param bucket:
-    :param slack_token:
-    :param slack_channel:
     :return: deploymentId from create_deployment
     """
     if pre_bundle_scripts:
@@ -64,9 +61,8 @@ def deploy(awsclient, applicationName, deploymentGroupName, deploymentConfigName
         response['deploymentId'],
     ))
 
-    message = 'tenkai bot: deployed deployment group %s ' % deploymentGroupName
-    # TODO move slack_notification to lifecycle
-    monitoring.slack_notification(slack_channel, message, slack_token)
+    #message = 'tenkai bot: deployed deployment group %s ' % deploymentGroupName
+    #monitoring.slack_notification(slack_channel, message, slack_token)
 
     return response['deploymentId']
 

@@ -6,35 +6,9 @@ from nose.tools import assert_true, assert_regexp_matches, assert_equal, \
     assert_items_equal
 import nose
 
-from gcdt.monitoring import slack_notification, datadog_notification, \
+from gcdt.monitoring import datadog_notification, \
     _datadog_get_tags, datadog_error
-from gcdt.utils import read_gcdt_user_config, get_context
-
-
-''' currently the Jenkins has an invalid slack_token so this won't work
-def test_slack_notification():
-    # read token from ~/.gcdt file
-    slack_token, _ = read_gcdt_user_config(compatibility_mode='kumo')
-    channel = 'test_do_not_join'
-    message = 'testing gcdt and tools...'
-    out = StringIO()
-
-    slack_notification(channel, message, slack_token, out)
-
-    assert_equal(out.getvalue().strip(), '')
-'''
-
-
-def test_slack_notification_invalid_token(capsys):
-    # invalid token
-    slack_token = 'xoxp-12345678901-12345678901-12345678901-4e6es20339'
-    channel = 'test_do_not_join'
-    message = 'testing gcdt...'
-    slack_notification(channel, message, slack_token)
-    out, err = capsys.readouterr()
-
-    assert_regexp_matches(out.strip(),
-                          'We can not use your slack token: invalid_auth')
+#from gcdt.utils import read_gcdt_user_config, get_context
 
 
 def test_datadog_get_tags():

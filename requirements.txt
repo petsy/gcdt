@@ -3,7 +3,6 @@ pyhocon==0.3.30
 #boto3>=1.4.2
 botocore==1.5.7
 s3transfer==0.1.10
-slacker==0.9.25
 pybars3==0.9.1
 pycrypto==2.6.1
 blinker==1.4

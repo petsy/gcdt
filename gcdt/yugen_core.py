@@ -6,7 +6,6 @@ import os
 import uuid
 
 from botocore.exceptions import ClientError
-from clint.textui import colored
 from pybars import Compiler
 from tabulate import tabulate
 
@@ -65,7 +64,7 @@ def list_apis(awsclient):
 
 
 def deploy_api(awsclient, api_name, api_description, stage_name, api_key,
-               lambdas, slack_token=None, slack_channel='systemmessages'):
+               lambdas):
     """Deploy API Gateway to AWS cloud.
     
     :param awsclient:
@@ -74,8 +73,6 @@ def deploy_api(awsclient, api_name, api_description, stage_name, api_key,
     :param stage_name: 
     :param api_key: 
     :param lambdas: 
-    :param slack_token:
-    :param slack_channel:
     """
     if not _api_exists(awsclient, api_name):
         if os.path.isfile(SWAGGER_FILE):
@@ -93,8 +90,8 @@ def deploy_api(awsclient, api_name, api_description, stage_name, api_key,
             _ensure_lambdas_permissions(awsclient, lambdas, api)
             _create_deployment(awsclient, api_name, stage_name)
             _wire_api_key(awsclient, api_name, api_key, stage_name)
-            message = 'yugen bot: created api *%s*' % api_name
-            monitoring.slack_notification(slack_channel, message, slack_token)
+            #message = 'yugen bot: created api *%s*' % api_name
+            #monitoring.slack_notification(slack_channel, message, slack_token)
         else:
             print('API name unknown')
     else:
@@ -108,19 +105,16 @@ def deploy_api(awsclient, api_name, api_description, stage_name, api_key,
         if api is not None:
             _ensure_lambdas_permissions(awsclient, lambdas, api)
             _create_deployment(awsclient, api_name, stage_name)
-            message = 'yugen bot: updated api *%s*' % api_name
-            monitoring.slack_notification(slack_channel, message, slack_token)
+            #message = 'yugen bot: updated api *%s*' % api_name
+            #monitoring.slack_notification(slack_channel, message, slack_token)
         else:
             print('API name unknown')
 
 
-def delete_api(awsclient, api_name, slack_token=None,
-               slack_channel='systemmessages'):
+def delete_api(awsclient, api_name):
     """Delete the API.
 
     :param api_name:
-    :param slack_token:
-    :param slack_channel:
     """
     client_api = awsclient.get_client('apigateway')
 
@@ -135,8 +129,8 @@ def delete_api(awsclient, api_name, slack_token=None,
         )
 
         print(_json2table(response))
-        message = 'yugen bot: deleted api *%s*' % api_name
-        monitoring.slack_notification(slack_channel, message, slack_token)
+        #message = 'yugen bot: deleted api *%s*' % api_name
+        #monitoring.slack_notification(slack_channel, message, slack_token)
     else:
         print('API name unknown')
 
