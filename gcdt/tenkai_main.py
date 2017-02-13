@@ -11,7 +11,7 @@ from .tenkai_core import deploy, deployment_status, \
     bundle_revision
 from gcdt.s3 import prepare_artifacts_bucket
 from .utils import check_gcdt_update
-from .monitoring import datadog_error, datadog_event_detail
+#from .monitoring import datadog_error, datadog_event_detail
 from .gcdt_cmd_dispatcher import cmd
 from . import gcdt_lifecycle
 
@@ -34,7 +34,7 @@ def version_cmd():
 def deploy_cmd(**tooldata):
     context = tooldata.get('context')
     conf = tooldata.get('config')
-    awsclient = context.get('awsclient')
+    awsclient = context.get('_awsclient')
 
     # are_credentials_still_valid()
     prepare_artifacts_bucket(awsclient,
@@ -49,11 +49,7 @@ def deploy_cmd(**tooldata):
     )
     exit_code = deployment_status(awsclient, deployment)
     if exit_code:
-        datadog_error(context)
         return 1
-    event = 'tenkai bot: deployed deployment group %s ' % \
-            conf.get('codedeploy.deploymentGroupName')
-    datadog_event_detail(context, event)
 
 
 @cmd(spec=['bundle'])

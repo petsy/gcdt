@@ -1,12 +1,11 @@
 # Dependencies have to be in sync with other packages (gcdt, glomex-credstash, gcdt-plugins)
 pyhocon==0.3.30
-#boto3>=1.4.2
 botocore==1.5.7
 s3transfer==0.1.10
 pybars3==0.9.1
 pycrypto==2.6.1
 blinker==1.4
-jmespath==0.9.1
+#jmespath==0.9.1
 regex==2017.02.08
 
 # Other dependencies
@@ -17,5 +16,4 @@ awacs==0.6.0
 troposphere>=1.9.0
 tabulate==0.7.5
 pyspin==1.0.2
-datadog==0.13.0
 pip>=9.0.1

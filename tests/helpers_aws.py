@@ -314,7 +314,7 @@ def get_tooldata(awsclient, tool, command, config=None, config_base_name=None,
             'command': command,
             'version': __version__,
             'user': 'unittest',
-            'awsclient': awsclient
+            '_awsclient': awsclient
         },
         'config': config
     }

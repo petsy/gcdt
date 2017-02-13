@@ -16,7 +16,6 @@ from . import utils
 from .kumo_core import print_parameter_diff, delete_stack, \
     deploy_stack, generate_template_file, list_stacks, create_change_set, \
     describe_change_set, load_cloudformation_template, call_pre_hook
-from .monitoring import datadog_event_detail
 from .kumo_viz import cfn_viz, svg_output
 from .gcdt_cmd_dispatcher import cmd
 from . import gcdt_lifecycle
@@ -53,7 +52,6 @@ def version_cmd():
 
 @cmd(spec=['dot'])
 def dot_cmd(**tooldata):
-    #context = tooldata.get('context')
     conf = tooldata.get('config')
     cloudformation = load_template()
     with NamedTemporaryFile() as temp_dot:
@@ -68,15 +66,13 @@ def dot_cmd(**tooldata):
 def deploy_cmd(override, **tooldata):
     context = tooldata.get('context')
     conf = tooldata.get('config')
-    awsclient = context.get('awsclient')
+    awsclient = context.get('_awsclient')
 
     cloudformation = load_template()
     call_pre_hook(awsclient, cloudformation)
     print_parameter_diff(awsclient, conf)
     exit_code = deploy_stack(awsclient, conf, cloudformation,
                              override_stack_policy=override)
-    event = 'kumo bot: deployed stack %s ' % conf.get('cloudformation.StackName')
-    datadog_event_detail(context, event)
     return exit_code
 
 
@@ -84,16 +80,13 @@ def deploy_cmd(override, **tooldata):
 def delete_cmd(force, **tooldata):
     context = tooldata.get('context')
     conf = tooldata.get('config')
-    awsclient = context.get('awsclient')
+    awsclient = context.get('_awsclient')
     exit_code = delete_stack(awsclient, conf)
-    event = 'kumo bot: deleted stack %s ' % conf.get('cloudformation.StackName')
-    datadog_event_detail(context, event)
     return exit_code
 
 
 @cmd(spec=['generate'])
 def generate_cmd(**tooldata):
-    #context = tooldata.get('context')
     conf = tooldata.get('config')
     cloudformation = load_template()
     generate_template_file(conf, cloudformation)
@@ -102,8 +95,7 @@ def generate_cmd(**tooldata):
 @cmd(spec=['list'])
 def list_cmd(**tooldata):
     context = tooldata.get('context')
-    #conf = tooldata.get('config')
-    awsclient = context.get('awsclient')
+    awsclient = context.get('_awsclient')
     list_stacks(awsclient)
 
 
@@ -111,7 +103,7 @@ def list_cmd(**tooldata):
 def preview_cmd(**tooldata):
     context = tooldata.get('context')
     conf = tooldata.get('config')
-    awsclient = context.get('awsclient')
+    awsclient = context.get('_awsclient')
     cloudformation = load_template()
     print_parameter_diff(awsclient, conf)
     change_set, stack_name = create_change_set(awsclient, conf,

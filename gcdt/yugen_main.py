@@ -7,7 +7,6 @@ from .yugen_core import list_api_keys, get_lambdas, delete_api, \
     export_to_swagger, create_api_key, list_apis, \
     create_custom_domain, delete_api_key, deploy_api
 from . import utils
-from .monitoring import datadog_event_detail
 from .gcdt_cmd_dispatcher import cmd
 from . import gcdt_lifecycle
 
@@ -40,8 +39,7 @@ def version_cmd():
 @cmd(spec=['list'])
 def list_cmd(**tooldata):
     context = tooldata.get('context')
-    #conf = tooldata.get('config')
-    awsclient = context.get('awsclient')
+    awsclient = context.get('_awsclient')
     return list_apis(awsclient)
 
 
@@ -49,7 +47,7 @@ def list_cmd(**tooldata):
 def deploy_cmd(**tooldata):
     context = tooldata.get('context')
     conf = tooldata.get('config')
-    awsclient = context.get('awsclient')
+    awsclient = context.get('_awsclient')
     api_name = conf.get('api.name')
     api_description = conf.get('api.description')
     target_stage = conf.get('api.targetStage')
@@ -84,8 +82,6 @@ def deploy_cmd(**tooldata):
             ssl_cert=ssl_cert,
             hosted_zone_id=hosted_zone_id
         )
-    event = 'yugen bot: deployed api *%s*' % api_name
-    datadog_event_detail(context, event)
     return exit_code
 
 
@@ -93,14 +89,12 @@ def deploy_cmd(**tooldata):
 def delete_cmd(force, **tooldata):
     context = tooldata.get('context')
     conf = tooldata.get('config')
-    awsclient = context.get('awsclient')
+    awsclient = context.get('_awsclient')
     api_name = conf.get('api.name')
     exit_code = delete_api(
         awsclient=awsclient,
         api_name=api_name
     )
-    event = 'yugen bot: deleted api *%s*' % api_name
-    datadog_event_detail(context, event)
     return exit_code
 
 
@@ -108,7 +102,7 @@ def delete_cmd(force, **tooldata):
 def export_cmd(**tooldata):
     context = tooldata.get('context')
     conf = tooldata.get('config')
-    awsclient = context.get('awsclient')
+    awsclient = context.get('_awsclient')
     api_name = conf.get('api.name')
     target_stage = conf.get('api.targetStage')
     api_description = conf.get('api.description')
@@ -131,7 +125,7 @@ def export_cmd(**tooldata):
 def apikey_create_cmd(keyname, **tooldata):
     context = tooldata.get('context')
     conf = tooldata.get('config')
-    awsclient = context.get('awsclient')
+    awsclient = context.get('_awsclient')
     api_name = conf.get('api.name')
     create_api_key(awsclient, api_name, keyname)
 
@@ -140,7 +134,7 @@ def apikey_create_cmd(keyname, **tooldata):
 def apikey_delete_cmd(**tooldata):
     context = tooldata.get('context')
     conf = tooldata.get('config')
-    awsclient = context.get('awsclient')
+    awsclient = context.get('_awsclient')
     api_key = conf.get('api.apiKey')
     delete_api_key(awsclient, api_key)
 
@@ -148,8 +142,7 @@ def apikey_delete_cmd(**tooldata):
 @cmd(spec=['apikey-list'])
 def apikey_list_cmd(**tooldata):
     context = tooldata.get('context')
-    #conf = tooldata.get('config')
-    awsclient = context.get('awsclient')
+    awsclient = context.get('_awsclient')
     list_api_keys(awsclient)
 
 
@@ -157,7 +150,7 @@ def apikey_list_cmd(**tooldata):
 def custom_domain_create_cmd(**tooldata):
     context = tooldata.get('context')
     conf = tooldata.get('config')
-    awsclient = context.get('awsclient')
+    awsclient = context.get('_awsclient')
     api_name = conf.get('api.name')
     api_target_stage = conf.get('api.targetStage')
 

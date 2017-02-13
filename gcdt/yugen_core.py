@@ -9,7 +9,6 @@ from botocore.exceptions import ClientError
 from pybars import Compiler
 from tabulate import tabulate
 
-from . import monitoring
 
 SWAGGER_FILE = 'swagger.yaml'
 INVOKE_FUNCTION_ACTION = 'lambda:InvokeFunction'
@@ -90,8 +89,6 @@ def deploy_api(awsclient, api_name, api_description, stage_name, api_key,
             _ensure_lambdas_permissions(awsclient, lambdas, api)
             _create_deployment(awsclient, api_name, stage_name)
             _wire_api_key(awsclient, api_name, api_key, stage_name)
-            #message = 'yugen bot: created api *%s*' % api_name
-            #monitoring.slack_notification(slack_channel, message, slack_token)
         else:
             print('API name unknown')
     else:
@@ -105,8 +102,6 @@ def deploy_api(awsclient, api_name, api_description, stage_name, api_key,
         if api is not None:
             _ensure_lambdas_permissions(awsclient, lambdas, api)
             _create_deployment(awsclient, api_name, stage_name)
-            #message = 'yugen bot: updated api *%s*' % api_name
-            #monitoring.slack_notification(slack_channel, message, slack_token)
         else:
             print('API name unknown')
 
@@ -129,8 +124,6 @@ def delete_api(awsclient, api_name):
         )
 
         print(_json2table(response))
-        #message = 'yugen bot: deleted api *%s*' % api_name
-        #monitoring.slack_notification(slack_channel, message, slack_token)
     else:
         print('API name unknown')
 

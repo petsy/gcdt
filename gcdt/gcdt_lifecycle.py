@@ -9,10 +9,8 @@ from clint.textui import colored
 from botocore.vendored import requests
 
 from . import gcdt_signals
-from .monitoring import datadog_notification, datadog_error
 from .gcdt_defaults import DEFAULT_CONFIG
 from .utils import dict_merge, get_context, check_gcdt_update
-#from .utils import read_gcdt_user_config
 from .config_reader import read_config
 from .gcdt_cmd_dispatcher import cmd, get_command
 from .gcdt_plugins import load_plugins
@@ -46,7 +44,7 @@ def lifecycle(awsclient, tool, command, arguments):
     load_plugins()
     context = get_context(awsclient, tool, command, arguments)
     # every tool needs a awsclient so we provide this via the context
-    context['awsclient'] = awsclient
+    context['_awsclient'] = awsclient
 
     ## initialized
     gcdt_signals.initialized.send(context)
@@ -57,7 +55,9 @@ def lifecycle(awsclient, tool, command, arguments):
         DEFAULT_CONFIG[tool].get('config_base_name', tool))
     gcdt_signals.config_read_finalized.send(context)
 
-    # TODO credentials_retr (in case this would be useful)
+    # credentials_retr (ask plugins to get their credentials)
+    gcdt_signals.credentials_retr_init.send((context, config))
+    gcdt_signals.credentials_retr_finalized.send((context, config))
 
     # TODO check credentials are valid
 
@@ -71,10 +71,6 @@ def lifecycle(awsclient, tool, command, arguments):
 
     # TODO lookups (in case this would be useful)
 
-    # every tool needs the datadog notifications
-    # TODO move the datadog notification to plugin!
-    datadog_notification(context)
-
     # run the command and provide context and config (= tooldata)
     gcdt_signals.command_init.send((context, config))
     try:
@@ -82,10 +78,9 @@ def lifecycle(awsclient, tool, command, arguments):
     except Exception as e:
         print(str(e))
         context['error'] = str(e)
-        gcdt_signals.error.send((context, config))
         exit_code = 1
     if exit_code:
-        datadog_error(context)
+        gcdt_signals.error.send((context, config))
         return 1
 
     gcdt_signals.command_finalized.send((context, config))

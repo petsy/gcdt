@@ -16,7 +16,6 @@ from clint.textui import colored, prompt
 from tabulate import tabulate
 
 from .s3 import upload_file_to_s3
-from . import monitoring
 from .config_reader import get_env
 
 
@@ -439,8 +438,6 @@ def _create_stack(awsclient, conf, cloudformation, parameters):
             StackPolicyBody=_get_stack_policy(cloudformation),
         )
 
-    #message = 'kumo bot: created stack %s ' % _get_stack_name(conf)
-    # create means no last_event!
     exit_code = _poll_stack_events(awsclient, stackname)
     _call_hook(awsclient, conf, stackname, parameters, cloudformation,
                hook='post_create_hook',
@@ -498,8 +495,6 @@ def _update_stack(awsclient, conf, cloudformation, parameters,
                     override_stack_policy)
             )
 
-        #message = 'kumo bot: updated stack %s ' % _get_stack_name(conf)
-        #monitoring.slack_notification(slack_channel, message, slack_token)
         exit_code = _poll_stack_events(awsclient, stackname, last_event)
         _call_hook(awsclient, conf, stackname, parameters, cloudformation,
                    hook='post_update_hook',
@@ -526,8 +521,6 @@ def delete_stack(awsclient, conf):
     response = client_cf.delete_stack(
         StackName=_get_stack_name(conf),
     )
-    #message = 'kumo bot: deleted stack %s ' % _get_stack_name(conf)
-    #monitoring.slack_notification(slack_channel, message, slack_token)
     return _poll_stack_events(awsclient, stackname, last_event)
 
 

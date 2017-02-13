@@ -356,12 +356,3 @@ def get_secret(awsclient, name, version="",  # region=None,
     plaintext = decryptor.decrypt(b64decode(material['contents']['S'])).decode(
         "utf-8")
     return plaintext
-
-
-def _get_datadog_api_key(awsclient):
-    api_key = None
-    try:
-        api_key = get_secret(awsclient, 'datadog.api_key')
-    except Exception:
-        pass
-    return api_key
