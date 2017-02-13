@@ -30,7 +30,9 @@ def check_vpn_connection():
             return True
         else:
             return False
-    except requests.exceptions.ConnectTimeout:
+    except Exception:
+        #requests.exceptions.ConnectTimeout:
+        #requests.exceptions.ConnectionError
         return False
 
 

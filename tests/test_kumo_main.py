@@ -1,15 +1,17 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals, print_function
-
+import os
 import pytest
 import regex
 
-from gcdt.kumo_main import version_cmd, list_cmd, preview_cmd
+from gcdt.kumo_main import version_cmd, list_cmd, preview_cmd, dot_cmd, \
+    generate_cmd
 
 from .helpers_aws import check_preconditions, get_tooldata
 from .helpers_aws import awsclient  # fixtures!
 from .test_kumo_aws import simple_cloudformation_stack  # fixtures!
 from .test_kumo_aws import simple_cloudformation_stack_folder  # fixtures!
+from .test_kumo_aws import sample_ec2_cloudformation_stack_folder  # fixtures!
 from .helpers import temp_folder  # fixtures!
 from . import here
 
@@ -49,3 +51,22 @@ def test_preview_cmd(awsclient, simple_cloudformation_stack,
     out, err = capsys.readouterr()
     # verify diff results
     assert 'InstanceType │ t2.micro      │ t2.medium ' in out
+
+
+@pytest.mark.aws
+@check_preconditions
+def test_dot_cmd(awsclient, sample_ec2_cloudformation_stack_folder):
+    tooldata = get_tooldata(awsclient, 'kumo', 'dot')
+    assert dot_cmd(**tooldata) == 0
+    assert os.path.exists('cloudformation.svg')
+    os.unlink('cloudformation.svg')
+
+
+@pytest.mark.aws
+@check_preconditions
+def test_generate_cmd(awsclient, simple_cloudformation_stack_folder):
+    tooldata = get_tooldata(awsclient, 'kumo', 'generate')
+    assert generate_cmd(**tooldata) == 0
+    filename = 'infra-dev-kumo-sample-stack-generated-cf-template.json'
+    assert os.path.exists(filename)
+    os.unlink(filename)

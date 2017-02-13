@@ -67,6 +67,16 @@ def simple_cloudformation_stack_folder():
 
 
 @pytest.fixture(scope='function')  # 'function' or 'module'
+def sample_ec2_cloudformation_stack_folder():
+    # helper to get into the sample folder so kumo can find cloudformation.py
+    cwd = (os.getcwd())
+    os.chdir(here('./resources/sample_ec2_cloudformation_stack/'))
+    yield
+    # cleanup
+    os.chdir(cwd)  # cd back to original folder
+
+
+@pytest.fixture(scope='function')  # 'function' or 'module'
 def sample_cloudformation_stack_with_hooks(awsclient):
     # create a stack we use for the test lifecycle
     are_credentials_still_valid(awsclient)

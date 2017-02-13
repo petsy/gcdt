@@ -6,6 +6,7 @@ to AWS cloud.
 """
 
 from __future__ import unicode_literals, print_function
+import os
 import sys
 import json
 from tempfile import NamedTemporaryFile
@@ -54,12 +55,14 @@ def version_cmd():
 def dot_cmd(**tooldata):
     conf = tooldata.get('config')
     cloudformation = load_template()
-    with NamedTemporaryFile() as temp_dot:
+    with NamedTemporaryFile(delete=False) as temp_dot:
         cfn_viz(json.loads(cloudformation.generate_template()),
                 parameters=conf,
                 out=temp_dot)
         temp_dot.close()
-        return svg_output(temp_dot.name)
+        exit_code = svg_output(temp_dot.name)
+        os.unlink(temp_dot.name)
+        return exit_code
 
 
 @cmd(spec=['deploy', '--override-stack-policy'])
@@ -81,8 +84,7 @@ def delete_cmd(force, **tooldata):
     context = tooldata.get('context')
     conf = tooldata.get('config')
     awsclient = context.get('_awsclient')
-    exit_code = delete_stack(awsclient, conf)
-    return exit_code
+    return delete_stack(awsclient, conf)
 
 
 @cmd(spec=['generate'])
@@ -90,6 +92,7 @@ def generate_cmd(**tooldata):
     conf = tooldata.get('config')
     cloudformation = load_template()
     generate_template_file(conf, cloudformation)
+    return 0
 
 
 @cmd(spec=['list'])
