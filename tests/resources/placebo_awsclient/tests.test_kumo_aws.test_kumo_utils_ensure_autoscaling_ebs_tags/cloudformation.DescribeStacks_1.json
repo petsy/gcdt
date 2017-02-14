@@ -1,0 +1,22 @@
+{
+    "status_code": 400,
+    "data": {
+        "ResponseMetadata": {
+            "RetryAttempts": 0,
+            "HTTPStatusCode": 400,
+            "RequestId": "2db4db5d-f2d2-11e6-adf0-01d39ef9c0a4",
+            "HTTPHeaders": {
+                "x-amzn-requestid": "2db4db5d-f2d2-11e6-adf0-01d39ef9c0a4",
+                "date": "Tue, 14 Feb 2017 16:25:20 GMT",
+                "content-length": "332",
+                "content-type": "text/xml",
+                "connection": "close"
+            }
+        },
+        "Error": {
+            "Message": "Stack with id infra-dev-gcdt-test-ensure-ebs-for-autoscaling does not exist",
+            "Code": "ValidationError",
+            "Type": "Sender"
+        }
+    }
+}

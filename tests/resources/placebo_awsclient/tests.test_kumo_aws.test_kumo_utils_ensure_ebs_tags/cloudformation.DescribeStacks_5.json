@@ -1,0 +1,47 @@
+{
+    "status_code": 200,
+    "data": {
+        "Stacks": [
+            {
+                "StackId": "arn:aws:cloudformation:eu-west-1:420189626185:stack/infra-dev-gcdt-test-ensure-ebs/f540b400-f2cb-11e6-a3e3-50faea5d48d2",
+                "Tags": [],
+                "Outputs": [
+                    {
+                        "Description": "InstanceId of the newly created EC2 instance",
+                        "OutputKey": "InstanceId",
+                        "OutputValue": "i-0b8a2112424ded696"
+                    }
+                ],
+                "StackStatusReason": "User Initiated",
+                "CreationTime": {
+                    "hour": 15,
+                    "__class__": "datetime",
+                    "month": 2,
+                    "second": 48,
+                    "microsecond": 840000,
+                    "year": 2017,
+                    "day": 14,
+                    "minute": 40
+                },
+                "Capabilities": [
+                    "CAPABILITY_IAM"
+                ],
+                "StackName": "infra-dev-gcdt-test-ensure-ebs",
+                "NotificationARNs": [],
+                "StackStatus": "DELETE_IN_PROGRESS",
+                "DisableRollback": false
+            }
+        ],
+        "ResponseMetadata": {
+            "RetryAttempts": 0,
+            "HTTPStatusCode": 200,
+            "RequestId": "1af039c8-f2cc-11e6-8bad-3b53ffecef91",
+            "HTTPHeaders": {
+                "x-amzn-requestid": "1af039c8-f2cc-11e6-8bad-3b53ffecef91",
+                "date": "Tue, 14 Feb 2017 15:41:52 GMT",
+                "content-length": "1161",
+                "content-type": "text/xml"
+            }
+        }
+    }
+}

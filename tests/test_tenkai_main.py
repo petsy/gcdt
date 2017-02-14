@@ -53,6 +53,6 @@ def test_deploy_cmd(awsclient, sample_codedeploy_app,
 def test_bundle_cmd(simple_codedeploy_folder):
     tooldata = get_tooldata(None, 'tenkai', 'bundle')
     bundle_cmd(**tooldata)
-    filename = '/tmp/tenkai-bundle.tar.gz'
+    filename = '%s/tenkai-bundle%s.tar.gz' % ('/tmp', os.getenv('BUILD_TAG', ''))
     assert os.path.exists(filename)
     os.unlink(filename)

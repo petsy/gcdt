@@ -1,0 +1,45 @@
+{
+    "status_code": 200,
+    "data": {
+        "Code": {
+            "RepositoryType": "S3",
+            "Location": "https://awslambda-eu-west-1-tasks.s3-eu-west-1.amazonaws.com/snapshots/420189626185/jenkins_test_azicck-864cbe9f-3cc2-4089-87fd-85103d04ec0b?X-Amz-Security-Token=FQoDYXdzEPH%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEaDAzPXxi5vh2qmHF6xCK3A2MQr7o68WkEsuSig0DY%2Bn77QSDsramO%2Fw9AnB9hPnA0sSZHb18AnEnWo7JjQxKeAw7H4VXPUkgR0%2BAmKUbkTNCyZNeSGMduxtVks5oXFe7Ffc5zLPqVSpqBWxTRZi1BcP5kXRoGHrIAhWeWXAS4ZSWvVugPLBzvC%2BXHHE7I3WpTHetlVjghkpLBEMUwdfr4gvTRhzOEE1Ivbun6ABbBDDWXQtHEDazTnHQtP9rDXnfNfZYpbhZDW3VEHeUjPb4CQ8Hf4%2B2f5hM3dWvuEMLx8imwNxrDG8halQzUuJPvt%2Fcx7C3jH2%2BS05eDzKePnfioKZnzKmQ%2Bey%2Fur3PTHEMuL%2B50Gi5KS7d73EGA8jUSTbmqneWlr%2BXZnhy4iSUmRMdzlgYwadwhPFjZ2h1YEjBoCueek0k1ZJk%2BcVyQWlMIPU38BHZAgLsgs%2BzGSkCS0U%2BoPMfHFarAWBXkkDuY%2FZlNrzs3Q2Z%2B7HDYzHp84OaS2PRl61wrx7WVagGbgOb%2Ba3FIPqz%2BaWhN2CbZhW%2B%2BNRSVTIk04E4VLv%2F6SjzcDcSMlefOLyayziU1kN8jI%2BHeM%2BvNT7ojgtRchigo4saMxQU%3D&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Date=20170214T170140Z&X-Amz-SignedHeaders=host&X-Amz-Expires=599&X-Amz-Credential=ASIAJH6YHOSOIDS3A5BQ%2F20170214%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Signature=838daa3b52f14adf9a7eb001241991f88e3a0e30f2e12a0c8515eab9300fe973"
+        },
+        "Configuration": {
+            "Version": "$LATEST",
+            "CodeSha256": "vnjtrE5/tV1iT54RMHCRlL6cwa+NVLS+zr9dtPGWHfU=",
+            "FunctionName": "jenkins_test_azicck",
+            "VpcConfig": {
+                "SubnetIds": [
+                    "subnet-e9db9f9f",
+                    "subnet-d5ffb0b1"
+                ],
+                "VpcId": "vpc-b9c1b4dd",
+                "SecurityGroupIds": [
+                    "sg-660dd700"
+                ]
+            },
+            "MemorySize": 256,
+            "CodeSize": 124403,
+            "FunctionArn": "arn:aws:lambda:eu-west-1:420189626185:function:jenkins_test_azicck",
+            "Handler": "handler.handle",
+            "Role": "arn:aws:iam::420189626185:role/unittest_azicck_lambda",
+            "Timeout": 300,
+            "LastModified": "2017-02-14T17:01:39.012+0000",
+            "Runtime": "python2.7",
+            "Description": "lambda test for ramuda"
+        },
+        "ResponseMetadata": {
+            "RetryAttempts": 0,
+            "HTTPStatusCode": 200,
+            "RequestId": "40e9c062-f2d7-11e6-9f3d-8f812dc026eb",
+            "HTTPHeaders": {
+                "date": "Tue, 14 Feb 2017 17:01:39 GMT",
+                "x-amzn-requestid": "40e9c062-f2d7-11e6-9f3d-8f812dc026eb",
+                "content-length": "1828",
+                "content-type": "application/json",
+                "connection": "keep-alive"
+            }
+        }
+    }
+}

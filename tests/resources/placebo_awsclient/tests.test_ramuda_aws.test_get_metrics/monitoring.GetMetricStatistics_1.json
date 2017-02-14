@@ -1,0 +1,18 @@
+{
+    "status_code": 200,
+    "data": {
+        "Datapoints": [],
+        "ResponseMetadata": {
+            "RetryAttempts": 0,
+            "HTTPStatusCode": 200,
+            "RequestId": "99d7cc68-f2ce-11e6-a0b0-7985d4d3caa4",
+            "HTTPHeaders": {
+                "x-amzn-requestid": "99d7cc68-f2ce-11e6-a0b0-7985d4d3caa4",
+                "date": "Tue, 14 Feb 2017 15:59:43 GMT",
+                "content-length": "331",
+                "content-type": "text/xml"
+            }
+        },
+        "Label": "Duration"
+    }
+}

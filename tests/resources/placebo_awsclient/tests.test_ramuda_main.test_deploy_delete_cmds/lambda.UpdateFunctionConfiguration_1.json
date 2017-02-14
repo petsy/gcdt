@@ -1,0 +1,39 @@
+{
+    "status_code": 200,
+    "data": {
+        "CodeSha256": "vnjtrE5/tV1iT54RMHCRlL6cwa+NVLS+zr9dtPGWHfU=",
+        "FunctionName": "jenkins_test_azicck",
+        "ResponseMetadata": {
+            "RetryAttempts": 0,
+            "HTTPStatusCode": 200,
+            "RequestId": "402efbab-f2d7-11e6-8559-e91e572a83ee",
+            "HTTPHeaders": {
+                "date": "Tue, 14 Feb 2017 17:01:39 GMT",
+                "x-amzn-requestid": "402efbab-f2d7-11e6-8559-e91e572a83ee",
+                "content-length": "629",
+                "content-type": "application/json",
+                "connection": "keep-alive"
+            }
+        },
+        "VpcConfig": {
+            "SubnetIds": [
+                "subnet-e9db9f9f",
+                "subnet-d5ffb0b1"
+            ],
+            "VpcId": "vpc-b9c1b4dd",
+            "SecurityGroupIds": [
+                "sg-660dd700"
+            ]
+        },
+        "MemorySize": 256,
+        "FunctionArn": "arn:aws:lambda:eu-west-1:420189626185:function:jenkins_test_azicck",
+        "Version": "$LATEST",
+        "Role": "arn:aws:iam::420189626185:role/unittest_azicck_lambda",
+        "Timeout": 300,
+        "LastModified": "2017-02-14T17:01:39.012+0000",
+        "Handler": "handler.handle",
+        "Runtime": "python2.7",
+        "CodeSize": 124403,
+        "Description": "lambda test for ramuda"
+    }
+}

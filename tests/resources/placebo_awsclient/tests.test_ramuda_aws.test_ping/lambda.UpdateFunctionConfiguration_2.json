@@ -1,0 +1,29 @@
+{
+    "status_code": 200,
+    "data": {
+        "CodeSha256": "alGiEum7pbGEQIVbfuUK8xgg8e48NEwzcd+R7K9kNIM=",
+        "FunctionName": "jenkins_test_svijlr",
+        "ResponseMetadata": {
+            "RetryAttempts": 0,
+            "HTTPStatusCode": 200,
+            "RequestId": "dc4e438a-f2ce-11e6-a50c-49c3507e1ec1",
+            "HTTPHeaders": {
+                "date": "Tue, 14 Feb 2017 16:01:35 GMT",
+                "x-amzn-requestid": "dc4e438a-f2ce-11e6-a50c-49c3507e1ec1",
+                "content-length": "558",
+                "content-type": "application/json",
+                "connection": "keep-alive"
+            }
+        },
+        "CodeSize": 124737,
+        "MemorySize": 128,
+        "FunctionArn": "arn:aws:lambda:eu-west-1:420189626185:function:jenkins_test_svijlr",
+        "Version": "$LATEST",
+        "Role": "arn:aws:iam::420189626185:role/unittest_svijlr_lambda",
+        "Timeout": 300,
+        "LastModified": "2017-02-14T16:01:35.472+0000",
+        "Handler": "handler_no_ping.handle",
+        "Runtime": "python2.7",
+        "Description": "lambda created for unittesting ramuda deployment"
+    }
+}

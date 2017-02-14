@@ -1,0 +1,24 @@
+{
+    "status_code": 200,
+    "data": {
+        "Payload": {
+            "body": "\"alive\"",
+            "__module__": "botocore.response",
+            "__class__": "StreamingBody"
+        },
+        "ResponseMetadata": {
+            "RetryAttempts": 0,
+            "HTTPStatusCode": 200,
+            "RequestId": "7758eca4-f2ce-11e6-8e84-9dcde00e65ac",
+            "HTTPHeaders": {
+                "x-amzn-requestid": "7758eca4-f2ce-11e6-8e84-9dcde00e65ac",
+                "content-length": "7",
+                "x-amzn-remapped-content-length": "0",
+                "connection": "keep-alive",
+                "date": "Tue, 14 Feb 2017 15:58:46 GMT",
+                "content-type": "application/json"
+            }
+        },
+        "StatusCode": 200
+    }
+}

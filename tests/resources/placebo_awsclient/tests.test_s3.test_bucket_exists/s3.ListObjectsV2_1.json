@@ -1,0 +1,25 @@
+{
+    "status_code": 200,
+    "data": {
+        "MaxKeys": 1000,
+        "Prefix": "",
+        "Name": "unittest-lambda-s3-event-source-vqjrzy",
+        "ResponseMetadata": {
+            "HTTPStatusCode": 200,
+            "RetryAttempts": 0,
+            "HostId": "89PLtImuf/hcqS89XviRjYfahe4RGgXkzWuhq85fGzg/Qai8Z7CdewNqrFaIzw6ZjghxiQhTauY=",
+            "RequestId": "73CF0C82B25A187D",
+            "HTTPHeaders": {
+                "x-amz-bucket-region": "eu-west-1",
+                "x-amz-id-2": "89PLtImuf/hcqS89XviRjYfahe4RGgXkzWuhq85fGzg/Qai8Z7CdewNqrFaIzw6ZjghxiQhTauY=",
+                "server": "AmazonS3",
+                "transfer-encoding": "chunked",
+                "x-amz-request-id": "73CF0C82B25A187D",
+                "date": "Tue, 14 Feb 2017 16:04:08 GMT",
+                "content-type": "application/xml"
+            }
+        },
+        "KeyCount": 0,
+        "IsTruncated": false
+    }
+}

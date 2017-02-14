@@ -1,0 +1,47 @@
+{
+    "status_code": 200,
+    "data": {
+        "Stacks": [
+            {
+                "StackId": "arn:aws:cloudformation:eu-west-1:420189626185:stack/infra-dev-kumo-sample-stack-with-hooks/72495ec0-f2cc-11e6-9d9d-503abe701cc5",
+                "Description": "AWS CloudFormation Sample Template S3_Bucket: template showing how to create a publicly accessible S3 bucket.",
+                "Parameters": [
+                    {
+                        "ParameterValue": "t2.medium",
+                        "ParameterKey": "InstanceType"
+                    }
+                ],
+                "Tags": [],
+                "StackStatusReason": "User Initiated",
+                "CreationTime": {
+                    "hour": 15,
+                    "__class__": "datetime",
+                    "month": 2,
+                    "second": 18,
+                    "microsecond": 611000,
+                    "year": 2017,
+                    "day": 14,
+                    "minute": 44
+                },
+                "Capabilities": [
+                    "CAPABILITY_IAM"
+                ],
+                "StackName": "infra-dev-kumo-sample-stack-with-hooks",
+                "NotificationARNs": [],
+                "StackStatus": "CREATE_IN_PROGRESS",
+                "DisableRollback": false
+            }
+        ],
+        "ResponseMetadata": {
+            "RetryAttempts": 0,
+            "HTTPStatusCode": 200,
+            "RequestId": "7281384a-f2cc-11e6-9f48-2f59e31d1270",
+            "HTTPHeaders": {
+                "x-amzn-requestid": "7281384a-f2cc-11e6-9f48-2f59e31d1270",
+                "date": "Tue, 14 Feb 2017 15:44:18 GMT",
+                "content-length": "1248",
+                "content-type": "text/xml"
+            }
+        }
+    }
+}

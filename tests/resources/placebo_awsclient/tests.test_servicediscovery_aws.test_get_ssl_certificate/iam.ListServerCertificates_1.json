@@ -1,0 +1,176 @@
+{
+    "status_code": 200,
+    "data": {
+        "ServerCertificateMetadataList": [
+            {
+                "ServerCertificateId": "ASCAI2N57LB4JNXSHWN3I",
+                "ServerCertificateName": "multidomain.glomex.cloud-2016-11-10",
+                "Expiration": {
+                    "hour": 23,
+                    "__class__": "datetime",
+                    "month": 8,
+                    "second": 59,
+                    "microsecond": 0,
+                    "year": 2017,
+                    "day": 19,
+                    "minute": 59
+                },
+                "Path": "/cloudfront/",
+                "Arn": "arn:aws:iam::420189626185:server-certificate/cloudfront/multidomain.glomex.cloud-2016-11-10",
+                "UploadDate": {
+                    "hour": 9,
+                    "__class__": "datetime",
+                    "month": 11,
+                    "second": 39,
+                    "microsecond": 0,
+                    "year": 2016,
+                    "day": 29,
+                    "minute": 10
+                }
+            },
+            {
+                "ServerCertificateId": "ASCAJMS3CYSYGSPAEDGG2",
+                "ServerCertificateName": "multidomain.glomex.cloud-2016-11-30",
+                "Expiration": {
+                    "hour": 23,
+                    "__class__": "datetime",
+                    "month": 8,
+                    "second": 59,
+                    "microsecond": 0,
+                    "year": 2017,
+                    "day": 21,
+                    "minute": 59
+                },
+                "Path": "/cloudfront/",
+                "Arn": "arn:aws:iam::420189626185:server-certificate/cloudfront/multidomain.glomex.cloud-2016-11-30",
+                "UploadDate": {
+                    "hour": 9,
+                    "__class__": "datetime",
+                    "month": 12,
+                    "second": 38,
+                    "microsecond": 0,
+                    "year": 2016,
+                    "day": 1,
+                    "minute": 48
+                }
+            },
+            {
+                "ServerCertificateId": "ASCAJZBCHWQE7EUG2S3WE",
+                "ServerCertificateName": "multidomain.glomex.cloud-2016-8-30",
+                "Expiration": {
+                    "hour": 23,
+                    "__class__": "datetime",
+                    "month": 8,
+                    "second": 59,
+                    "microsecond": 0,
+                    "year": 2017,
+                    "day": 18,
+                    "minute": 59
+                },
+                "Path": "/cloudfront/",
+                "Arn": "arn:aws:iam::420189626185:server-certificate/cloudfront/multidomain.glomex.cloud-2016-8-30",
+                "UploadDate": {
+                    "hour": 14,
+                    "__class__": "datetime",
+                    "month": 11,
+                    "second": 17,
+                    "microsecond": 0,
+                    "year": 2016,
+                    "day": 3,
+                    "minute": 19
+                }
+            },
+            {
+                "ServerCertificateId": "ASCAIQ5HPR2HT4JCVPXIY",
+                "ServerCertificateName": "wildcard.dp.glomex.cloud-2016-3-31",
+                "Expiration": {
+                    "hour": 23,
+                    "__class__": "datetime",
+                    "month": 3,
+                    "second": 59,
+                    "microsecond": 0,
+                    "year": 2017,
+                    "day": 31,
+                    "minute": 59
+                },
+                "Path": "/cloudfront/",
+                "Arn": "arn:aws:iam::420189626185:server-certificate/cloudfront/wildcard.dp.glomex.cloud-2016-3-31",
+                "UploadDate": {
+                    "hour": 14,
+                    "__class__": "datetime",
+                    "month": 11,
+                    "second": 26,
+                    "microsecond": 0,
+                    "year": 2016,
+                    "day": 3,
+                    "minute": 20
+                }
+            },
+            {
+                "ServerCertificateId": "ASCAJE2BZPBWITR25J4D2",
+                "ServerCertificateName": "wildcard.glomex.com-2016-03",
+                "Expiration": {
+                    "hour": 23,
+                    "__class__": "datetime",
+                    "month": 3,
+                    "second": 59,
+                    "microsecond": 0,
+                    "year": 2017,
+                    "day": 30,
+                    "minute": 59
+                },
+                "Path": "/cloudfront/2016/",
+                "Arn": "arn:aws:iam::420189626185:server-certificate/cloudfront/2016/wildcard.glomex.com-2016-03",
+                "UploadDate": {
+                    "hour": 12,
+                    "__class__": "datetime",
+                    "month": 3,
+                    "second": 11,
+                    "microsecond": 0,
+                    "year": 2016,
+                    "day": 31,
+                    "minute": 15
+                }
+            },
+            {
+                "ServerCertificateId": "ASCAI5LWRRUGK2VM65FSS",
+                "ServerCertificateName": "wildcard.infra.glomex.cloud-2016-3",
+                "Expiration": {
+                    "hour": 23,
+                    "__class__": "datetime",
+                    "month": 3,
+                    "second": 59,
+                    "microsecond": 0,
+                    "year": 2017,
+                    "day": 31,
+                    "minute": 59
+                },
+                "Path": "/cloudfront/2016/",
+                "Arn": "arn:aws:iam::420189626185:server-certificate/cloudfront/2016/wildcard.infra.glomex.cloud-2016-3",
+                "UploadDate": {
+                    "hour": 6,
+                    "__class__": "datetime",
+                    "month": 4,
+                    "second": 28,
+                    "microsecond": 0,
+                    "year": 2016,
+                    "day": 1,
+                    "minute": 42
+                }
+            }
+        ],
+        "IsTruncated": false,
+        "ResponseMetadata": {
+            "RetryAttempts": 0,
+            "HTTPStatusCode": 200,
+            "RequestId": "64163dd2-f2cf-11e6-a3f8-3ddb0885db38",
+            "HTTPHeaders": {
+                "x-amzn-requestid": "64163dd2-f2cf-11e6-a3f8-3ddb0885db38",
+                "vary": "Accept-Encoding",
+                "content-length": "3087",
+                "content-type": "text/xml",
+                "date": "Tue, 14 Feb 2017 16:05:22 GMT"
+            }
+        }
+    }
+}

@@ -1,0 +1,35 @@
+{
+    "status_code": 200,
+    "data": {
+        "Code": {
+            "RepositoryType": "S3",
+            "Location": "https://awslambda-eu-west-1-tasks.s3-eu-west-1.amazonaws.com/snapshots/420189626185/jenkins_test_miilbf-24192735-fa5b-4aae-b8cf-cdd2d271478d?X-Amz-Security-Token=FQoDYXdzEPD%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEaDPhCUNlbs2vDzEPinyK3A8rPUmAGPltK%2F%2FgEcrMlfLV2bZ8LXP4GFbnc4khdYq0jnn2lUOpF2lRcpYYKs9i7May5TqmH9SOiGoKKBuo9Al84yA4a3vZwOueeQbYs5RZzq2wxVW5wYElOMz%2FYTLcDs%2B01QoiAJWnkw1f04NjjJ%2F971F1GqXtGWubu7zGkIo73L0FnOGRyV9160SAc8vddovmqzaWhpw8TghR7sDZg4KLqe7C%2FkSWcDJZHP7kTIZMRCzKGHdgupzym40rFKtzCGTLzLeyP8GyIoMlZxgEN7rwax0zGlTsbaFcCvEMSmfu4nAAf0ITaI84pkWNVS1N1innEfFeWJobXKRWBElEizgnt2IPoloeIdfpoPcdZ82U4QUjCp%2BPuPo0lMdfjTE5CJAXKwXVDKBUawLaD6zecdQfWA4i8M0fOLGpx0mT%2Fw085Ehdl143%2BhpR%2BozmZpcD%2FlG8ILWgo4JP7qW6BJOoRGxv3%2BwPdwZCoFysOtlhI7IWrDsatY8LQxeLZSYOGnnAyJfghwjQOQbv9af5IgMNBqNKChE4Y7t1n%2FFYjtOwSEGOkFX93jY85SF8u5RBdpxMIPmgHAY7HuD4olK%2BMxQU%3D&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Date=20170214T155115Z&X-Amz-SignedHeaders=host&X-Amz-Expires=600&X-Amz-Credential=ASIAITIG6552DTOOSIWA%2F20170214%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Signature=af7746a279192e0f3913f657cb39fabc55c95e9b6cf7b3b0e1d11a34022834e3"
+        },
+        "Configuration": {
+            "Version": "$LATEST",
+            "CodeSha256": "2CaJaDceZ2ubHiNoEDB3wEZ1P87s1E0E1RHn5B/2tNA=",
+            "FunctionName": "jenkins_test_miilbf",
+            "MemorySize": 128,
+            "CodeSize": 124720,
+            "FunctionArn": "arn:aws:lambda:eu-west-1:420189626185:function:jenkins_test_miilbf",
+            "Handler": "handler.handle",
+            "Role": "arn:aws:iam::420189626185:role/unittest_miilbf_lambda",
+            "Timeout": 300,
+            "LastModified": "2017-02-14T15:51:03.650+0000",
+            "Runtime": "python2.7",
+            "Description": "lambda created for unittesting ramuda deployment"
+        },
+        "ResponseMetadata": {
+            "RetryAttempts": 0,
+            "HTTPStatusCode": 200,
+            "RequestId": "6aa11de0-f2cd-11e6-a217-1bfcf75b940c",
+            "HTTPHeaders": {
+                "date": "Tue, 14 Feb 2017 15:51:14 GMT",
+                "x-amzn-requestid": "6aa11de0-f2cd-11e6-a217-1bfcf75b940c",
+                "content-length": "1731",
+                "content-type": "application/json",
+                "connection": "keep-alive"
+            }
+        }
+    }
+}

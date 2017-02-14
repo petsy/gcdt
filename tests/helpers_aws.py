@@ -238,6 +238,8 @@ def awsclient(request):
     time.sleep = sleep_orig
 
 
+# TODO use recorder for datetime.now() calls!!
+
 def recorder(record_dir, function, filename=None):
     """this helper wraps a function and writes results to a file
     default filename is the name of the function.
