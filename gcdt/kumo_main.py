@@ -114,5 +114,9 @@ def preview_cmd(**tooldata):
     describe_change_set(awsclient, change_set, stack_name)
 
 
-if __name__ == '__main__':
+def main():
     sys.exit(gcdt_lifecycle.main(DOC, 'kumo'))
+
+
+if __name__ == '__main__':
+    main()

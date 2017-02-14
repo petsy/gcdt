@@ -177,6 +177,10 @@ def custom_domain_create_cmd(**tooldata):
     )
 
 
-if __name__ == '__main__':
+def main():
     sys.exit(gcdt_lifecycle.main(
         DOC, 'yugen', dispatch_only=['version', 'clean']))
+
+
+if __name__ == '__main__':
+    main()

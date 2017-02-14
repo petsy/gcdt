@@ -54,8 +54,12 @@ def bundle_cmd(**tooldata):
     print('created bundle at %s' % bundle_revision())
 
 
-if __name__ == '__main__':
+def main():
     sys.exit(
         gcdt_lifecycle.main(DOC, 'tenkai',
                             dispatch_only=['version', 'bundle'])
     )
+
+
+if __name__ == '__main__':
+    main()

@@ -28,5 +28,9 @@ def version_cmd():
     utils.version()
 
 
-if __name__ == '__main__':
+def main():
     sys.exit(gcdt_lifecycle.main(DOC, 'gcdt'))
+
+
+if __name__ == '__main__':
+    main()
