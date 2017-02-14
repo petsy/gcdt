@@ -40,3 +40,9 @@ def test_execute_scripts(awsclient):
     exit_code = execute_scripts(pre_bundle_scripts)
     assert_equal(exit_code, 0)
     os.chdir(start_dir)
+
+
+# TODO
+'''
+are_credentials_still_valid
+'''

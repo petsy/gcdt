@@ -7,8 +7,8 @@ from nose.tools import assert_equal, assert_false
 import pytest
 
 from gcdt.logger import setup_logger
-from gcdt.kumo_core import deploy_stack, are_credentials_still_valid, \
-    load_cloudformation_template, delete_stack, _get_stack_name
+from gcdt.kumo_core import deploy_stack, load_cloudformation_template, delete_stack, _get_stack_name
+from gcdt.utils import are_credentials_still_valid
 from gcdt.servicediscovery import get_outputs_for_stack
 from gcdt.tenkai_core import deploy as tenkai_deploy, deployment_status
 from .helpers_aws import check_preconditions
@@ -29,6 +29,25 @@ def cleanup_stack_tenkai(awsclient):
     """Remove the ec2 stack to cleanup after test run.
 
     This is intended to be called during test teardown"""
+    yield
+    # cleanup
+    exit_code = delete_stack(awsclient, config_sample_codeploy_stack)
+    # check whether delete was completed!
+    assert_false(exit_code, 'delete_stack was not completed\n' +
+                 'please make sure to clean up the stack manually')
+
+
+@pytest.fixture(scope='function')  # 'function' or 'module'
+def sample_codedeploy_app(awsclient):
+    are_credentials_still_valid(awsclient)
+    # Set up stack with an ec2 and deployment
+    cloudformation, _ = load_cloudformation_template(
+        here('resources/sample_codedeploy_app/cloudformation.py')
+    )
+    exit_code = deploy_stack(awsclient, config_sample_codeploy_stack,
+                             cloudformation, override_stack_policy=False)
+    assert_equal(exit_code, 0)
+
     yield
     # cleanup
     exit_code = delete_stack(awsclient, config_sample_codeploy_stack)

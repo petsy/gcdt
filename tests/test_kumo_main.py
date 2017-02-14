@@ -5,9 +5,11 @@ import pytest
 import regex
 
 from gcdt.kumo_main import version_cmd, list_cmd, preview_cmd, dot_cmd, \
-    generate_cmd
+    generate_cmd, deploy_cmd, delete_cmd, load_template
+from gcdt.kumo_core import _get_stack_state
 
 from .helpers_aws import check_preconditions, get_tooldata
+from .helpers import check_dot_precondition
 from .helpers_aws import awsclient  # fixtures!
 from .test_kumo_aws import simple_cloudformation_stack  # fixtures!
 from .test_kumo_aws import simple_cloudformation_stack_folder  # fixtures!
@@ -18,6 +20,15 @@ from . import here
 
 # note: xzy_main tests have a more "integrative" character so focus is to make
 # sure that the gcdt parts fit together not functional coverage of the parts.
+
+
+def test_load_template(capsys):
+    """Bail out if template is not found.
+    """
+    with pytest.raises(SystemExit):
+        load_template()
+    out, err = capsys.readouterr()
+    assert 'no cloudformation.py found, bailing out...\n' in out
 
 
 def test_version_cmd(capsys):
@@ -55,6 +66,7 @@ def test_preview_cmd(awsclient, simple_cloudformation_stack,
 
 @pytest.mark.aws
 @check_preconditions
+@check_dot_precondition
 def test_dot_cmd(awsclient, sample_ec2_cloudformation_stack_folder):
     tooldata = get_tooldata(awsclient, 'kumo', 'dot')
     assert dot_cmd(**tooldata) == 0
@@ -70,3 +82,16 @@ def test_generate_cmd(awsclient, simple_cloudformation_stack_folder):
     filename = 'infra-dev-kumo-sample-stack-generated-cf-template.json'
     assert os.path.exists(filename)
     os.unlink(filename)
+
+
+@pytest.mark.aws
+@check_preconditions
+def test_deploy_delete_cmds(awsclient, simple_cloudformation_stack_folder):
+    tooldata = get_tooldata(awsclient, 'kumo', 'deploy')
+    assert deploy_cmd(False, **tooldata) == 0
+    assert _get_stack_state(awsclient.get_client('cloudformation'),
+                            'infra-dev-kumo-sample-stack') in ['CREATE_COMPLETE']
+    tooldata['context']['command'] = 'delete'
+    assert delete_cmd(True, **tooldata) == 0
+    assert _get_stack_state(awsclient.get_client('cloudformation'),
+                            'infra-dev-kumo-sample-stack') is None

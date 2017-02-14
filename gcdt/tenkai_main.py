@@ -7,11 +7,8 @@ from __future__ import unicode_literals, print_function
 import sys
 
 from . import utils
-from .tenkai_core import deploy, deployment_status, \
-    bundle_revision
+from .tenkai_core import deploy, deployment_status, bundle_revision
 from gcdt.s3 import prepare_artifacts_bucket
-from .utils import check_gcdt_update
-#from .monitoring import datadog_error, datadog_event_detail
 from .gcdt_cmd_dispatcher import cmd
 from . import gcdt_lifecycle
 
@@ -53,9 +50,12 @@ def deploy_cmd(**tooldata):
 
 
 @cmd(spec=['bundle'])
-def bundle(**tooldata):
+def bundle_cmd(**tooldata):
     print('created bundle at %s' % bundle_revision())
 
 
 if __name__ == '__main__':
-    sys.exit(gcdt_lifecycle.main(DOC, 'tenkai'))
+    sys.exit(
+        gcdt_lifecycle.main(DOC, 'tenkai',
+                            dispatch_only=['version', 'bundle'])
+    )

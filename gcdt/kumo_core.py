@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals, print_function
-import os
-import six
+
 import imp
 import json
 import random
@@ -9,14 +8,16 @@ import string
 import sys
 import time
 
+import os
 import pyhocon.exceptions
+import six
+from clint.textui import colored, prompt
 from pyhocon.exceptions import ConfigMissingException
 from pyspin.spin import Default, Spinner
-from clint.textui import colored, prompt
 from tabulate import tabulate
 
-from .s3 import upload_file_to_s3
 from .config_reader import get_env
+from .s3 import upload_file_to_s3
 
 
 def load_cloudformation_template(path=None):
@@ -163,22 +164,6 @@ def _json2table(data):
         return tabulate(table, tablefmt='fancy_grid')
     except Exception:
         return data
-
-
-def are_credentials_still_valid(awsclient):
-    """Check whether the credentials have expired.
-
-    :param awsclient:
-    :return: exit_code
-    """
-    client = awsclient.get_client('lambda')
-    try:
-        client.list_functions()
-    except Exception as e:
-        print(e)
-        print(colored.red('Your credentials have expired... Please renew and try again!'))
-        return 1
-    return 0
 
 
 def _get_input():

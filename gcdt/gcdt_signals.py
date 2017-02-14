@@ -21,8 +21,8 @@ config_validation_finalized = signal('config_validation_finalized')
 credentials_retr_init = signal('credentials_retr_init')
 credentials_retr_finalized = signal('credentials_retr_finalized')
 
-lookup_init = signal('lookup_init')
-lookup_finalized = signal('lookup_finalized')
+# lookup_init = signal('lookup_init')
+# lookup_finalized = signal('lookup_finalized')
 
 command_init = signal('command_init')
 command_finalized = signal('command_finalized')

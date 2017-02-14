@@ -9,11 +9,12 @@ from nose.tools import assert_equal, assert_false, assert_is_not, \
 import pytest
 
 from gcdt.kumo_core import load_cloudformation_template, list_stacks, \
-    print_parameter_diff, are_credentials_still_valid, deploy_stack, \
+    print_parameter_diff, deploy_stack, \
     delete_stack, create_change_set, _get_stack_name, describe_change_set, \
     _get_artifact_bucket, _s3_upload, _get_stack_state
 from gcdt.kumo_util import ensure_ebs_volume_tags_ec2_instance, \
     ensure_ebs_volume_tags_autoscaling_group
+from gcdt.utils import are_credentials_still_valid
 from gcdt.servicediscovery import get_outputs_for_stack
 from gcdt.s3 import prepare_artifacts_bucket
 
@@ -311,9 +312,3 @@ def test_call_hook(awsclient, sample_cloudformation_stack_with_hooks):
     state = _get_stack_state(awsclient.get_client('cloudformation'),
                              sample_cloudformation_stack_with_hooks)
     assert state in ['CREATE_IN_PROGRESS', 'CREATE_COMPLETE']
-
-
-# TODO
-'''
-are_credentials_still_valid
-'''

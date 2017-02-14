@@ -10,7 +10,8 @@ from botocore.vendored import requests
 
 from . import gcdt_signals
 from .gcdt_defaults import DEFAULT_CONFIG
-from .utils import dict_merge, get_context, check_gcdt_update
+from .utils import dict_merge, get_context, check_gcdt_update, \
+    are_credentials_still_valid
 from .config_reader import read_config
 from .gcdt_cmd_dispatcher import cmd, get_command
 from .gcdt_plugins import load_plugins
@@ -25,7 +26,7 @@ def check_vpn_connection():
     :return: True / False
     """
     try:
-        request = requests.get(REPO_SERVER, timeout=2.0)
+        request = requests.get(REPO_SERVER, timeout=1.0)
         if request.status_code == 200:
             return True
         else:
@@ -57,21 +58,21 @@ def lifecycle(awsclient, tool, command, arguments):
         DEFAULT_CONFIG[tool].get('config_base_name', tool))
     gcdt_signals.config_read_finalized.send(context)
 
-    # credentials_retr (ask plugins to get their credentials)
-    gcdt_signals.credentials_retr_init.send((context, config))
-    gcdt_signals.credentials_retr_finalized.send((context, config))
-
-    # TODO check credentials are valid
-
     gcdt_signals.config_validation_init.send((context, config))
     # TODO config validation
     gcdt_signals.config_validation_finalized.send((context, config))
 
+    # credentials_retr (ask plugins to get their credentials)
+    gcdt_signals.credentials_retr_init.send((context, config))
+    # plugins do retrieve credentials themselves
+    gcdt_signals.credentials_retr_finalized.send((context, config))
+
+    # check credentials are valid
+    are_credentials_still_valid(awsclient)
+
     # merge DEFAULT_CONFIG with config
     tool_config = copy.deepcopy(DEFAULT_CONFIG[tool])
     dict_merge(tool_config, config)
-
-    # TODO lookups (in case this would be useful)
 
     # run the command and provide context and config (= tooldata)
     gcdt_signals.command_init.send((context, config))

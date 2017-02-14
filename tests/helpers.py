@@ -103,7 +103,28 @@ def _npm_check():
 
 
 # skipif helper check_npm
-check_npm = pytest.mark.skipif(
+check_npm_precondition = pytest.mark.skipif(
     _npm_check(),
     reason="You need to install npm (see gcdt docs)."
+)
+
+
+def _dot_check():
+    # Make sure the dot / graphviz tool is installed.
+    # returns false if missing
+    try:
+        subprocess.call(["dot", "-V"])
+    except OSError as e:
+        if e.errno == os.errno.ENOENT:
+            return True
+        else:
+            # Something else went wrong while trying to run `npm`
+            raise
+    return False
+
+
+# skipif helper check_preconditions
+check_dot_precondition = pytest.mark.skipif(
+    _dot_check(),
+    reason="You need to install dot / graphviz (see gcdt docs)."
 )

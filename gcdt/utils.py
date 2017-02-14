@@ -182,3 +182,42 @@ def dict_merge(a, b, path=None):
         else:
             a[key] = b[key]
     return a
+
+
+def are_credentials_still_valid(awsclient):
+    """Check whether the credentials have expired.
+
+    :param awsclient:
+    :return: exit_code
+    """
+    client = awsclient.get_client('lambda')
+    try:
+        client.list_functions()
+    except Exception as e:
+        print(e)
+        print(colored.red('Your credentials have expired... Please renew and try again!'))
+        return 1
+    return 0
+
+
+# dead code, not used!!
+'''
+def check_aws_credentials(awsclient):
+    """
+    A decorator that will check for valid credentials
+    """
+
+    def wrapper(func):
+        @wraps(func)
+        def wrapped(*args, **kwargs):
+            exit_code = are_credentials_still_valid(awsclient)
+            if exit_code:
+                # TODO: remove exit()
+                sys.exit()
+            result = func(*args, **kwargs)
+            return result
+
+        return wrapped
+
+    return wrapper
+'''
