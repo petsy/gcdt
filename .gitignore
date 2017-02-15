@@ -156,3 +156,4 @@ remove_*.py
 remove_gcdt_version.sh
 viz_sample/*
 _build
+tests/resources/dot_file/*
