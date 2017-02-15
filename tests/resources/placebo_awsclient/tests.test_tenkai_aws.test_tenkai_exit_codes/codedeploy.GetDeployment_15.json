@@ -1,0 +1,72 @@
+{
+    "status_code": 200,
+    "data": {
+        "ResponseMetadata": {
+            "RetryAttempts": 0,
+            "HTTPStatusCode": 200,
+            "RequestId": "4567d2ad-f2d0-11e6-9865-29e37e662ac0",
+            "HTTPHeaders": {
+                "x-amzn-requestid": "4567d2ad-f2d0-11e6-9865-29e37e662ac0",
+                "content-length": "1031",
+                "content-type": "application/x-amz-json-1.1"
+            }
+        },
+        "deploymentInfo": {
+            "applicationName": "gcdt-test-tenkai-deploy-gcdtTenkaiTestingApp-AWHMZL5G2U88",
+            "status": "Succeeded",
+            "deploymentOverview": {
+                "Skipped": 0,
+                "Succeeded": 1,
+                "Failed": 0,
+                "Ready": 0,
+                "InProgress": 0,
+                "Pending": 0
+            },
+            "description": "deploy with tenkai",
+            "deploymentConfigName": "CodeDeployDefault.AllAtOnce",
+            "creator": "user",
+            "deploymentId": "d-8W0CR39HK",
+            "ignoreApplicationStopFailures": true,
+            "autoRollbackConfiguration": {
+                "enabled": false
+            },
+            "deploymentStyle": {
+                "deploymentType": "IN_PLACE",
+                "deploymentOption": "WITHOUT_TRAFFIC_CONTROL"
+            },
+            "updateOutdatedInstancesOnly": false,
+            "instanceTerminationWaitTimeStarted": false,
+            "deploymentGroupName": "gcdt-test-tenkai-deploy-gcdtTestDeploymentGroup-14ZQD7H0MEGI0",
+            "createTime": {
+                "hour": 17,
+                "__class__": "datetime",
+                "month": 2,
+                "second": 10,
+                "microsecond": 93000,
+                "year": 2017,
+                "day": 14,
+                "minute": 11
+            },
+            "completeTime": {
+                "hour": 17,
+                "__class__": "datetime",
+                "month": 2,
+                "second": 37,
+                "microsecond": 125000,
+                "year": 2017,
+                "day": 14,
+                "minute": 11
+            },
+            "revision": {
+                "revisionType": "S3",
+                "s3Location": {
+                    "bundleType": "tgz",
+                    "version": "_UoVOVGETQ0RmigQeuOUlNDjDhaewnRY",
+                    "bucket": "7finity-infra-dev-deployment",
+                    "key": "gcdt-test-tenkai-deploy-gcdtTenkaiTestingApp-AWHMZL5G2U88/bundle.tar.gz",
+                    "eTag": "\"449418743ba571eb43be10071342457c\""
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,29 @@
+{
+    "status_code": 201,
+    "data": {
+        "CodeSha256": "5HEnIu5BH1EGQjUGZCXP0c7LdIq9ut0nW+0A19yk6GY=",
+        "FunctionName": "jenkins_test_bqpfhm",
+        "ResponseMetadata": {
+            "RetryAttempts": 0,
+            "HTTPStatusCode": 201,
+            "RequestId": "1b4a8e85-f2d7-11e6-8621-1b20217f1645",
+            "HTTPHeaders": {
+                "date": "Tue, 14 Feb 2017 17:00:37 GMT",
+                "x-amzn-requestid": "1b4a8e85-f2d7-11e6-8621-1b20217f1645",
+                "content-length": "544",
+                "content-type": "application/json",
+                "connection": "keep-alive"
+            }
+        },
+        "CodeSize": 124696,
+        "MemorySize": 128,
+        "FunctionArn": "arn:aws:lambda:eu-west-1:420189626185:function:jenkins_test_bqpfhm",
+        "Version": "1",
+        "Role": "arn:aws:iam::420189626185:role/unittest_bqpfhm_lambda",
+        "Timeout": 300,
+        "LastModified": "2017-02-14T17:00:37.568+0000",
+        "Handler": "handler.handle",
+        "Runtime": "python2.7",
+        "Description": "lambda created for unittesting ramuda deployment"
+    }
+}

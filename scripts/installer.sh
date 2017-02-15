@@ -57,7 +57,7 @@ cat <<EOF >~/.gcdtrc
 VENV_GCDT=~/.venv-gcdt
 
 check_venv() {
-    # check if we run in user defined virutalenv; if not then setup or activate virtualenv for gcdt
+    # check if we run in user defined virtualenv; if not then setup or activate virtualenv for gcdt
     if [ ! -z "\$VIRTUAL_ENV" ]
     then
         # already running in virtualenv (do nothing)
@@ -71,34 +71,34 @@ check_venv() {
     fi
 }
 
-gcdt() {
+gcdt_cmd() {
+    cmd=$1_main
+    shift
     check_venv;
-    python -m gcdt.gcdt_main \$@
-    if [ "\$IN_USR_VENV" = false ] ; then deactivate; fi
+    python -m gcdt.$cmd $@
+    exit_code=$?
+    if [ "$IN_USR_VENV" = false ] ; then deactivate; fi
+    return "$exit_code"
+}
+
+gcdt() {
+    gcdt_cmd gcdt $@
 }
 
 kumo() {
-    check_venv;
-    python -m gcdt.kumo_main \$@
-    if [ "\$IN_USR_VENV" = false ] ; then deactivate; fi
+    gcdt_cmd kumo $@
 }
 
 tenkai() {
-    check_venv;
-    python -m gcdt.tenkai_main \$@
-    if [ "\$IN_USR_VENV" = false ] ; then deactivate; fi
+    gcdt_cmd tenkai $@
 }
 
 ramuda() {
-    check_venv;
-    python -m gcdt.ramuda_main \$@
-    if [ "\$IN_USR_VENV" = false ] ; then deactivate; fi
+    gcdt_cmd ramuda $@
 }
 
 yugen() {
-    check_venv;
-    python -m gcdt.yugen_main \$@
-    if [ "\$IN_USR_VENV" = false ] ; then deactivate; fi
+    gcdt_cmd yugen $@
 }
 EOF
 

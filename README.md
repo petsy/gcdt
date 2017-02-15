@@ -1,13 +1,9 @@
 # glomex-cloud-deployment-tools (gcdt)
 
-version number: 0.0.77.dev0
-
 author: glomex OPS Team
-
 
 The gcdt tools have emerged from our experiences at glomex while working extensively with
 Cloudformation, CodeDeploy, AWS Lambda, and API Gateway. 
-
 
 ## Useful gcdt information
 

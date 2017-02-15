@@ -58,15 +58,6 @@ $ pip install -r requirements_dev.txt
 ```
 
 
-### gcdt design principles
-
-* write testable code
-* tests need to run on all accounts (not just dp account)
-* make sure additions and changes have powerful tests
-* use pylint to increase your coding style
-* we adhere to [Semantic Versioning](http://semver.org/).
-
-
 ### Running Unit-Tests
 
 Use the pytest test-runner to run the gcdt unit tests. A few tests (with '_aws' in the file name) need AWS. Please turn on your VPN and set the AWS_DEFAULT_PROFILE, ENV, and ACCOUNT environment variables. Details here: https://confluence.glomex.com/display/OPSSHARED/Deployment+on+AWS.
@@ -109,31 +100,41 @@ To suppress debug output to more easily find out why (if) the tests break, pleas
 
 ### Mock calls to AWS services
 
-For testing gcdt together with boto3 and AWS services we use placebo (a tool by the boto maintainers). The way placebo works is that it is attached to the boto session and used to record and later playback the communication with AWS services (https://github.com/garnaat/placebo).
+For testing gcdt together with botocore and AWS services we use placebo_awsclient (a tool based on the boto maintainers placebo project). The way placebo_awsclient works is that it is attached to the botocore session and used to record and later playback the communication with AWS services.
 
-The recorded placebo json files for gcdt tests are are stored in 'tests/resources/placebo'.
+The recorded json files for gcdt tests are stored in 'tests/resources/placebo_awsclient'.
 
 gcdt testing using placebo playback is transparent (if you know how to run gcdt tests nothing changes for you).
 
 To record a test using placebo (first remove old recordings if any):
 
 ```bash
-$ rm -rf tests/resources/placebo/tests.test_tenkai_aws.test_tenkai_exit_codes/
+$ rm -rf tests/resources/placebo_awsclient/tests.test_tenkai_aws.test_tenkai_exit_codes/
 $ export PLACEBO_MODE=record
 $ python -m pytest -vv --cov-report term-missing --cov gcdt tests/test_tenkai_aws.py::test_tenkai_exit_codes
 ```
 
-To switch off placebo record mode:
+To switch off placebo record mode and use playback mode:
 
 ```bash
 $ export PLACEBO_MODE=playback
 ```
 
+To run the tests against AWS services (without recording) use `normal` mode:
+
+```bash
+$ export PLACEBO_MODE=normal
+```
+
+
 Please note:
 
-* prerequisite for placebo to work is that all gcdt tools support that the boto session is handed in as parameter (by the test or main). If a module creates its own boto session it breaks gcdt testability.
+* prerequisite for placebo to work is that all gcdt tools support that the awsclient is handed in as parameter (by the test or main). If a module creates its own botocore session it breaks gcdt testability.
 * in order to avoid merging placebo json files please never record all tests (it would take to long anyway). only record aws tests which are impacted by your change.
 * gcdt testing using placebo works well together with aws-mfa.
+* if you record the tests twice the json files probably get messed up.
+  Please do not do this.
+* Please commit the placebo files in a seperate commit. This makes reviewing easier.
 
 
 ### documenting gcdt
@@ -175,3 +176,116 @@ We used the sphinx-apidoc tool to create the skeleton (80_gcdt_api.rst) for gcdt
 ```bash
 $ sphinx-apidoc -F -o apidocs gcdt
 ```
+
+
+### gcdt design
+
+#### Design Goals
+
+* support development teams with tools and templates
+* ease, simplify, and master infrastructure-as-code
+
+
+#### Design Principles
+
+* write testable code
+* tests need to run on all accounts (not just dp account)
+* make sure additions and changes have powerful tests
+* use pylint to increase your coding style
+* we adhere to [Semantic Versioning](http://semver.org/).
+
+
+#### Design Decisions
+
+In this section we document important design decisions we made over time while maintaining gcdt.
+
+
+##### Use botocore over boto3
+
+With botocore and boto3 AWS provides two different programmatic interfaces to automate interaction with AWS services.
+
+One of the most noticeable differences between botocore and boto3
+is that the client objects:
+
+1) require parameters to be provided as ``**kwargs`` and
+2) require the arguments typically be provided as ``CamelCased`` values.
+
+For example::
+
+    ddb = session.create_client('dynamodb')
+    ddb.describe_table(TableName='mytable')
+
+In boto3, the equivalent code would be::
+
+    layer1.describe_table(table_name='mytable')
+
+There are several reasons why this was changed in botocore.
+
+The first reason was because we wanted to have the same casing for
+inputs as well as outputs.  In both boto3 and botocore, the response
+for the ``describe_table`` calls is::
+
+    {'Table': {'CreationDateTime': 1393007077.387,
+                'ItemCount': 0,
+                'KeySchema': {'HashKeyElement': {'AttributeName': 'foo',
+                                                 'AttributeType': 'S'}},
+                'ProvisionedThroughput': {'ReadCapacityUnits': 5,
+                                          'WriteCapacityUnits': 5},
+                'TableName': 'testtable',
+                'TableStatus': 'ACTIVE'}}
+
+Notice that the response is ``CamelCased``.  This makes it more difficult
+to round trip results.  In many cases you want to get the result of
+a ``describe*`` call and use that value as input through a corresponding
+``update*`` call.  If the input arguments require ``snake_casing`` but
+the response data is ``CamelCased`` then you will need to manually convert
+all the response elements back to ``snake_case`` in order to properly
+round trip.
+
+This makes the case for having consistent casing for both input and
+output.  Why not use ``snake_casing`` for input as well as output?
+
+We choose to use ``CamelCasing`` because this is the casing used by
+AWS services.  As a result, we don't have to do any translation from
+``CamelCasing`` to ``snake_casing``.  We can use the response values
+exactly as they are returned from AWS services.
+
+This also means that if you are reading the AWS API documentation
+for services, the names and casing referenced there will match
+what you would provide to botocore.  For example, here's the
+corresponding API documentation for
+`dynamodb.describe_table
+<http://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_DescribeTable.html>`__.
+
+
+#### Use pytest over nose
+
+For many years py.test and nose coexisted as Python unit test frameworks in addition to std. Python unittest. Nose was developed by Mozilla and was popular for quite some time. In 2015 Mozilla switched from nose to pytest.
+
+http://mathieu.agopian.info/presentations/2015_06_djangocon_europe/
+
+There are many arguments in favour of pytest. For us the most important is pytest fixtures which provides us with a reliable and reusable mechanism to prepare and cleanup resources used during testing.
+
+
+#### Use Sphinx, Readthedocs, and Markdown for documentation
+
+Many, many documentation tools populate this space since it is so easy to come up with something. However for Open Source projects Readthedocs is the dominant platform to host the documentation.
+
+The Sphinx is the Python std. docu tool. In combination with markdown tools set is a very convenient way to create Readthedocs conform documentation.
+
+
+#### Use docopt to build the command line interface
+
+There is a never-ending discussion going about pros and cons of CLI tools for Python. Some of these tools are contained in the Python std. library, some are independent open source library additions. At the moment the most popular tools are Optparse, Argparse, Click, and Docopt
+
+
+https://www.youtube.com/watch?v=pXhcPJK5cMc
+
+We decided to use docopt for out command line interface because it is simple and very flexible. In addition we developed a `dispatch mechanism` to ease the docopt usage and to make the gcdt CLI commands testable.
+
+
+#### Plugin mechanism
+
+gcdt uses entry points similar to [pluggy](https://github.com/pytest-dev/pluggy) to find installed plugins
+
+For communication with the plugin we use [Blinker signals](https://pythonhosted.org/blinker/). This helps us to decouple the gcdt code base from plugin code and vice-versa. Blinker is of cause only one way to do that. Blinker is fast, simple, well documented, etc. so there are some popular frameworks using it (Flask, Pelican, ...).

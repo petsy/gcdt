@@ -5,25 +5,21 @@
 to AWS cloud.
 """
 
-from __future__ import print_function
-
+from __future__ import unicode_literals, print_function
+import os
 import sys
 import json
+from tempfile import NamedTemporaryFile
 
-from docopt import docopt
 from clint.textui import colored
-import boto3
 
-from .config_reader import read_config
-from gcdt import utils
-from gcdt.kumo_core import print_parameter_diff, delete_stack, \
+from . import utils
+from .kumo_core import print_parameter_diff, delete_stack, \
     deploy_stack, generate_template_file, list_stacks, create_change_set, \
     describe_change_set, load_cloudformation_template, call_pre_hook
-from gcdt.utils import read_gcdt_user_config, get_context, get_command, \
-    check_gcdt_update
-from gcdt.monitoring import datadog_notification, datadog_error, \
-    datadog_event_detail
-from gcdt.kumo_viz import cfn_viz
+from .kumo_viz import cfn_viz, svg_output
+from .gcdt_cmd_dispatcher import cmd
+from . import gcdt_lifecycle
 
 
 # creating docopt parameters and usage help
@@ -34,7 +30,7 @@ DOC = '''Usage:
         kumo generate
         kumo preview
         kumo version
-        kumo dot | dot -Tsvg -ocloudformation.svg
+        kumo dot
 
 -h --help           show this
 '''
@@ -50,77 +46,76 @@ def load_template():
     return cloudformation
 
 
-def are_credentials_still_valid(boto_session):
-    """Wrapper to bail out on invalid credentials."""
-    from kumo_core import are_credentials_still_valid as acsv
-    exit_code = acsv(boto_session)
-    if exit_code:
-        sys.exit(1)
+@cmd(spec=['version'])
+def version_cmd():
+    utils.version()
 
 
-def get_user_config():
-    slack_token, slack_channel = read_gcdt_user_config(compatibility_mode='kumo')
-    if not slack_token and not isinstance(slack_token, basestring):
-        sys.exit(1)
-    else:
-        return slack_token, slack_channel
+@cmd(spec=['dot'])
+def dot_cmd(**tooldata):
+    conf = tooldata.get('config')
+    cloudformation = load_template()
+    with NamedTemporaryFile(delete=False) as temp_dot:
+        cfn_viz(json.loads(cloudformation.generate_template()),
+                parameters=conf,
+                out=temp_dot)
+        temp_dot.close()
+        exit_code = svg_output(temp_dot.name)
+        os.unlink(temp_dot.name)
+        return exit_code
+
+
+@cmd(spec=['deploy', '--override-stack-policy'])
+def deploy_cmd(override, **tooldata):
+    context = tooldata.get('context')
+    conf = tooldata.get('config')
+    awsclient = context.get('_awsclient')
+
+    cloudformation = load_template()
+    call_pre_hook(awsclient, cloudformation)
+    print_parameter_diff(awsclient, conf)
+    exit_code = deploy_stack(awsclient, conf, cloudformation,
+                             override_stack_policy=override)
+    return exit_code
+
+
+@cmd(spec=['delete', '-f'])
+def delete_cmd(force, **tooldata):
+    context = tooldata.get('context')
+    conf = tooldata.get('config')
+    awsclient = context.get('_awsclient')
+    return delete_stack(awsclient, conf)
+
+
+@cmd(spec=['generate'])
+def generate_cmd(**tooldata):
+    conf = tooldata.get('config')
+    cloudformation = load_template()
+    generate_template_file(conf, cloudformation)
+    return 0
+
+
+@cmd(spec=['list'])
+def list_cmd(**tooldata):
+    context = tooldata.get('context')
+    awsclient = context.get('_awsclient')
+    list_stacks(awsclient)
+
+
+@cmd(spec=['preview'])
+def preview_cmd(**tooldata):
+    context = tooldata.get('context')
+    conf = tooldata.get('config')
+    awsclient = context.get('_awsclient')
+    cloudformation = load_template()
+    print_parameter_diff(awsclient, conf)
+    change_set, stack_name = create_change_set(awsclient, conf,
+                                               cloudformation)
+    describe_change_set(awsclient, change_set, stack_name)
 
 
 def main():
-    exit_code = 0
-    boto_session = boto3.session.Session()
-    arguments = docopt(DOC)
-    check_gcdt_update()
-    if arguments['version']:
-        utils.version()
-        sys.exit(0)
-    elif arguments['dot']:
-        cloudformation = load_template()
-        conf = read_config(boto_session)
-        cfn_viz(json.loads(cloudformation.generate_template()), parameters=conf)
-        sys.exit(0)
-
-    context = get_context(boto_session, 'kumo', get_command(arguments))
-    datadog_notification(context)
-
-    # Run command
-    if arguments['deploy']:
-        slack_token, slack_channel = get_user_config()
-        cloudformation = load_template()
-        call_pre_hook(boto_session, cloudformation)
-        conf = read_config(boto_session)
-        print_parameter_diff(boto_session, conf)
-        are_credentials_still_valid(boto_session)
-        exit_code = deploy_stack(boto_session, conf, cloudformation, slack_token, \
-            slack_channel, override_stack_policy=arguments['--override-stack-policy'])
-        event = 'kumo bot: deployed stack %s ' % conf.get('cloudformation.StackName')
-        datadog_event_detail(context, event)
-    elif arguments['delete']:
-        slack_token, slack_channel = get_user_config()
-        conf = read_config(boto_session)
-        are_credentials_still_valid(boto_session)
-        exit_code = delete_stack(boto_session, conf, slack_token, slack_channel)
-        event = 'kumo bot: deleted stack %s ' % conf.get('cloudformation.StackName')
-        datadog_event_detail(context, event)
-    elif arguments['generate']:
-        cloudformation = load_template()
-        conf = read_config(boto_session)
-        generate_template_file(conf, cloudformation)
-    elif arguments['list']:
-        are_credentials_still_valid(boto_session)
-        list_stacks(boto_session)
-    elif arguments['preview']:
-        cloudformation = load_template()
-        conf = read_config(boto_session)
-        print_parameter_diff(boto_session, conf)
-        are_credentials_still_valid(boto_session)
-        change_set, stack_name = create_change_set(boto_session, conf,
-                                                   cloudformation)
-        describe_change_set(boto_session, change_set, stack_name)
-
-    if exit_code:
-        datadog_error(context)
-    sys.exit(exit_code)
+    sys.exit(gcdt_lifecycle.main(DOC, 'kumo'))
 
 
 if __name__ == '__main__':

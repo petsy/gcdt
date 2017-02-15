@@ -3,6 +3,7 @@
 """Helper to create IAM parts of cloud formation templates
 """
 
+from __future__ import unicode_literals, print_function
 import troposphere
 from troposphere.iam import Role, PolicyType, ManagedPolicy
 from troposphere.s3 import Bucket, BucketPolicy
@@ -11,7 +12,7 @@ from awacs.aws import Allow, Statement, Principal, Policy
 from awacs.sts import AssumeRole
 
 
-# TODO: add tests
+# FIXME: I could not find any usage so far
 
 class IAMRoleAndPolicies(object):
     """

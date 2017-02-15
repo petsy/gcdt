@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from __future__ import print_function
+from __future__ import unicode_literals, print_function
 import os
 import subprocess
 import random
@@ -8,6 +8,12 @@ import string
 from tempfile import NamedTemporaryFile, mkdtemp
 
 import pytest
+
+
+# http://code.activestate.com/recipes/52308-the-simple-but-handy-collector-of-a-bunch-of-named/?in=user-97991
+class Bunch:
+    def __init__(self, **kwds):
+        self.__dict__.update(kwds)
 
 
 def create_tempfile(contents):
@@ -44,32 +50,10 @@ def random_string():
     """Create a random 6 character string.
 
     note: in case you use this function in a test during test together with
-    a boto_session then this function is altered so you get reproducible results
+    an awsclient then this function is altered so you get reproducible results
     that will work with your recorded placebo json files (see helpers_aws.py).
     """
     return ''.join([random.choice(string.ascii_lowercase) for i in xrange(6)])
-
-
-'''
-class FakeSocket(object):
-    """ A fake socket for testing datadog statsd. """
-
-    def __init__(self):
-        self.payloads = deque()
-
-    def send(self, payload):
-        assert type(payload) == six.binary_type
-        self.payloads.append(payload)
-
-    def recv(self):
-        try:
-            return self.payloads.popleft().decode('utf-8')
-        except IndexError:
-            return None
-
-    def __repr__(self):
-        return str(self.payloads)
-'''
 
 
 @pytest.fixture(scope='module')  # 'function' or 'module'
@@ -94,9 +78,14 @@ def temp_folder():
     shutil.rmtree(folder)
 
 
-#FIXME this is not supposed to be here!
-def here(p):
-    return os.path.join(os.path.dirname(__file__), p)
+@pytest.fixture(scope='function')  # 'function' or 'module'
+def random_file():
+    # provide a named file with some random content
+    # we use random_string so it is reproducible
+    filename = create_tempfile(random_string())
+    yield filename
+    # cleanup
+    os.unlink(filename)
 
 
 def _npm_check():
@@ -114,7 +103,28 @@ def _npm_check():
 
 
 # skipif helper check_npm
-check_npm = pytest.mark.skipif(
+check_npm_precondition = pytest.mark.skipif(
     _npm_check(),
     reason="You need to install npm (see gcdt docs)."
+)
+
+
+def _dot_check():
+    # Make sure the dot / graphviz tool is installed.
+    # returns false if missing
+    try:
+        subprocess.call(["dot", "-V"])
+    except OSError as e:
+        if e.errno == os.errno.ENOENT:
+            return True
+        else:
+            # Something else went wrong while trying to run `npm`
+            raise
+    return False
+
+
+# skipif helper check_preconditions
+check_dot_precondition = pytest.mark.skipif(
+    _dot_check(),
+    reason="You need to install dot / graphviz (see gcdt docs)."
 )

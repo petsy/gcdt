@@ -1,0 +1,35 @@
+{
+    "status_code": 200,
+    "data": {
+        "Code": {
+            "RepositoryType": "S3",
+            "Location": "https://awslambda-eu-west-1-tasks.s3-eu-west-1.amazonaws.com/snapshots/420189626185/jenkins_test_svijlr-60f5943d-3373-4f2f-b4ac-2d759121b8d2?X-Amz-Security-Token=FQoDYXdzEPH%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEaDHSbIZEA92pnhGB42iK3A%2FarEGNtCiWjPYEtNDJIV8AW6sUCF3EMYI4ropDhzVVVgFKqj2SmrxHffPgv26mVgPqgsNcs5i%2F1bEZEyjnnHAFufTuAgiIKc9FwFo9X1oMVhImkp4BUC%2ByEvCvtL8yDc9%2BYCDff0sngQb8cguIdDGmSRJM6WFMdofoUSfqUgBMyliDBlnA7RWesstDNcjcNS7qhHjBILDBq2a7YTctyYnSqEvc2CkNyWlh64eYlX6VHhzDsH59LnRclHz52c5jSJQ8FC%2FuViYZ55M9NVdKr4p4XesW%2FNT6d8xNkiyWSE0SccqwfvmdzE%2Bl0oSPUNaDt8y2LWzM9mpYKFna3foQ291RFR9o7Z1zvOmIlRUojuM9XLRLMYTKuNR4fO4Je2pFibPY70pYfxYg5msRQddtNlqz9epcXa9UcqLuiVv24WoHB3LcaBDdTdSMy0re4gENVzKjcJdUq35LMSZkTavcMMvEKBusDcf3NfqMWXHKsbd%2F6AqD2Y13l8mVNt8%2BqfH1yQnQrRp9hj%2FMZxKND0kZcFScMVQor9kNbNiwH7FmfNHlCtg1WPW019UDGI9u6uHfjP0qQMGcvY%2BEo0ceMxQU%3D&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Date=20170214T160146Z&X-Amz-SignedHeaders=host&X-Amz-Expires=599&X-Amz-Credential=ASIAINLZCY2EBVXKPUHA%2F20170214%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Signature=defc9b18f651a7883cbfd282d36690c8b19b6effe47822fc3043e11f5a642b18"
+        },
+        "Configuration": {
+            "Version": "$LATEST",
+            "CodeSha256": "alGiEum7pbGEQIVbfuUK8xgg8e48NEwzcd+R7K9kNIM=",
+            "FunctionName": "jenkins_test_svijlr",
+            "MemorySize": 128,
+            "CodeSize": 124737,
+            "FunctionArn": "arn:aws:lambda:eu-west-1:420189626185:function:jenkins_test_svijlr",
+            "Handler": "handler_no_ping.handle",
+            "Role": "arn:aws:iam::420189626185:role/unittest_svijlr_lambda",
+            "Timeout": 300,
+            "LastModified": "2017-02-14T16:01:35.472+0000",
+            "Runtime": "python2.7",
+            "Description": "lambda created for unittesting ramuda deployment"
+        },
+        "ResponseMetadata": {
+            "RetryAttempts": 0,
+            "HTTPStatusCode": 200,
+            "RequestId": "e2a94e34-f2ce-11e6-9eb4-61c82e59b3a0",
+            "HTTPHeaders": {
+                "date": "Tue, 14 Feb 2017 16:01:45 GMT",
+                "x-amzn-requestid": "e2a94e34-f2ce-11e6-9eb4-61c82e59b3a0",
+                "content-length": "1733",
+                "content-type": "application/json",
+                "connection": "keep-alive"
+            }
+        }
+    }
+}

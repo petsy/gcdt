@@ -1,0 +1,29 @@
+{
+    "status_code": 200,
+    "data": {
+        "CodeSha256": "2CaJaDceZ2ubHiNoEDB3wEZ1P87s1E0E1RHn5B/2tNA=",
+        "FunctionName": "jenkins_test_miilbf",
+        "ResponseMetadata": {
+            "RetryAttempts": 0,
+            "HTTPStatusCode": 200,
+            "RequestId": "6359683d-f2cd-11e6-a216-0749cb3577d9",
+            "HTTPHeaders": {
+                "date": "Tue, 14 Feb 2017 15:51:03 GMT",
+                "x-amzn-requestid": "6359683d-f2cd-11e6-a216-0749cb3577d9",
+                "content-length": "546",
+                "content-type": "application/json",
+                "connection": "keep-alive"
+            }
+        },
+        "CodeSize": 124720,
+        "MemorySize": 128,
+        "FunctionArn": "arn:aws:lambda:eu-west-1:420189626185:function:jenkins_test_miilbf:2",
+        "Version": "2",
+        "Role": "arn:aws:iam::420189626185:role/unittest_miilbf_lambda",
+        "Timeout": 300,
+        "LastModified": "2017-02-14T15:51:03.505+0000",
+        "Handler": "handler.handle",
+        "Runtime": "python2.7",
+        "Description": "lambda created for unittesting ramuda deployment"
+    }
+}

@@ -1,0 +1,58 @@
+{
+    "status_code": 200,
+    "data": {
+        "ResponseMetadata": {
+            "RetryAttempts": 0,
+            "HTTPStatusCode": 200,
+            "RequestId": "53bb8549-b0c9-4a73-a74a-3cdec3e6d105",
+            "HTTPHeaders": {
+                "transfer-encoding": "chunked",
+                "vary": "Accept-Encoding",
+                "server": "AmazonEC2",
+                "content-type": "text/xml;charset=UTF-8",
+                "date": "Tue, 14 Feb 2017 16:26:33 GMT"
+            }
+        },
+        "Volumes": [
+            {
+                "AvailabilityZone": "eu-west-1a",
+                "Attachments": [
+                    {
+                        "AttachTime": {
+                            "hour": 16,
+                            "__class__": "datetime",
+                            "month": 2,
+                            "second": 35,
+                            "microsecond": 0,
+                            "year": 2017,
+                            "day": 14,
+                            "minute": 25
+                        },
+                        "InstanceId": "i-05f3b6c02afc2300c",
+                        "VolumeId": "vol-0b02d17196199a468",
+                        "State": "attached",
+                        "DeleteOnTermination": true,
+                        "Device": "/dev/xvda"
+                    }
+                ],
+                "Encrypted": false,
+                "VolumeType": "gp2",
+                "VolumeId": "vol-0b02d17196199a468",
+                "State": "in-use",
+                "Iops": 100,
+                "SnapshotId": "snap-0c1e86f8",
+                "CreateTime": {
+                    "hour": 16,
+                    "__class__": "datetime",
+                    "month": 2,
+                    "second": 35,
+                    "microsecond": 586000,
+                    "year": 2017,
+                    "day": 14,
+                    "minute": 25
+                },
+                "Size": 8
+            }
+        ]
+    }
+}

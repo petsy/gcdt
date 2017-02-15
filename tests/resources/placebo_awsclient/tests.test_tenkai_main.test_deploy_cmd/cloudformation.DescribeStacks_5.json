@@ -1,0 +1,62 @@
+{
+    "status_code": 200,
+    "data": {
+        "Stacks": [
+            {
+                "StackId": "arn:aws:cloudformation:eu-west-1:420189626185:stack/gcdt-test-tenkai-deploy/7f30c200-f2d0-11e6-860e-503abe701c29",
+                "Tags": [],
+                "Outputs": [
+                    {
+                        "Description": "InstanceId of the newly created EC2 instance",
+                        "OutputKey": "InstanceName",
+                        "OutputValue": "gcdt-test-tenkai-deployment_CT24POM"
+                    },
+                    {
+                        "Description": "Name of the App",
+                        "OutputKey": "ApplicationName",
+                        "OutputValue": "gcdt-test-tenkai-deploy-gcdtTenkaiTestingApp-LH6CX03D08A3"
+                    },
+                    {
+                        "Description": "InstanceId of the newly created EC2 instance",
+                        "OutputKey": "InstanceId",
+                        "OutputValue": "i-08f20452dcb2e993e"
+                    },
+                    {
+                        "Description": "Name of the DeploymentGroup",
+                        "OutputKey": "DeploymentGroupName",
+                        "OutputValue": "gcdt-test-tenkai-deploy-gcdtTestDeploymentGroup-ILDV2U3ZFV8Y"
+                    }
+                ],
+                "StackStatusReason": "User Initiated",
+                "CreationTime": {
+                    "hour": 16,
+                    "__class__": "datetime",
+                    "month": 2,
+                    "second": 18,
+                    "microsecond": 248000,
+                    "year": 2017,
+                    "day": 14,
+                    "minute": 13
+                },
+                "Capabilities": [
+                    "CAPABILITY_IAM"
+                ],
+                "StackName": "gcdt-test-tenkai-deploy",
+                "NotificationARNs": [],
+                "StackStatus": "DELETE_IN_PROGRESS",
+                "DisableRollback": false
+            }
+        ],
+        "ResponseMetadata": {
+            "RetryAttempts": 0,
+            "HTTPStatusCode": 200,
+            "RequestId": "468867bc-f2d1-11e6-8638-8f54db62d3dc",
+            "HTTPHeaders": {
+                "x-amzn-requestid": "468867bc-f2d1-11e6-8638-8f54db62d3dc",
+                "date": "Tue, 14 Feb 2017 16:18:52 GMT",
+                "content-length": "1896",
+                "content-type": "text/xml"
+            }
+        }
+    }
+}

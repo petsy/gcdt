@@ -1,20 +1,20 @@
 # -*- coding: utf-8 -*-
-from __future__ import print_function
-import os
-import sys
-import json
-import time
-import tarfile
+from __future__ import unicode_literals, print_function
 
-from boto3.s3.transfer import S3Transfer
+import json
+import sys
+import tarfile
+import time
+
+import os
 from clint.textui import colored
 
-from gcdt import monitoring, utils
+from . import utils
+from .s3 import upload_file_to_s3
 
 
-def deploy(boto_session, applicationName, deploymentGroupName, deploymentConfigName, bucket,
-           slack_token=None, slack_channel='systemmessages',
-           pre_bundle_scripts=None):
+def deploy(awsclient, applicationName, deploymentGroupName,
+           deploymentConfigName, bucket, pre_bundle_scripts=None):
     """Upload bundle and deploy to deployment group.
     This includes the bundle-action.
 
@@ -22,8 +22,6 @@ def deploy(boto_session, applicationName, deploymentGroupName, deploymentConfigN
     :param deploymentGroupName:
     :param deploymentConfigName:
     :param bucket:
-    :param slack_token:
-    :param slack_channel:
     :return: deploymentId from create_deployment
     """
     if pre_bundle_scripts:
@@ -32,10 +30,12 @@ def deploy(boto_session, applicationName, deploymentGroupName, deploymentConfigN
             print('Pre bundle script exited with error')
             sys.exit(1)
     bundlefile = bundle_revision()
-    etag, version = _upload_revision_to_s3(boto_session, bucket,
-                                           applicationName, bundlefile)
+    # upload revision to s3
+    etag, version = upload_file_to_s3(awsclient, bucket,
+                                      _build_bundle_key(applicationName),
+                                      bundlefile)
 
-    client_codedeploy = boto_session.client('codedeploy')
+    client_codedeploy = awsclient.get_client('codedeploy')
     response = client_codedeploy.create_deployment(
         applicationName=applicationName,
         deploymentGroupName=deploymentGroupName,
@@ -56,18 +56,18 @@ def deploy(boto_session, applicationName, deploymentGroupName, deploymentConfigN
 
     print("Deployment: {} -> URL: https://{}.console.aws.amazon.com/codedeploy/home?region={}#/deployments/{}".format(
         response['deploymentId'],
-        boto_session.region_name,
-        boto_session.region_name,
+        client_codedeploy.meta.region_name,
+        client_codedeploy.meta.region_name,
         response['deploymentId'],
     ))
 
-    message = 'tenkai bot: deployed deployment group %s ' % deploymentGroupName
-    monitoring.slack_notification(slack_channel, message, slack_token)
+    #message = 'tenkai bot: deployed deployment group %s ' % deploymentGroupName
+    #monitoring.slack_notification(slack_channel, message, slack_token)
 
     return response['deploymentId']
 
 
-def deployment_status(boto_session, deploymentId, iterations=100):
+def deployment_status(awsclient, deploymentId, iterations=100):
     """Wait until an deployment is in an steady state and output information.
 
     :param deploymentId:
@@ -76,7 +76,7 @@ def deployment_status(boto_session, deploymentId, iterations=100):
     """
     counter = 0
     steady_states = ['Succeeded', 'Failed', 'Stopped']
-    client_codedeploy = boto_session.client('codedeploy')
+    client_codedeploy = awsclient.get_client('codedeploy')
 
     while counter <= iterations:
         response = client_codedeploy.get_deployment(deploymentId=deploymentId)
@@ -84,7 +84,7 @@ def deployment_status(boto_session, deploymentId, iterations=100):
 
         if status not in steady_states:
             print('Deployment: %s - State: %s' % (deploymentId, status))
-            sys.stdout.flush()
+            #sys.stdout.flush()
             time.sleep(10)
         elif status == 'Failed':
             print(
@@ -111,44 +111,6 @@ def bundle_revision(outputpath='/tmp'):
     tarfile_name = _make_tar_file(path='./codedeploy',
                                   outputpath=outputpath)
     return tarfile_name
-
-
-def prepare_artifacts_bucket(boto_session, bucket):
-    """Prepare the bucket if it does not exist.
-
-    :param bucket:
-    """
-    if not _bucket_exists(boto_session, bucket):
-        _create_bucket(boto_session, bucket)
-
-
-def _upload_revision_to_s3(boto_session, bucket, applicationName, file):
-    client_s3 = boto_session.client('s3')
-    transfer = S3Transfer(client_s3)
-    # Upload /tmp/myfile to s3://bucket/key and print upload progress.
-    transfer.upload_file(file, bucket, _build_bundle_key(applicationName))
-    response = client_s3.head_object(Bucket=bucket,
-                                  Key=_build_bundle_key(applicationName))
-
-    return response['ETag'], response['VersionId']
-
-
-def _bucket_exists(boto_session, bucket):
-    client_s3 = boto_session.resource('s3')
-    return client_s3.Bucket(bucket) in client_s3.buckets.all()
-
-
-def _create_bucket(boto_session, bucket):
-    client_s3 = boto_session.client('s3')
-    client_s3.create_bucket(
-        Bucket=bucket
-    )
-    client_s3.put_bucket_versioning(
-        Bucket=bucket,
-        VersioningConfiguration={
-            'Status': 'Enabled'
-        }
-    )
 
 
 def _build_bundle_key(application_name):

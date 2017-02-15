@@ -1,22 +1,22 @@
 # -*- coding: utf-8 -*-
-from __future__ import print_function
-import os
-import sys
-from time import sleep
+from __future__ import unicode_literals, print_function
+
 import getpass
 import subprocess
+from time import sleep
 
+import os
 from clint.textui import prompt, colored
 from pyhocon import ConfigFactory
-import credstash
 
 from gcdt import __version__
+#from gcdt.config_reader import _get_datadog_api_key
 from gcdt.package_utils import get_package_versions
 
 
-def version(out=sys.stdout):
+def version():
     """Print version of gcdt tools."""
-    print("gcdt version %s" % __version__, file=out)
+    print("gcdt version %s" % __version__)
 
 
 def retries(max_tries, delay=1, backoff=2, exceptions=(Exception,), hook=None):
@@ -71,43 +71,6 @@ def retries(max_tries, delay=1, backoff=2, exceptions=(Exception,), hook=None):
     return dec
 
 
-# config
-
-def read_gcdt_user_config(gcdt_file=None, compatibility_mode=None):
-    """Read .gcdt config file from user home.
-    supports compatibility for .kumo, .tenkai, .ramuda, etc. files
-
-    :return: slack_token or None
-    """
-    extension = 'gcdt'
-    if compatibility_mode and compatibility_mode not in \
-            ['kumo', 'tenkai', 'ramuda', 'yugen']:
-        print(colored.red('Unknown compatibility mode: %s' % compatibility_mode))
-        print(colored.red('No user configuration!'))
-        return
-    elif gcdt_file and compatibility_mode:
-        extension = compatibility_mode
-    elif not gcdt_file:
-        gcdt_file = os.path.expanduser('~') + '/.' + extension
-        if os.path.isfile(gcdt_file):
-            pass
-        elif compatibility_mode:
-            extension = compatibility_mode
-            gcdt_file = os.path.expanduser('~') + '/.' + extension
-    try:
-        config = ConfigFactory.parse_file(gcdt_file)
-        slack_token = config.get('%s.slack-token' % extension)
-        try:
-            slack_channel = config.get('%s.slack-channel' % extension)
-        except Exception:
-            slack_channel = 'systemmessages'
-        return slack_token, slack_channel
-    except Exception:
-        print(colored.red('Cannot find config file .gcdt in your home directory'))
-        print(colored.red('Please run \'gcdt configure\''))
-        return None, None
-
-
 def read_gcdt_user_config_value(key, default=None, gcdt_file=None):
     """Read .gcdt config file from user home and return value for key.
     Configuration keys are in the form <command>.<key>
@@ -125,34 +88,6 @@ def read_gcdt_user_config_value(key, default=None, gcdt_file=None):
     return value
 
 
-def _get_slack_token_from_user():
-    slack_token = prompt.query('Please enter your Slack API token: ')
-    return slack_token
-
-
-def configure(config_file=None):
-    """Create the .gcdt config file in the users home folder.
-
-    :param config_file:
-    """
-    if not config_file:
-        config_file = os.path.expanduser('~') + '/' + '.gcdt'
-    slack_token = _get_slack_token_from_user()
-    with open(config_file, 'w') as config:
-        config.write('gcdt {\n')
-        config.write('slack-token=%s' % slack_token)
-        config.write('\n}')
-
-
-def _get_datadog_api_key(boto_session):
-    api_key = None
-    try:
-        api_key = credstash.get_secret(boto_session, 'datadog.api_key')
-    except Exception:
-        pass
-    return api_key
-
-
 def _get_user():
     return getpass.getuser()
 
@@ -168,7 +103,7 @@ def _get_env():
     return env
 
 
-def get_context(boto_session, tool, command):
+def get_context(awsclient, tool, command, arguments=None):
     """This assembles the tool context. Private members are preceded by a '_'.
 
     :param tool:
@@ -176,9 +111,12 @@ def get_context(boto_session, tool, command):
     :return: dictionary containing the gcdt tool context
     """
     # TODO: elapsed, artifact(stack, depl-grp, lambda, api)
+    if arguments is None:
+        arguments = {}
     context = {
         'tool': tool,
         'command': command,
+        '_arguments': arguments,  # TODO clean up arguments -> args
         'version': __version__,
         'user': _get_user()
     }
@@ -186,10 +124,6 @@ def get_context(boto_session, tool, command):
     env = _get_env()
     if env:
         context['env'] = env
-
-    datadog_api_key = _get_datadog_api_key(boto_session)
-    if datadog_api_key:
-        context['_datadog_api_key'] = datadog_api_key
 
     return context
 
@@ -202,16 +136,6 @@ def get_command(arguments):
     """
     return [k for k, v in arguments.iteritems()
             if not k.startswith('-') and v is True][0]
-
-
-# gets Outputs for a given StackName (from glomex-utils/servicediscovery.py)
-def get_outputs_for_stack(boto_session, stack_name):
-    client_cf = boto_session.client('cloudformation')
-    response = client_cf.describe_stacks(StackName=stack_name)
-    result = {}
-    for output in response["Stacks"][0]["Outputs"]:
-        result[output["OutputKey"]] = output["OutputValue"]
-    return result
 
 
 def execute_scripts(scripts):
@@ -240,3 +164,60 @@ def check_gcdt_update():
     if inst_version < latest_version:
         print(colored.yellow('Please consider an update to gcdt version: %s' %
                              latest_version))
+
+
+# adapted from:
+# http://stackoverflow.com/questions/7204805/dictionaries-of-dictionaries-merge/7205107#7205107
+def dict_merge(a, b, path=None):
+    """merges b into a"""
+    if path is None:
+        path = []
+    for key in b:
+        if key in a:
+            if isinstance(a[key], dict) and isinstance(b[key], dict):
+                dict_merge(a[key], b[key], path + [str(key)])
+            elif a[key] != b[key]:
+                # update the value
+                a[key] = b[key]
+        else:
+            a[key] = b[key]
+    return a
+
+
+def are_credentials_still_valid(awsclient):
+    """Check whether the credentials have expired.
+
+    :param awsclient:
+    :return: exit_code
+    """
+    client = awsclient.get_client('lambda')
+    try:
+        client.list_functions()
+    except Exception as e:
+        print(e)
+        print(colored.red('Your credentials have expired... Please renew and try again!'))
+        return 1
+    return 0
+
+
+# dead code, not used!!
+'''
+def check_aws_credentials(awsclient):
+    """
+    A decorator that will check for valid credentials
+    """
+
+    def wrapper(func):
+        @wraps(func)
+        def wrapped(*args, **kwargs):
+            exit_code = are_credentials_still_valid(awsclient)
+            if exit_code:
+                # TODO: remove exit()
+                sys.exit()
+            result = func(*args, **kwargs)
+            return result
+
+        return wrapped
+
+    return wrapper
+'''

@@ -14,7 +14,7 @@ Usage:
         kumo generate
         kumo preview
         kumo version
-        kumo dot | dot -Tsvg -ocloudformation.svg
+        kumo dot
 ```
 
 ### Commands
@@ -40,7 +40,15 @@ will create a CloudFormation ChangeSet with your current changes to the template
 will print the version of gcdt you are using
 
 #### dot
-Visualize the cloudformation template (does not need AWS). Installation of the dot binary is required to convert the dot output into svg (http://www.graphviz.org/Download_macos.php).
+Visualize the cloudformation template of your stack using `kumo dot`.
+
+![Sample Cloudformation](_static/images/cloudformation.svg "Supercars Demo Stack")
+
+Installation of the dot binary is required on your Mac to convert the graph into svg (http://www.graphviz.org/Download_macos.php).
+
+``` bash
+$ brew install graphviz
+```
 
 ### Folder Layout
 

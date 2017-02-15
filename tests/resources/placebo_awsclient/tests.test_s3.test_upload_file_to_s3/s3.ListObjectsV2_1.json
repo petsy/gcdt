@@ -1,0 +1,43 @@
+{
+    "status_code": 200,
+    "data": {
+        "MaxKeys": 1000,
+        "Prefix": "",
+        "Name": "unittest-lambda-s3-event-source-moshou",
+        "ResponseMetadata": {
+            "HTTPStatusCode": 200,
+            "RetryAttempts": 0,
+            "HostId": "I0dT35oo9VFf3aDWXjRFcV/QLeWIRctbUqCzv2aa/JHwfU/qxM5SViPIRO/R+Pbrzf0n5cPu1no=",
+            "RequestId": "175DD6DDD0E1CF01",
+            "HTTPHeaders": {
+                "x-amz-bucket-region": "eu-west-1",
+                "x-amz-id-2": "I0dT35oo9VFf3aDWXjRFcV/QLeWIRctbUqCzv2aa/JHwfU/qxM5SViPIRO/R+Pbrzf0n5cPu1no=",
+                "server": "AmazonS3",
+                "transfer-encoding": "chunked",
+                "x-amz-request-id": "175DD6DDD0E1CF01",
+                "date": "Tue, 14 Feb 2017 16:04:12 GMT",
+                "content-type": "application/xml"
+            }
+        },
+        "KeyCount": 1,
+        "IsTruncated": false,
+        "Contents": [
+            {
+                "LastModified": {
+                    "hour": 16,
+                    "__class__": "datetime",
+                    "month": 2,
+                    "second": 12,
+                    "microsecond": 0,
+                    "year": 2017,
+                    "day": 14,
+                    "minute": 4
+                },
+                "ETag": "\"420f3b02d55a3d1fa002c8fc1467c1bb\"",
+                "StorageClass": "STANDARD",
+                "Key": "content.txt",
+                "Size": 6
+            }
+        ]
+    }
+}

@@ -1,0 +1,20 @@
+{
+    "status_code": 200,
+    "data": {
+        "Location": "http://unittest-lambda-s3-event-source-nplsmx.s3.amazonaws.com/",
+        "ResponseMetadata": {
+            "HTTPStatusCode": 200,
+            "RetryAttempts": 0,
+            "HostId": "MRjyPrY6P/yp7MRgH88EYcp27BmC2pPYmMZtS8kazdU0ep+mNxvp7cmGWm0m8MsYPk8ZPAWDw5k=",
+            "RequestId": "92F0658F5EBBF17A",
+            "HTTPHeaders": {
+                "content-length": "0",
+                "x-amz-id-2": "MRjyPrY6P/yp7MRgH88EYcp27BmC2pPYmMZtS8kazdU0ep+mNxvp7cmGWm0m8MsYPk8ZPAWDw5k=",
+                "server": "AmazonS3",
+                "x-amz-request-id": "92F0658F5EBBF17A",
+                "location": "http://unittest-lambda-s3-event-source-nplsmx.s3.amazonaws.com/",
+                "date": "Tue, 14 Feb 2017 15:56:33 GMT"
+            }
+        }
+    }
+}

@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals, print_function
 import os
 
 from nose.tools import assert_equal, assert_true, assert_items_equal, \
@@ -7,7 +8,8 @@ from nose.tools import assert_equal, assert_true, assert_items_equal, \
 from gcdt.tenkai_core import _make_tar_file, _files_to_bundle, bundle_revision, \
     _build_bundle_key
 
-from .helpers import here, temp_folder
+from .helpers import temp_folder  # fixtures!
+from . import here
 
 
 def test_make_tar_file(temp_folder):

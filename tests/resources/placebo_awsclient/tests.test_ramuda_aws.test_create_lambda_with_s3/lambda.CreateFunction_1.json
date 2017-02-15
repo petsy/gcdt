@@ -1,0 +1,29 @@
+{
+    "status_code": 201,
+    "data": {
+        "CodeSha256": "vnjtrE5/tV1iT54RMHCRlL6cwa+NVLS+zr9dtPGWHfU=",
+        "FunctionName": "jenkins_test_oxfzts",
+        "ResponseMetadata": {
+            "RetryAttempts": 0,
+            "HTTPStatusCode": 201,
+            "RequestId": "3ba44f26-f2cd-11e6-a568-5163192d1fca",
+            "HTTPHeaders": {
+                "date": "Tue, 14 Feb 2017 15:49:56 GMT",
+                "x-amzn-requestid": "3ba44f26-f2cd-11e6-a568-5163192d1fca",
+                "content-length": "525",
+                "content-type": "application/json",
+                "connection": "keep-alive"
+            }
+        },
+        "CodeSize": 124403,
+        "MemorySize": 256,
+        "FunctionArn": "arn:aws:lambda:eu-west-1:420189626185:function:jenkins_test_oxfzts",
+        "Version": "1",
+        "Role": "arn:aws:iam::420189626185:role/unittest_oxfzts_lambda",
+        "Timeout": 300,
+        "LastModified": "2017-02-14T15:49:56.551+0000",
+        "Handler": "handler.handle",
+        "Runtime": "python2.7",
+        "Description": "lambda nodejs test for ramuda"
+    }
+}

@@ -1,15 +1,15 @@
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals, print_function
 import os
 import json
 from StringIO import StringIO
 
 from nose.tools import assert_equal
 import nose
+import pytest
 
 from gcdt.kumo_viz import cfn_viz, _analyze_sg
-
-
-def here(p): return os.path.join(os.path.dirname(__file__), p)
+from . import here
 
 
 def test_cfn_viz():

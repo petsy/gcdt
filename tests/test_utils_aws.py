@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals, print_function
 import os
 
 from nose.tools import assert_dict_contains_subset,assert_in
@@ -8,13 +9,14 @@ import pytest
 
 from gcdt.config_reader import read_config
 from gcdt.utils import get_context, execute_scripts
-from .helpers_aws import boto_session
-from .helpers import here
+
+from .helpers_aws import awsclient
+from . import here
 
 
 @pytest.mark.aws
-def test_get_context(boto_session):
-    actual = get_context(boto_session, 'kumo', 'deploy')
+def test_get_context(awsclient):
+    actual = get_context(awsclient, 'kumo', 'deploy')
     expected_subset = {
         'tool': 'kumo',
         'command': 'deploy',
@@ -28,13 +30,19 @@ def test_get_context(boto_session):
 
 
 @pytest.mark.aws
-def test_execute_scripts(boto_session):
+def test_execute_scripts(awsclient):
     start_dir = here('.')
     codedeploy_dir = here('resources/sample_pre_bundle_script_codedeploy')
     os.chdir(codedeploy_dir)
-    config = read_config(boto_session, 'codedeploy')
+    config = read_config(awsclient, 'codedeploy')
     pre_bundle_scripts = config.get('preBundle', None)
     assert_is_not_none(pre_bundle_scripts)
     exit_code = execute_scripts(pre_bundle_scripts)
     assert_equal(exit_code, 0)
     os.chdir(start_dir)
+
+
+# TODO
+'''
+are_credentials_still_valid
+'''

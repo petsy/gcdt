@@ -1,12 +1,11 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
 """Visualize cloudformation template."""
-
-from __future__ import print_function
+from __future__ import unicode_literals, print_function
 import sys
+import time
 from numbers import Number
 from compiler.ast import flatten
+import subprocess
 
 # based on original version from https://github.com/benbc/cloud-formation-viz
 # Author: Ben Butler-Cole
@@ -228,3 +227,22 @@ def _render(graph, subgraph=False, out=sys.stdout):
     for e in graph['edges']:
         print('"%s" -> "%s";' % (e['from'], e['to']), file=out)
     print('}', file=out)
+
+
+def svg_output(dotfile, outfile='cloudformation.svg'):
+    """Render template into svg file using the dot command (must be installed).
+
+    :param dotfile: path to the dotfile
+    :param outfile: filename for the output file
+    :return:
+    """
+    try:
+        cmd = ['dot', '-Tsvg', '-o' + outfile, dotfile]
+        subprocess.check_output(cmd, stderr=subprocess.STDOUT)
+    except subprocess.CalledProcessError as e:
+        sys.stderr.write(
+            '\033[01;31mError running command: %s resulted in the ' % e.cmd +
+            'following error: \033[01;32m %s' % e.output)
+        return 1
+
+    return 0

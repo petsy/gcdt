@@ -1,22 +1,24 @@
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals, print_function
 import os
 from tempfile import NamedTemporaryFile
-from StringIO import StringIO
 
 from nose.tools import assert_equal, assert_is_not_none
+import pytest
 
 from gcdt import utils
-from gcdt.utils import version, __version__, retries, configure, \
-    read_gcdt_user_config, get_command, read_gcdt_user_config_value, \
-    execute_scripts
-from .helpers import here, create_tempfile, cleanup_tempfiles
-from .helpers_aws import boto_session
+from gcdt.utils import version, __version__, retries,  \
+    get_command, read_gcdt_user_config_value, \
+    execute_scripts, dict_merge
+#from gcdt.utils import configure, read_gcdt_user_config
+from .helpers import create_tempfile, cleanup_tempfiles
+from . import here
 
 
-def test_version():
-    out = StringIO()
-    version(out=out)
-    assert_equal(out.getvalue().strip(), 'gcdt version %s' % __version__)
+def test_version(capsys):
+    version()
+    out, err = capsys.readouterr()
+    assert out.strip() == 'gcdt version %s' % __version__
 
 
 def test_retries_backoff():
@@ -82,6 +84,7 @@ def test_retries_raises_exception():
     assert_equal(state['h'], 4)
 
 
+'''
 def test_configure():
     stackname = 'my_stack'
 
@@ -97,8 +100,10 @@ def test_configure():
     # cleanup the testfile
     tf.close()
     os.unlink(tf.name)
+'''
 
 
+'''
 def test_read_user_config():
     expected_slack_token = 'my_slack_token'
     expected_slack_channel = 'my_slack_channel'
@@ -114,8 +119,10 @@ def test_read_user_config():
     # cleanup the testfile
     tf.close()
     os.unlink(tf.name)
+'''
 
 
+'''
 def test_read_user_config_comp_mode():
     expected_slack_token = 'my_slack_token'
 
@@ -129,8 +136,9 @@ def test_read_user_config_comp_mode():
     # cleanup the testfile
     tf.close()
     os.unlink(tf.name)
+'''
 
-
+'''
 def test_read_gcdt_user_config_value(cleanup_tempfiles):
     tf = create_tempfile('ramuda {\nfailDeploymentOnUnsuccessfulPing=true\n}')
     cleanup_tempfiles.append(tf)
@@ -147,6 +155,7 @@ def test_read_gcdt_user_config_value_default(cleanup_tempfiles):
     value = read_gcdt_user_config_value('ramuda.thisValueIsNotPresent',
                                         default='my_default', gcdt_file=tf)
     assert value == 'my_default'
+'''
 
 
 def test_command_version():
@@ -167,3 +176,25 @@ def test_command_delete_f():
         'version': False
     }
     assert_equal(get_command(arguments), 'delete')
+
+
+def test_dict_merge():
+    a = {'1': 1, '2': [2], '3': {'3': 3}}
+    dict_merge(a, {'3': 3})
+    assert a == {'1': 1, '2': [2], '3': 3}
+
+    dict_merge(a, {'4': 4})
+    assert a == {'1': 1, '2': [2], '3': 3, '4': 4}
+
+    dict_merge(a, {'4': {'4': 4}})
+    assert a == {'1': 1, '2': [2], '3': 3, '4': {'4': 4}}
+
+    dict_merge(a, {'4': {'5': 5}})
+    assert a == {'1': 1, '2': [2], '3': 3, '4': {'4': 4, '5': 5}}
+
+    dict_merge(a, {'2': [2, 2], '4': [4]})
+    assert a == {'1': 1, '2': [2, 2], '3': 3, '4': [4]}
+
+
+# TODO get_outputs_for_stack
+# TODO test_make_command

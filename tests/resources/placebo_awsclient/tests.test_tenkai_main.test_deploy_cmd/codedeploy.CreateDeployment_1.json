@@ -1,0 +1,16 @@
+{
+    "status_code": 200,
+    "data": {
+        "deploymentId": "d-2DWF3L8HK",
+        "ResponseMetadata": {
+            "RetryAttempts": 0,
+            "HTTPStatusCode": 200,
+            "RequestId": "f5a8d2f1-f2d0-11e6-85e5-7d251b1b088b",
+            "HTTPHeaders": {
+                "x-amzn-requestid": "f5a8d2f1-f2d0-11e6-85e5-7d251b1b088b",
+                "content-length": "30",
+                "content-type": "application/x-amz-json-1.1"
+            }
+        }
+    }
+}

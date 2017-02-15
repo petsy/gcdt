@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from __future__ import print_function
+from __future__ import unicode_literals, print_function
 import os
 
 from nose.tools import assert_equal, assert_greater_equal, \
@@ -10,7 +10,7 @@ from gcdt.logger import setup_logger
 from gcdt.yugen_core import deploy_api, delete_api, delete_api_key, \
     create_api_key, _template_variables_to_dict
 from . import helpers
-from .helpers_aws import check_preconditions, boto_session
+from .helpers_aws import check_preconditions, awsclient
 
 log = setup_logger(__name__)
 
@@ -19,26 +19,26 @@ def here(p): return os.path.join(os.path.dirname(__file__), p)
 
 
 @pytest.fixture(scope='function')  # 'function' or 'module'
-def cleanup_apis(boto_session):
+def cleanup_apis(awsclient):
     apis = []
     yield apis
     # cleanup
     for i in apis:
-        delete_api(boto_session, i)
+        delete_api(awsclient, i)
 
 
 @pytest.fixture(scope='function')  # 'function' or 'module'
-def cleanup_api_keys(boto_session):
+def cleanup_api_keys(awsclient):
     items = []
     yield items
     # cleanup
     for i in items:
-        delete_api_key(boto_session, i)
+        delete_api_key(awsclient, i)
 
 
 @pytest.mark.aws
 @check_preconditions
-def test_create_api(boto_session, cleanup_api_keys, cleanup_apis):
+def test_create_api(awsclient, cleanup_api_keys, cleanup_apis):
     log.info('running test_create_api')
 
     temp_string = helpers.random_string()
@@ -46,12 +46,12 @@ def test_create_api(boto_session, cleanup_api_keys, cleanup_apis):
     api_key_name = 'unittest-gcdt-sample-api-key-%s' % temp_string
     api_description = 'Gcdt sample API based on dp api-mock'
     target_stage = 'mock'
-    api_key = create_api_key(boto_session, api_name, api_key_name)
+    api_key = create_api_key(awsclient, api_name, api_key_name)
     cleanup_api_keys.append(api_key)
 
     lambdas = []
     deploy_api(
-        boto_session=boto_session,
+        awsclient=awsclient,
         api_name=api_name,
         api_description=api_description,
         stage_name=target_stage,
@@ -63,13 +63,14 @@ def test_create_api(boto_session, cleanup_api_keys, cleanup_apis):
 
 @pytest.mark.aws
 @check_preconditions
-def test_template_variables_to_dict_custom_hostname(boto_session):
+def test_template_variables_to_dict_custom_hostname(awsclient):
     api_name = 'apiName'
     api_description = 'apiDescription'
     api_target_stage = 'mock'
 
+    client_api = awsclient.get_client('apigateway')
     result = _template_variables_to_dict(
-        boto_session, api_name, api_description, api_target_stage,
+        client_api, api_name, api_description, api_target_stage,
         custom_hostname='chn', custom_base_path='cbp')
     assert_equal(result['apiName'], api_name)
     assert_equal(result['apiDescription'], api_description)
@@ -79,12 +80,12 @@ def test_template_variables_to_dict_custom_hostname(boto_session):
 
 @pytest.mark.aws
 @check_preconditions
-def test_template_variables_to_dict(boto_session):
+def test_template_variables_to_dict(awsclient):
     api_name = 'apiName'
     api_description = 'apiDescription'
     api_target_stage = 'mock'
-
-    result = _template_variables_to_dict(boto_session, api_name,
+    client_api = awsclient.get_client('apigateway')
+    result = _template_variables_to_dict(client_api, api_name,
                                          api_description, api_target_stage)
     assert_equal(result['apiName'], api_name)
     assert_equal(result['apiDescription'], api_description)
@@ -94,6 +95,28 @@ def test_template_variables_to_dict(boto_session):
 
 # FIXME: tests
 # * important test "yugen deploy" without valid key, I think there is a defect!
-# * get_lambdas
 # * test that reads config from file
-# * current coverage is 28% (that is not good enough!)
+# * current coverage is 35% (that is not good enough!)
+
+# TODO missing tests
+# export_to_swagger
+# list_apis
+# list_api_keys
+# create_custom_domain
+# get_lambdas
+# are_credentials_still_valid
+# _import_from_swagger
+# _update_from_swagger
+# _create_api
+# _wire_api_key
+# _create_deployment
+# _ensure_correct_base_path_mapping
+# _base_path_mapping_exists
+# _record_exists_and_correct
+# _create_new_custom_domain
+# _template_variables_to_dict
+# _ensure_lambda_permissions
+# _invoke_lambda_permission_exists
+# _custom_domain_name_exists
+# _basepath_to_string_if_null
+#

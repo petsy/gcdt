@@ -1,0 +1,20 @@
+{
+    "status_code": 200,
+    "data": {
+        "Location": "http://unittest-lambda-s3-event-source-moshou.s3.amazonaws.com/",
+        "ResponseMetadata": {
+            "HTTPStatusCode": 200,
+            "RetryAttempts": 0,
+            "HostId": "0HDuw+HDT8tcJj7nF8MtMucRWyh86c+jFvuI8Ai3Pl8oKw8zx4v3Qy6/DJAX81ZiuQ7c/GHQczo=",
+            "RequestId": "E16379B25C8E3AE5",
+            "HTTPHeaders": {
+                "content-length": "0",
+                "x-amz-id-2": "0HDuw+HDT8tcJj7nF8MtMucRWyh86c+jFvuI8Ai3Pl8oKw8zx4v3Qy6/DJAX81ZiuQ7c/GHQczo=",
+                "server": "AmazonS3",
+                "x-amz-request-id": "E16379B25C8E3AE5",
+                "location": "http://unittest-lambda-s3-event-source-moshou.s3.amazonaws.com/",
+                "date": "Tue, 14 Feb 2017 16:04:10 GMT"
+            }
+        }
+    }
+}
