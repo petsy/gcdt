@@ -5,7 +5,6 @@ author: glomex OPS Team
 The gcdt tools have emerged from our experiences at glomex while working extensively with
 Cloudformation, CodeDeploy, AWS Lambda, and API Gateway. 
 
-
 ## Useful gcdt information
 
 * [gcdt usage dashboard](https://app.datadoghq.com/screen/114476/glomex-cloud-deployment-tools-gcdt)
