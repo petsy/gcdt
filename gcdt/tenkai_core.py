@@ -28,6 +28,7 @@ def deploy(awsclient, applicationName, deploymentGroupName,
         exit_code = utils.execute_scripts(pre_bundle_scripts)
         if exit_code != 0:
             print('Pre bundle script exited with error')
+            # TODO unbelievable: another sys.exit in library code!!!
             sys.exit(1)
     bundlefile = bundle_revision()
     # upload revision to s3

@@ -1,21 +1,17 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals, print_function
-import os
+import logging
 
 from nose.tools import assert_equal, assert_greater_equal, \
     assert_in, assert_not_in, assert_regexp_matches
 import pytest
 
-from gcdt.logger import setup_logger
 from gcdt.yugen_core import deploy_api, delete_api, delete_api_key, \
     create_api_key, _template_variables_to_dict
-from . import helpers
+from . import helpers, here
 from .helpers_aws import check_preconditions, awsclient
 
-log = setup_logger(__name__)
-
-
-def here(p): return os.path.join(os.path.dirname(__file__), p)
+log = logging.getLogger(__name__)
 
 
 @pytest.fixture(scope='function')  # 'function' or 'module'
