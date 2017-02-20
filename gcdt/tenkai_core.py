@@ -2,19 +2,17 @@
 from __future__ import unicode_literals, print_function
 
 import json
-import sys
 import tarfile
 import time
 
 import os
 from clint.textui import colored
 
-from . import utils
 from .s3 import upload_file_to_s3
 
 
 def deploy(awsclient, applicationName, deploymentGroupName,
-           deploymentConfigName, bucket, pre_bundle_scripts=None):
+           deploymentConfigName, bucket):
     """Upload bundle and deploy to deployment group.
     This includes the bundle-action.
 
@@ -24,14 +22,8 @@ def deploy(awsclient, applicationName, deploymentGroupName,
     :param bucket:
     :return: deploymentId from create_deployment
     """
-    if pre_bundle_scripts:
-        exit_code = utils.execute_scripts(pre_bundle_scripts)
-        if exit_code != 0:
-            print('Pre bundle script exited with error')
-            # TODO unbelievable: another sys.exit in library code!!!
-            sys.exit(1)
     bundlefile = bundle_revision()
-    # upload revision to s3
+
     etag, version = upload_file_to_s3(awsclient, bucket,
                                       _build_bundle_key(applicationName),
                                       bundlefile)
@@ -61,9 +53,6 @@ def deploy(awsclient, applicationName, deploymentGroupName,
         client_codedeploy.meta.region_name,
         response['deploymentId'],
     ))
-
-    #message = 'tenkai bot: deployed deployment group %s ' % deploymentGroupName
-    #monitoring.slack_notification(slack_channel, message, slack_token)
 
     return response['deploymentId']
 
@@ -115,6 +104,7 @@ def bundle_revision(outputpath='/tmp'):
 
 
 def _build_bundle_key(application_name):
+    # key = bundle name on target
     return '%s/bundle.tar.gz' % application_name
 
 

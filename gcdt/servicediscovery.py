@@ -1,4 +1,8 @@
 # -*- coding: utf-8 -*-
+"""
+Note: This is used in cloudformation templates (at least in parts)
+A refactoring might break team-code!!
+"""
 from __future__ import unicode_literals, print_function
 from distutils.version import StrictVersion
 from datetime import tzinfo, timedelta, datetime
@@ -90,13 +94,13 @@ def get_base_ami(awsclient, owners=None):
             Owners=owners,
             Filters=image_filter
             )['Images']:
-        print(i)
+        #print(i)
         m = re.search(r'(Ops_Base-Image)_(\d+.\d+.\d+)_(\d+)$', i['Name'])
         if m:
             version = StrictVersion(m.group(2))
             timestamp = m.group(3)
             creation_date = parse_ts(i['CreationDate'])
-            print(creation_date)
+            #print(creation_date)
 
             if creation_date > latest_ts and version >=latest_version:
                 latest_id = i['ImageId']

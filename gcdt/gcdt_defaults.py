@@ -7,6 +7,8 @@ hardcoded default values.
 
 
 DEFAULT_CONFIG = {
+    # this moved with config reader to gcdt-plugins
+    '''
     'kumo': {
         'config_base_name': 'settings'
     },
@@ -19,4 +21,5 @@ DEFAULT_CONFIG = {
     'yugen': {
         'config_base_name': 'api'
     }
+    '''
 }

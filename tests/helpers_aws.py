@@ -15,7 +15,6 @@ from . import helpers
 from .placebo_awsclient import PlaceboAWSClient
 from gcdt import __version__
 from gcdt.config_reader import read_config
-from gcdt.gcdt_defaults import DEFAULT_CONFIG
 
 
 log = logging.getLogger(__name__)
@@ -300,6 +299,21 @@ def get_tooldata(awsclient, tool, command, config=None, config_base_name=None,
     :param location:
     :return:
     """
+    # TODO refactor tooldata for testing to read from json config files
+    DEFAULT_CONFIG = {
+        'kumo': {
+            'config_base_name': 'settings'
+        },
+        'tenkai': {
+            'config_base_name': 'codedeploy'
+        },
+        'ramuda': {
+            'config_base_name': 'lambda'
+        },
+        'yugen': {
+            'config_base_name': 'api'
+        }
+    }
     if config is None:
         if config_base_name is None:
             config_base_name = DEFAULT_CONFIG[tool].get('config_base_name',
