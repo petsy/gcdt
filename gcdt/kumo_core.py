@@ -16,7 +16,7 @@ from clint.textui import colored, prompt
 from pyspin.spin import Default, Spinner
 from tabulate import tabulate
 
-from .config_reader import get_env
+from .utils import get_env
 from .s3 import upload_file_to_s3
 
 

@@ -3,7 +3,6 @@ from __future__ import unicode_literals, print_function
 import os
 import logging
 
-from pyhocon import ConfigFactory
 from nose.tools import assert_equal, assert_false
 import pytest
 
@@ -11,6 +10,7 @@ from gcdt.kumo_core import deploy_stack, load_cloudformation_template, delete_st
 from gcdt.utils import are_credentials_still_valid
 from gcdt.servicediscovery import get_outputs_for_stack
 from gcdt.tenkai_core import deploy as tenkai_deploy, deployment_status
+from gcdt.gcdt_config_reader import read_json_config
 from .helpers_aws import check_preconditions
 from .helpers_aws import cleanup_buckets, awsclient  # fixtures!
 from . import here
@@ -18,10 +18,10 @@ from . import here
 log = logging.getLogger(__name__)
 
 
-# read template and config
-config_sample_codeploy_stack = ConfigFactory.parse_file(
-    here('resources/sample_codedeploy_app/settings_dev.conf')
-)
+# read config
+config_sample_codeploy_stack = read_json_config(
+    here('resources/sample_codedeploy_app/gcdt_dev.json')
+)['kumo']
 
 
 @pytest.fixture(scope='function')  # 'function' or 'module'

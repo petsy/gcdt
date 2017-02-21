@@ -12,7 +12,7 @@ import troposphere
 from troposphere.ec2 import Instance
 from troposphere.route53 import RecordSetType
 
-from .config_reader import get_env
+from .utils import get_env
 from .servicediscovery import get_outputs_for_stack
 
 TTL_DEFAULT = 300

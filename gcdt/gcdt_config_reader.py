@@ -1,11 +1,19 @@
 # -*- coding: utf-8 -*-
-"""config_reader reads a config in HOCON format.
-
-If local set ENV variable to LOCAL and it will use settings_local.conf
-Standard is no ENV variable and then it uses a settings.conf
+"""config_reader reads a config injson format.
 """
-
 from __future__ import unicode_literals, print_function
+import json
+# TODO write config_reader for 'gcdt_<env>.json'
+
+
+def read_json_config(config_file):
+    # currently this is only a helper for test
+    with open(config_file) as jfile:
+        data = json.load(jfile)
+    return data
+
+
+'''
 from collections import OrderedDict
 import os
 
@@ -286,9 +294,9 @@ class ItemNotFound(Exception):
 def get_secret(awsclient, name, version="",  # region=None,
                 table="credential-store", context=None,
                **kwargs):
-    '''
+    """
     fetch and decrypt the secret called `name`
-    '''
+    """
     if context is None:
         context = {}
     client_ddb = awsclient.get_client('dynamodb')
@@ -356,3 +364,4 @@ def get_secret(awsclient, name, version="",  # region=None,
     plaintext = decryptor.decrypt(b64decode(material['contents']['S'])).decode(
         "utf-8")
     return plaintext
+'''

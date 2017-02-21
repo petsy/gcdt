@@ -92,7 +92,7 @@ def _get_user():
     return getpass.getuser()
 
 
-def _get_env():
+def get_env():
     """
     Read environment from ENV and mangle it to a (lower case) representation
     :return: Environment as lower case string (or None if not matched)
@@ -121,7 +121,7 @@ def get_context(awsclient, tool, command, arguments=None):
         'user': _get_user()
     }
 
-    env = _get_env()
+    env = get_env()
     if env:
         context['env'] = env
 

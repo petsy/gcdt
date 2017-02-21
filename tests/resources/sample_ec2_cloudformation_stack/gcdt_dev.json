@@ -1,0 +1,7 @@
+{
+  "kumo": {
+    "cloudformation": {
+      "StackName": "infra-dev-gcdt-test-ensure-ebs"
+    }
+  }
+}

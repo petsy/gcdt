@@ -1,0 +1,8 @@
+{
+  "kumo": {
+    "cloudformation": {
+      "StackName": "infra-dev-kumo-sample-stack-with-hooks",
+      "InstanceType": "t2.medium"
+    }
+  }
+}
