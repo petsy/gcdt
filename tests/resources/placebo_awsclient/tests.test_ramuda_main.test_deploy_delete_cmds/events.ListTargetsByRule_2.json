@@ -1,0 +1,21 @@
+{
+    "status_code": 400, 
+    "data": {
+        "ResponseMetadata": {
+            "RetryAttempts": 0, 
+            "HTTPStatusCode": 400, 
+            "RequestId": "c8da5c0a-f859-11e6-acde-3f659103f1fa", 
+            "HTTPHeaders": {
+                "x-amzn-requestid": "c8da5c0a-f859-11e6-acde-3f659103f1fa", 
+                "date": "Tue, 21 Feb 2017 17:18:38 GMT", 
+                "content-length": "103", 
+                "content-type": "application/x-amz-json-1.1", 
+                "connection": "close"
+            }
+        }, 
+        "Error": {
+            "Message": "Rule infra-dev-sample-lambda-jobr-T2 does not exist.", 
+            "Code": "ResourceNotFoundException"
+        }
+    }
+}
