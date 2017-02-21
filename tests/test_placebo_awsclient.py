@@ -18,7 +18,6 @@ def awsclient(request, temp_folder):
     # note this is a specialized version since the version in helpers_aws is
     # controlled via env variables
     prefix = request.module.__name__ + '.' + request.function.__name__
-    #record_dir = os.path.join(here('./resources/placebo_awsclient'), prefix)
     record_dir = os.path.join(temp_folder[0], 'placebo_awsclient', prefix)
     if not os.path.exists(record_dir):
         os.makedirs(record_dir)
@@ -51,20 +50,6 @@ def test_playback(awsclient):
     assert awsclient._events == ['before-call.*.*']
     awsclient.stop()
     assert awsclient._events == []
-
-
-# I do not think we need the bookkeeping!
-#def test_clients(self):
-#    ec2 = self.session.client('ec2')
-#    iam = self.session.client('iam')
-#    assert len(awsclient.clients), 2)
-#    self.assertTrue(ec2 in awsclient.clients)
-#    self.assertTrue(iam in awsclient.clients)
-#    session = boto3.Session(profile_name='foobar',
-#                            region_name='us-west-2')
-#    new_ec2 = session.client('ec2')
-#    assert len(awsclient.clients), 2)
-#    self.assertFalse(new_ec2 in awsclient.clients)
 
 
 ### from test_save.py

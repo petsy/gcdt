@@ -10,7 +10,6 @@ from clint.textui import prompt, colored
 from pyhocon import ConfigFactory
 
 from gcdt import __version__
-#from gcdt.config_reader import _get_datadog_api_key
 from gcdt.package_utils import get_package_versions
 
 
@@ -198,26 +197,3 @@ def are_credentials_still_valid(awsclient):
         print(colored.red('Your credentials have expired... Please renew and try again!'))
         return 1
     return 0
-
-
-# dead code, not used!!
-'''
-def check_aws_credentials(awsclient):
-    """
-    A decorator that will check for valid credentials
-    """
-
-    def wrapper(func):
-        @wraps(func)
-        def wrapped(*args, **kwargs):
-            exit_code = are_credentials_still_valid(awsclient)
-            if exit_code:
-                # TODO: remove exit()
-                sys.exit()
-            result = func(*args, **kwargs)
-            return result
-
-        return wrapped
-
-    return wrapper
-'''

@@ -94,13 +94,11 @@ def get_base_ami(awsclient, owners=None):
             Owners=owners,
             Filters=image_filter
             )['Images']:
-        #print(i)
         m = re.search(r'(Ops_Base-Image)_(\d+.\d+.\d+)_(\d+)$', i['Name'])
         if m:
             version = StrictVersion(m.group(2))
             timestamp = m.group(3)
             creation_date = parse_ts(i['CreationDate'])
-            #print(creation_date)
 
             if creation_date > latest_ts and version >=latest_version:
                 latest_id = i['ImageId']

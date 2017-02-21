@@ -295,12 +295,12 @@ def get_tooldata(awsclient, tool, command, config=None, config_base_name=None,
     :param awsclient:
     :param tool:
     :param command:
-    :param config:
+    :param config: provide custom config or empty to read from file
     :param config_base_name:
     :param location:
     :return:
     """
-    # TODO refactor tooldata for testing to read from 'gcdt_<env>.json' files
+    # for testing to read from 'gcdt_<env>.json' files
     if config is None:
         if config_base_name is None:
             config_base_name = 'gcdt'
@@ -320,5 +320,4 @@ def get_tooldata(awsclient, tool, command, config=None, config_base_name=None,
         },
         'config': config
     }
-    tooldata['config'] = config
     return tooldata

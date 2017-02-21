@@ -241,7 +241,6 @@ def get_lambdas(awsclient, config, add_arn=False):
     """
     if 'lambda' in config:
         client_lambda = awsclient.get_client('lambda')
-        #lambda_entries = config.get('lambda.entries', [])
         lambda_entries = config['lambda'].get('entries', [])
         lmbdas = []
         for lambda_entry in lambda_entries:

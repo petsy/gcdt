@@ -3,7 +3,8 @@
 """Helper to create Route53 entries
 """
 
-# FIXME: it looks like this is not used at all!!
+# TODO: this is probably only used in cloudformation
+# TODO: add documentation how to use it!
 
 from __future__ import unicode_literals, print_function
 import sys

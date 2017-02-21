@@ -3,7 +3,7 @@ from __future__ import unicode_literals, print_function
 import os
 import textwrap
 
-from nose.tools import assert_equal, assert_not_in
+from nose.tools import assert_equal
 
 from gcdt.yugen_core import _compile_template, _arn_to_uri, \
     _get_region_and_account_from_lambda_arn

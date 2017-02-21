@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals, print_function
-import copy
 import sys
 import logging
 
@@ -14,7 +13,6 @@ from . import gcdt_signals
 from .gcdt_defaults import DEFAULT_CONFIG
 from .utils import dict_merge, get_context, check_gcdt_update, \
     are_credentials_still_valid
-#from .config_reader import read_config
 from .gcdt_cmd_dispatcher import cmd, get_command
 from .gcdt_plugins import load_plugins
 from .gcdt_awsclient import AWSClient
@@ -59,8 +57,6 @@ def lifecycle(awsclient, tool, command, arguments):
 
     config = {}
     gcdt_signals.config_read_init.send((context, config))
-    #config = read_config(awsclient, config_base_name=
-    #    DEFAULT_CONFIG[tool].get('config_base_name', tool))
     gcdt_signals.config_read_finalized.send((context, config))
 
     # TODO lookup

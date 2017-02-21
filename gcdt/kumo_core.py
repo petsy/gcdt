@@ -9,8 +9,6 @@ import sys
 import time
 
 import os
-#import pyhocon.exceptions
-#from pyhocon.exceptions import ConfigMissingException
 import six
 from clint.textui import colored, prompt
 from pyspin.spin import Default, Spinner
@@ -52,7 +50,6 @@ def print_parameter_diff(awsclient, config):
     """
     client_cf = awsclient.get_client('cloudformation')
     try:
-        #stackname = config['cloudformation.StackName']
         stackname = config['cloudformation']['StackName']
         if stackname:
             response = client_cf.describe_stacks(StackName=stackname)
@@ -62,7 +59,6 @@ def print_parameter_diff(awsclient, config):
             else:
                 return None
         else:
-            #except pyhocon.exceptions.ConfigMissingException:
             print('StackName is not configured, could not create parameter diff')
             return None
     except:
@@ -80,12 +76,10 @@ def print_parameter_diff(awsclient, config):
                 old = param['ParameterValue']
                 if ',' in old:
                     old = old.split(',')
-                #new = config.get('cloudformation.' + param['ParameterKey'])
                 new = config['cloudformation'][param['ParameterKey']]
                 if old != new:
                     table.append([param['ParameterKey'], old, new])
                     changed += 1
-            #except pyhocon.exceptions.ConfigMissingException:
             except Exception:
                 print('Did not find %s in local config file' % param['ParameterKey'])
 
@@ -270,7 +264,6 @@ def _generate_parameter_entry(conf, raw_param):
 
 
 def _get_conf_value(conf, raw_param):
-    #conf_value = conf.get('cloudformation.' + raw_param)
     conf_value = conf['cloudformation'][raw_param]
     if isinstance(conf_value, list):
         # if list or array then join to comma separated list
@@ -316,8 +309,6 @@ def deploy_stack(awsclient, conf, cloudformation, override_stack_policy=False):
     """
     stackname = _get_stack_name(conf)
     parameters = _generate_parameters(conf)
-    #_call_hook(awsclient, conf, stackname, parameters, cloudformation,
-    #           hook='pre_hook')
     if _stack_exists(awsclient, stackname):
         exit_code = _update_stack(awsclient, conf, cloudformation,
                                   parameters, override_stack_policy)

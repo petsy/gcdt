@@ -64,7 +64,6 @@ def deploy_cmd(**tooldata):
         lambdas=lambdas
     )
     if 'customDomain' in config:
-        #domain_name = conf.get('customDomain.domainName')
         domain_name = config['customDomain'].get('domainName')
         route_53_record = config['customDomain'].get('route53Record')
         ssl_cert = {

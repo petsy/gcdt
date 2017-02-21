@@ -11,12 +11,7 @@ from .gcdt_cmd_dispatcher import cmd
 
 
 # creating docopt parameters and usage help
-# we do not need the configure any more!
-#        gcdt configure
-#        gcdt version
-#
-#-h --help           show this
-DOC = ''''Usage:
+DOC = '''Usage:
         gcdt version
 
 -h --help           show this

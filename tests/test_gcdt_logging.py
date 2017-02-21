@@ -10,6 +10,9 @@ import pytest
 from gcdt.gcdt_logging import logging_config, GcdtFormatter
 
 
+#TODO find proper log capture tool for pytest
+
+
 def test_gcdt_logging_config_debug(capsys):
     lc = deepcopy(logging_config)
     lc['loggers']['gcdt']['level'] = 'DEBUG'
@@ -25,7 +28,7 @@ def test_gcdt_logging_config_debug(capsys):
     out, err = capsys.readouterr()
 
     assert out == textwrap.dedent("""\
-        DEBUG: test_gcdt_logging: 20: debug message
+        DEBUG: test_gcdt_logging: 23: debug message
         info message
         WARNING: warning message
         ERROR: error message

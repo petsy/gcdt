@@ -83,7 +83,6 @@ def deployment_status(awsclient, deploymentId, iterations=100):
                     json.dumps(response['deploymentInfo']['errorInformation'], indent=2)
                 ))
             )
-            # sys.exit(1)
             return 1
         else:
             print('Deployment: %s - State: %s' % (deploymentId, status))

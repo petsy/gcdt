@@ -42,7 +42,6 @@ def test_version_cmd(capsys):
 def test_list_cmd(awsclient, capsys):
     tooldata = get_tooldata(
         awsclient, 'kumo', 'list',
-        #config_base_name='settings_large',
         config_base_name='gcdt_large',
         location=here('./resources/simple_cloudformation_stack/'))
     list_cmd(**tooldata)
@@ -57,7 +56,6 @@ def test_preview_cmd(awsclient, simple_cloudformation_stack,
                      simple_cloudformation_stack_folder, capsys):
     tooldata = get_tooldata(
         awsclient, 'kumo', 'preview',
-        #config_base_name='settings_large',
         config_base_name='gcdt_large',
         location=here('./resources/simple_cloudformation_stack/'))
     preview_cmd(**tooldata)

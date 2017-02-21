@@ -34,7 +34,6 @@ def deploy_cmd(**tooldata):
     awsclient = context.get('_awsclient')
 
     prepare_artifacts_bucket(awsclient,
-                             #conf.get('codedeploy.artifactsBucket'))
                              config['codedeploy'].get('artifactsBucket'))
     # TODO deprecate prebundle hook with reference to new signal-based-hooks
     pre_bundle_scripts = config.get('preBundle', None)
@@ -46,10 +45,6 @@ def deploy_cmd(**tooldata):
 
     deployment = deploy(
         awsclient=awsclient,
-        #applicationName=conf.get('codedeploy.applicationName'),
-        #deploymentGroupName=conf.get('codedeploy.deploymentGroupName'),
-        #deploymentConfigName=conf.get('codedeploy.deploymentConfigName'),
-        #bucket=conf.get('codedeploy.artifactsBucket')
         applicationName=config['codedeploy'].get('applicationName'),
         deploymentGroupName=config['codedeploy'].get('deploymentGroupName'),
         deploymentConfigName=config['codedeploy'].get('deploymentConfigName'),

@@ -69,7 +69,6 @@ def _dummy_signal_factory(name, exp_signals):
     return _dummy_signal_handler
 
 
-#@mock.patch('gcdt.gcdt_lifecycle.read_config', return_value={'foo': 'bar'})
 @mock.patch('gcdt.gcdt_lifecycle.cmd.dispatch', return_value=0)
 @mock.patch('gcdt.gcdt_lifecycle.are_credentials_still_valid')
 @mock.patch('gcdt.gcdt_lifecycle.check_gcdt_update')
@@ -109,13 +108,10 @@ def test_lifecycle(mocked_load_plugins, mocked_check_gcdt_update,
 
     mocked_load_plugins.assert_called_once()
     mocked_check_gcdt_update.assert_called_once()
-    #mocked_read_config.assert_called_once_with('my_awsclient',
-    #                                           config_base_name=u'settings')
     mocked_are_credentials_still_valid.called_once_with('my_awsclient')
     mocked_cmd_dispatch.called_once_with('my_awsclient')
 
 
-#@mock.patch('gcdt.gcdt_lifecycle.read_config', return_value={'foo': 'bar'})
 @mock.patch('gcdt.gcdt_lifecycle.cmd.dispatch', side_effect=Exception)
 @mock.patch('gcdt.gcdt_lifecycle.are_credentials_still_valid')
 @mock.patch('gcdt.gcdt_lifecycle.check_gcdt_update')
@@ -154,8 +150,6 @@ def test_lifecycle_error(mocked_load_plugins, mocked_check_gcdt_update,
 
     mocked_load_plugins.assert_called_once()
     mocked_check_gcdt_update.assert_called_once()
-    #mocked_read_config.assert_called_once_with('my_awsclient',
-    #                                           config_base_name=u'settings')
     mocked_are_credentials_still_valid.called_once_with('my_awsclient')
     mocked_cmd_dispatch.called_once_with('my_awsclient')
 

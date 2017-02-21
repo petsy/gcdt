@@ -7,19 +7,5 @@ hardcoded default values.
 
 
 DEFAULT_CONFIG = {
-    # this moved with config reader to gcdt-plugins
-    '''
-    'kumo': {
-        'config_base_name': 'settings'
-    },
-    'tenkai': {
-        'config_base_name': 'codedeploy'
-    },
-    'ramuda': {
-        'config_base_name': 'lambda'
-    },
-    'yugen': {
-        'config_base_name': 'api'
-    }
-    '''
+    # config values here
 }
