@@ -2,6 +2,15 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.0.77] - 2017-02-20
+### Added
+- FEATURE moved to std python logging + activate DEBUG logs via `-v` (#175)
+- FEATURE std. gcdt lifecycle (#152)
+- FEATURE plugin mechanism (#152)
+- FEATURE moved datadog and slack reporting functionality to gcdt-plugins (#152)
+- FEATURE cmd dispatcher + testable main modules + tests (#152)
+- FEATURE migrated boto_session to awsclient (#152)
+
 ## [0.0.76] - 2017-01-30
 ### Added
 - FEATURE ramuda replaced git short hash in target filename with sha256 (#169)

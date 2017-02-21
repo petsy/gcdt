@@ -82,6 +82,7 @@ def _retrieve_stack_host_zone_name(awsclient, default_stack_name=None):
 
     if env is None:
         print("Please set environment...")
+        # TODO: why is there a sys.exit in library code used by cloudformation!!!
         sys.exit()
 
     if default_stack_name is None:
@@ -94,6 +95,7 @@ def _retrieve_stack_host_zone_name(awsclient, default_stack_name=None):
                 default_stack_name,
                 HOST_ZONE_NAME__STACK_OUTPUT_NAME,
         ))
+        # TODO: why is there a sys.exit in library code used by cloudformation!!!
         sys.exit()
 
     _host_zone_name = default_stack_output[HOST_ZONE_NAME__STACK_OUTPUT_NAME] + "."

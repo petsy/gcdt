@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals, print_function
 import os
+import logging
 
 from pyhocon import ConfigFactory
 from nose.tools import assert_equal, assert_false
 import pytest
 
-from gcdt.logger import setup_logger
 from gcdt.kumo_core import deploy_stack, load_cloudformation_template, delete_stack, _get_stack_name
 from gcdt.utils import are_credentials_still_valid
 from gcdt.servicediscovery import get_outputs_for_stack
@@ -15,7 +15,7 @@ from .helpers_aws import check_preconditions
 from .helpers_aws import cleanup_buckets, awsclient  # fixtures!
 from . import here
 
-log = setup_logger(logger_name='tenkai_test_aws')
+log = logging.getLogger(__name__)
 
 
 # read template and config

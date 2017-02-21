@@ -2,11 +2,13 @@
 from __future__ import unicode_literals, print_function
 import copy
 import sys
+import logging
 
 from docopt import docopt
 import botocore.session
 from clint.textui import colored
 from botocore.vendored import requests
+from logging.config import dictConfig
 
 from . import gcdt_signals
 from .gcdt_defaults import DEFAULT_CONFIG
@@ -16,8 +18,10 @@ from .config_reader import read_config
 from .gcdt_cmd_dispatcher import cmd, get_command
 from .gcdt_plugins import load_plugins
 from .gcdt_awsclient import AWSClient
+from .gcdt_logging import logging_config
 
 
+log = logging.getLogger(__name__)
 REPO_SERVER = 'https://reposerver-prod-eu-west-1.infra.glomex.cloud/pypi/packages'
 
 
@@ -105,6 +109,12 @@ def main(doc, tool, dispatch_only=None):
         dispatch_only = ['version']
     assert tool in ['gcdt', 'kumo', 'tenkai', 'ramuda', 'yugen']
     arguments = docopt(doc, sys.argv[1:])
+    # DEBUG mode (if requested)
+    verbose = arguments.pop('--verbose', False)
+    if verbose:
+        logging_config['loggers']['gcdt']['level'] = 'DEBUG'
+    dictConfig(logging_config)
+
     command = get_command(arguments)
     if not check_vpn_connection():
         print(colored.red('Can not connect to VPN please activate your VPN!'))
