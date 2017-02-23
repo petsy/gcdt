@@ -239,41 +239,24 @@ def get_lambdas(awsclient, config, add_arn=False):
     :param add_arn:
     :return: list containing lambda entries
     """
-    client_lambda = awsclient.get_client('lambda')
-    lambda_entries = config.get('lambda.entries', [])
-    lmbdas = []
-    for lambda_entry in lambda_entries:
-        lmbda = {
-            'name': lambda_entry.get('name', None),
-            'alias': lambda_entry.get('alias', None),
-            'swagger_ref': lambda_entry.get('swaggerRef', None)
-        }
-        if add_arn:
-            response_lambda = client_lambda.get_function(
-                FunctionName=lmbda['name'])
-            lmbda['arn'] = response_lambda['Configuration']['FunctionArn']
-        lmbdas.append(lmbda)
-    return lmbdas
-
-
-'''
-def are_credentials_still_valid(awsclient):
-    """Check if credentials are still valid.
-
-    :return: exit_codes
-    """
-    # TODO: refactor to utils
-    client_api = awsclient.get_client('apigateway')
-    try:
-        client_api.get_account()
-    except Exception as e:
-        print(colored.red(
-            'Your credentials have expired... Please renew and try again!'))
-        print(e)
-        # sys.exit(1)
-        return 1
-    return 0
-'''
+    if 'lambda' in config:
+        client_lambda = awsclient.get_client('lambda')
+        lambda_entries = config['lambda'].get('entries', [])
+        lmbdas = []
+        for lambda_entry in lambda_entries:
+            lmbda = {
+                'name': lambda_entry.get('name', None),
+                'alias': lambda_entry.get('alias', None),
+                'swagger_ref': lambda_entry.get('swaggerRef', None)
+            }
+            if add_arn:
+                response_lambda = client_lambda.get_function(
+                    FunctionName=lmbda['name'])
+                lmbda['arn'] = response_lambda['Configuration']['FunctionArn']
+            lmbdas.append(lmbda)
+        return lmbdas
+    else:
+        return []
 
 
 def _import_from_swagger(awsclient, api_name, api_description, stage_name,

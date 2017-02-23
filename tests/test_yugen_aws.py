@@ -2,8 +2,7 @@
 from __future__ import unicode_literals, print_function
 import logging
 
-from nose.tools import assert_equal, assert_greater_equal, \
-    assert_in, assert_not_in, assert_regexp_matches
+from nose.tools import assert_equal, assert_not_in
 import pytest
 
 from gcdt.yugen_core import deploy_api, delete_api, delete_api_key, \

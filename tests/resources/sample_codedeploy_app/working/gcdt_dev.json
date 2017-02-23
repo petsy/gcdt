@@ -1,0 +1,10 @@
+{
+  "tenkai": {
+    "codedeploy": {
+      "applicationName": "lookup:stack:gcdt-test-tenkai-deploy:ApplicationName",
+      "deploymentGroupName": "lookup:stack:gcdt-test-tenkai-deploy:DeploymentGroupName",
+      "deploymentConfigName": "CodeDeployDefault.AllAtOnce",
+      "artifactsBucket": "7finity-infra-dev-deployment"
+    }
+  }
+}

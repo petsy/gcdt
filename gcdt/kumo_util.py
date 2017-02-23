@@ -5,7 +5,6 @@ templates or from other external code.
 from __future__ import unicode_literals, print_function
 
 import troposphere
-from clint.textui import colored
 from troposphere.cloudformation import AWSCustomObject
 
 

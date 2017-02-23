@@ -14,9 +14,9 @@ from gcdt.s3 import create_bucket, delete_bucket
 from . import helpers
 from .placebo_awsclient import PlaceboAWSClient
 from gcdt import __version__
-from gcdt.config_reader import read_config
-from gcdt.gcdt_defaults import DEFAULT_CONFIG
-
+#from gcdt.config_reader import read_config
+from gcdt.gcdt_config_reader import read_json_config
+from gcdt.utils import get_env
 
 log = logging.getLogger(__name__)
 
@@ -295,22 +295,21 @@ def get_tooldata(awsclient, tool, command, config=None, config_base_name=None,
     :param awsclient:
     :param tool:
     :param command:
-    :param config:
+    :param config: provide custom config or empty to read from file
     :param config_base_name:
     :param location:
     :return:
     """
+    # for testing to read from 'gcdt_<env>.json' files
     if config is None:
         if config_base_name is None:
-            config_base_name = DEFAULT_CONFIG[tool].get('config_base_name',
-                                                        tool)
+            config_base_name = 'gcdt'
         if location is None:
-            location = ''
-        config = read_config(
-            awsclient,
-            config_base_name=config_base_name,
-            location=location
-        )
+            location = '.'
+        env = get_env()
+        gcdt_config_file = os.path.join(location,
+                                        '%s_%s.json' % (config_base_name, env))
+        config = read_json_config(gcdt_config_file)[tool]
     tooldata = {
         'context': {
             'tool': tool,
@@ -321,5 +320,4 @@ def get_tooldata(awsclient, tool, command, config=None, config_base_name=None,
         },
         'config': config
     }
-    tooldata['config'] = config
     return tooldata

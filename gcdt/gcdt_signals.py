@@ -15,14 +15,18 @@ initialized = signal('initialized')  # after reading arguments and context
 config_read_init = signal('config_read_init')
 config_read_finalized = signal('config_read_finalized')
 
+lookup_init = signal('lookup_init')
+lookup_finalized = signal('lookup_finalized')
+
 config_validation_init = signal('config_validation_init')
 config_validation_finalized = signal('config_validation_finalized')
 
 credentials_retr_init = signal('credentials_retr_init')
 credentials_retr_finalized = signal('credentials_retr_finalized')
 
-# lookup_init = signal('lookup_init')
-# lookup_finalized = signal('lookup_finalized')
+bundle_init = signal('bundle_init')
+_bundle = signal('bundle')  # not for public consumption
+bundle_finalized = signal('bundle_finalized')
 
 command_init = signal('command_init')
 command_finalized = signal('command_finalized')

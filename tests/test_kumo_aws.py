@@ -3,12 +3,11 @@ from __future__ import unicode_literals, print_function
 import os
 
 from pyhocon import ConfigFactory
-from pyhocon.config_tree import ConfigTree
 from nose.tools import assert_equal, assert_false, assert_is_not, \
-    assert_regexp_matches, assert_is_not_none, assert_true
+    assert_is_not_none, assert_true
 import pytest
 
-from gcdt.kumo_core import load_cloudformation_template, list_stacks, \
+from gcdt.kumo_core import load_cloudformation_template, \
     print_parameter_diff, deploy_stack, \
     delete_stack, create_change_set, _get_stack_name, describe_change_set, \
     _get_artifact_bucket, _s3_upload, _get_stack_state
@@ -17,6 +16,7 @@ from gcdt.kumo_util import ensure_ebs_volume_tags_ec2_instance, \
 from gcdt.utils import are_credentials_still_valid
 from gcdt.servicediscovery import get_outputs_for_stack
 from gcdt.s3 import prepare_artifacts_bucket
+from gcdt.gcdt_config_reader import read_json_config
 
 from .helpers_aws import check_preconditions
 from .helpers_aws import cleanup_buckets, awsclient  # fixtures!
@@ -24,17 +24,17 @@ from . import here
 
 
 # read template and config
-config_simple_stack = ConfigFactory.parse_file(
-    here('resources/simple_cloudformation_stack/settings_dev.conf')
-)
+config_simple_stack = read_json_config(
+    here('resources/simple_cloudformation_stack/gcdt_dev.json')
+)['kumo']
 
-config_ec2 = ConfigFactory.parse_file(
-    here('resources/sample_ec2_cloudformation_stack/settings_dev.conf')
-)
+config_ec2 = read_json_config(
+    here('resources/sample_ec2_cloudformation_stack/gcdt_dev.json')
+)['kumo']
 
-config_autoscaling = ConfigFactory.parse_file(
-    here('resources/sample_autoscaling_cloudformation_stack/settings_dev.conf')
-)
+config_autoscaling = read_json_config(
+    here('resources/sample_autoscaling_cloudformation_stack/gcdt_dev.json')
+)['kumo']
 
 
 @pytest.fixture(scope='function')  # 'function' or 'module'
@@ -84,9 +84,9 @@ def sample_cloudformation_stack_with_hooks(awsclient):
     cloudformation_stack, _ = load_cloudformation_template(
         here('resources/sample_cloudformation_stack_with_hooks/cloudformation.py')
     )
-    config_stack = ConfigFactory.parse_file(
-        here('resources/sample_cloudformation_stack_with_hooks/settings_dev.conf')
-    )
+    config_stack = read_json_config(
+        here('resources/sample_cloudformation_stack_with_hooks/gcdt_dev.json')
+    )['kumo']
     exit_code = deploy_stack(awsclient, config_stack,
                              cloudformation_stack,
                              override_stack_policy=False)
@@ -133,18 +133,6 @@ def test_s3_upload(cleanup_buckets, awsclient):
 # since the stack creation for a simple stack takes some time we decided
 # to test the stack related operations together
 
-#@pytest.fixture(scope='function')  # 'function' or 'module'
-#def cleanup_stack(awsclient):
-#    """Remove the stack to cleanup after test run.#
-#
-#    This is intended to be called during test teardown"""
-#    yield
-#    # cleanup
-#    exit_code = delete_stack(awsclient, config_simple_stack)
-#    # check whether delete was completed!
-#    assert_false(exit_code, 'delete_stack was not completed\n' +
-#                 'please make sure to clean up the stack manually')
-
 
 @pytest.fixture(scope='function')  # 'function' or 'module'
 def cleanup_stack_autoscaling(awsclient):
@@ -176,15 +164,9 @@ def cleanup_stack_ec2(awsclient):
 @check_preconditions
 def test_kumo_stack_lifecycle(awsclient, simple_cloudformation_stack):
     # create a stack we use for the test lifecycle
-    #print_parameter_diff(awsclient, config_simple_stack)
-    #are_credentials_still_valid(awsclient)
     cloudformation_simple_stack, _ = load_cloudformation_template(
         here('resources/simple_cloudformation_stack/cloudformation.py')
     )
-    #exit_code = deploy_stack(awsclient, config_simple_stack,
-    #                         cloudformation_simple_stack,
-    #                         override_stack_policy=False)
-    #assert_equal(exit_code, 0)
 
     # preview (with identical stack)
     # TODO: add more asserts!

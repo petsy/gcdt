@@ -2,6 +2,11 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.0.78] - 2017-02-27
+### Added
+- FEATURE moved hocon config_reader to plugin (#150)
+- FIX continues with warning after slack.tocken is missing in credstash (#215)
+
 ## [0.0.77] - 2017-02-20
 ### Added
 - FEATURE moved to std python logging + activate DEBUG logs via `-v` (#175)

@@ -9,7 +9,6 @@ import glob
 import re
 from io import BytesIO
 from requests.structures import CaseInsensitiveDict
-from datetime import tzinfo, timedelta
 
 from botocore.response import StreamingBody
 
@@ -96,7 +95,6 @@ class PlaceboAWSClient(AWSClient):
         json_data = {'status_code': http_response,
                      'data': response_data}
         with open(filepath, 'w') as fp:
-            #json.dump(json_data, fp, indent=4, default=serialize)
             json.dump(json_data, fp, indent=4, default=serialize_patch)
 
     def _get_new_file_path(self, service, operation):
@@ -209,55 +207,6 @@ def deserialize(obj):
         return StringIO(target['body'])
     # Return unrecognized structures as-is
     return obj
-
-
-'''
-def serialize(obj):
-    """Convert objects into JSON structures."""
-    # Record class and module information for deserialization
-    result = {'__class__': obj.__class__.__name__}
-    try:
-        result['__module__'] = obj.__module__
-    except AttributeError:
-        pass
-    # Convert objects to dictionary representation based on type
-    if isinstance(obj, datetime.datetime):
-        result['year'] = obj.year
-        result['month'] = obj.month
-        result['day'] = obj.day
-        result['hour'] = obj.hour
-        result['minute'] = obj.minute
-        result['second'] = obj.second
-        result['microsecond'] = obj.microsecond
-        return result
-    if isinstance(obj, StreamingBody):
-        result['body'] = obj.read()
-        return result
-    # Raise a TypeError if the object isn't recognized
-    raise TypeError("Type not serializable")
-'''
-
-
-# we need to apply a patch:
-# https://github.com/garnaat/placebo/issues/48
-'''
-def deserialize_patch(obj):
-    """Convert JSON dicts back into objects."""
-    # Be careful of shallow copy here
-    target = dict(obj)
-    class_name = None
-    if '__class__' in target:
-        class_name = target.pop('__class__')
-    # Use getattr(module, class_name) for custom types if needed
-    if class_name == 'datetime':
-        return datetime.datetime(**target)
-    if class_name == 'StreamingBody':
-        return BytesIO(target['body'])
-    if class_name == 'CaseInsensitiveDict':
-        return CaseInsensitiveDict(target['as_dict'])
-    # Return unrecognized structures as-is
-    return obj
-'''
 
 
 def serialize_patch(obj):

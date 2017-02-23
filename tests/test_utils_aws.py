@@ -7,7 +7,6 @@ from nose.tools import assert_equal, assert_is_not_none
 
 import pytest
 
-from gcdt.config_reader import read_config
 from gcdt.utils import get_context, execute_scripts
 
 from .helpers_aws import awsclient
@@ -34,8 +33,7 @@ def test_execute_scripts(awsclient):
     start_dir = here('.')
     codedeploy_dir = here('resources/sample_pre_bundle_script_codedeploy')
     os.chdir(codedeploy_dir)
-    config = read_config(awsclient, 'codedeploy')
-    pre_bundle_scripts = config.get('preBundle', None)
+    pre_bundle_scripts = ['pre_bundle_script/dummy_script.sh']
     assert_is_not_none(pre_bundle_scripts)
     exit_code = execute_scripts(pre_bundle_scripts)
     assert_equal(exit_code, 0)

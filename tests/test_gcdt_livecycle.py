@@ -57,31 +57,36 @@ def test_main_dispatch_only(mocked_docopt, mocked_check_gcdt_update,
          'dot': False, 'delete': False})
 
 
+def _dummy_signal_factory(name, exp_signals):
+    def _dummy_signal_handler(args):
+        print('signal fired: %s' % name)
+        if name == 'config_read_init':
+            args[0]['foo'] = 'bar'
+            args[0]['tool'] = 'kumo'
+            args[1]['kumo'] = {}
+        n = exp_signals.pop(0)
+        assert n == name
+    return _dummy_signal_handler
+
+
 @mock.patch('gcdt.gcdt_lifecycle.cmd.dispatch', return_value=0)
 @mock.patch('gcdt.gcdt_lifecycle.are_credentials_still_valid')
-@mock.patch('gcdt.gcdt_lifecycle.read_config', return_value={'foo': 'bar'})
 @mock.patch('gcdt.gcdt_lifecycle.check_gcdt_update')
 @mock.patch('gcdt.gcdt_lifecycle.load_plugins')
 def test_lifecycle(mocked_load_plugins, mocked_check_gcdt_update,
-                   mocked_read_config, mocked_are_credentials_still_valid,
+                   mocked_are_credentials_still_valid,
                    mocked_cmd_dispatch):
     # preparation
-    def _dummy_signal_factory(name):
-        def _dummy_signal_handler(*args):
-            print('signal fired: %s' % name)
-            n = exp_signals.pop(0)
-            assert n == name
-        return _dummy_signal_handler
-
     signal_handlers = []  # GC cleans them up if there is no ref
     exp_signals = [
         'initialized', 'config_read_init', 'config_read_finalized',
         'config_validation_init', 'config_validation_finalized',
-        'credentials_retr_init', 'credentials_retr_finalized', 'command_init',
-        'command_finalized', 'finalized']
+        'credentials_retr_init', 'credentials_retr_finalized', 'bundle_init',
+        '_bundle', 'bundle_finalized', 'command_init', 'command_finalized',
+        'finalized']
     for s in exp_signals:
         sig = gcdt_signals.__dict__[s]
-        handler = _dummy_signal_factory(s)
+        handler = _dummy_signal_factory(s, exp_signals)
         sig.connect(handler)
         signal_handlers.append(handler)
 
@@ -103,37 +108,27 @@ def test_lifecycle(mocked_load_plugins, mocked_check_gcdt_update,
 
     mocked_load_plugins.assert_called_once()
     mocked_check_gcdt_update.assert_called_once()
-    mocked_read_config.assert_called_once_with('my_awsclient',
-                                               config_base_name=u'settings')
     mocked_are_credentials_still_valid.called_once_with('my_awsclient')
     mocked_cmd_dispatch.called_once_with('my_awsclient')
 
 
 @mock.patch('gcdt.gcdt_lifecycle.cmd.dispatch', side_effect=Exception)
 @mock.patch('gcdt.gcdt_lifecycle.are_credentials_still_valid')
-@mock.patch('gcdt.gcdt_lifecycle.read_config', return_value={'foo': 'bar'})
 @mock.patch('gcdt.gcdt_lifecycle.check_gcdt_update')
 @mock.patch('gcdt.gcdt_lifecycle.load_plugins')
 def test_lifecycle_error(mocked_load_plugins, mocked_check_gcdt_update,
-                   mocked_read_config, mocked_are_credentials_still_valid,
+                   mocked_are_credentials_still_valid,
                    mocked_cmd_dispatch):
     # preparation
-    def _dummy_signal_factory(name):
-        def _dummy_signal_handler(*args):
-            print('signal fired: %s' % name)
-            n = exp_signals.pop(0)
-            assert n == name
-        return _dummy_signal_handler
-
     signal_handlers = []  # GC cleans them up if there is no ref
     exp_signals = [
         'initialized', 'config_read_init', 'config_read_finalized',
         'config_validation_init', 'config_validation_finalized',
-        'credentials_retr_init', 'credentials_retr_finalized', 'command_init',
-        'error']
+        'credentials_retr_init', 'credentials_retr_finalized', 'bundle_init',
+        '_bundle', 'bundle_finalized', 'command_init', 'error']
     for s in exp_signals:
         sig = gcdt_signals.__dict__[s]
-        handler = _dummy_signal_factory(s)
+        handler = _dummy_signal_factory(s, exp_signals)
         sig.connect(handler)
         signal_handlers.append(handler)
 
@@ -155,8 +150,6 @@ def test_lifecycle_error(mocked_load_plugins, mocked_check_gcdt_update,
 
     mocked_load_plugins.assert_called_once()
     mocked_check_gcdt_update.assert_called_once()
-    mocked_read_config.assert_called_once_with('my_awsclient',
-                                               config_base_name=u'settings')
     mocked_are_credentials_still_valid.called_once_with('my_awsclient')
     mocked_cmd_dispatch.called_once_with('my_awsclient')
 

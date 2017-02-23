@@ -9,14 +9,12 @@ import sys
 import time
 
 import os
-import pyhocon.exceptions
 import six
 from clint.textui import colored, prompt
-from pyhocon.exceptions import ConfigMissingException
 from pyspin.spin import Default, Spinner
 from tabulate import tabulate
 
-from .config_reader import get_env
+from .utils import get_env
 from .s3 import upload_file_to_s3
 
 
@@ -52,16 +50,17 @@ def print_parameter_diff(awsclient, config):
     """
     client_cf = awsclient.get_client('cloudformation')
     try:
-        stackname = config['cloudformation.StackName']
-        response = client_cf.describe_stacks(StackName=stackname)
-        if response['Stacks']:
-            stack_id = response['Stacks'][0]['StackId']
-            stack = response['Stacks'][0]
+        stackname = config['cloudformation']['StackName']
+        if stackname:
+            response = client_cf.describe_stacks(StackName=stackname)
+            if response['Stacks']:
+                stack_id = response['Stacks'][0]['StackId']
+                stack = response['Stacks'][0]
+            else:
+                return None
         else:
+            print('StackName is not configured, could not create parameter diff')
             return None
-    except pyhocon.exceptions.ConfigMissingException:
-        print('StackName is not configured, could not create parameter diff')
-        return None
     except:
         # probably the stack is not existent
         return None
@@ -77,11 +76,11 @@ def print_parameter_diff(awsclient, config):
                 old = param['ParameterValue']
                 if ',' in old:
                     old = old.split(',')
-                new = config.get('cloudformation.' + param['ParameterKey'])
+                new = config['cloudformation'][param['ParameterKey']]
                 if old != new:
                     table.append([param['ParameterKey'], old, new])
                     changed += 1
-            except pyhocon.exceptions.ConfigMissingException:
+            except Exception:
                 print('Did not find %s in local config file' % param['ParameterKey'])
 
     if changed > 0:
@@ -265,7 +264,7 @@ def _generate_parameter_entry(conf, raw_param):
 
 
 def _get_conf_value(conf, raw_param):
-    conf_value = conf.get('cloudformation.' + raw_param)
+    conf_value = conf['cloudformation'][raw_param]
     if isinstance(conf_value, list):
         # if list or array then join to comma separated list
         return ','.join(conf_value)
@@ -310,8 +309,6 @@ def deploy_stack(awsclient, conf, cloudformation, override_stack_policy=False):
     """
     stackname = _get_stack_name(conf)
     parameters = _generate_parameters(conf)
-    #_call_hook(awsclient, conf, stackname, parameters, cloudformation,
-    #           hook='pre_hook')
     if _stack_exists(awsclient, stackname):
         exit_code = _update_stack(awsclient, conf, cloudformation,
                                   parameters, override_stack_policy)
@@ -400,8 +397,8 @@ def _create_stack(awsclient, conf, cloudformation, parameters):
     stackname = _get_stack_name(conf)
     _call_hook(awsclient, conf, stackname, parameters, cloudformation,
                hook='pre_create_hook')
-    try:
-        _get_artifact_bucket(conf)
+    #try:
+    if _get_artifact_bucket(conf):
         response = client_cf.create_stack(
             StackName=_get_stack_name(conf),
             TemplateURL=_s3_upload(awsclient, conf, cloudformation),
@@ -411,8 +408,9 @@ def _create_stack(awsclient, conf, cloudformation, parameters):
             ],
             StackPolicyBody=_get_stack_policy(cloudformation),
         )
-    # if we have no artifacts bucket configured then upload the template directly
-    except ConfigMissingException:
+    else:
+        # if we have no artifacts bucket configured then upload the template directly
+        #except ConfigMissingException:
         response = client_cf.create_stack(
             StackName=_get_stack_name(conf),
             TemplateBody=cloudformation.generate_template(),
@@ -451,7 +449,8 @@ def _update_stack(awsclient, conf, cloudformation, parameters,
         stackname = _get_stack_name(conf)
         _call_hook(awsclient, conf, stackname, parameters, cloudformation,
                    hook='pre_update_hook')
-        try:
+        #try:
+        if stackname:
             _get_artifact_bucket(conf)
             response = client_cf.update_stack(
                 StackName=_get_stack_name(conf),
@@ -466,7 +465,8 @@ def _update_stack(awsclient, conf, cloudformation, parameters,
                     override_stack_policy)
 
             )
-        except ConfigMissingException:
+        #except ConfigMissingException:
+        else:
             response = client_cf.update_stack(
                 StackName=_get_stack_name(conf),
                 TemplateBody=cloudformation.generate_template(),
@@ -551,6 +551,7 @@ def create_change_set(awsclient, conf, cloudformation):
         ChangeSetName=change_set_name
     )
     # print json2table(response)
+    # TODO catch nonexistant stack (ValidationError)
     return change_set_name, _get_stack_name(conf)
 
 
@@ -577,11 +578,15 @@ def describe_change_set(awsclient, change_set_name, stack_name):
 
 
 def _get_stack_name(conf):
-    return conf.get('cloudformation.StackName')
+    #return conf.get('cloudformation.StackName')
+    return conf['cloudformation']['StackName']
 
 
 def _get_artifact_bucket(conf):
-    return conf.get('cloudformation.artifactBucket')
+    #return conf.get('cloudformation.artifactBucket')
+    bucket = conf['cloudformation'].get('artifactBucket')
+    if bucket:
+        return bucket
 
 
 def generate_template_file(conf, cloudformation):

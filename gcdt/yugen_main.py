@@ -46,13 +46,15 @@ def list_cmd(**tooldata):
 @cmd(spec=['deploy'])
 def deploy_cmd(**tooldata):
     context = tooldata.get('context')
-    conf = tooldata.get('config')
+    config = tooldata.get('config')
     awsclient = context.get('_awsclient')
-    api_name = conf.get('api.name')
-    api_description = conf.get('api.description')
-    target_stage = conf.get('api.targetStage')
-    api_key = conf.get('api.apiKey')
-    lambdas = get_lambdas(awsclient, conf, add_arn=True)
+
+    #api_name = conf.get('api.name')
+    api_name = config['api'].get('name')
+    api_description = config['api'].get('description')
+    target_stage = config['api'].get('targetStage')
+    api_key = config['api'].get('apiKey')
+    lambdas = get_lambdas(awsclient, config, add_arn=True)
     exit_code = deploy_api(
         awsclient=awsclient,
         api_name=api_name,
@@ -61,17 +63,17 @@ def deploy_cmd(**tooldata):
         api_key=api_key,
         lambdas=lambdas
     )
-    if 'customDomain' in conf:
-        domain_name = conf.get('customDomain.domainName')
-        route_53_record = conf.get('customDomain.route53Record')
+    if 'customDomain' in config:
+        domain_name = config['customDomain'].get('domainName')
+        route_53_record = config['customDomain'].get('route53Record')
         ssl_cert = {
-            'name': conf.get('customDomain.certificateName'),
-            'body': conf.get('customDomain.certificateBody'),
-            'private_key': conf.get('customDomain.certificatePrivateKey'),
-            'chain': conf.get('customDomain.certificateChain')
+            'name': config['customDomain'].get('certificateName'),
+            'body': config['customDomain'].get('certificateBody'),
+            'private_key': config['customDomain'].get('certificatePrivateKey'),
+            'chain': config['customDomain'].get('certificateChain')
         }
-        hosted_zone_id = conf.get('customDomain.hostedDomainZoneId')
-        api_base_path = conf.get('customDomain.basePath')
+        hosted_zone_id = config['customDomain'].get('hostedDomainZoneId')
+        api_base_path = config['customDomain'].get('basePath')
         create_custom_domain(
             awsclient=awsclient,
             api_name=api_name,
@@ -88,12 +90,12 @@ def deploy_cmd(**tooldata):
 @cmd(spec=['delete', '-f'])
 def delete_cmd(force, **tooldata):
     context = tooldata.get('context')
-    conf = tooldata.get('config')
+    config = tooldata.get('config')
     awsclient = context.get('_awsclient')
-    api_name = conf.get('api.name')
+
     exit_code = delete_api(
         awsclient=awsclient,
-        api_name=api_name
+        api_name=config['api'].get('name')
     )
     return exit_code
 
@@ -101,41 +103,41 @@ def delete_cmd(force, **tooldata):
 @cmd(spec=['export'])
 def export_cmd(**tooldata):
     context = tooldata.get('context')
-    conf = tooldata.get('config')
+    config = tooldata.get('config')
     awsclient = context.get('_awsclient')
-    api_name = conf.get('api.name')
-    target_stage = conf.get('api.targetStage')
-    api_description = conf.get('api.description')
+    api_name = config['api'].get('name')
+    target_stage = config['api'].get('targetStage')
+    api_description = config['api'].get('description')
 
-    lambdas = get_lambdas(awsclient, conf, add_arn=True)
+    lambdas = get_lambdas(awsclient, config, add_arn=True)
     return export_to_swagger(
         awsclient=awsclient,
         api_name=api_name,
         stage_name=target_stage,
         api_description=api_description,
         lambdas=lambdas,
-        custom_hostname=(conf.get('customDomain.domainName')
-                         if 'customDomain' in conf else False),
-        custom_base_path=(conf.get('customDomain.basePath')
-                          if 'customDomain' in conf else False)
+        custom_hostname=(config['customDomain'].get('domainName')
+                         if 'customDomain' in config else False),
+        custom_base_path=(config['customDomain'].get('basePath')
+                          if 'customDomain' in config else False)
     )
 
 
 @cmd(spec=['apikey-create', '<keyname>'])
 def apikey_create_cmd(keyname, **tooldata):
     context = tooldata.get('context')
-    conf = tooldata.get('config')
+    config = tooldata.get('config')
     awsclient = context.get('_awsclient')
-    api_name = conf.get('api.name')
+    api_name = config['api'].get('name')
     create_api_key(awsclient, api_name, keyname)
 
 
 @cmd(spec=['apikey-delete'])
 def apikey_delete_cmd(**tooldata):
     context = tooldata.get('context')
-    conf = tooldata.get('config')
+    config = tooldata.get('config')
     awsclient = context.get('_awsclient')
-    api_key = conf.get('api.apiKey')
+    api_key = config['api'].get('apiKey')
     delete_api_key(awsclient, api_key)
 
 
@@ -149,21 +151,21 @@ def apikey_list_cmd(**tooldata):
 @cmd(spec=['custom-domain-create'])
 def custom_domain_create_cmd(**tooldata):
     context = tooldata.get('context')
-    conf = tooldata.get('config')
+    config = tooldata.get('config')
     awsclient = context.get('_awsclient')
-    api_name = conf.get('api.name')
-    api_target_stage = conf.get('api.targetStage')
+    api_name = config['api'].get('name')
+    api_target_stage = config['api'].get('targetStage')
 
-    domain_name = conf.get('customDomain.domainName')
-    route_53_record = conf.get('customDomain.route53Record')
-    api_base_path = conf.get('customDomain.basePath')
+    domain_name = config['customDomain'].get('domainName')
+    route_53_record = config['customDomain'].get('route53Record')
+    api_base_path = config['customDomain'].get('basePath')
     ssl_cert = {
-        'name': conf.get('customDomain.certificateName'),
-        'body': conf.get('customDomain.certificateBody'),
-        'private_key': conf.get('customDomain.certificatePrivateKey'),
-        'chain': conf.get('customDomain.certificateChain')
+        'name': config['customDomain'].get('certificateName'),
+        'body': config['customDomain'].get('certificateBody'),
+        'private_key': config['customDomain'].get('certificatePrivateKey'),
+        'chain': config['customDomain'].get('certificateChain')
     }
-    hosted_zone_id = conf.get('customDomain.hostedDomainZoneId')
+    hosted_zone_id = config['customDomain'].get('hostedDomainZoneId')
 
     return create_custom_domain(
         awsclient=awsclient,

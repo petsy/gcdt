@@ -7,10 +7,6 @@ coverage==4.2.0
 pytest>=3.0.6
 pytest-cov>=2.4.0
 mock==2.0.0
-#TODO find proper log capture
-#testfixtures
-#pytest_catchlog==1.2.2
-#pytest-capturelog==0.7
 
 # build-tools
 setuptools>=34.2.0
@@ -18,6 +14,6 @@ pep8>=1.7.0
 pylint>=1.6.4
 bumpversion>=0.5.3
 aws-mfa>=0.0.6
-awscli>=1.11.47
+awscli>=1.11.51
 
 # misc

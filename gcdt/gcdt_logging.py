@@ -46,6 +46,11 @@ logging_config = {
             'level': 'INFO',
             'handlers': ['default'],
             'propagate': 0
+        },
+        'plugins': {
+            'level': 'INFO',
+            'handlers': ['default'],
+            'propagate': 0
         }
     },
     'disable_existing_loggers': False
