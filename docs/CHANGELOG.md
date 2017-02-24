@@ -11,6 +11,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - FEATURE moved to std python logging + activate DEBUG logs via `-v` (#175)
 - FEATURE std. gcdt lifecycle (#152)
+- FEATURE removed glomex_utils as installation dependency (#152)
+- FEATURE cloudformation utilities need awsclient (see kumo documentation) (#152)
 - FEATURE plugin mechanism (#152)
 - FEATURE moved datadog and slack reporting functionality to gcdt-plugins (#152)
 - FEATURE cmd dispatcher + testable main modules + tests (#152)

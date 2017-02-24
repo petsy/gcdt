@@ -128,3 +128,11 @@ check_dot_precondition = pytest.mark.skipif(
     _dot_check(),
     reason="You need to install dot / graphviz (see gcdt docs)."
 )
+
+
+@pytest.fixture(scope='function')  # 'function' or 'module'
+def preserve_env():
+    env = os.environ['ENV']
+    yield
+    # cleanup
+    os.environ['ENV'] = env

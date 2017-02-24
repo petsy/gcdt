@@ -104,8 +104,26 @@ multiple ways of using parameters in your hook functions:
 
 * no arguments (as previous to version 0.0.73.dev0.dev0)
 * use kwargs dict and just access the arguments you need e.g. "def pre_hook(**kwargs):"
-* use all positional arguments e.g. "def pre_hook(boto_session, config, parameters, stack_outputs, stack_state):"
+* use all positional arguments e.g. "def pre_hook(awsclient, config, parameters, stack_outputs, stack_state):"
 * use all arguments as keyword arguments or mix.
+* with version 0.0.77 we decided to move away from using boto_sessions towards awsclient (more flexible and low-level).
+
+
+### Using gcdt functionality in your cloudformation templates
+
+Historically `cloudformation.py` templates used functionality from gcdt and glomex_utils packages. With version 0.0.77 we consolidated and copied `get_env` over to gcdt. 
+
+Made functionality available in gcdt (sounds awful but it was there already anyway) :
+* gcdt.utils: import get_env now available
+
+Continued no changes:
+* gcdt.iam: IAMRoleAndPolicies 
+
+The following functionality requirees `awsclient`. The `awsclient` is available in the template within the scope of a hook (see above). Consequently you need to execute it within the scope of a hook:
+* gcdt.servicediscovery: get_outputs_for_stack 
+* gcdt.route53: create_record 
+* gcdt.kumo_util: ensure_ebs_volume_tags_autoscaling_group
+
 
 ### Stack Policies
 kumo does offer support for stack policies. It has a default stack policy that will get applied to each stack:

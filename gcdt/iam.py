@@ -12,11 +12,10 @@ from awacs.aws import Allow, Statement, Principal, Policy
 from awacs.sts import AssumeRole
 
 
-# FIXME: I could not find any usage so far
-
 class IAMRoleAndPolicies(object):
-    """
-    Class to generate IAM roles and policies
+    """Class to generate IAM roles and policies
+    Note: gcdt.iam IAMRoleAndPolicies(template, role_name_prefix, role_principals, role_path)
+    is used in many cloudformation.py templates!
     """
 
     VERSION_IAM = "2012-10-17"

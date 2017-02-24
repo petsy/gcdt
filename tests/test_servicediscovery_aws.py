@@ -15,6 +15,7 @@ from .test_kumo_aws import simple_cloudformation_stack  # fixtures!
 @pytest.mark.aws
 @check_preconditions
 def test_get_outputs_for_stack(awsclient, simple_cloudformation_stack):
+    # used in cloudformation!
     outputs = get_outputs_for_stack(awsclient, simple_cloudformation_stack)
     assert 'BucketName' in outputs
     assert outputs['BucketName'].startswith('infra-dev-kumo-sample-stack-s3bucket1-')
