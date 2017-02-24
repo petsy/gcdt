@@ -111,15 +111,15 @@ multiple ways of using parameters in your hook functions:
 
 ### Using gcdt functionality in your cloudformation templates
 
-Historically `cloudformation.py` templates used functionality from gcdt and glomex_utils packages. With version 0.0.77 we consolidated and copied `get_env` over to gcdt. 
+Historically `cloudformation.py` templates imported functionality from gcdt and glomex_utils packages. With version 0.0.77 we consolidated and copied `get_env` over to gcdt.utils.
 
 Made functionality available in gcdt (sounds awful but it was there already anyway) :
-* gcdt.utils: import get_env now available
+* gcdt.utils: get_env now available
 
 Continued no changes:
 * gcdt.iam: IAMRoleAndPolicies 
 
-The following functionality requirees `awsclient`. The `awsclient` is available in the template within the scope of a hook (see above). Consequently you need to execute it within the scope of a hook:
+The following functionality requires `awsclient` to lookup information from AWS. The `awsclient` is available in the cloudformation template only within the scope of a hook (see above). Consequently you need to execute your calls within the scope of a hook:
 * gcdt.servicediscovery: get_outputs_for_stack 
 * gcdt.route53: create_record 
 * gcdt.kumo_util: ensure_ebs_volume_tags_autoscaling_group

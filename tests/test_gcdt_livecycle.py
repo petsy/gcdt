@@ -79,11 +79,14 @@ def test_lifecycle(mocked_load_plugins, mocked_check_gcdt_update,
     # preparation
     signal_handlers = []  # GC cleans them up if there is no ref
     exp_signals = [
-        'initialized', 'config_read_init', 'config_read_finalized',
+        'initialized',
+        'config_read_init', 'config_read_finalized',
+        'lookup_init', 'lookup_finalized',
         'config_validation_init', 'config_validation_finalized',
-        'credentials_retr_init', 'credentials_retr_finalized', 'bundle_init',
-        '_bundle', 'bundle_finalized', 'command_init', 'command_finalized',
-        'finalized']
+        'bundle_init', '_bundle', 'bundle_finalized',
+        'command_init', 'command_finalized',
+        'finalized'
+    ]
     for s in exp_signals:
         sig = gcdt_signals.__dict__[s]
         handler = _dummy_signal_factory(s, exp_signals)
@@ -122,10 +125,14 @@ def test_lifecycle_error(mocked_load_plugins, mocked_check_gcdt_update,
     # preparation
     signal_handlers = []  # GC cleans them up if there is no ref
     exp_signals = [
-        'initialized', 'config_read_init', 'config_read_finalized',
+        'initialized',
+        'config_read_init', 'config_read_finalized',
+        'lookup_init', 'lookup_finalized',
         'config_validation_init', 'config_validation_finalized',
-        'credentials_retr_init', 'credentials_retr_finalized', 'bundle_init',
-        '_bundle', 'bundle_finalized', 'command_init', 'error']
+        'bundle_init', '_bundle', 'bundle_finalized',
+        'command_init',
+        'error'
+    ]
     for s in exp_signals:
         sig = gcdt_signals.__dict__[s]
         handler = _dummy_signal_factory(s, exp_signals)

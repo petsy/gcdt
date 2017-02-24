@@ -21,8 +21,9 @@ lookup_finalized = signal('lookup_finalized')
 config_validation_init = signal('config_validation_init')
 config_validation_finalized = signal('config_validation_finalized')
 
-credentials_retr_init = signal('credentials_retr_init')
-credentials_retr_finalized = signal('credentials_retr_finalized')
+# credential retrieval should be done using lookups
+#credentials_retr_init = signal('credentials_retr_init')
+#credentials_retr_finalized = signal('credentials_retr_finalized')
 
 bundle_init = signal('bundle_init')
 _bundle = signal('bundle')  # not for public consumption

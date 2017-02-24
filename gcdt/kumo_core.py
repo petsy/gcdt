@@ -277,10 +277,12 @@ def _generate_parameters(conf):
     # conf keys
     raw_parameters = []
     parameter_list = []
-    for item in conf.iterkeys():
-        for key in conf[item].iterkeys():
-            if key not in ['StackName', 'TemplateBody', 'ArtifactBucket']:
-                raw_parameters.append(key)
+    # this looks extremely weired since this should work on the cloudformation part
+    #for item in conf.iterkeys():
+    item = 'cloudformation'
+    for key in conf[item].iterkeys():
+        if key not in ['StackName', 'TemplateBody', 'ArtifactBucket']:
+            raw_parameters.append(key)
     for param in raw_parameters:
         entry = _generate_parameter_entry(conf, param)
         parameter_list.append(entry)
@@ -578,12 +580,10 @@ def describe_change_set(awsclient, change_set_name, stack_name):
 
 
 def _get_stack_name(conf):
-    #return conf.get('cloudformation.StackName')
     return conf['cloudformation']['StackName']
 
 
 def _get_artifact_bucket(conf):
-    #return conf.get('cloudformation.artifactBucket')
     bucket = conf['cloudformation'].get('artifactBucket')
     if bucket:
         return bucket

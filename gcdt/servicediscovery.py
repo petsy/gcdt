@@ -79,13 +79,13 @@ def get_ssl_certificate(awsclient, domain):
     return arn
 
 
-def get_base_ami(awsclient, owners=None):
+def get_base_ami(awsclient, owners):
     """
     return the latest version of our base AMI
     we can't use tags for this, so we have only the name as resource
     """
-    if owners is None:
-        owners = ['569909643510']
+    #if owners is None:
+    #    owners = ['569909643510']
     client_ec2 = awsclient.get_client('ec2')
     image_filter = [
         {
