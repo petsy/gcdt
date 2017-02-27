@@ -277,10 +277,10 @@ def _generate_parameters(conf):
     # conf keys
     raw_parameters = []
     parameter_list = []
-    # this looks extremely weired since this should work on the cloudformation part
+    # this looks weird since it should work only on the 'cloudformation' config
     #for item in conf.iterkeys():
-    item = 'cloudformation'
-    for key in conf[item].iterkeys():
+    #    for key in conf[item].iterkeys():
+    for key in conf['cloudformation'].iterkeys():
         if key not in ['StackName', 'TemplateBody', 'ArtifactBucket']:
             raw_parameters.append(key)
     for param in raw_parameters:

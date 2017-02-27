@@ -5,7 +5,7 @@ pybars3==0.9.1
 blinker==1.4
 #jmespath==0.9.1
 regex==2017.2.8
-gcdt-plugins==0.0.4
+gcdt-plugins==0.0.5
 
 # Other dependencies
 clint==0.5.1
