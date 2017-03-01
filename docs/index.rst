@@ -4,7 +4,8 @@ glomex-cloud-deployment-tools
 .. toctree::
    :glob:
 
-   10_gcdt
+   02_introduction
+   05_overview
    20_kumo
    30_tenkai
    40_ramuda
