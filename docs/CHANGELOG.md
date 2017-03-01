@@ -7,6 +7,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - FEATURE moved hocon config_reader to plugin (#150)
 - FEATURE split glomex_lookups plugin from config_reader (#150)
 - FIX continues with warning after slack config is missing (#215)
+- FEATURE extracted bundle step into bundler plugin (#150)
 
 ## [0.0.77] - 2017-02-20
 ### Added

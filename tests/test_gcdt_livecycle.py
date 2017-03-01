@@ -83,7 +83,7 @@ def test_lifecycle(mocked_load_plugins, mocked_check_gcdt_update,
         'config_read_init', 'config_read_finalized',
         'lookup_init', 'lookup_finalized',
         'config_validation_init', 'config_validation_finalized',
-        'bundle_init', '_bundle', 'bundle_finalized',
+        'bundle_pre', 'bundle_init', 'bundle_finalized',
         'command_init', 'command_finalized',
         'finalized'
     ]
@@ -129,7 +129,7 @@ def test_lifecycle_error(mocked_load_plugins, mocked_check_gcdt_update,
         'config_read_init', 'config_read_finalized',
         'lookup_init', 'lookup_finalized',
         'config_validation_init', 'config_validation_finalized',
-        'bundle_init', '_bundle', 'bundle_finalized',
+        'bundle_pre', 'bundle_init', 'bundle_finalized',
         'command_init',
         'error'
     ]

@@ -71,21 +71,12 @@ def lifecycle(awsclient, tool, command, arguments):
     gcdt_signals.config_validation_init.send((context, config))
     gcdt_signals.config_validation_finalized.send((context, config))
 
-    ## credentials_retr (ask plugins to get their credentials)
-    # credential retrieval should be done using lookups
-    #gcdt_signals.credentials_retr_init.send((context, config))
-    #gcdt_signals.credentials_retr_finalized.send((context, config))
-
     ## check credentials are valid (AWS services)
     are_credentials_still_valid(awsclient)
 
-    # merge DEFAULT_CONFIG with config
-    #tool_config = copy.deepcopy(DEFAULT_CONFIG[tool])
-    #dict_merge(tool_config, config)
-
     ## TODO bundle-phase if the tool & command requires one
+    gcdt_signals.bundle_pre.send((context, config))
     gcdt_signals.bundle_init.send((context, config))
-    gcdt_signals._bundle.send((context, config))
     gcdt_signals.bundle_finalized.send((context, config))
 
     ## dispatch command providing context and config (= tooldata)
