@@ -7,8 +7,8 @@ import pytest
 from gcdt.tenkai_main import version_cmd, deploy_cmd, bundle_cmd
 from plugins.bundler.bundler import bundle_revision
 
-from .helpers_aws import check_preconditions, get_tooldata
-from .helpers_aws import awsclient  # fixtures !
+from gcdt_testtools.helpers_aws import check_preconditions, get_tooldata
+from gcdt_testtools.helpers_aws import awsclient  # fixtures !
 from .test_tenkai_aws import sample_codedeploy_app  # fixtures !
 from . import here
 

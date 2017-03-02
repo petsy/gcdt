@@ -5,7 +5,7 @@ from troposphere.ec2 import Instance
 
 from gcdt import route53
 
-from .helpers_aws import awsclient
+from gcdt_testtools.helpers_aws import awsclient
 
 
 def test_create_record_with_given_hostname(awsclient):

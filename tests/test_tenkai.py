@@ -5,8 +5,7 @@ from nose.tools import assert_equal, assert_items_equal
 
 from gcdt.tenkai_core import _build_bundle_key
 
-from gcdt.testtools.helpers import temp_folder  # fixtures!
-from gcdt.testtools import here
+from gcdt_testtools.helpers import temp_folder  # fixtures!
 
 
 def test_build_bundle_key():

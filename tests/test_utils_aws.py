@@ -9,7 +9,7 @@ import pytest
 
 from gcdt.utils import get_context, execute_scripts
 
-from .helpers_aws import awsclient
+from gcdt_testtools.helpers_aws import awsclient
 from . import here
 
 

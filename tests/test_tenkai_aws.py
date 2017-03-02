@@ -12,8 +12,8 @@ from gcdt.utils import are_credentials_still_valid
 from gcdt.servicediscovery import get_outputs_for_stack
 from gcdt.tenkai_core import deploy as tenkai_deploy, deployment_status
 from gcdt.gcdt_config_reader import read_json_config
-from .helpers_aws import check_preconditions
-from .helpers_aws import cleanup_buckets, awsclient  # fixtures!
+from gcdt_testtools.helpers_aws import check_preconditions
+from gcdt_testtools.helpers_aws import cleanup_buckets, awsclient  # fixtures!
 from . import here
 
 log = logging.getLogger(__name__)

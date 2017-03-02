@@ -7,7 +7,7 @@ import pytest
 
 from gcdt.utils import version, __version__, retries,  \
     get_command, dict_merge, get_env
-from gcdt.testtools.helpers import create_tempfile, preserve_env  # fixtures!
+from gcdt_testtools.helpers import create_tempfile, preserve_env  # fixtures!
 from . import here
 
 

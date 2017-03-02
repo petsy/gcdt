@@ -7,9 +7,9 @@ import json
 import pytest
 import botocore.session
 
-from .placebo_awsclient import PlaceboAWSClient, serialize_patch, deserialize, \
-    UTC
-from gcdt.testtools.helpers import temp_folder  # fixture!
+from gcdt_testtools.placebo_awsclient import PlaceboAWSClient, serialize_patch, \
+    deserialize, UTC
+from gcdt_testtools.helpers import temp_folder  # fixture!
 from . import here
 
 
