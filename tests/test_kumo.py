@@ -15,8 +15,8 @@ from gcdt.kumo_core import _generate_parameters, \
     _get_stack_policy, _get_stack_policy_during_update, _get_conf_value, \
     _generate_parameter_entry, _call_hook
 
-from .helpers import cleanup_tempfiles, temp_folder  # fixtures!
-from .helpers import Bunch
+from gcdt.testtools.helpers import cleanup_tempfiles, temp_folder  # fixtures!
+from gcdt.testtools.helpers import Bunch
 from . import here
 
 

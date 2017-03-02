@@ -7,8 +7,8 @@ import pytest
 from gcdt.s3 import bucket_exists, upload_file_to_s3, ls
 
 from .helpers_aws import awsclient, temp_bucket  # fixtures!
-from .helpers import random_file  # fixtures!
-from . import helpers
+from gcdt.testtools.helpers import random_file  # fixtures!
+from gcdt.testtools import helpers
 
 log = logging.getLogger(__name__)
 

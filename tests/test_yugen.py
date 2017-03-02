@@ -7,7 +7,7 @@ from nose.tools import assert_equal
 
 from gcdt.yugen_core import _compile_template, _arn_to_uri, \
     _get_region_and_account_from_lambda_arn
-from .helpers import create_tempfile, cleanup_tempfiles
+from gcdt.testtools.helpers import create_tempfile, cleanup_tempfiles
 
 
 def _setup():

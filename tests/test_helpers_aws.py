@@ -3,8 +3,8 @@ from __future__ import unicode_literals, print_function
 import os
 
 from .helpers_aws import recorder, file_reader, awsclient
-from .helpers import temp_folder  # fixture!
-from . import helpers
+from gcdt.testtools.helpers import temp_folder  # fixture!
+from gcdt.testtools import helpers
 from . import here
 
 

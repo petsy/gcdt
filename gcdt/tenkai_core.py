@@ -1,18 +1,15 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals, print_function
-
 import json
-import tarfile
 import time
 
-import os
 from clint.textui import colored
 
 from .s3 import upload_file_to_s3
 
 
 def deploy(awsclient, applicationName, deploymentGroupName,
-           deploymentConfigName, bucket):
+           deploymentConfigName, bucket, bundlefile):
     """Upload bundle and deploy to deployment group.
     This includes the bundle-action.
 
@@ -20,10 +17,9 @@ def deploy(awsclient, applicationName, deploymentGroupName,
     :param deploymentGroupName:
     :param deploymentConfigName:
     :param bucket:
+    :param bundlefile:
     :return: deploymentId from create_deployment
     """
-    bundlefile = bundle_revision()
-
     etag, version = upload_file_to_s3(awsclient, bucket,
                                       _build_bundle_key(applicationName),
                                       bundlefile)
@@ -47,14 +43,20 @@ def deploy(awsclient, applicationName, deploymentGroupName,
         ignoreApplicationStopFailures=True
     )
 
-    print("Deployment: {} -> URL: https://{}.console.aws.amazon.com/codedeploy/home?region={}#/deployments/{}".format(
-        response['deploymentId'],
-        client_codedeploy.meta.region_name,
-        client_codedeploy.meta.region_name,
-        response['deploymentId'],
-    ))
+    print(
+        "Deployment: {} -> URL: https://{}.console.aws.amazon.com/codedeploy/home?region={}#/deployments/{}".format(
+            response['deploymentId'],
+            client_codedeploy.meta.region_name,
+            client_codedeploy.meta.region_name,
+            response['deploymentId'],
+        ))
 
     return response['deploymentId']
+
+
+def _build_bundle_key(application_name):
+    # key = bundle name on target
+    return '%s/bundle.tar.gz' % application_name
 
 
 def deployment_status(awsclient, deploymentId, iterations=100):
@@ -74,13 +76,14 @@ def deployment_status(awsclient, deploymentId, iterations=100):
 
         if status not in steady_states:
             print('Deployment: %s - State: %s' % (deploymentId, status))
-            #sys.stdout.flush()
+            # sys.stdout.flush()
             time.sleep(10)
         elif status == 'Failed':
             print(
                 colored.red('Deployment: {} failed: {}'.format(
                     deploymentId,
-                    json.dumps(response['deploymentInfo']['errorInformation'], indent=2)
+                    json.dumps(response['deploymentInfo']['errorInformation'],
+                               indent=2)
                 ))
             )
             return 1
@@ -89,38 +92,3 @@ def deployment_status(awsclient, deploymentId, iterations=100):
             break
 
     return 0
-
-
-def bundle_revision(outputpath='/tmp'):
-    """Prepare the tarfile for the revision.
-
-    :param outputpath:
-    :return: tarfile_name
-    """
-    tarfile_name = _make_tar_file(path='./codedeploy',
-                                  outputpath=outputpath)
-    return tarfile_name
-
-
-def _build_bundle_key(application_name):
-    # key = bundle name on target
-    return '%s/bundle.tar.gz' % application_name
-
-
-def _files_to_bundle(path):
-    for root, dirs, files in os.walk(path):
-        for f in files:
-            full_path = os.path.join(root, f)
-            archive_name = full_path[len(path) + len(os.sep):]
-            # print "full_path, archive_name" + full_path, archive_name
-            yield full_path, archive_name
-
-
-def _make_tar_file(path, outputpath):
-    # make sure we add a unique identifier when we are running within jenkins
-    file_suffix = os.getenv('BUILD_TAG', '')
-    destfile = '%s/tenkai-bundle%s.tar.gz' % (outputpath, file_suffix)
-    with tarfile.open(destfile, 'w:gz') as tar:
-        for full_path, archive_name in _files_to_bundle(path=path):
-            tar.add(full_path, recursive=False, arcname=archive_name)
-    return destfile

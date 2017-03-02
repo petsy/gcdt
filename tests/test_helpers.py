@@ -5,7 +5,7 @@ import os
 import nose
 from nose.tools import assert_equal
 
-from helpers import temp_folder, create_tempfile, get_size, random_string
+from gcdt.testtools.helpers import temp_folder, create_tempfile, get_size, random_string
 from helpers_aws import recorder, file_reader
 
 

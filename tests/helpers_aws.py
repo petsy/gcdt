@@ -11,17 +11,15 @@ import pytest
 
 from gcdt.ramuda_core import deploy_lambda
 from gcdt.s3 import create_bucket, delete_bucket
-from . import helpers
+from gcdt.testtools import helpers
 from .placebo_awsclient import PlaceboAWSClient
 from gcdt import __version__
-#from gcdt.config_reader import read_config
 from gcdt.gcdt_config_reader import read_json_config
 from gcdt.utils import get_env
+from . import here
+
 
 log = logging.getLogger(__name__)
-
-
-def here(p): return os.path.join(os.path.dirname(__file__), p)
 
 
 @pytest.fixture(scope='function')  # 'function' or 'module'

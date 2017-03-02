@@ -5,6 +5,7 @@ import logging
 
 from nose.tools import assert_equal, assert_false
 import pytest
+from plugins.bundler.bundler import bundle_revision
 
 from gcdt.kumo_core import deploy_stack, load_cloudformation_template, delete_stack, _get_stack_name
 from gcdt.utils import are_credentials_still_valid
@@ -79,6 +80,7 @@ def test_tenkai_exit_codes(cleanup_stack_tenkai, awsclient):
         './resources/sample_codedeploy_app/not_working')
     working_deploy_dir = here('./resources/sample_codedeploy_app/working')
     os.chdir(not_working_deploy_dir)
+    bundle_file = bundle_revision()
 
     # test deployment which should exit with exit code 1
     deploy_id_1 = tenkai_deploy(
@@ -86,7 +88,8 @@ def test_tenkai_exit_codes(cleanup_stack_tenkai, awsclient):
         app_name,
         deployment_group,
         'CodeDeployDefault.AllAtOnce',
-        '7finity-infra-dev-deployment'
+        '7finity-infra-dev-deployment',
+        bundle_file
     )
 
     exit_code = deployment_status(awsclient, deploy_id_1)
@@ -98,7 +101,8 @@ def test_tenkai_exit_codes(cleanup_stack_tenkai, awsclient):
         app_name,
         deployment_group,
         'CodeDeployDefault.AllAtOnce',
-        '7finity-infra-dev-deployment'
+        '7finity-infra-dev-deployment',
+        bundle_file
     )
     exit_code = deployment_status(awsclient, deploy_id_2)
     assert_equal(exit_code, 0)

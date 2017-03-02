@@ -7,8 +7,8 @@ from __future__ import unicode_literals, print_function
 import sys
 
 from . import utils
-from .tenkai_core import deploy, deployment_status, bundle_revision
-from gcdt.s3 import prepare_artifacts_bucket
+from .tenkai_core import deploy, deployment_status  # bundle_revision
+from gcdt.s3 import prepare_artifacts_bucket, upload_file_to_s3
 from .gcdt_cmd_dispatcher import cmd
 from . import gcdt_lifecycle
 
@@ -36,6 +36,7 @@ def deploy_cmd(**tooldata):
     prepare_artifacts_bucket(awsclient,
                              config['codedeploy'].get('artifactsBucket'))
     # TODO deprecate prebundle hook with reference to new signal-based-hooks
+    # TODO and move them to glomex_bundler
     pre_bundle_scripts = config.get('preBundle', None)
     if pre_bundle_scripts:
         exit_code = utils.execute_scripts(pre_bundle_scripts)
@@ -43,12 +44,15 @@ def deploy_cmd(**tooldata):
             print('Pre bundle script exited with error')
             return 1
 
+    bucket = config['codedeploy'].get('artifactsBucket')
+
     deployment = deploy(
         awsclient=awsclient,
         applicationName=config['codedeploy'].get('applicationName'),
         deploymentGroupName=config['codedeploy'].get('deploymentGroupName'),
         deploymentConfigName=config['codedeploy'].get('deploymentConfigName'),
-        bucket=config['codedeploy'].get('artifactsBucket')
+        bucket=bucket,
+        bundlefile=context['_bundle_file']
     )
 
     exit_code = deployment_status(awsclient, deployment)
@@ -58,7 +62,9 @@ def deploy_cmd(**tooldata):
 
 @cmd(spec=['bundle'])
 def bundle_cmd(**tooldata):
-    print('created bundle at %s' % bundle_revision())
+    context = tooldata.get('context')
+    #print('created bundle at %s' % bundle_revision())
+    print('created bundle at %s' % context['_bundle_file'])
 
 
 def main():
