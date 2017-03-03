@@ -8,6 +8,7 @@ import logging
 
 import botocore.session
 import pytest
+from gcdt_plugins.bundler.bundler import _get_zipped_file
 
 from gcdt.ramuda_core import deploy_lambda
 from gcdt.s3 import create_bucket, delete_bucket
@@ -96,6 +97,14 @@ def create_lambda_helper(awsclient, lambda_name, role_arn, handler_filename,
     ]
     artifact_bucket = None
 
+    zipfile = _get_zipped_file(#awsclient,
+        handler_filename,
+        folders_from_file,
+        #runtime=runtime,
+        #settings=settings
+    )
+
+
     # create the function
     deploy_lambda(
         awsclient=awsclient,
@@ -107,7 +116,9 @@ def create_lambda_helper(awsclient, lambda_name, role_arn, handler_filename,
         description=lambda_description,
         timeout=timeout,
         memory=memory_size,
-        artifact_bucket=artifact_bucket)
+        artifact_bucket=artifact_bucket,
+        zipfile=zipfile
+    )
     time.sleep(10)
 
 

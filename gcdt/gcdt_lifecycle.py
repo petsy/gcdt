@@ -12,8 +12,7 @@ from logging.config import dictConfig
 
 from . import gcdt_signals
 from .gcdt_defaults import DEFAULT_CONFIG
-from .utils import dict_merge, get_context, check_gcdt_update, \
-    are_credentials_still_valid
+from .utils import get_context, check_gcdt_update, are_credentials_still_valid
 from .gcdt_cmd_dispatcher import cmd, get_command
 from .gcdt_plugins import load_plugins
 from .gcdt_awsclient import AWSClient
@@ -74,10 +73,13 @@ def lifecycle(awsclient, tool, command, arguments):
     ## check credentials are valid (AWS services)
     are_credentials_still_valid(awsclient)
 
-    ## TODO bundle-phase if the tool & command requires one
+    ## bundle step
     gcdt_signals.bundle_pre.send((context, config))
     gcdt_signals.bundle_init.send((context, config))
     gcdt_signals.bundle_finalized.send((context, config))
+    if 'error' in context:
+        gcdt_signals.error.send((context, config))
+        return 1
 
     ## dispatch command providing context and config (= tooldata)
     gcdt_signals.command_init.send((context, config))
