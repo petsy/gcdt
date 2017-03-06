@@ -5,7 +5,7 @@ from __future__ import unicode_literals, print_function
 import json
 
 
-# TODO write config_reader for 'gcdt_<env>.json'
+# TODO implement config_reader for 'gcdt_<env>.json' as plugin!!
 
 
 def read_json_config(config_file):

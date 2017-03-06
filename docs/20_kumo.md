@@ -81,10 +81,9 @@ cloudformation {
 
 ### Howto
 1. create a new local folder from the template: `kumo scaffold`
-2. fill `cloudformation.py`with the contents of your stack
-3. fill `settings_ENV.conf`with valid parameters for your CloudFormation template
-4. call `kumo validate`to check your template for errors
-5. call `kumo deploy`to deploy your stack to AWS
+2. fill `cloudformation.py` with the contents of your stack
+3. fill `settings_<env>.conf` with valid parameters for your CloudFormation template
+4. call `kumo deploy` to deploy your stack to AWS
 
 ### Hooks
 kumo offers numerous hook functions that get called during the lifecycle of a kumo deploy run:
