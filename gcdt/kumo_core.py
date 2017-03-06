@@ -468,7 +468,6 @@ def _update_stack(awsclient, conf, cloudformation, parameters,
         else:
             # if we have no artifacts bucket configured then upload the template directly
             #except ConfigMissingException:
-            print('no bucket')
             response = client_cf.update_stack(
                 StackName=_get_stack_name(conf),
                 TemplateBody=cloudformation.generate_template(),
