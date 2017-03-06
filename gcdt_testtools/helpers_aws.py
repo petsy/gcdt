@@ -8,20 +8,18 @@ import logging
 
 import botocore.session
 import pytest
+from gcdt_plugins.bundler.bundler import _get_zipped_file
 
 from gcdt.ramuda_core import deploy_lambda
 from gcdt.s3 import create_bucket, delete_bucket
-from . import helpers
+from gcdt_testtools import helpers
 from .placebo_awsclient import PlaceboAWSClient
 from gcdt import __version__
-#from gcdt.config_reader import read_config
 from gcdt.gcdt_config_reader import read_json_config
 from gcdt.utils import get_env
 
+
 log = logging.getLogger(__name__)
-
-
-def here(p): return os.path.join(os.path.dirname(__file__), p)
 
 
 @pytest.fixture(scope='function')  # 'function' or 'module'
@@ -99,6 +97,14 @@ def create_lambda_helper(awsclient, lambda_name, role_arn, handler_filename,
     ]
     artifact_bucket = None
 
+    zipfile = _get_zipped_file(#awsclient,
+        handler_filename,
+        folders_from_file,
+        #runtime=runtime,
+        #settings=settings
+    )
+
+
     # create the function
     deploy_lambda(
         awsclient=awsclient,
@@ -110,7 +116,9 @@ def create_lambda_helper(awsclient, lambda_name, role_arn, handler_filename,
         description=lambda_description,
         timeout=timeout,
         memory=memory_size,
-        artifact_bucket=artifact_bucket)
+        artifact_bucket=artifact_bucket,
+        zipfile=zipfile
+    )
     time.sleep(10)
 
 
@@ -206,11 +214,17 @@ check_preconditions = pytest.mark.skipif(
 
 @pytest.fixture(scope='function')  # 'function' or 'module'
 def awsclient(request):
+    def there(p):
+        # waited a long time to find a problem where I can use this ;)
+        return os.path.abspath(os.path.join(
+            os.path.dirname(request.module.__file__), p))
+
     random_string_orig = helpers.random_string
     sleep_orig = time.sleep
     random_string_filename = 'random_string.txt'
     prefix = request.module.__name__ + '.' + request.function.__name__
-    record_dir = os.path.join(here('./resources/placebo_awsclient'), prefix)
+    #record_dir = os.path.join(here('./resources/placebo_awsclient'), prefix)
+    record_dir = os.path.join(there('./resources/placebo_awsclient'), prefix)
 
     client = PlaceboAWSClient(botocore.session.Session(), data_path=record_dir)
     if os.getenv('PLACEBO_MODE', '').lower() == 'record':

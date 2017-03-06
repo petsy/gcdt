@@ -128,3 +128,36 @@ check_dot_precondition = pytest.mark.skipif(
     _dot_check(),
     reason="You need to install dot / graphviz (see gcdt docs)."
 )
+
+
+@pytest.fixture(scope='function')  # 'function' or 'module'
+def preserve_env():
+    env = os.environ['ENV']
+    yield
+    # cleanup
+    os.environ['ENV'] = env
+
+
+# pytest_vts
+# python has many mocking tools for requests, we use pytest_vts because:
+# * pytest
+# * uses responses under the hood (good alternative would be requests-mock)
+# * implementation is straight forward
+@pytest.fixture
+def vts(request, vts_recorder):
+    """transform vts_recorder into a fixture by applying setup/teardown
+    phases. If a file is there it goes into playback state."""
+    def there(p):
+        return os.path.abspath(os.path.join(
+            os.path.dirname(request.module.__file__), p))
+
+    # in order to avoid setting basedir for every test I patch it in
+    param = getattr(request, 'param',
+                    {'basedir': there('./resources/vts_cassettes'),
+                     'strict_body': True})
+    if param and not isinstance(param, dict):
+        raise Exception('pytest-vts configuration error! Currently you can'
+                        ' configure pytest-vts\'s fixtures with dicts objects')
+    vts_recorder.setup(**param)
+    request.addfinalizer(vts_recorder.teardown)
+    return vts_recorder

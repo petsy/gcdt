@@ -10,6 +10,8 @@ from troposphere.cloudformation import AWSCustomObject
 
 class StackLookup(object):
     """Class to handle stack lookups
+    Note: gcdt.kumo_util StackLookup(template, template, param_lambda_lookup_arn)
+    is used in many cloudformation.py templates!
     """
 
     def __init__(self, template, param_lambda_lookup_arn,
@@ -71,7 +73,8 @@ class StackLookup(object):
 
 
 def ensure_ebs_volume_tags_autoscaling_group(awsclient, as_group_name, tags):
-    # I think this is only relevant to test code!
+    # note: gcdt.kumo_util ensure_ebs_volume_tags_autoscaling_group(awsclient, ...)
+    # is used in dataplatform cloudformation.py templates!
     ec2_client = awsclient.get_client('ec2')
 
     autoscale_filter = {

@@ -8,13 +8,13 @@ from gcdt.kumo_main import version_cmd, list_cmd, preview_cmd, dot_cmd, \
     generate_cmd, deploy_cmd, delete_cmd, load_template
 from gcdt.kumo_core import _get_stack_state
 
-from .helpers_aws import check_preconditions, get_tooldata
-from .helpers import check_dot_precondition
-from .helpers_aws import awsclient  # fixtures!
+from gcdt_testtools.helpers_aws import check_preconditions, get_tooldata
+from gcdt_testtools.helpers import check_dot_precondition
+from gcdt_testtools.helpers_aws import awsclient  # fixtures!
 from .test_kumo_aws import simple_cloudformation_stack  # fixtures!
 from .test_kumo_aws import simple_cloudformation_stack_folder  # fixtures!
 from .test_kumo_aws import sample_ec2_cloudformation_stack_folder  # fixtures!
-from .helpers import temp_folder  # fixtures!
+from gcdt_testtools.helpers import temp_folder  # fixtures!
 from . import here
 
 

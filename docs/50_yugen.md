@@ -1,6 +1,11 @@
 ## API Gateway Deploy Tool
 ### yugen (幽玄 from Japanese: “dim”, “deep” or “mysterious”)
 
+### Related documents
+
+* [AWS API Gateway service](https://aws.amazon.com/api-gateway/)
+
+
 ### Usage
 
 To see available commands, call this:

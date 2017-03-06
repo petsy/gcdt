@@ -1,4 +1,11 @@
-## glomex-cloud-deployment-tools (gcdt)
+## glomex-cloud-deployment-tools
+### gcdt
+
+### Related documents
+
+* [Infrastructure as code](https://martinfowler.com/bliki/InfrastructureAsCode.html)
+* [Low-level interface to AWS services](http://botocore.readthedocs.io/en/latest/index.html)
+
 ### Usage
 
 To see available commands, call gcdt without any arguments:

@@ -5,6 +5,7 @@ from gcdt.kumo_util import StackLookup
 
 
 def test_StackLookup():
+    # used in cloudformation!
     # Create EC2 Cloudformation template with troposphere
     t = troposphere.Template()
     t.add_version('2010-09-09')

@@ -2,15 +2,19 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## [0.0.78] - 2017-02-27
+## [0.0.78] - 2017-03-06
 ### Added
 - FEATURE moved hocon config_reader to plugin (#150)
-- FIX continues with warning after slack.tocken is missing in credstash (#215)
+- FEATURE split glomex_lookups plugin from config_reader (#150)
+- FEATURE improved slack plugin (webhooks, consolidated msgs) (#219)
+- FEATURE extracted bundle step into bundler plugin (#150)
 
 ## [0.0.77] - 2017-02-20
 ### Added
 - FEATURE moved to std python logging + activate DEBUG logs via `-v` (#175)
 - FEATURE std. gcdt lifecycle (#152)
+- FEATURE removed glomex_utils as installation dependency (#152)
+- FEATURE cloudformation utilities need awsclient (see kumo documentation) (#152)
 - FEATURE plugin mechanism (#152)
 - FEATURE moved datadog and slack reporting functionality to gcdt-plugins (#152)
 - FEATURE cmd dispatcher + testable main modules + tests (#152)

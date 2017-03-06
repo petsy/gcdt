@@ -21,11 +21,9 @@ lookup_finalized = signal('lookup_finalized')
 config_validation_init = signal('config_validation_init')
 config_validation_finalized = signal('config_validation_finalized')
 
-credentials_retr_init = signal('credentials_retr_init')
-credentials_retr_finalized = signal('credentials_retr_finalized')
-
+bundle_pre = signal('bundle_pre')  # we need this signal to implement the prebundle-hook
 bundle_init = signal('bundle_init')
-_bundle = signal('bundle')  # not for public consumption
+#_bundle = signal('bundle')  # not for public consumption
 bundle_finalized = signal('bundle_finalized')
 
 command_init = signal('command_init')

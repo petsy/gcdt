@@ -5,10 +5,11 @@ from troposphere.ec2 import Instance
 
 from gcdt import route53
 
-from .helpers_aws import awsclient
+from gcdt_testtools.helpers_aws import awsclient
 
 
 def test_create_record_with_given_hostname(awsclient):
+    # used in cloudformation!
     result_record = route53.create_record(
         awsclient,
         'TESTPREFIX',
@@ -29,6 +30,7 @@ def test_create_record_with_given_hostname(awsclient):
 
 
 def test_create_record_with_given_hostname_cname(awsclient):
+    # used in cloudformation!
     result_record = route53.create_record(
         awsclient,
         'TESTPREFIX',
@@ -50,6 +52,7 @@ def test_create_record_with_given_hostname_cname(awsclient):
 
 
 def test_create_record_with_given_hostname_target_instance():
+    # used in cloudformation!
     instance = Instance('testEC2')
 
     result_record = route53.create_record(

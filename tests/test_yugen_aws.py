@@ -7,8 +7,9 @@ import pytest
 
 from gcdt.yugen_core import deploy_api, delete_api, delete_api_key, \
     create_api_key, _template_variables_to_dict
-from . import helpers, here
-from .helpers_aws import check_preconditions, awsclient
+from gcdt_testtools import helpers
+from gcdt_testtools.helpers_aws import check_preconditions
+from gcdt_testtools.helpers_aws import awsclient  # fixtures!
 
 log = logging.getLogger(__name__)
 

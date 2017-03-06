@@ -1,5 +1,11 @@
 ## AWS CodeDeploy Tool
 ### tenkai (展開 from Japanese: deployment)
+
+### Related documents
+
+* [AWS Codedeploy service](https://aws.amazon.com/codedeploy/)
+
+
 ### Usage
 
 To see available commands, call this:

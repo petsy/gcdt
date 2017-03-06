@@ -277,10 +277,12 @@ def _generate_parameters(conf):
     # conf keys
     raw_parameters = []
     parameter_list = []
-    for item in conf.iterkeys():
-        for key in conf[item].iterkeys():
-            if key not in ['StackName', 'TemplateBody', 'ArtifactBucket']:
-                raw_parameters.append(key)
+    # this looks weird since it should work only on the 'cloudformation' config
+    #for item in conf.iterkeys():
+    #    for key in conf[item].iterkeys():
+    for key in conf['cloudformation'].iterkeys():
+        if key not in ['StackName', 'TemplateBody', 'ArtifactBucket']:
+            raw_parameters.append(key)
     for param in raw_parameters:
         entry = _generate_parameter_entry(conf, param)
         parameter_list.append(entry)
@@ -446,12 +448,10 @@ def _update_stack(awsclient, conf, cloudformation, parameters,
     stackname = _get_stack_name(conf)
     last_event = _get_stack_events_last_timestamp(awsclient, stackname)
     try:
-        stackname = _get_stack_name(conf)
         _call_hook(awsclient, conf, stackname, parameters, cloudformation,
                    hook='pre_update_hook')
         #try:
-        if stackname:
-            _get_artifact_bucket(conf)
+        if _get_artifact_bucket(conf):
             response = client_cf.update_stack(
                 StackName=_get_stack_name(conf),
                 TemplateURL=_s3_upload(awsclient, conf, cloudformation),
@@ -465,12 +465,13 @@ def _update_stack(awsclient, conf, cloudformation, parameters,
                     override_stack_policy)
 
             )
-        #except ConfigMissingException:
         else:
+            # if we have no artifacts bucket configured then upload the template directly
+            #except ConfigMissingException:
             response = client_cf.update_stack(
                 StackName=_get_stack_name(conf),
                 TemplateBody=cloudformation.generate_template(),
-                Parameters=_generate_parameters(conf),
+                Parameters=parameters,
                 Capabilities=[
                     'CAPABILITY_IAM',
                 ],
@@ -489,7 +490,7 @@ def _update_stack(awsclient, conf, cloudformation, parameters,
             print(colored.yellow('No updates are to be performed.'))
         else:
             print(type(e))
-            print(colored.red('Exception occurred during update:' + str(e)))
+            print(colored.red('Exception occurred during update: ' + str(e)))
 
     return exit_code
 
@@ -578,12 +579,10 @@ def describe_change_set(awsclient, change_set_name, stack_name):
 
 
 def _get_stack_name(conf):
-    #return conf.get('cloudformation.StackName')
     return conf['cloudformation']['StackName']
 
 
 def _get_artifact_bucket(conf):
-    #return conf.get('cloudformation.artifactBucket')
     bucket = conf['cloudformation'].get('artifactBucket')
     if bucket:
         return bucket

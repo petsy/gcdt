@@ -7,7 +7,7 @@ from pip.commands.list import ListCommand
 
 from gcdt.package_utils import get_dist, get_package_versions
 
-from .helpers import Bunch
+from gcdt_testtools.helpers import Bunch
 
 
 def test_get_dist():

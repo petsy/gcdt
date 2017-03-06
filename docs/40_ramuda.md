@@ -1,6 +1,11 @@
 ## AWS Lambda Deploy Tool
 ### ramuda (ラムダ from Japanese: lambda)
 
+### Related documents
+
+* [AWS Lambda service](https://aws.amazon.com/lambda/)
+
+
 ### Usage
 
 To see available commands, call this:

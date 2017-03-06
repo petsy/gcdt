@@ -5,7 +5,7 @@ from botocore.validate import validate_parameters
 from botocore import xform_name
 import pytest
 
-from .helpers_aws import awsclient  # fixtures!
+from gcdt_testtools.helpers_aws import awsclient  # fixtures!
 
 
 # note: this is not really a test

@@ -24,6 +24,8 @@ _host_zone_name = None
 def create_record(awsclient, name_prefix, instance_reference, type="A", host_zone_name=None):
     """
     Builds route53 record entries enabling DNS names for services
+    Note: gcdt.route53 create_record(awsclient, ...)
+    is used in dataplatform cloudformation.py templates!
 
     :param name_prefix: The sub domain prefix to use
     :param instance_reference: The EC2 troposphere reference which's private IP should be linked to

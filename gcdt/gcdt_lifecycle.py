@@ -2,6 +2,7 @@
 from __future__ import unicode_literals, print_function
 import sys
 import logging
+from copy import deepcopy
 
 from docopt import docopt
 import botocore.session
@@ -11,8 +12,7 @@ from logging.config import dictConfig
 
 from . import gcdt_signals
 from .gcdt_defaults import DEFAULT_CONFIG
-from .utils import dict_merge, get_context, check_gcdt_update, \
-    are_credentials_still_valid
+from .utils import get_context, check_gcdt_update, are_credentials_still_valid
 from .gcdt_cmd_dispatcher import cmd, get_command
 from .gcdt_plugins import load_plugins
 from .gcdt_awsclient import AWSClient
@@ -55,34 +55,33 @@ def lifecycle(awsclient, tool, command, arguments):
     gcdt_signals.initialized.send(context)
     check_gcdt_update()
 
-    config = {}
+    config = deepcopy(DEFAULT_CONFIG)
     gcdt_signals.config_read_init.send((context, config))
     gcdt_signals.config_read_finalized.send((context, config))
+    # TODO we might want to be able to override config via env variables?
+    # here would be the right place to do this
 
-    # TODO lookup
+    ## lookup
+    # credential retrieval should be done using lookups
+    gcdt_signals.lookup_init.send((context, config))
+    gcdt_signals.lookup_finalized.send((context, config))
 
+    ## config validation
     gcdt_signals.config_validation_init.send((context, config))
-    # TODO config validation
     gcdt_signals.config_validation_finalized.send((context, config))
 
-    # credentials_retr (ask plugins to get their credentials)
-    gcdt_signals.credentials_retr_init.send((context, config))
-    # plugins do retrieve credentials themselves
-    gcdt_signals.credentials_retr_finalized.send((context, config))
-
-    # check credentials are valid
+    ## check credentials are valid (AWS services)
     are_credentials_still_valid(awsclient)
 
-    # merge DEFAULT_CONFIG with config
-    #tool_config = copy.deepcopy(DEFAULT_CONFIG[tool])
-    #dict_merge(tool_config, config)
-
-    # TODO bundle-phase if the tool & command requires one
+    ## bundle step
+    gcdt_signals.bundle_pre.send((context, config))
     gcdt_signals.bundle_init.send((context, config))
-    gcdt_signals._bundle.send((context, config))
     gcdt_signals.bundle_finalized.send((context, config))
+    if 'error' in context:
+        gcdt_signals.error.send((context, config))
+        return 1
 
-    # run the command and provide context and config (= tooldata)
+    ## dispatch command providing context and config (= tooldata)
     gcdt_signals.command_init.send((context, config))
     try:
         exit_code = cmd.dispatch(arguments,

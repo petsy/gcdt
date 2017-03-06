@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals, print_function
+import os
 
 from nose.tools import assert_equal
 import pytest
 
 from gcdt.utils import version, __version__, retries,  \
-    get_command, dict_merge
-from .helpers import create_tempfile, cleanup_tempfiles
+    get_command, dict_merge, get_env
+from gcdt_testtools.helpers import create_tempfile, preserve_env  # fixtures!
 from . import here
 
 
@@ -115,6 +116,18 @@ def test_dict_merge():
 
     dict_merge(a, {'2': [2, 2], '4': [4]})
     assert a == {'1': 1, '2': [2, 2], '3': 3, '4': [4]}
+
+
+def test_get_env(preserve_env):
+    # used in cloudformation!
+    os.environ['ENV'] = 'LOCAL'
+    assert get_env() == 'local'
+
+    del os.environ['ENV']
+    assert get_env() == None
+
+    os.environ['ENV'] = 'NONE_SENSE'
+    assert get_env() == 'none_sense'
 
 
 # TODO get_outputs_for_stack

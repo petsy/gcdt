@@ -5,9 +5,10 @@ import os
 import pytest
 
 from gcdt.tenkai_main import version_cmd, deploy_cmd, bundle_cmd
+from gcdt_plugins.bundler.bundler import bundle_revision
 
-from .helpers_aws import check_preconditions, get_tooldata
-from .helpers_aws import awsclient  # fixtures !
+from gcdt_testtools.helpers_aws import check_preconditions, get_tooldata
+from gcdt_testtools.helpers_aws import awsclient  # fixtures !
 from .test_tenkai_aws import sample_codedeploy_app  # fixtures !
 from . import here
 
@@ -47,12 +48,16 @@ def test_version_cmd(capsys):
 def test_deploy_cmd(awsclient, sample_codedeploy_app,
                     sample_codedeploy_app_working_folder):
     tooldata = get_tooldata(awsclient, 'tenkai', 'deploy')
+    # gcdt-plugins are installed anyway so this is ok
+    # TODO alternatively prepare a stock bundle.zip!
+    tooldata['context']['_bundle_file'] = bundle_revision()
     deploy_cmd(**tooldata)
 
 
-def test_bundle_cmd(simple_codedeploy_folder):
-    tooldata = get_tooldata(None, 'tenkai', 'bundle')
+def test_bundle_cmd(capsys):
+    tooldata = {
+        'context': {'_bundle_file': 'some_file'}
+    }
     bundle_cmd(**tooldata)
-    filename = '%s/tenkai-bundle%s.tar.gz' % ('/tmp', os.getenv('BUILD_TAG', ''))
-    assert os.path.exists(filename)
-    os.unlink(filename)
+    out, err = capsys.readouterr()
+    assert out == 'created bundle at some_file\n'
