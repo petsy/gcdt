@@ -448,12 +448,10 @@ def _update_stack(awsclient, conf, cloudformation, parameters,
     stackname = _get_stack_name(conf)
     last_event = _get_stack_events_last_timestamp(awsclient, stackname)
     try:
-        stackname = _get_stack_name(conf)
         _call_hook(awsclient, conf, stackname, parameters, cloudformation,
                    hook='pre_update_hook')
         #try:
-        if stackname:
-            _get_artifact_bucket(conf)
+        if _get_artifact_bucket(conf):
             response = client_cf.update_stack(
                 StackName=_get_stack_name(conf),
                 TemplateURL=_s3_upload(awsclient, conf, cloudformation),
@@ -467,12 +465,14 @@ def _update_stack(awsclient, conf, cloudformation, parameters,
                     override_stack_policy)
 
             )
-        #except ConfigMissingException:
         else:
+            # if we have no artifacts bucket configured then upload the template directly
+            #except ConfigMissingException:
+            print('no bucket')
             response = client_cf.update_stack(
                 StackName=_get_stack_name(conf),
                 TemplateBody=cloudformation.generate_template(),
-                Parameters=_generate_parameters(conf),
+                Parameters=parameters,
                 Capabilities=[
                     'CAPABILITY_IAM',
                 ],
@@ -491,7 +491,7 @@ def _update_stack(awsclient, conf, cloudformation, parameters,
             print(colored.yellow('No updates are to be performed.'))
         else:
             print(type(e))
-            print(colored.red('Exception occurred during update:' + str(e)))
+            print(colored.red('Exception occurred during update: ' + str(e)))
 
     return exit_code
 
