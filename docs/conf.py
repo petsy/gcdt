@@ -52,7 +52,7 @@ author = u'glomex DevOps team & friends'
 # built documents.
 #
 # The short X.Y version.
-version = '0.0.78.dev2'
+version = '0.0.78.dev3'
 # The full version, including alpha/beta/rc tags.
 #release = '0.0.74'
 release = version
