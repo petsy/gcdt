@@ -2,9 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## [0.0.79] - 2017-03-13
+## [0.0.79] - 2017-03-08
 ### Added
 - FIX kumo docu bug (#183)
+- INVESTIGATE ramuda bundling issue (#225)
 
 ## [0.0.78] - 2017-03-06
 ### Added

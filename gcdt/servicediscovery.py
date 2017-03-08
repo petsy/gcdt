@@ -6,7 +6,6 @@ A refactoring might break team-code!!
 from __future__ import unicode_literals, print_function
 from distutils.version import StrictVersion
 from datetime import tzinfo, timedelta, datetime
-import locale
 import re
 
 
@@ -29,7 +28,8 @@ def parse_ts(ts):
     ISO8601_MS = '%Y-%m-%dT%H:%M:%S.%fZ'
     RFC1123 = '%a, %d %b %Y %H:%M:%S %Z'
 
-    locale.setlocale(locale.LC_ALL, 'C')
+    # commented out after discussion with Andy 08.03.2017
+    #locale.setlocale(locale.LC_ALL, 'C')
     ts = ts.strip()
     try:
         dt = datetime.strptime(ts, ISO8601)
