@@ -9,6 +9,7 @@ import logging
 import botocore.session
 import pytest
 from gcdt_plugins.bundler.bundler import _get_zipped_file
+from gcdt_plugins.glomex_lookups.lookups import _resolve_lookups
 
 from gcdt.ramuda_core import deploy_lambda
 from gcdt.s3 import create_bucket, delete_bucket
@@ -324,6 +325,9 @@ def get_tooldata(awsclient, tool, command, config=None, config_base_name=None,
         gcdt_config_file = os.path.join(location,
                                         '%s_%s.json' % (config_base_name, env))
         config = read_json_config(gcdt_config_file)[tool]
+        _resolve_lookups(awsclient, config, config.get('lookups',
+            ['secret', 'ssl', 'stack', 'baseami']))
+
     tooldata = {
         'context': {
             'tool': tool,
