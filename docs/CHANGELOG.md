@@ -5,6 +5,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ## [0.0.79] - 2017-03-08
 ### Added
 - FIX kumo docu bug (#183)
+- FIX servicediscovery timestamp localization issue (#217)
 - INVESTIGATE ramuda bundling issue (#225)
 
 ## [0.0.78] - 2017-03-06
