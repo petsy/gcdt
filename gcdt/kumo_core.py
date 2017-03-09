@@ -135,6 +135,7 @@ def _call_hook(awsclient, config, stack_name, parameters, cloudformation,
                   stack_state=stack_state)
 
 
+# TODO research CloudFormation Exports
 def _get_stack_outputs(cfn_client, stack_name):
     response = cfn_client.describe_stacks(StackName=stack_name)
     if response['Stacks']:
@@ -399,7 +400,6 @@ def _create_stack(awsclient, conf, cloudformation, parameters):
     stackname = _get_stack_name(conf)
     _call_hook(awsclient, conf, stackname, parameters, cloudformation,
                hook='pre_create_hook')
-    #try:
     if _get_artifact_bucket(conf):
         response = client_cf.create_stack(
             StackName=_get_stack_name(conf),
@@ -412,7 +412,6 @@ def _create_stack(awsclient, conf, cloudformation, parameters):
         )
     else:
         # if we have no artifacts bucket configured then upload the template directly
-        #except ConfigMissingException:
         response = client_cf.create_stack(
             StackName=_get_stack_name(conf),
             TemplateBody=cloudformation.generate_template(),
