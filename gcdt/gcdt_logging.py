@@ -47,7 +47,7 @@ logging_config = {
             'handlers': ['default'],
             'propagate': 0
         },
-        'plugins': {
+        'gcdt_plugins': {
             'level': 'INFO',
             'handlers': ['default'],
             'propagate': 0

@@ -87,3 +87,12 @@ def test_gcdt_formatter_warning(capsys):
                             None, None)
 
     assert GcdtFormatter().format(rec) == 'WARNING: warning message'
+
+
+def test_log_capturing(caplog):
+    # https://github.com/eisensheng/pytest-catchlog
+    logging.getLogger().info('boo %s', 'arg')
+
+    assert caplog.record_tuples == [
+        ('root', logging.INFO, 'boo arg'),
+    ]
