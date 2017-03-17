@@ -3,7 +3,8 @@ from __future__ import unicode_literals, print_function
 
 import mock
 
-from gcdt.gcdt_plugins import load_plugins, check_hook_mechanism_is_intact
+from gcdt.gcdt_plugins import load_plugins
+from gcdt.gcdt_signals import check_hook_mechanism_is_intact
 
 
 def test_load_plugins():
