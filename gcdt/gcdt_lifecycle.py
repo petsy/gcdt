@@ -12,7 +12,8 @@ from logging.config import dictConfig
 
 from . import gcdt_signals
 from .gcdt_defaults import DEFAULT_CONFIG
-from .utils import get_context, check_gcdt_update, are_credentials_still_valid
+from .utils import get_context, check_gcdt_update, are_credentials_still_valid, \
+    get_env
 from .gcdt_cmd_dispatcher import cmd, get_command
 from .gcdt_plugins import load_plugins
 from .gcdt_awsclient import AWSClient
@@ -20,15 +21,14 @@ from .gcdt_logging import logging_config
 
 
 log = logging.getLogger(__name__)
-REPO_SERVER = 'https://reposerver-prod-eu-west-1.infra.glomex.cloud/pypi/packages'
 
 
-def check_vpn_connection():
+def check_vpn_connection(reposerver):
     """Check whether we can connect to VPN for version check.
     :return: True / False
     """
     try:
-        request = requests.get(REPO_SERVER, timeout=1.0)
+        request = requests.get(reposerver, timeout=1.0)
         if request.status_code == 200:
             return True
         else:
@@ -41,21 +41,27 @@ def check_vpn_connection():
 
 # lifecycle implementation adapted from
 # https://github.com/finklabs/aws-deploy/blob/master/aws_deploy/tool.py
-def lifecycle(awsclient, tool, command, arguments):
+def lifecycle(awsclient, env, tool, command, arguments):
     """Tool lifecycle which provides hooks into the different stages of the
     command execution. See signals for hook details.
     """
-    # TODO hooks!!
     load_plugins()
-    context = get_context(awsclient, tool, command, arguments)
+    context = get_context(awsclient, env, tool, command, arguments)
     # every tool needs a awsclient so we provide this via the context
     context['_awsclient'] = awsclient
+    if 'error' in context:
+        # no need to send an 'error' signal here
+        return 1
 
     ## initialized
     gcdt_signals.initialized.send(context)
     check_gcdt_update()
 
     config = deepcopy(DEFAULT_CONFIG)
+    if not check_vpn_connection(config['reposerver']):
+        print(colored.red('Can not connect to VPN please activate your VPN!'))
+        return 1
+
     gcdt_signals.config_read_init.send((context, config))
     gcdt_signals.config_read_finalized.send((context, config))
     # TODO we might want to be able to override config via env variables?
@@ -71,7 +77,12 @@ def lifecycle(awsclient, tool, command, arguments):
     gcdt_signals.config_validation_finalized.send((context, config))
 
     ## check credentials are valid (AWS services)
-    are_credentials_still_valid(awsclient)
+    if are_credentials_still_valid(awsclient):
+        context['error'] = \
+            'Your credentials have expired... Please renew and try again!'
+        log.error(context['error'])
+        gcdt_signals.error.send((context, config))
+        return 1
 
     ## bundle step
     gcdt_signals.bundle_pre.send((context, config))
@@ -110,6 +121,11 @@ def main(doc, tool, dispatch_only=None):
     :param tool: gcdt tool (gcdt, kumo, tenkai, ramuda, yugen)
     :return: exit_code
     """
+    env = get_env()
+    if not env:
+        log.error('\'ENV\' environment variable not set!')
+        return 1
+
     if dispatch_only is None:
         dispatch_only = ['version']
     assert tool in ['gcdt', 'kumo', 'tenkai', 'ramuda', 'yugen']
@@ -121,13 +137,10 @@ def main(doc, tool, dispatch_only=None):
     dictConfig(logging_config)
 
     command = get_command(arguments)
-    if not check_vpn_connection():
-        print(colored.red('Can not connect to VPN please activate your VPN!'))
-        return 1
     if command in dispatch_only:
         # handle commands that do not need a lifecycle
         check_gcdt_update()
         return cmd.dispatch(arguments)
     else:
         awsclient = AWSClient(botocore.session.get_session())
-        return lifecycle(awsclient, tool, command, arguments)
+        return lifecycle(awsclient, env, tool, command, arguments)

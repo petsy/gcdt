@@ -166,11 +166,6 @@ def _json2table(data):
         return data
 
 
-def _get_input():
-    name = prompt.query('Please enter your Slack API token: ')
-    return name
-
-
 def _get_stack_id(awsclient, stackname):
     client = awsclient.get_client('cloudformation')
     response = client.describe_stacks(StackName=stackname)
@@ -292,6 +287,7 @@ def _generate_parameters(conf):
 
 
 def _stack_exists(awsclient, stackName):
+    # TODO handle failure based on API call limit
     client = awsclient.get_client('cloudformation')
     try:
         response = client.describe_stacks(

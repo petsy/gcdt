@@ -23,7 +23,6 @@ config_validation_finalized = signal('config_validation_finalized')
 
 bundle_pre = signal('bundle_pre')  # we need this signal to implement the prebundle-hook
 bundle_init = signal('bundle_init')
-#_bundle = signal('bundle')  # not for public consumption
 bundle_finalized = signal('bundle_finalized')
 
 command_init = signal('command_init')
@@ -32,7 +31,3 @@ command_finalized = signal('command_finalized')
 error = signal('error')
 
 finalized = signal('finalized')  # right before exit
-
-
-# tool specific signals
-# please prefix these with the tool name e.g. static_

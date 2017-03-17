@@ -15,7 +15,7 @@ from . import here
 
 @pytest.mark.aws
 def test_get_context(awsclient):
-    actual = get_context(awsclient, 'kumo', 'deploy')
+    actual = get_context(awsclient, 'dev', 'kumo', 'deploy')
     expected_subset = {
         'tool': 'kumo',
         'command': 'deploy',

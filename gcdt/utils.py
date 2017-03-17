@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals, print_function
-
+import logging
 import getpass
 import subprocess
 from time import sleep
@@ -11,6 +11,8 @@ from pyhocon import ConfigFactory
 
 from gcdt import __version__
 from gcdt.package_utils import get_package_versions
+
+log = logging.getLogger(__name__)
 
 
 def version():
@@ -103,7 +105,7 @@ def get_env():
     return env
 
 
-def get_context(awsclient, tool, command, arguments=None):
+def get_context(awsclient, env, tool, command, arguments=None):
     """This assembles the tool context. Private members are preceded by a '_'.
 
     :param tool:
@@ -114,16 +116,13 @@ def get_context(awsclient, tool, command, arguments=None):
     if arguments is None:
         arguments = {}
     context = {
+        'env': env,
         'tool': tool,
         'command': command,
         '_arguments': arguments,  # TODO clean up arguments -> args
         'version': __version__,
         'user': _get_user()
     }
-
-    env = get_env()
-    if env:
-        context['env'] = env
 
     return context
 
@@ -184,6 +183,8 @@ def dict_merge(a, b, path=None):
     return a
 
 
+# TODO test this properly!
+# TODO use logging
 def are_credentials_still_valid(awsclient):
     """Check whether the credentials have expired.
 
@@ -194,7 +195,7 @@ def are_credentials_still_valid(awsclient):
     try:
         client.list_functions()
     except Exception as e:
+        log.debug(e)
         print(e)
-        print(colored.red('Your credentials have expired... Please renew and try again!'))
         return 1
     return 0

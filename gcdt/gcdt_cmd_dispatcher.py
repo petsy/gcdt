@@ -55,7 +55,6 @@ class cmd(object):
         for spec, func in cls._specs:
             # if command and arguments.get(command) and match(args):
             args = []  # specified args in order of appearance
-            # TODO probably easier to read using list comprehension
             options = filter(lambda k: k.startswith('-') and
                                        (arguments[k] or k in spec),
                              arguments.keys())

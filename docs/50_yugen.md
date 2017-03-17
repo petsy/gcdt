@@ -72,3 +72,12 @@ lambda {
 
 }
 ```
+
+
+#### Setting the ENV variable
+
+For example if you want to set the environment variable ENV to 'DEV' you can do that as follows:
+
+``` bash
+export ENV=DEV
+```
