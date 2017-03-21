@@ -1,5 +1,7 @@
-## API Gateway Deploy Tool
-### yugen (幽玄 from Japanese: “dim”, “deep” or “mysterious”)
+## yugen command
+
+`yugen` (幽玄 from Japanese: “dim”, “deep” or “mysterious”) is gcdts API Gateway deployment tool.
+
 
 ### Related documents
 

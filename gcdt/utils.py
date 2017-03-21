@@ -26,10 +26,10 @@ def retries(max_tries, delay=1, backoff=2, exceptions=(Exception,), hook=None):
     delay: Sleep this many seconds * backoff * try number after failure
     backoff: Multiply delay by this factor after each failure
     exceptions: A tuple of exception classes; default (Exception,)
-    hook: A function with the signature:
-        example: myhook(tries_remaining, exception, mydelay);
-        default: None
+    hook: A function with the signature: (tries_remaining, exception, mydelay)
+    """
 
+    """
     def example_hook(tries_remaining, exception, delay):
         '''Example exception handler; prints a warning to stderr.
 

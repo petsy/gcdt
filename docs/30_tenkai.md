@@ -1,5 +1,7 @@
-## AWS CodeDeploy Tool
-### tenkai (展開 from Japanese: deployment)
+## tenkai command
+
+`tenkai` (展開 from Japanese: deployment) is gcdts codedeploy tool.
+
 
 ### Related documents
 

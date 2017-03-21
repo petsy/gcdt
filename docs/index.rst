@@ -6,10 +6,13 @@ glomex-cloud-deployment-tools
 
    02_introduction
    05_overview
+   07_installation
+   10_gcdt
    20_kumo
    30_tenkai
    40_ramuda
    50_yugen
+   gcdt_plugins/index.rst
    60_faq
    CHANGELOG
    70_development
