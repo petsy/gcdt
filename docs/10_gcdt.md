@@ -1,5 +1,7 @@
-## glomex-cloud-deployment-tools
-### gcdt
+## gcdt command
+
+glomex-cloud-deployment-tools
+
 
 ### Related documents
 

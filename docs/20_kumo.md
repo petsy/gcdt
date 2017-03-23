@@ -1,5 +1,7 @@
-## Cloudformation Deploy Tool  
-### kumo (雲 from Japanese: cloud)
+## kumo command
+  
+`kumo` (雲 from Japanese: cloud) is gcdts cloudformation deploy tool.
+
 
 ### Related documents
 

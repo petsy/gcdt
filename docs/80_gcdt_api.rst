@@ -1,14 +1,6 @@
 API Documentation of gcdt
 =========================
 
-gcdt.config_reader module
--------------------------
-
-.. automodule:: gcdt.config_reader
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 gcdt.gcdt_awsclient module
 --------------------------
 
@@ -21,6 +13,14 @@ gcdt.gcdt_cmd_dispatcher module
 -------------------------------
 
 .. automodule:: gcdt.gcdt_cmd_dispatcher
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+gcdt.gcdt_config_reader module
+------------------------------
+
+.. automodule:: gcdt.gcdt_config_reader
     :members:
     :undoc-members:
     :show-inheritance:

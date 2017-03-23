@@ -7,6 +7,7 @@ import logging
 
 class GcdtFormatter(logging.Formatter):
     """Give us details in case we use DEBUG level, for INFO no details.
+
     For WARN and ERROR output <level>: <msg>.
     Note: gcdt does NOT have a logfile!
     """

@@ -1,27 +1,5 @@
 ## Development of gcdt
 
-### Installation / Usage
-
-All gcdt packages live in a private PyPi repository. See [reposerver](http://reposerver-prod-eu-west-1.infra.glomex.cloud/pypi/) for instructions.
-
-Install the package:
-
-```bash
-$ pip install gcdt
-```
-
-The repo also has prerelease packages you can use for testing new features or bug fixes:
-
-```bash
-$ pip install --pre gcdt
-```
-
-Install the development version (after checkout):
-
-```bash
-$ pip install -e .
-```
-
 
 ### Contributing
 
@@ -50,6 +28,11 @@ extra-index-url = https://reposerver-prod-eu-west-1.infra.glomex.cloud/pypi/pack
 trusted-host = reposerver-prod-eu-west-1.infra.glomex.cloud
 ```
 
+Install the development version (after checkout):
+
+```bash
+$ pip install -e .
+```
 
 use pip to install the dev requirements:
 

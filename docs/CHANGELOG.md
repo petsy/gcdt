@@ -2,6 +2,11 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.0.81] - 2017-03-30
+### Added
+- FEATURE added scaffolding mechanism
+- FEATURE included plugin documentation
+
 ## [0.0.80] - 2017-03-09
 ### Added
 - FIX fixed ramuda vpc config handling (#225)

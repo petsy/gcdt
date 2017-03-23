@@ -1,5 +1,7 @@
-## AWS Lambda Deploy Tool
-### ramuda (ラムダ from Japanese: lambda)
+## ramuda command
+
+`ramuda` (ラムダ from Japanese: lambda) is gcdts AWS lambda deployment tool.
+
 
 ### Related documents
 
