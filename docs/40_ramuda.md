@@ -160,6 +160,15 @@ region = "eu-west-1",
 You can get the name of the bucket from Ops and it should be part of the stack outputs of the base stack in your account (s3DeploymentBucket).
 
 
+#### Setting the ENV variable
+
+For example if you want to set the environment variable ENV to 'DEV' you can do that as follows:
+
+``` bash
+export ENV=DEV
+```
+
+
 ### NodeJs runtime
 
 With `gcdt version 0.0.75` ramuda supports the `nodejs4.3` runtime.

@@ -10,9 +10,6 @@ import pytest
 from gcdt.gcdt_logging import logging_config, GcdtFormatter
 
 
-#TODO find proper log capture tool for pytest
-
-
 def test_gcdt_logging_config_debug(capsys):
     lc = deepcopy(logging_config)
     lc['loggers']['gcdt']['level'] = 'DEBUG'
@@ -28,7 +25,7 @@ def test_gcdt_logging_config_debug(capsys):
     out, err = capsys.readouterr()
 
     assert out == textwrap.dedent("""\
-        DEBUG: test_gcdt_logging: 23: debug message
+        DEBUG: test_gcdt_logging: 20: debug message
         info message
         WARNING: warning message
         ERROR: error message
@@ -87,3 +84,12 @@ def test_gcdt_formatter_warning(capsys):
                             None, None)
 
     assert GcdtFormatter().format(rec) == 'WARNING: warning message'
+
+
+def test_log_capturing(caplog):
+    # https://github.com/eisensheng/pytest-catchlog
+    logging.getLogger().info('boo %s', 'arg')
+
+    assert caplog.record_tuples == [
+        ('root', logging.INFO, 'boo arg'),
+    ]

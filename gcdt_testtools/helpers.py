@@ -56,6 +56,9 @@ def random_string():
     return ''.join([random.choice(string.ascii_lowercase) for i in xrange(6)])
 
 
+# TODO find out how to automatically load the gcdt_testtools fixtures
+
+
 @pytest.fixture(scope='module')  # 'function' or 'module'
 def cleanup_tempfiles():
     items = []

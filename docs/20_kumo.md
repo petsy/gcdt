@@ -79,13 +79,72 @@ cloudformation {
 }
 ```
 
+#### Setting the ENV variable
+
+For example if you want to set the environment variable ENV to 'DEV' you can do that as follows:
+
+``` bash
+export ENV=DEV
+```
+
+
 ### Howto
 1. create a new local folder from the template: `kumo scaffold`
 2. fill `cloudformation.py` with the contents of your stack
 3. fill `settings_<env>.conf` with valid parameters for your CloudFormation template
 4. call `kumo deploy` to deploy your stack to AWS
 
-### Hooks
+
+### Kumo uses a specialized version of troposphere
+
+Maintaining our own troposhpere fork has many benefits but also a few disadvantages.
+
+#### Pros
+
+* region specific cloudformation resource specifications specs
+* smaller codebase (allows better quality / test coverage)
+* quickly have new cloudformation features available (update spec)
++ update-type Mutable / Immutable
++ easy to integrate "opinionated defaults" - feature
++ easy to integrate "scaffolding" - feature
+
+
+#### Cons
+
+* need to maintain own fork (migrate new features and bug fixes, update specs)
+* I think 100% backwards compatibility will be an issue regarding generated modules and imports from cloudformation.ps templates. I expect that people who need to update their templates to a) set the region b) remove some imports.
+
+#### Details
+
+https://github.com/cloudtools/troposphere/issues/618
+http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cfn-resource-specification.html
+
+
+### Kumo lifecycle hooks
+
+Kumo lifecycle hooks work exactly like gcdt lifecycle hooks but have a specialized integration for kumo templates.
+
+```
+def my_hook(params):
+    context, config = params
+    ...
+
+def register():
+    """Please be very specific about when your hook needs to run and why.
+    E.g. run the sample stuff after at the very beginning of the lifecycle
+    """
+    gcdt_signals.initialized.connect(my_hook)
+
+
+def deregister():
+    gcdt_signals.initialized.disconnect(my_hook)
+```
+
+
+### Kumo legacy hooks
+
+The hooks in this section are deprecated please use gcdt livecycle hooks (see above)
+
 kumo offers numerous hook functions that get called during the lifecycle of a kumo deploy run:
 
 * pre_hook()

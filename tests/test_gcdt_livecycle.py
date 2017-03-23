@@ -27,7 +27,7 @@ def test_main(mocked_lifecycle, mocked_docopt, mocked_awsclient):
     main(DOC, 'kumo')
     # mocked_check_gcdt_update.assert_called_once()
     mocked_lifecycle.assert_called_once_with(
-        'my_awsclient', 'kumo', 'deploy',
+        'my_awsclient', 'dev', 'kumo', 'deploy',
         {'-f': False, '--override-stack-policy': False, 'version': False,
          'deploy': True, 'preview': False, 'list': False, 'generate': False,
          'dot': False, 'delete': False})
@@ -70,7 +70,7 @@ def _dummy_signal_factory(name, exp_signals):
 
 
 @mock.patch('gcdt.gcdt_lifecycle.cmd.dispatch', return_value=0)
-@mock.patch('gcdt.gcdt_lifecycle.are_credentials_still_valid')
+@mock.patch('gcdt.gcdt_lifecycle.are_credentials_still_valid', return_value=False)
 @mock.patch('gcdt.gcdt_lifecycle.check_gcdt_update')
 @mock.patch('gcdt.gcdt_lifecycle.load_plugins')
 def test_lifecycle(mocked_load_plugins, mocked_check_gcdt_update,
@@ -105,7 +105,7 @@ def test_lifecycle(mocked_load_plugins, mocked_check_gcdt_update,
         u'preview': False,
         u'version': False
     }
-    exit_code = lifecycle('my_awsclient', 'kumo', 'deploy', arguments)
+    exit_code = lifecycle('my_awsclient', 'dev', 'kumo', 'deploy', arguments)
     assert exit_code == 0
     assert exp_signals == []
 
@@ -116,7 +116,7 @@ def test_lifecycle(mocked_load_plugins, mocked_check_gcdt_update,
 
 
 @mock.patch('gcdt.gcdt_lifecycle.cmd.dispatch', side_effect=Exception)
-@mock.patch('gcdt.gcdt_lifecycle.are_credentials_still_valid')
+@mock.patch('gcdt.gcdt_lifecycle.are_credentials_still_valid', return_value=False)
 @mock.patch('gcdt.gcdt_lifecycle.check_gcdt_update')
 @mock.patch('gcdt.gcdt_lifecycle.load_plugins')
 def test_lifecycle_error(mocked_load_plugins, mocked_check_gcdt_update,
@@ -151,7 +151,7 @@ def test_lifecycle_error(mocked_load_plugins, mocked_check_gcdt_update,
         u'preview': False,
         u'version': False
     }
-    exit_code = lifecycle('my_awsclient', 'kumo', 'deploy', arguments)
+    exit_code = lifecycle('my_awsclient', 'dev', 'kumo', 'deploy', arguments)
     assert exit_code == 1
     assert exp_signals == []
 
@@ -164,7 +164,7 @@ def test_lifecycle_error(mocked_load_plugins, mocked_check_gcdt_update,
 @mock.patch('gcdt.gcdt_lifecycle.requests.get',
             return_value={'status_code' == 404})
 def test_check_vpn_connection(mocked_requests_get):
-    assert check_vpn_connection() == False
+    assert check_vpn_connection('foo.bar') is False
     mocked_requests_get.assert_called_once_with(
-        'https://reposerver-prod-eu-west-1.infra.glomex.cloud/pypi/packages',
+        'foo.bar',
         timeout=1.0)
