@@ -6,6 +6,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - FEATURE added scaffolding mechanism
 - FEATURE included plugin documentation
+- FIX ramuda bundle includes settings_<env>.conf file (#249)
 
 ## [0.0.80] - 2017-03-09
 ### Added
