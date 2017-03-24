@@ -1,11 +1,34 @@
 ## Installing gcdt
 
-gcdt installation comes in two flavours
+This chapter covers the gcdt installation. gcdt's behaviour can be customized using plugins. The gcdt plugin mechanism relies on standard Python package mechanisms. In order to get a good experience and get the most out of gcdt you need to know a few things about Python packaging.
+ 
+This chapter aims to provide you with all the information you need to know on this topic. We also have a screencast in the making related to this topic.
+
+TODO: add the screencast link.
+
+ 
+### Related documents
+
+* [Python Package Index](https://pypi.python.org/pypi)
+
 
 
 ### What you need to know about python package management
 
 TODO
+
+
+### gcdt package structure
+
+The following diagram gives an overview on the gcdt packages. Please note how we grouped the gcdt packages in the following categories: 
+
+* gcdt - the gcdt core (livecycle mechanism, gcdt tools)
+* gcdt plugins - packages to customize how you use gcdt
+* gcdt generators and tools - scaffolding and tools to make your work even more efficient
+
+![gcdt package structure overview](/_static/images/gcdt-package-structure.png "gcdt package structure overview")
+
+At glomex we have very few (currently one) gcdt packages we do not want to open-source. The glomex-config-reader has very opinionated defaults on how we use gcdt on our AWS infrastructure that is very specific and optimized for our media usecase. 
 
 
 ### Maintaining dependencies for your project
@@ -20,13 +43,13 @@ A little opinionated but pretty common:
 * `requirements_dev.txt` tools and packages you need to develop and test your service
 * `requirements_docs.txt` tools you need to write and build your documentation
 
-TODO document version schema
+TODO: document version schema
 
 * add gcdt to your requirements_dev.txt
 * add the plugins you use to requirements_dev.txt
 
 
-### Installation (advanced mode / hacker mode)
+### Installation
 
 #### Setup virtualenv
 
@@ -73,7 +96,6 @@ $ deactivate
 ```
 
 
-### Use the gcdt installer (simple mode)
+### Use the gcdt installer
 
-TODO
-
+The gcdt installer is deprecated and not recommended for use any more. Please consider to use virtualenv and pip tools to get the most out of gcdt.

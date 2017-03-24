@@ -121,6 +121,13 @@ def main(doc, tool, dispatch_only=None):
     :param tool: gcdt tool (gcdt, kumo, tenkai, ramuda, yugen)
     :return: exit_code
     """
+    arguments = docopt(doc, sys.argv[1:])
+    # DEBUG mode (if requested)
+    verbose = arguments.pop('--verbose', False)
+    if verbose:
+        logging_config['loggers']['gcdt']['level'] = 'DEBUG'
+    dictConfig(logging_config)
+
     env = get_env()
     if not env:
         log.error('\'ENV\' environment variable not set!')
@@ -129,12 +136,6 @@ def main(doc, tool, dispatch_only=None):
     if dispatch_only is None:
         dispatch_only = ['version']
     assert tool in ['gcdt', 'kumo', 'tenkai', 'ramuda', 'yugen']
-    arguments = docopt(doc, sys.argv[1:])
-    # DEBUG mode (if requested)
-    verbose = arguments.pop('--verbose', False)
-    if verbose:
-        logging_config['loggers']['gcdt']['level'] = 'DEBUG'
-    dictConfig(logging_config)
 
     command = get_command(arguments)
     if command in dispatch_only:

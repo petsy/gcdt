@@ -17,18 +17,9 @@ Please open a GitHub issue for any bug reports and feature requests.
 1. All tools use the config_reader module from [glomex-utils](https://github.com/glomex/glomex-utils). This offers some convenient features like looking up values from other CloudFormation stacks, fetching credentials stored in credstash. See the repo documentation for details.
 
 
-### Installing dev requirements
+### Installing the development version locally
 
-if you use virtualenv, add the following entry to your $VIRTUAL_ENV/pip.conf file:
-
-```
-[global]
-timeout = 5
-extra-index-url = https://reposerver-prod-eu-west-1.infra.glomex.cloud/pypi/packages
-trusted-host = reposerver-prod-eu-west-1.infra.glomex.cloud
-```
-
-Install the development version (after checkout):
+To install your local development version (after checkout):
 
 ```bash
 $ pip install -e .
@@ -64,8 +55,6 @@ Note: You need to enter an MFA code to run the tests.
 $ python -m pytest tests/test_kumo*
 ```
 
-Hint: If you want to see the print outputs use `NOSE_NOCAPTURE=1` as a prefix. 
-
 
 Please make sure that you do not lower the gcdt test coverage. You can use the following command to make sure:
 
@@ -73,12 +62,11 @@ Please make sure that you do not lower the gcdt test coverage. You can use the f
 $ python -m pytest --cov gcdt tests/test_ramuda*
 ```
 
-This requires the `coverage` package, which can be installed via pip;
-```bash
-$ pip install coverage
-```
+This requires the `coverage` package (included in the `requirements_dev.txt` file):
 
-To suppress debug output to more easily find out why (if) the tests break, please run nosetests with the `-vv` option.
+```bash
+$ pip install -r requirements_dev.txt
+```
 
 
 ### Mock calls to AWS services
@@ -117,12 +105,12 @@ Please note:
 * gcdt testing using placebo works well together with aws-mfa.
 * if you record the tests twice the json files probably get messed up.
   Please do not do this.
-* Please commit the placebo files in a seperate commit. This makes reviewing easier.
+* Please commit the placebo files in a separate commit. This makes reviewing of pull requests easier.
 
 
 ### documenting gcdt
 
-For the open source version of gcdt we need documentation and we want to publish it on Readthedocs. Consequently some of the toolsing is already set like sphinx, latex, ... We would like to use markdown instead of restructured text so we choose recommonmark.
+For gcdt we need documentation and we publish it on Readthedocs. Consequently the tooling is already set like sphinx, latex, ... We would like to use markdown instead of restructured text so we choose recommonmark.
 
 Detailed information on using [markdown and sphinx](http://blog.readthedocs.com/adding-markdown-support/)
 
@@ -139,6 +127,7 @@ If you need to create the pdf docu [install pdflatex](https://thetechsolo.wordpr
 $ brew cask install mactex
 ```
 
+
 #### build docu
 
 In order to build the html and pdf version of the documentation
@@ -148,9 +137,10 @@ $ make html
 $ make latexpdf
 ```
 
+
 #### Release docu to Readthedocs
 
-To release the documentation to Readthedocs most of the time there are no additional steps necessary. Just connect your rtfd accoutn to your github repo.
+To release the documentation to Readthedocs most of the time there are no additional steps necessary. Just connect your rtfd account to your github repo.
 
 
 #### Initialize api docu

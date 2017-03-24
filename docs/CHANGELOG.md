@@ -6,6 +6,10 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - FEATURE added scaffolding mechanism
 - FEATURE included plugin documentation
+- FIX ramuda bundle includes settings_<env>.conf file (#249)
+- FEATURE gcdt_config_reader for json config files (#218)
+- FIX minor improvements from code review sessions (#230)
+- FIX missing environment is not properly handled (#248)
 
 ## [0.0.80] - 2017-03-09
 ### Added
