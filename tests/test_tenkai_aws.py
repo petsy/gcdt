@@ -60,7 +60,6 @@ def sample_codedeploy_app(awsclient):
 @pytest.mark.aws
 @check_preconditions
 def test_tenkai_exit_codes(cleanup_stack_tenkai, awsclient):
-    # TODO: cleanup two tests in one
     are_credentials_still_valid(awsclient)
     # Set up stack with an ec2 and deployment
     cloudformation, _ = load_cloudformation_template(
@@ -80,7 +79,7 @@ def test_tenkai_exit_codes(cleanup_stack_tenkai, awsclient):
         './resources/sample_codedeploy_app/not_working')
     working_deploy_dir = here('./resources/sample_codedeploy_app/working')
     os.chdir(not_working_deploy_dir)
-    bundle_file = bundle_revision()
+    #bundle_file = bundle_revision()
 
     # test deployment which should exit with exit code 1
     deploy_id_1 = tenkai_deploy(
@@ -89,11 +88,11 @@ def test_tenkai_exit_codes(cleanup_stack_tenkai, awsclient):
         deployment_group,
         'CodeDeployDefault.AllAtOnce',
         '7finity-infra-dev-deployment',
-        bundle_file
+        bundle_revision()
     )
-
     exit_code = deployment_status(awsclient, deploy_id_1)
-    assert_equal(exit_code, 1)
+    assert exit_code == 1
+
     # test deployment which should exit with exit code 0
     os.chdir(working_deploy_dir)
     deploy_id_2 = tenkai_deploy(
@@ -102,8 +101,8 @@ def test_tenkai_exit_codes(cleanup_stack_tenkai, awsclient):
         deployment_group,
         'CodeDeployDefault.AllAtOnce',
         '7finity-infra-dev-deployment',
-        bundle_file
+        bundle_revision()
     )
     exit_code = deployment_status(awsclient, deploy_id_2)
-    assert_equal(exit_code, 0)
+    assert exit_code == 0
     os.chdir(cwd)

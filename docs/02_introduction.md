@@ -36,5 +36,5 @@ This section aims to provide to you a list of related documents that will be use
 
 Please use Github issues to report gcdt issues: [gcdt issues](https://github.com/glomex/glomex-cloud-deployment-tools/issues). To check on the progress check out the gcdt project board: [gcdt project board](https://github.com/glomex/glomex-cloud-deployment-tools/projects/1)
 
-glomex employess can get immediate user support via [gcdt slack channel](https://glomex-team.slack.com/messages/gcdt/) or just stop by the SRE lab in Munich, Landsberger Straße 110 
+glomex employess can get immediate user support via [gcdt slack channel](https://glomex-team.slack.com/messages/gcdt/) or just stop by the glomex SRE lab in Munich, Landsberger Straße 110 
  at P-02-041.

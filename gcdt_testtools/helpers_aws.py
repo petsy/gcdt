@@ -213,6 +213,21 @@ check_preconditions = pytest.mark.skipif(
 )
 
 
+def _playback_mode_check():
+    """Make sure the default AWS profile is set so the test can run on AWS."""
+    if os.getenv('PLACEBO_MODE', '').lower() in ['record', 'normal']:
+        return True
+    else:
+        return False
+
+
+# skipif helper aswclient_placebo mode
+check_playback_mode = pytest.mark.skipif(
+    _playback_mode_check(),
+    reason="Test runs only in playback mode (not normal or record)."
+)
+
+
 @pytest.fixture(scope='function')  # 'function' or 'module'
 def awsclient(request):
     def there(p):

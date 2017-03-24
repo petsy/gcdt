@@ -2,7 +2,8 @@
 from __future__ import unicode_literals, print_function
 import os
 
-from gcdt_testtools.helpers_aws import recorder, file_reader, awsclient
+from gcdt_testtools.helpers_aws import recorder, file_reader, awsclient, \
+    check_playback_mode
 from gcdt_testtools.helpers import temp_folder  # fixture!
 from gcdt_testtools import helpers
 from . import here
@@ -35,6 +36,7 @@ def test_file_reader(temp_folder):
         assert reader() == '222'
 
 
+@check_playback_mode
 def test_random_string_recording(awsclient):
     # record and playback cases are identical for this test
     lines = []
