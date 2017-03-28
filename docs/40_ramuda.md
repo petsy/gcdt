@@ -175,6 +175,12 @@ export ENV=DEV
 
 With `gcdt version 0.0.75` ramuda supports the `nodejs4.3` runtime.
 
+Add the runtime config to the `lambda` section of your gcdt configuration. 
+
+``` js
+    "runtime": "nodejs4.3"
+```
+
 At this point the following features are implemented:
 
 * install dependencies before bundling (dependencies are defined in package.json)

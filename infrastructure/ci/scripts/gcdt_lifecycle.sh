@@ -32,7 +32,7 @@ virtualenv --clear venv
 virtualenv -p /usr/bin/python2.7 --no-site-packages venv
 
 
-# create pip.conf file
+# create pip.conf file so we get PR version from reposerver
 echo "[global]
 timeout = 20
 extra-index-url = https://reposerver-prod-eu-west-1.infra.glomex.cloud/pypi/packages

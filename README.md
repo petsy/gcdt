@@ -8,7 +8,7 @@ gcdt is a CLI tool to code and deploy your AWS infrastructure.
 
 The gcdt command line tools have emerged from our experiences at glomex while working extensively with AWS services like Cloudformation, CodeDeploy, AWS Lambda, and API Gateway. gcdt is based on the same technology AWS uses to build AWS-CLI and Boto3 tools. 
 
-In 2017 glomex won the Gartner award "Best Data Management and Infrastructure". Key to our success are the gcdt automation tools we use to successfully complete >100 deployments per day to AWS. Over the course of the last 12 month we built gcdt ourselves using Python.
+In 2017 glomex won the Gartner award "Best Data Management and Infrastructure". Key to our success are the gcdt automation tools we use to successfully complete >100 deployments per day to AWS. Over the course of the last 12 months we built gcdt ourselves using Python.
 
 [![Gartner Award](https://img.youtube.com/vi/DMArRBH2wAk/mqdefault.jpg)](https://www.youtube.com/watch?v=DMArRBH2wAk)
 
@@ -21,7 +21,7 @@ Features include:
 * Powerful plugin mechanism
 * Service integration (Slack, Datadog, ...)
 * Codify infrastructure best practices
-* Multi-Env support (dev, stage, prod)
+* Multi-Env support (dev, stage, prod, ...)
 
 
 ## Why gcdt?
@@ -35,7 +35,7 @@ We hope gcdt will be helpful to you, too. At glomex we believe that only open so
 
 ## Useful gcdt information
 
-* [![gcdt_userguide](https://readthedocs.org/projects/beedo/badge/?version=latest)](http://gcdt.readthedocs.io/en/latest/)
+* [gcdt_userguide](http://gcdt.readthedocs.io/en/latest/)
 * [gcdt issues](https://github.com/glomex/gcdt/issues)
 * [gcdt project board](https://github.com/glomex/gcdt/projects/1)
 
@@ -51,11 +51,11 @@ gcdt needs at least some gcdt-glugins so you should want to install these togeth
 
 ``` text
 gcdt
-gcdt-config-reader
-gcdt-gen-serverless
 gcdt-say-hello
-gcdt-sack-integration
+gcdt-config-reader
+gcdt-slack-integration
 gcdt-datadog-integration
+gcdt-gen-serverless
 ```
 
 This is also a best practice to use the `requirements_dev.txt` file on your build server.
