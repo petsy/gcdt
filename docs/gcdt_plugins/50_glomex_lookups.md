@@ -29,7 +29,7 @@ sample: `lookup:ssl:wildcard.glomex.com`
 The `secret` lookup is used to substitute configuration where the value is a password, token or other sensitive information that you can not commit to a repository.  
  
 format: `lookup:secret:<name>.<subname>`
-sample: `lookup:secret:datadog_api_key`
+sample: `lookup:secret:datadog.api_key`
 lookup the 'datadog_api_key' entry from credstash
 sample: `lookup:secret:slack.webhook:CONTINUE_IF_NOT_FOUND`
 lookup the 'slack.token' entry from credstash
