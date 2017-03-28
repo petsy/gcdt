@@ -1,4 +1,4 @@
-## say hello plugin
+## gcdt-say-hello plugin
 
 This is probably the friendliest plugin ever. It simply greets the user.
 
