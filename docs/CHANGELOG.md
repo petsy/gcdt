@@ -2,9 +2,13 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## [0.0.81] - 2017-03-30
+## [0.1.0] - 2017-03-28
 ### Added
 - FEATURE added scaffolding mechanism
+- FEATURE use MIT LICENSE (#253)
+
+## [0.0.81] - 2017-03-24
+### Added
 - FEATURE included plugin documentation
 - FIX ramuda bundle includes settings_<env>.conf file (#249)
 - FEATURE gcdt_config_reader for json config files (#218)

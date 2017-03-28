@@ -30,7 +30,7 @@ setup(
     long_description=long_description,
     url='https://invalidurl.invalid',
     download_url='http://invalidurl.invalid/gcdt/tarball/' + version,
-    license='BSD',
+    license='MIT',
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Intended Audience :: Developers',

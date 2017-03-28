@@ -25,3 +25,21 @@ DEFAULT_CONFIG = {
         'settings_file': 'settings.json'
     }
 }
+
+
+# note this config is used in the config_reader to "overlay" the
+# gcdt_defaults of gcdt.
+CONFIG_READER_CONFIG = {
+    'lookups': ['secret', 'ssl', 'stack', 'baseami'],
+    'plugins': {
+        'datadog_integration': {
+            'datadog_api_key': 'lookup:secret:datadog.api_key'
+        },
+        'slack_integration': {
+            'slack_webhook': 'lookup:secret:slack.webhook:CONTINUE_IF_NOT_FOUND'
+        },
+        'glomex_lookups': {
+            'ami_accountid': '569909643510'
+        }
+    }
+}

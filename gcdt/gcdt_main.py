@@ -8,9 +8,9 @@ import sys
 from . import utils
 from . import gcdt_lifecycle
 from .gcdt_cmd_dispatcher import cmd
-#from banana.router import Router
-#from banana.routes import run
-#from whaaaaat import color_print as cp
+from banana.router import Router
+from banana.routes import run
+from whaaaaat import color_print as cp
 
 
 GCDT_GENERATOR_GROUP = 'gcdtgen10'
@@ -30,7 +30,6 @@ def version_cmd():
     utils.version()
 
 
-'''
 @cmd(spec=['generate', '<generator>'])
 def generate_cmd(generator):
     insight = None
@@ -50,7 +49,6 @@ def list_cmd():
     print('Installed gcdt generators:')
     for g in router.generators:
         print('  - %s' % g)
-'''
 
 
 def main():
