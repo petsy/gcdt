@@ -106,6 +106,9 @@ def call_pre_hook(awsclient, cloudformation):
     :param cloudformation:
     """
     # no config available
+    if not hasattr(cloudformation, 'pre_hook'):
+        # hook is not present
+        return
     hook_func = getattr(cloudformation, 'pre_hook')
     if not hook_func.func_code.co_argcount:
         hook_func()  # for compatibility with existing templates
