@@ -1,4 +1,4 @@
-## datadog integration plugin
+## gcdt-datadog-integration plugin
 
 The original usecase for the datadog_integration was to get usage data from gcdt executions. So we get some idea on frequency and gcdt utilization. We still use metrics with the datadog gcdt-dashboard to concentrate our efforts on the relevant parts of gcdt.
 

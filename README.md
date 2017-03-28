@@ -1,3 +1,5 @@
+[![Documentation](https://readthedocs.org/projects/beedo/badge/?version=latest)](http://gcdt.readthedocs.io/en/latest/)
+
 # glomex-cloud-deployment-tools (gcdt)
 
 gcdt is a CLI tool to code and deploy your AWS infrastructure.
@@ -31,7 +33,7 @@ We hope gcdt will be helpful to you, too. At glomex we believe that only open so
 
 ## Useful gcdt information
 
-* [gcdt userguide](http://gcdt.readthedocs.io/en/latest/)
+* [![gcdt_userguide](https://readthedocs.org/projects/beedo/badge/?version=latest)](http://gcdt.readthedocs.io/en/latest/)  [gcdt userguide](http://gcdt.readthedocs.io/en/latest/)
 * [gcdt issues](https://github.com/glomex/gcdt/issues)
 * [gcdt project board](https://github.com/glomex/gcdt/projects/1)
 
@@ -96,7 +98,7 @@ At glomex we welcome feedback, bug reports, and pull requests!
 For pull requests, please stick to the following guidelines:
 
 * Add tests for any new features and bug fixes. Ideally, each PR should increase the test coverage.
-* Follow the existing code style (e.g., indents). A PEP8 code linting target is included in the Makefile.
+* Follow the existing code style (e.g., indents). UseA PEP8 code linting.
 * Put a reasonable amount of comments into the code.
 * Separate unrelated changes into multiple pull requests.
 

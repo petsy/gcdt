@@ -1,11 +1,11 @@
-## glomex lookups plugin
+## gcdt-lookups plugin
 
 The lookups functionality was previously part of the hocon config reader. The lookup functionality was refactored into this `glomex_lookups` plugin and with the refactoring we also pinned the functionality it into a dedicated lifecycle step. 
 
 
 ### Related documents
 
-* [glomex credstash](https://github.com/glomex/glomex-credstash)
+* [credstash](https://github.com/fugue/credstash)
 
 
 ### lookup stack output
