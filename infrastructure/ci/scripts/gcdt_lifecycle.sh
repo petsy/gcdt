@@ -81,10 +81,6 @@ ramuda delete -f jenkins-gcdt-lifecycle-for-ramuda
 #######
 # yugen lifecycle
 cd $WORKSPACE/sample_api
-echo "creating slack config"
-echo "yugen {
-  slack-token=***REMOVED***
-}" > ~/.yugen
 
 echo "$ yugen apikey-create jenkins-yugen-testkey"
 yugen apikey-create jenkins-yugen-testkey | tee apikey.txt
