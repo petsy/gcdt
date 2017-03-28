@@ -1,4 +1,6 @@
 [![Documentation](https://readthedocs.org/projects/beedo/badge/?version=latest)](http://gcdt.readthedocs.io/en/latest/)
+[![License](http://img.shields.io/badge/license-MIT-yellowgreen.svg)](LICENSE) 
+[![GitHub issues](https://img.shields.io/github/issues/badges/shields.svg)]()
 
 # glomex-cloud-deployment-tools (gcdt)
 
