@@ -1,6 +1,6 @@
 [![Documentation](https://readthedocs.org/projects/beedo/badge/?version=latest)](http://gcdt.readthedocs.io/en/latest/)
 [![License](http://img.shields.io/badge/license-MIT-yellowgreen.svg)](LICENSE) 
-[![GitHub issues](https://img.shields.io/github/issues/badges/shields.svg)](https://github.com/glomex/glomex-cloud-deployment-tools/issues)
+[![GitHub issues](https://img.shields.io/github/issues/glomex/glomex-cloud-deployment-tools.svg?maxAge=2592000)](https://github.com/glomex/glomex-cloud-deployment-tools/issues)
 
 # glomex-cloud-deployment-tools (gcdt)
 
