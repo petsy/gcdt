@@ -35,7 +35,7 @@ We hope gcdt will be helpful to you, too. At glomex we believe that only open so
 
 ## Useful gcdt information
 
-* [![gcdt_userguide](https://readthedocs.org/projects/beedo/badge/?version=latest)](http://gcdt.readthedocs.io/en/latest/)  [gcdt userguide](http://gcdt.readthedocs.io/en/latest/)
+* [![gcdt_userguide](https://readthedocs.org/projects/beedo/badge/?version=latest)](http://gcdt.readthedocs.io/en/latest/)
 * [gcdt issues](https://github.com/glomex/gcdt/issues)
 * [gcdt project board](https://github.com/glomex/gcdt/projects/1)
 
