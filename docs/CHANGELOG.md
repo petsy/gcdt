@@ -6,6 +6,10 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - FEATURE open source (#255)
 
+## [0.0.83] - 2017-03-29
+### Added
+- FEATURE updated gcdt-plugin dependency
+
 ## [0.0.82] - 2017-03-29
 ### Added
 - FEATURE added scaffolding mechanism
