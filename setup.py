@@ -9,10 +9,13 @@ if not os.getenv('ghprbPullId', None):
 else:
     version = 'PR%s' % os.getenv('ghprbPullId')
 
-
 # Get the long description from the README file
-with open(os.path.join(here, 'README.md'), encoding='utf-8') as f:
-    long_description = f.read()
+try:
+    import pypandoc
+    long_description = pypandoc.convert('README.md', format='md', to='rst')
+except(IOError, ImportError):
+    with open(os.path.join(here, 'README.md'), encoding='utf-8') as f:
+        long_description = f.read()
 
 # get the dependencies and installs
 with open(os.path.join(here, 'requirements.txt'), encoding='utf-8') as f:
@@ -28,8 +31,8 @@ setup(
     version=version,
     description='Glomex Cloud Deployment Tools',
     long_description=long_description,
-    url='https://invalidurl.invalid',
-    download_url='http://invalidurl.invalid/gcdt/tarball/' + version,
+    url='https://github.com/glomex/gcdt',
+    #download_url='http://invalidurl.invalid/gcdt/tarball/' + version,
     license='MIT',
     classifiers=[
         'Development Status :: 3 - Alpha',
@@ -42,7 +45,7 @@ setup(
     author='Glomex DevOps Team',
     install_requires=install_requires,
     dependency_links=dependency_links,
-    author_email='glomex@glomex.de',
+    author_email='Mark.Fink@glomex.com',
     entry_points={
         'console_scripts': [
             'gcdt=gcdt.gcdt_main:main',

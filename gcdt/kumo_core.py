@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals, print_function
-
 import imp
 import json
 import random
 import string
 import sys
 import time
+import logging
 
 import os
 import six
@@ -16,6 +16,8 @@ from tabulate import tabulate
 
 from .utils import get_env
 from .s3 import upload_file_to_s3
+
+log = logging.getLogger(__name__)
 
 
 def load_cloudformation_template(path=None):
@@ -103,11 +105,16 @@ def call_pre_hook(awsclient, cloudformation):
     :param awsclient:
     :param cloudformation:
     """
-    conf = {}  # we don't have a config before we read the config
-    stackname = ''
-    parameters = []
-    _call_hook(awsclient, conf, stackname, parameters, cloudformation,
-               hook='pre_hook')
+    # no config available
+    if not hasattr(cloudformation, 'pre_hook'):
+        # hook is not present
+        return
+    hook_func = getattr(cloudformation, 'pre_hook')
+    if not hook_func.func_code.co_argcount:
+        hook_func()  # for compatibility with existing templates
+    else:
+        log.error('pre_hock can not have any arguments. The pre_hook it is ' +
+                  'executed BEFORE config is read')
 
 
 def _call_hook(awsclient, config, stack_name, parameters, cloudformation,

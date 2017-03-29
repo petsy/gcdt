@@ -49,6 +49,8 @@ def lifecycle(awsclient, env, tool, command, arguments):
     context = get_context(awsclient, env, tool, command, arguments)
     # every tool needs a awsclient so we provide this via the context
     context['_awsclient'] = awsclient
+    log.debug('### context:')
+    log.debug(context)
     if 'error' in context:
         # no need to send an 'error' signal here
         return 1
@@ -71,6 +73,8 @@ def lifecycle(awsclient, env, tool, command, arguments):
     # credential retrieval should be done using lookups
     gcdt_signals.lookup_init.send((context, config))
     gcdt_signals.lookup_finalized.send((context, config))
+    log.debug('### config after lookup:')
+    log.debug(config)
 
     ## config validation
     gcdt_signals.config_validation_init.send((context, config))
