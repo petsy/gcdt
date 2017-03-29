@@ -24,15 +24,16 @@ from . import gcdt_lifecycle
 
 # creating docopt parameters and usage help
 DOC = '''Usage:
-        kumo deploy [--override-stack-policy]
-        kumo list
-        kumo delete -f
-        kumo generate
-        kumo preview
+        kumo deploy [--override-stack-policy] [-v]
+        kumo list [-v]
+        kumo delete -f [-v]
+        kumo generate [-v]
+        kumo preview [-v]
         kumo version
-        kumo dot
+        kumo dot [-v]
 
 -h --help           show this
+-v --verbose        show debug messages
 '''
 
 
