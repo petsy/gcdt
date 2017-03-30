@@ -2,10 +2,24 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## [0.1.0] - 2017-03-28
+## [0.1.0] - 2017-03-31
+### Added
+- FEATURE open source (#255)
+
+## [0.0.84] - 2017-03-30
+### Added
+- FEATURE support for hooks in cloudformation templates and hookfiles (#218)
+
+## [0.0.83] - 2017-03-29
+### Added
+- FEATURE updated gcdt-plugin dependency
+
+## [0.0.82] - 2017-03-29
 ### Added
 - FEATURE added scaffolding mechanism
 - FEATURE use MIT LICENSE (#253)
+- FIX tamed greedy lookup (#258)
+- FIX kumo fixed deprecated pre_hook (#259)
 
 ## [0.0.81] - 2017-03-24
 ### Added
