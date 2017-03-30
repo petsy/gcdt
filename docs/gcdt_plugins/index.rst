@@ -8,9 +8,9 @@ Plugins for gcdt (gcdt-plugins)
    10_overview
    15_plugin_mechanism
    20_config
-   30_datadog_integration
+   30_gcdt_datadog_integration
    38_gcdt_config_reader
    40_glomex_config_reader
-   50_glomex_lookups
-   60_say_hello
-   70_slack_integration
+   50_gcdt_lookups
+   60_gcdt_say_hello
+   70_gcdt_slack_integration

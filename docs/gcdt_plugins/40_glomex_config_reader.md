@@ -1,6 +1,8 @@
-## glomex config reader plugin 
+## glomex-config-reader plugin 
 
-`glomex_config_reader` implements reading classic gcdt hocon config files for all gcdt tools. It also implements the deprecated hook formats for kumo and ramuda.
+Note: this is not open-sourced. Probably we won't open-source this plugin since it contains many optimizations relevant only for our internal glomex infrastructure.
+
+`glomex-config-reader` implements reading classic gcdt hocon config files for all gcdt tools. It also implements the deprecated hook formats for kumo and ramuda.
 
 
 ### Related documents

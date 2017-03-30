@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals, print_function
+import os
 import sys
+import imp
 import logging
 from copy import deepcopy
 
@@ -18,6 +20,8 @@ from .gcdt_cmd_dispatcher import cmd, get_command
 from .gcdt_plugins import load_plugins
 from .gcdt_awsclient import AWSClient
 from .gcdt_logging import logging_config
+from .gcdt_signals import check_hook_mechanism_is_intact, \
+    check_register_present
 
 
 log = logging.getLogger(__name__)
@@ -39,6 +43,23 @@ def check_vpn_connection(reposerver):
         return False
 
 
+def _load_hooks(path):
+    """Load hook module and register signals.
+
+    :param path: Absolute or relative path to module.
+    :return: module
+    """
+    module = imp.load_source(os.path.splitext(os.path.basename(path))[0], path)
+    if not check_hook_mechanism_is_intact(module):
+        # no hooks - do nothing
+        log.debug('No valid hook configuration: \'%s\'. Not using hooks!', path)
+    else:
+        if check_register_present(module):
+            # register the template hooks so they listen to gcdt_signals
+            module.register()
+    return module
+
+
 # lifecycle implementation adapted from
 # https://github.com/finklabs/aws-deploy/blob/master/aws_deploy/tool.py
 def lifecycle(awsclient, env, tool, command, arguments):
@@ -49,6 +70,8 @@ def lifecycle(awsclient, env, tool, command, arguments):
     context = get_context(awsclient, env, tool, command, arguments)
     # every tool needs a awsclient so we provide this via the context
     context['_awsclient'] = awsclient
+    log.debug('### context:')
+    log.debug(context)
     if 'error' in context:
         # no need to send an 'error' signal here
         return 1
@@ -66,11 +89,16 @@ def lifecycle(awsclient, env, tool, command, arguments):
     gcdt_signals.config_read_finalized.send((context, config))
     # TODO we might want to be able to override config via env variables?
     # here would be the right place to do this
+    if 'hookfile' in config:
+        # load hooks from hookfile
+        _load_hooks(config['hookfile'])
 
     ## lookup
     # credential retrieval should be done using lookups
     gcdt_signals.lookup_init.send((context, config))
     gcdt_signals.lookup_finalized.send((context, config))
+    log.debug('### config after lookup:')
+    log.debug(config)
 
     ## config validation
     gcdt_signals.config_validation_init.send((context, config))

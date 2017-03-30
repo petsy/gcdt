@@ -1,4 +1,4 @@
-## slack integration plugin
+## gcdt-slack-integration plugin
 
 Announce the status of your deployments on slack.
 
@@ -14,11 +14,11 @@ Announce the status of your deployments on slack.
 
 Announce deployments on the slack channel for your squad: 
 
-![slack integration](/_static/images/slack_notifications.png "slack integration")
+![gcdt_slack integration](/_static/images/slack_notifications.png "gcdt slack integration")
 
 In case a deployments fails you get a notification, too: 
 
-![slack integration](/_static/images/slack_notification_failed.png "slack integration")
+![gcdt_slack integration](/_static/images/slack_notification_failed.png "gcdt slack integration")
 
 
 ### Setup
