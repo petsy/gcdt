@@ -237,3 +237,14 @@ def test_call_hook_not_present(capsys):
                'pre_create_hook')
     out, err = capsys.readouterr()
     assert out == ''
+
+
+def test_new_cloudformation_template_hooks():
+    template_path = here(
+        'resources/simple_cloudformation_stack_hooks/cloudformation.py')
+    module, success = load_cloudformation_template(template_path)
+    assert_equal(success, True)
+
+    assert module.COUNTER['register'] == 1
+    # currently deregister is not called (but we need that later!)
+    #assert module.COUNTER['deregister'] == 1

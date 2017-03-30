@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals, print_function
+import os
 import sys
+import imp
 import logging
 from copy import deepcopy
 
@@ -18,6 +20,8 @@ from .gcdt_cmd_dispatcher import cmd, get_command
 from .gcdt_plugins import load_plugins
 from .gcdt_awsclient import AWSClient
 from .gcdt_logging import logging_config
+from .gcdt_signals import check_hook_mechanism_is_intact, \
+    check_register_present
 
 
 log = logging.getLogger(__name__)
@@ -37,6 +41,23 @@ def check_vpn_connection(reposerver):
         #requests.exceptions.ConnectTimeout:
         #requests.exceptions.ConnectionError
         return False
+
+
+def _load_hooks(path):
+    """Load hook module and register signals.
+
+    :param path: Absolute or relative path to module.
+    :return: module
+    """
+    module = imp.load_source(os.path.splitext(os.path.basename(path))[0], path)
+    if not check_hook_mechanism_is_intact(module):
+        # no hooks - do nothing
+        log.debug('No valid hook configuration: \'%s\'. Not using hooks!', path)
+    else:
+        if check_register_present(module):
+            # register the template hooks so they listen to gcdt_signals
+            module.register()
+    return module
 
 
 # lifecycle implementation adapted from
@@ -68,6 +89,9 @@ def lifecycle(awsclient, env, tool, command, arguments):
     gcdt_signals.config_read_finalized.send((context, config))
     # TODO we might want to be able to override config via env variables?
     # here would be the right place to do this
+    if 'hookfile' in config:
+        # load hooks from hookfile
+        _load_hooks(config['hookfile'])
 
     ## lookup
     # credential retrieval should be done using lookups
