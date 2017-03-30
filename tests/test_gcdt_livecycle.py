@@ -1,12 +1,16 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals, print_function
+import os
+import textwrap
 
 import pytest
 import mock
 
-from gcdt.gcdt_lifecycle import main, lifecycle, check_vpn_connection
+from gcdt.gcdt_lifecycle import main, lifecycle, check_vpn_connection, \
+    _load_hooks
 from gcdt.kumo_main import DOC
 from gcdt import gcdt_signals
+from gcdt_testtools.helpers import create_tempfile
 
 
 @mock.patch('gcdt.gcdt_lifecycle.AWSClient', return_value='my_awsclient')
@@ -168,3 +172,20 @@ def test_check_vpn_connection(mocked_requests_get):
     mocked_requests_get.assert_called_once_with(
         'foo.bar',
         timeout=1.0)
+
+
+def test_load_hooks():
+    tfile = create_tempfile(textwrap.dedent("""
+    COUNT = {'register': 0, 'deregister': 0}
+
+    def register():
+        COUNT['register'] += 1
+
+
+    def deregister():
+        COUNT['deregister'] += 1
+    """))
+    module = _load_hooks(tfile)
+
+    assert module.COUNT['register'] == 1
+    os.unlink(tfile)
