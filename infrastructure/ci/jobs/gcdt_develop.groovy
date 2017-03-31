@@ -14,7 +14,7 @@ def artifactBucket = "glomex-infra-reposerver-prod"
 def buildScript = baseFolder + "/scripts/build_develop.sh"
 
 def packageName = 'gcdt'
-def jobName = "glomex-cloud-deployment-tools/" + packageName + "-bump-dev-level"
+def jobName = "glomex-cloud-deployment-tools/" + packageName + "-bump-patch-level"
 def repository = "glomex/glomex-cloud-deployment-tools"
 
 folder("glomex-cloud-deployment-tools") {
