@@ -4,6 +4,7 @@
 
 ## 
 echo "\n## initialize"
+export PATH=/usr/local/bin:$PATH
 virtualenv --clear venv
 virtualenv -p /usr/bin/python2.7 --no-site-packages venv
 
