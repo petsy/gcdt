@@ -28,3 +28,8 @@ You can use hooks in gcdt in the following places:
 * use hooks in a `hookfile.py`. Please specify the location of the `hookfile` in your config file.
 
 For details on gcdt_lifecycle and gcdt_signals please take a look into the gcdt-plugins section of this documentation.
+
+
+### Why not elastic beanstalk
+
+At glomex we adhere to infrastructure-as-code and use cloudformation. elastic beanstalk within cloudformation makes little sense since this will again set up another cloudformation stack. so everything you can do with elastic beanstalk you can do directly with cloudformation (and more). this way you directly benefit from improvements we make to gcdt tooling and standards that are based on this toolchain.

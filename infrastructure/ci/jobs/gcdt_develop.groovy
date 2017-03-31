@@ -64,10 +64,10 @@ job(jobName) {
         }
     }
 
-    triggers {
+    /*triggers {
         //githubPush()
         scm('H/5 * * * *')
-    }
+    }*/
 
     wrappers {
         preBuildCleanup()

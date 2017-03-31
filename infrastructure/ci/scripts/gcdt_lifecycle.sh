@@ -1,15 +1,7 @@
 #!/bin/bash -e
 
 # execute lifecycles for the gcdt tools on the infra stack via gcdt CLI
-
 # this script is supposed to run within the Jenkins gcdt pull request builder
-# check preconditions
-echo $ghprbPullId
-if [ -v $ghprbPullId ]
-then
-    echo "not inside a pull request - bailing out!"
-    exit 1
-fi
 
 
 # create temp folder
