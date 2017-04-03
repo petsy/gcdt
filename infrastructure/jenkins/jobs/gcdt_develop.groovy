@@ -52,6 +52,7 @@ job(jobName) {
         githubPush()
     }
 
+    
     publishers {
         git {
             pushOnlyIfSuccess()
