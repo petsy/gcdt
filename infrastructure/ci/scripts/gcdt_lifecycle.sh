@@ -10,6 +10,8 @@ folder=`mktemp -d -t gcdt_unittest_XXXXXXXX`
 echo "using temp folder: $folder"
 cd $folder
 
+export PATH=/usr/local/bin:$PATH
+
 
 # checkout sample app
 # this needs "Credentials Binding Plugin" to work (v)
@@ -17,7 +19,6 @@ cd $folder
 username=${GIT_CREDENTIALS%:*}
 password=${GIT_CREDENTIALS#*:}
 git clone https://${username}:${password}@github.com/glomex/gcdt-sample-stack.git
-
 
 # prepare virtualenv
 virtualenv --clear venv
