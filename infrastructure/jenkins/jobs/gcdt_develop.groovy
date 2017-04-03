@@ -27,7 +27,7 @@ job(jobName) {
         keepBuildVariables(true)
         env('ENV', environ)
         env('PACKAGE_NAME', packageName)
-        env('ARTIFACT_BUCKET', artifactBucket)
+        //env('ARTIFACT_BUCKET', artifactBucket)
         env('PYTHONUNBUFFERED', "1")
         env('AWS_DEFAULT_REGION', 'eu-west-1')
         // http://chase-seibert.github.io/blog/2014/01/12/python-unicode-console-output.html
