@@ -11,7 +11,7 @@ def branchToCheckout = InfraUtilities.getBranch()
 out.println(branchToCheckout)
 
 def credentialsToCheckout = "glomex-sre-deploy"
-def baseFolder = "infrastructure/ci"
+def baseFolder = "infrastructure/jenkins"
 def artifactBucket = "glomex-infra-reposerver-prod"
 def venvScript = baseFolder + "/scripts/prepare_virtualenv.sh"
 def buildScript = baseFolder + "/scripts/build_package.sh"
