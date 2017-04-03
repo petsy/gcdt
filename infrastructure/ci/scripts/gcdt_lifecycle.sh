@@ -12,7 +12,6 @@ cd $folder
 
 export PATH=/usr/local/bin:$PATH
 
-
 # checkout sample app
 # this needs "Credentials Binding Plugin" to work (v)
 # note: GIT_CREDENTIALS (conjoined) comes as username:password
