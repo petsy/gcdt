@@ -48,6 +48,10 @@ job(jobName) {
         }
     }
 
+    triggers {
+        githubPush()
+    }
+
     publishers {
         git {
             pushOnlyIfSuccess()
