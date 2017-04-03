@@ -10,7 +10,6 @@ out.println(branchToCheckout)
 
 def credentialsToCheckout = "glomex-sre-deploy"
 def baseFolder = "infrastructure/jenkins"
-//def artifactBucket = "glomex-infra-reposerver-prod"
 def buildScript = baseFolder + "/scripts/build_develop.sh"
 
 def packageName = 'gcdt'
@@ -27,12 +26,10 @@ job(jobName) {
         keepBuildVariables(true)
         env('ENV', environ)
         env('PACKAGE_NAME', packageName)
-        //env('ARTIFACT_BUCKET', artifactBucket)
         env('PYTHONUNBUFFERED', "1")
         env('AWS_DEFAULT_REGION', 'eu-west-1')
         // http://chase-seibert.github.io/blog/2014/01/12/python-unicode-console-output.html
         env('PYTHONIOENCODING', 'UTF-8')
-        //env('BUCKET', artifactBucket + '/pypi/packages/' + packageName + '/')
     }
 
     scm {
