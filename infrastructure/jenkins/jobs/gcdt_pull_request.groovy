@@ -1,12 +1,10 @@
 import utilities.InfraUtilities
 
 // this is the pull request builder job
-// TODO: activate the github hook to speed up the build
 
 
-environ = InfraUtilities.getEnv() //TODO: this does not work with central Jenkins:
+environ = InfraUtilities.getEnv()
 def branchToCheckout = InfraUtilities.getBranch()
-//def slackChannel = InfraUtilities.getSlackChannel()
 
 out.println(branchToCheckout)
 
