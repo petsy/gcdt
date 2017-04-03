@@ -35,12 +35,6 @@ job(jobName) {
         //env('BUCKET', artifactBucket + '/pypi/packages/' + packageName + '/')
     }
 
-    parameters {
-        labelParam('NODE') {
-            defaultValue('infra-dev')
-        }
-    }
-
     scm {
         git {
             remote {
