@@ -4,17 +4,11 @@
 
 ########
 # Preparation
+export PATH=/usr/local/bin:$PATH
 
 # Setup virtualenv in temp folder
 TEMP_DIR=`mktemp -d` && cd ${TEMP_DIR}
 virtualenv -p /usr/bin/python2.7 --no-site-packages venv
-
-# create pip.conf file
-#echo "[global]
-#timeout = 20
-#extra-index-url = https://reposerver-prod-eu-west-1.infra.glomex.cloud/pypi/packages
-#trusted-host = reposerver-prod-eu-west-1.infra.glomex.cloud" >> ./venv/pip.conf
-
 source ./venv/bin/activate
 
 
@@ -42,16 +36,18 @@ pip install -r requirements.txt -r requirements_dev.txt
 ########
 # Version
 echo "bumping dev level in develop"
-bumpversion --commit dev
+bumpversion --commit patch
 
 
 ########
 # Release
-python setup.py sdist --dist-dir dist/
-ls -la dist/
+# python setup.py sdist --dist-dir dist/
+echo "[server-login]
+username:glomex
+password:$(credstash -r eu-west-1 get jenkins.pypi.password)" > ~/.pypirc
 
 # publish to repo server
-aws s3 cp --acl bucket-owner-full-control ./dist/ s3://$BUCKET --recursive --exclude '*' --include '*.tar.gz'
+python setup.py sdist upload
 
 
 ########

@@ -10,6 +10,7 @@ folder=`mktemp -d -t gcdt_unittest_XXXXXXXX`
 echo "using temp folder: $folder"
 cd $folder
 
+export PATH=/usr/local/bin:$PATH
 
 # checkout sample app
 # this needs "Credentials Binding Plugin" to work (v)
