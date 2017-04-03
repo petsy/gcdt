@@ -81,9 +81,10 @@ def lifecycle(awsclient, env, tool, command, arguments):
     check_gcdt_update()
 
     config = deepcopy(DEFAULT_CONFIG)
-    if not check_vpn_connection(config['reposerver']):
-        print(colored.red('Can not connect to VPN please activate your VPN!'))
-        return 1
+    # TODO move this to glomex-checks plugin!
+    #if not check_vpn_connection(config['reposerver']):
+    #    print(colored.red('Can not connect to VPN please activate your VPN!'))
+    #    return 1
 
     gcdt_signals.config_read_init.send((context, config))
     gcdt_signals.config_read_finalized.send((context, config))

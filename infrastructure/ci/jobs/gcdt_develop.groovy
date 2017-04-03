@@ -8,16 +8,16 @@ def branchToCheckout = InfraUtilities.getBranch()
 
 out.println(branchToCheckout)
 
-def credentialsToCheckout = "psd-frontend-jenkins_username-password"
+def credentialsToCheckout = "glomex-sre-deploy"
 def baseFolder = "infrastructure/ci"
 def artifactBucket = "glomex-infra-reposerver-prod"
 def buildScript = baseFolder + "/scripts/build_develop.sh"
 
 def packageName = 'gcdt'
-def jobName = "glomex-cloud-deployment-tools/" + packageName + "-bump-patch-level"
-def repository = "glomex/glomex-cloud-deployment-tools"
+def jobName = "gcdt/" + packageName + "-bump-patch-level"
+def repository = "glomex/gcdt"
 
-folder("glomex-cloud-deployment-tools") {
+folder("gcdt") {
 }
 
 
@@ -63,11 +63,6 @@ job(jobName) {
             branch('origin', 'develop')
         }
     }
-
-    /*triggers {
-        //githubPush()
-        scm('H/5 * * * *')
-    }*/
 
     wrappers {
         preBuildCleanup()

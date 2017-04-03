@@ -10,7 +10,7 @@ def branchToCheckout = InfraUtilities.getBranch()
 
 out.println(branchToCheckout)
 
-def credentialsToCheckout = "psd-frontend-jenkins_username-password"
+def credentialsToCheckout = "glomex-sre-deploy"
 def baseFolder = "infrastructure/ci"
 def artifactBucket = "glomex-infra-reposerver-prod"
 def venvScript = baseFolder + "/scripts/prepare_virtualenv.sh"
@@ -18,10 +18,10 @@ def buildScript = baseFolder + "/scripts/build_package.sh"
 def lifecycleScript = baseFolder + "/scripts/gcdt_lifecycle.sh"
 
 def packageName = 'gcdt'
-def jobName = "glomex-cloud-deployment-tools/" + packageName + "_pull_request"
-def repository = "glomex/glomex-cloud-deployment-tools"
+def jobName = "gcdt/" + packageName + "_pull_request"
+def repository = "glomex/gcdt"
 
-folder("glomex-cloud-deployment-tools") {
+folder("gcdt") {
 }
 
 job(jobName) {
@@ -69,12 +69,14 @@ job(jobName) {
 
     triggers {
         githubPullRequest {
+            // For documentation of settings see source code here:
+            // https://github.com/jenkinsci/ghprb-plugin/tree/master/src/main/java/org/jenkinsci/plugins/ghprb/jobdsl
+            useGitHubHooks()
+            //useGitHubHooks(false)
+            //cron('H/5 * * * *')
             orgWhitelist(['glomex'])  // ma_github_org
-            cron('H/5 * * * *')
             onlyTriggerPhrase(false)
             triggerPhrase('@alexa please test')
-            useGitHubHooks(false)
-            //useGitHubHooks()
             permitAll()
 
             autoCloseFailedPullRequests(false)
@@ -82,10 +84,6 @@ job(jobName) {
             // whitelist target branch is missing in the config??
             extensions {
                 commitStatus {
-                    //context('deploy to staging site')
-                    //triggeredStatus('starting deployment to staging site...')
-                    //startedStatus('deploying to staging site...')
-                    //statusUrl('http://mystatussite.com/prs')
                     completedStatus('SUCCESS', 'All is well')
                     completedStatus('FAILURE', 'Something went wrong.')
                     completedStatus('PENDING', 'processing...')
@@ -101,7 +99,7 @@ job(jobName) {
 
         credentialsBinding {
             usernamePassword('GIT_CREDENTIALS',
-                    'psd-frontend-jenkins_username-password')
+                    'glomex-sre-deploy')
         }
     }
 
@@ -120,7 +118,10 @@ job(jobName) {
         shell(readFileFromWorkspace(venvScript))
 
         // run the unit tests
-        shell('./venv/bin/python -m pytest --cov gcdt tests/test_*')
+        shell('''
+            export PATH=/usr/local/bin:$PATH
+            ./venv/bin/python -m pytest --cov gcdt tests/test_*
+            '''.stripIndent())
 
         // run the style checks
         shell('./venv/bin/pylint gcdt || true')
