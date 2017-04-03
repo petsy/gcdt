@@ -5,6 +5,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ## [0.1.0] - 2017-03-31
 ### Added
 - FEATURE open source (#255)
+- FEATURE moved build jobs to new infra jenkins (#255)
 
 ## [0.0.84] - 2017-03-30
 ### Added
