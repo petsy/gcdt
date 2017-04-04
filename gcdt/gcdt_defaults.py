@@ -38,7 +38,7 @@ CONFIG_READER_CONFIG = {
         'gcdt_slack_integration': {
             'slack_webhook': 'lookup:secret:slack.webhook:CONTINUE_IF_NOT_FOUND'
         },
-        'gcdt_lookup': {
+        'gcdt_lookups': {
             'ami_accountid': '569909643510'
         }
     }
