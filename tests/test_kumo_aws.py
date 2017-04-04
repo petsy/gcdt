@@ -2,7 +2,7 @@
 from __future__ import unicode_literals, print_function
 import os
 
-from pyhocon import ConfigFactory
+#from pyhocon import ConfigFactory
 from nose.tools import assert_equal, assert_false, assert_is_not, \
     assert_is_not_none, assert_true
 import pytest
@@ -102,9 +102,17 @@ def sample_cloudformation_stack_with_hooks(awsclient):
 @pytest.mark.aws
 @check_preconditions
 def test_s3_upload(cleanup_buckets, awsclient):
-    upload_conf = ConfigFactory.parse_file(
-        here('resources/simple_cloudformation_stack/settings_upload_dev.conf')
-    )
+    #upload_conf = ConfigFactory.parse_file(
+    #    here('resources/simple_cloudformation_stack/settings_upload_dev.conf')
+    #)
+
+    upload_conf = {
+        'cloudformation': {
+            'StackName': "infra-dev-kumo-sample-stack",
+            'InstanceType': "t2.micro",
+            'artifactBucket': "unittest-kumo-artifact-bucket"
+        }
+    }
 
     region = awsclient.get_client('s3').meta.region_name
     account = os.getenv('ACCOUNT', None)

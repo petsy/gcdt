@@ -43,7 +43,7 @@ credstash put datadog_api_key <my_key>
 ``` js
     ...
     'plugins': {
-        'slack_integration': {
+        'gcdt_slack_integration': {
             'channel': '<my_squad_slack_channel>'
         },
         ...

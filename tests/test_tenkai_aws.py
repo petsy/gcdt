@@ -5,7 +5,7 @@ import logging
 
 from nose.tools import assert_equal, assert_false
 import pytest
-from gcdt_plugins.bundler.bundler import bundle_revision
+from gcdt_bundler.bundler import bundle_revision
 
 from gcdt.kumo_core import deploy_stack, load_cloudformation_template, delete_stack, _get_stack_name
 from gcdt.utils import are_credentials_still_valid

@@ -7,7 +7,6 @@ from time import sleep
 
 import os
 from clint.textui import prompt, colored
-from pyhocon import ConfigFactory
 
 from gcdt import __version__
 from gcdt.package_utils import get_package_versions
@@ -72,6 +71,8 @@ def retries(max_tries, delay=1, backoff=2, exceptions=(Exception,), hook=None):
     return dec
 
 
+# TODO check if this is used and move to hocon config reader
+'''
 def read_gcdt_user_config_value(key, default=None, gcdt_file=None):
     """Read .gcdt config file from user home and return value for key.
     Configuration keys are in the form <command>.<key>
@@ -87,6 +88,7 @@ def read_gcdt_user_config_value(key, default=None, gcdt_file=None):
     except Exception:
         value = default
     return value
+'''
 
 
 def _get_user():

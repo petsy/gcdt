@@ -5,7 +5,7 @@ import os
 import pytest
 
 from gcdt.tenkai_main import version_cmd, deploy_cmd, bundle_cmd
-from gcdt_plugins.bundler.bundler import bundle_revision
+from gcdt_bundler.bundler import bundle_revision
 
 from gcdt_testtools.helpers_aws import check_preconditions, get_tooldata
 from gcdt_testtools.helpers_aws import awsclient  # fixtures !

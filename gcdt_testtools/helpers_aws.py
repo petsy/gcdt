@@ -8,8 +8,8 @@ import logging
 
 import botocore.session
 import pytest
-from gcdt_plugins.bundler.bundler import _get_zipped_file
-from gcdt_plugins.glomex_lookups.lookups import _resolve_lookups
+from gcdt_bundler.bundler import _get_zipped_file
+from gcdt_lookups.lookups import _resolve_lookups
 
 from gcdt.ramuda_core import deploy_lambda
 from gcdt.s3 import create_bucket, delete_bucket

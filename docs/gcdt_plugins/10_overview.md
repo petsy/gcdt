@@ -27,7 +27,7 @@ Configuration for a plugin are specific for that plugin so please consult the pl
     ...
     'plugins': {
         ...
-        'slack_integration': {
+        'gcdt_slack_integration': {
             'slack_webhook': 'lookup:secret:slack.webhook:CONTINUE_IF_NOT_FOUND'
         },
         ...
@@ -41,12 +41,12 @@ The following table lists the plugins and gives a brief overview what each plugi
 
 Plugin | Description
 ------ | -----------
-datadog_integration | send deployment metrics and events to datadog
+gcdt_datadog_integration | send deployment metrics and events to datadog
 gcdt_config_reader | read configuration files in json, python, or yaml format
 glomex_config_reader | read hocon configuration files
-glomex_lookup | lookup information related to your AWS account
-say hello | simple plugin to demonstrate how plugins work / are developed
-slack_integration | send deployment status information to slack
+gcdt_lookup | lookup information related to your AWS account
+gcdt_say_hello | simple plugin to demonstrate how plugins work / are developed
+gcdt_slack_integration | send deployment status information to slack
 
 Please refer to detailed plugin's documentation later in this document folder for detailed information about that plugin.
 

@@ -1,6 +1,6 @@
 ## gcdt-datadog-integration plugin
 
-The original usecase for the datadog_integration was to get usage data from gcdt executions. So we get some idea on frequency and gcdt utilization. We still use metrics with the datadog gcdt-dashboard to concentrate our efforts on the relevant parts of gcdt.
+The original usecase for the gcdt_datadog_integration was to get usage data from gcdt executions. So we get some idea on frequency and gcdt utilization. We still use metrics with the datadog gcdt-dashboard to concentrate our efforts on the relevant parts of gcdt.
 
 
 ### Related documents
@@ -20,7 +20,7 @@ The original usecase for the datadog_integration was to get usage data from gcdt
 `datadog.api_key` is provided via secret lookup:
 
 ``` js
-'datadog_integration': {
+'gcdt_datadog_integration': {
     'datadog_api_key': 'lookup:secret:datadog.api_key'
 },
 ```

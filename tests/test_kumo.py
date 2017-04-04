@@ -3,8 +3,6 @@ from __future__ import unicode_literals, print_function
 import json
 from tempfile import NamedTemporaryFile
 
-from pyhocon import ConfigFactory
-from pyhocon.exceptions import ConfigMissingException
 from nose.tools import assert_dict_equal
 from nose.tools import assert_equal, assert_true, \
     assert_regexp_matches, assert_list_equal, raises
@@ -49,13 +47,18 @@ def test_simple_cloudformation_stack():
     # read the template
     template_path = here(
         'resources/simple_cloudformation_stack/cloudformation.py')
-    config_path = here(
-        'resources/simple_cloudformation_stack/settings_dev.conf')
+    #config_path = here(
+    #    'resources/simple_cloudformation_stack/settings_dev.conf')
 
     cloudformation, success = load_cloudformation_template(template_path)
     assert_true(success)
-    # read the configuration
-    config = ConfigFactory.parse_file(config_path)
+
+    config = {
+        'cloudformation': {
+            'StackName': "infra-dev-kumo-sample-stack",
+            'InstanceType': "t2.micro"
+        }
+    }
 
     expected_templ_file_name = '%s-generated-cf-template.json' % \
                                _get_stack_name(config)
@@ -121,12 +124,6 @@ def test_simple_cloudformation_stack_during_update_override_default():
 
 
 def test_parameter_substitution():
-    config_string = '''
-    cloudformation {
-        ConfigOne = value1
-        ConfigTwo = [value2, value3]
-    }
-    '''
     expected = [
         {
             'ParameterKey': 'ConfigOne',
@@ -139,20 +136,26 @@ def test_parameter_substitution():
             'UsePreviousValue': False
         }
     ]
-    conf = ConfigFactory.parse_string(config_string)
+    conf = {
+        'cloudformation': {
+            'ConfigOne': 'value1',
+            'ConfigTwo': ['value2', 'value3']
+        }
+    }
+
     converted_conf = _generate_parameters(conf)
     assert_equal(converted_conf, expected)
 
 
 def test_parameter_substitution_reserved_terms():
-    config_string = '''
-    cloudformation {
-        ConfigOne = value1
-        StackName = value2
-        TemplateBody = value3
-        ArtifactBucket = value4
+    conf = {
+        'cloudformation': {
+            'ConfigOne': 'value1',
+            'StackName': 'value2',
+            'TemplateBody': 'value3',
+            'ArtifactBucket': 'value4',
+        }
     }
-    '''
     expected = [
         {
             'ParameterKey': 'ConfigOne',
@@ -160,49 +163,44 @@ def test_parameter_substitution_reserved_terms():
             'UsePreviousValue': False
         }
     ]
-    conf = ConfigFactory.parse_string(config_string)
     converted_conf = _generate_parameters(conf)
     assert_equal(converted_conf, expected)
 
 
 def test_get_conf_value():
-    config_string = '''
-    cloudformation {
-        ConfigOne = value1
+    config = {
+        'cloudformation': {
+            'ConfigOne': 'value1'
+        }
     }
-    '''
-    config = ConfigFactory.parse_string(config_string)
     assert_equal(_get_conf_value(config, 'ConfigOne'), 'value1')
 
 
 def test_get_conf_value_list():
-    config_string = '''
-    cloudformation {
-        ConfigOne = [a, b, c]
+    config = {
+        'cloudformation': {
+            'ConfigOne': ['a', 'b', 'c']
+        }
     }
-    '''
-    config = ConfigFactory.parse_string(config_string)
     assert_equal(_get_conf_value(config, 'ConfigOne'), 'a,b,c')
 
 
-@raises(ConfigMissingException)
+@raises(KeyError)
 def test_get_conf_value_unknown():
-    config_string = '''
-    cloudformation {
-        ConfigOne = [a, b, c]
+    config = {
+        'cloudformation': {
+            'ConfigOne': ['a', 'b', 'c']
+        }
     }
-    '''
-    config = ConfigFactory.parse_string(config_string)
     _get_conf_value(config, 'Unknown')
 
 
 def test_generate_parameter_entry():
-    config_string = '''
-    cloudformation {
-        ConfigOne = value1
+    config = {
+        'cloudformation': {
+            'ConfigOne': 'value1'
+        }
     }
-    '''
-    config = ConfigFactory.parse_string(config_string)
     assert_dict_equal(_generate_parameter_entry(config, 'ConfigOne'),
                       {
                           'ParameterKey': 'ConfigOne',

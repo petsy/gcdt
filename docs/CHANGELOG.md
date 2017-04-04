@@ -43,7 +43,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ## [0.0.78] - 2017-03-06
 ### Added
 - FEATURE moved hocon config_reader to plugin (#150)
-- FEATURE split glomex_lookups plugin from config_reader (#150)
+- FEATURE split gcdt_lookups plugin from config_reader (#150)
 - FEATURE improved slack plugin (webhooks, consolidated msgs) (#219)
 - FEATURE extracted bundle step into bundler plugin (#150)
 

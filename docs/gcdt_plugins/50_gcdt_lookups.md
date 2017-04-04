@@ -1,6 +1,6 @@
 ## gcdt-lookups plugin
 
-The lookups functionality was previously part of the hocon config reader. The lookup functionality was refactored into this `glomex_lookups` plugin and with the refactoring we also pinned the functionality it into a dedicated lifecycle step. 
+The lookups functionality was previously part of the hocon config reader. The lookup functionality was refactored into this `gcdt-lookups` plugin and with the refactoring we also pinned the functionality it into a dedicated lifecycle step. 
 
 
 ### Related documents
