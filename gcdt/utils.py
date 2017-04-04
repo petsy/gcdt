@@ -20,12 +20,12 @@ def version():
     print('gcdt version %s' % __version__)
     print('gcdt plugins:')
     for p, v in get_plugin_versions().items():
-        print('%s version %s' % (p, v))
+        print(' * %s version %s' % (p, v))
     generators = get_plugin_versions('gcdtgen10')
     if generators:
         print('gcdt scaffolding generators:')
         for p, v in generators.items():
-            print('%s version %s' % (p, v))
+            print(' * %s version %s' % (p, v))
 
 
 def retries(max_tries, delay=1, backoff=2, exceptions=(Exception,), hook=None):
