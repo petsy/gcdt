@@ -27,22 +27,6 @@ from .gcdt_signals import check_hook_mechanism_is_intact, \
 log = logging.getLogger(__name__)
 
 
-def check_vpn_connection(reposerver):
-    """Check whether we can connect to VPN for version check.
-    :return: True / False
-    """
-    try:
-        request = requests.get(reposerver, timeout=1.0)
-        if request.status_code == 200:
-            return True
-        else:
-            return False
-    except Exception:
-        #requests.exceptions.ConnectTimeout:
-        #requests.exceptions.ConnectionError
-        return False
-
-
 def _load_hooks(path):
     """Load hook module and register signals.
 
@@ -78,13 +62,14 @@ def lifecycle(awsclient, env, tool, command, arguments):
 
     ## initialized
     gcdt_signals.initialized.send(context)
+    if 'error' in context:
+        log.error(context['error'])
+        gcdt_signals.error.send((context, {}))
+        return 1
+
     check_gcdt_update()
 
     config = deepcopy(DEFAULT_CONFIG)
-    # TODO move this to glomex-checks plugin!
-    #if not check_vpn_connection(config['reposerver']):
-    #    print(colored.red('Can not connect to VPN please activate your VPN!'))
-    #    return 1
 
     gcdt_signals.config_read_init.send((context, config))
     gcdt_signals.config_read_finalized.send((context, config))
